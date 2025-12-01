@@ -8,6 +8,7 @@ import { clamp, randInt } from './utils.js';
 import { applyStatus, tickStatuses } from './statuses.js';
 import { playSoundAttack, playSoundHit, playSoundSkill, playSoundVictory, playSoundDefeat, playSoundCrit, playSoundBlock, playSoundEnemySpecial, playBossMusic, stopBossMusic } from './audio.js';
 import { applyZoneStartEffects, tickZoneEffects, applyZoneEndEffects } from './zones.js';
+import { SKILLS, getSkillById, canAffordSkill } from './skills.js';
 
 /**
  * Validate that battle can proceed
@@ -42,10 +43,17 @@ export const Battle = {
   momentumMax: 100,
   _momentumDecayOnHit: true,
 
+  // Skill cooldowns: tracks per-skill cooldown state { skillId: currentTime }
+  skillCooldowns: {},
+
   // Enemy special attack tracking (telegraphing)
   enemySpecialCooldownCurrent: 0,
   enemySpecialCooldownMax: 0,
   enemySpecialWindupRemaining: 0,
+
+  // MP regeneration tracking
+  _mpRegenAccumulator: 0,
+  _mpRegenRate: 0.8, // MP regenerated per second in battle
 
   _lastTs: 0,
   _rafId: 0,
@@ -85,6 +93,9 @@ export const Battle = {
 
     // Initialize momentum & enemy special
     this.playerMomentum = 0;
+    // Initialize skill cooldowns
+    this.skillCooldowns = {};
+    this._mpRegenAccumulator = 0;
     if (enemy.specialAttack) {
       this.enemySpecialCooldownMax = enemy.specialAttack.cooldown;
       this.enemySpecialCooldownCurrent = this.enemySpecialCooldownMax * 0.6; // start partially charged
@@ -151,6 +162,9 @@ export const Battle = {
     const tMul = p._modifiers?.baseCooldownMultiplier ?? 1.0;
     this.playerCooldownMax = Math.max(1.0, (baseCd + weaponCdMod) * tMul);
     this.playerCooldownCurrent = this.playerCooldownMax;
+    // Initialize skill cooldowns and MP regen
+    this.skillCooldowns = {};
+    this._mpRegenAccumulator = 0;
     this.isBattleActive = true;
     this._lastTs = performance.now();
     showScreen('screen-battle');
@@ -196,6 +210,21 @@ export const Battle = {
     tickStatuses(p, dt, addBattleLogEntry);
     tickStatuses(e, dt, addBattleLogEntry);
     if (this.currentZoneKey) tickZoneEffects(this.currentZoneKey, this, dt);
+
+    // Regenerate MP over time
+    this._mpRegenAccumulator += dt * this._mpRegenRate;
+    if (this._mpRegenAccumulator >= 1.0) {
+      const regenAmount = Math.floor(this._mpRegenAccumulator);
+      GameState.regenerateMp(regenAmount);
+      this._mpRegenAccumulator -= regenAmount;
+    }
+
+    // Tick skill cooldowns
+    for (const skillId in this.skillCooldowns) {
+      if (this.skillCooldowns[skillId] > 0) {
+        this.skillCooldowns[skillId] = Math.max(0, this.skillCooldowns[skillId] - dt);
+      }
+    }
 
     // Advance cooldowns
     const effectiveMax = this._tempSkillCooldownFactor ? this.playerCooldownMax * this._tempSkillCooldownFactor : this.playerCooldownMax;
@@ -292,6 +321,22 @@ export const Battle = {
         e.cdCurrent = clamp(e.cdCurrent + dt, 0, e.cdMax);
       }
     }
+
+    // Regenerate MP over time
+    this._mpRegenAccumulator += dt * this._mpRegenRate;
+    if (this._mpRegenAccumulator >= 1.0) {
+      const regenAmount = Math.floor(this._mpRegenAccumulator);
+      GameState.regenerateMp(regenAmount);
+      this._mpRegenAccumulator -= regenAmount;
+    }
+
+    // Tick skill cooldowns
+    for (const skillId in this.skillCooldowns) {
+      if (this.skillCooldowns[skillId] > 0) {
+        this.skillCooldowns[skillId] = Math.max(0, this.skillCooldowns[skillId] - dt);
+      }
+    }
+
     // Player cooldown
     const effectiveMax = this._tempSkillCooldownFactor ? this.playerCooldownMax * this._tempSkillCooldownFactor : this.playerCooldownMax;
     this.playerCooldownCurrent = clamp(this.playerCooldownCurrent + dt, 0, effectiveMax);
@@ -470,6 +515,128 @@ export const Battle = {
         wr.windup = 2.2; wr.windupType = 'elder_rupture';
         addBattleLogEntry('The earth screams — Elder Rupture charging!', 'boss');
         flashWarning(); playSoundEnemySpecial();
+      }
+    }
+  },
+
+  /**
+   * Use an active skill from skills.js
+   * @param {string} skillId - The skill identifier to use
+   */
+  useSkill(skillId) {
+    if (!validateBattleState(this)) return;
+    const p = GameState.player;
+    const e = this.currentEnemy;
+    const skill = getSkillById(skillId);
+    
+    if (!skill) {
+      console.warn(`Skill ${skillId} not found`);
+      return;
+    }
+
+    // Check if skill is on cooldown
+    if (this.skillCooldowns[skillId] && this.skillCooldowns[skillId] > 0) {
+      addBattleLogEntry(`${skill.name} is on cooldown!`, 'info');
+      return;
+    }
+
+    // Check if player can afford the skill
+    if (!canAffordSkill(p, skill)) {
+      addBattleLogEntry(`Not enough MP to use ${skill.name}!`, 'info');
+      return;
+    }
+
+    // Spend MP
+    if (!GameState.spendMp(skill.resourceCost)) {
+      addBattleLogEntry(`Failed to use ${skill.name}!`, 'info');
+      return;
+    }
+
+    // Calculate damage based on skill scaling stat
+    let baseDamage = skill.basePower;
+    let scalingStat = 0;
+
+    switch(skill.scalingStat) {
+      case 'strength':
+        scalingStat = p.stats.strength;
+        break;
+      case 'dexterity':
+        scalingStat = p.stats.dexterity;
+        break;
+      case 'intelligence':
+        scalingStat = p.stats.intelligence;
+        break;
+      case 'vitality':
+        scalingStat = p.stats.vitality;
+        break;
+    }
+
+    // Calculate final damage
+    let dmg = 0;
+    if (skill.effectType === 'damage') {
+      if (skill.damageType === 'physical') {
+        const attackPower = Math.max(1, p.attackPower + scalingStat);
+        dmg = Math.max(1, Math.round((attackPower + baseDamage - e.defense) * (p._modifiers?.attackMultiplier ?? 1.0)));
+      } else if (skill.damageType === 'magical') {
+        const magicPower = Math.max(1, p.magicPower + scalingStat);
+        dmg = Math.max(1, Math.round((magicPower + baseDamage - Math.floor(e.defense * 0.3)) * (p._modifiers?.magicMultiplier ?? 1.0)));
+      }
+
+      // Add momentum bonus
+      const momentumFactor = (this.playerMomentum / this.momentumMax);
+      dmg = Math.round(dmg * (1 + momentumFactor * 0.2));
+
+      // Crit chance (skills can have bonus crit)
+      const w = p.equipment.weapon;
+      const weaponCritBonus = w?.critChance || 0;
+      const baseCrit = 0.05;
+      const skillCritBonus = skill.critBonus || 0;
+      const critChance = baseCrit + weaponCritBonus + skillCritBonus + (p._modifiers?.critChanceBonus ?? 0) + (momentumFactor * 0.1);
+      const isCrit = Math.random() < critChance;
+      if (isCrit) dmg = Math.round(dmg * 1.5);
+
+      // Variance
+      dmg += randInt(-2, 2);
+      dmg = Math.max(1, dmg);
+
+      // Apply damage
+      e.hp = clamp((e.hp ?? e.maxHp) - dmg, 0, e.maxHp);
+
+      // Visual and audio feedback
+      playSoundSkill();
+      const enemyCombatant = document.querySelector('.combatant.enemy');
+      flashHit(enemyCombatant);
+      shakeElement(enemyCombatant);
+      spawnFloatingDamage(enemyCombatant, dmg, isCrit ? 'crit' : 'normal');
+      if (isCrit) playSoundCrit();
+
+      addBattleLogEntry(`${p.name} uses ${skill.name} for ${dmg} damage!${isCrit ? ' (CRIT!)' : ''}`, isCrit ? 'crit' : 'damage');
+    } else if (skill.effectType === 'buff') {
+      // Apply buff to player (e.g., damage reduction)
+      if (skill.statusEffect) {
+        applyStatus(p, skill.statusEffect, addBattleLogEntry);
+      }
+      addBattleLogEntry(`${p.name} uses ${skill.name}!`, 'info');
+      playSoundSkill();
+    }
+
+    // Apply status effect chance
+    if (skill.statusEffect && skill.statusChance && Math.random() < skill.statusChance) {
+      applyStatus(e, skill.statusEffect, addBattleLogEntry);
+    }
+
+    // Set skill on cooldown
+    this.skillCooldowns[skillId] = skill.cooldownMax;
+
+    // Build momentum (slightly less than basic attacks)
+    this.playerMomentum = Math.min(this.momentumMax, this.playerMomentum + 8);
+
+    // Check if enemy defeated
+    if (e.hp <= 0) {
+      if (this.isGroupBattle) {
+        addBattleLogEntry(`${e.name} defeated.`, 'victory');
+      } else {
+        return this.endBattle('victory');
       }
     }
   },
@@ -672,6 +839,9 @@ export const Battle = {
     }
     if (outcome === 'victory') {
       playSoundVictory();
+      // Restore MP on victory (20% of max)
+      const mpRestore = Math.floor(p.maxMp * 0.2);
+      GameState.regenerateMp(mpRestore);
       if (this.isGroupBattle){
         // Sum rewards
         let totalGold = 0, totalXp = 0;

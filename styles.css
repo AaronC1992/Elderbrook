@@ -439,6 +439,18 @@ button.danger{background:linear-gradient(180deg,#c73535,#981b1b);border-color:#7
 .bar.cd > div{background:linear-gradient(90deg,#f59e0b,#fde047)}
 .values{color:#cbd5e1;font-size:12px}
 .battle-actions{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.skill-bar{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.skill-button{position:relative;display:flex;flex-direction:column;align-items:center;padding:8px 12px;min-width:100px;background:linear-gradient(135deg,#1e293b,#334155);border:2px solid #475569;border-radius:8px;color:#e2e8f0;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;overflow:hidden}
+.skill-button:hover:not(:disabled){background:linear-gradient(135deg,#334155,#475569);border-color:#64748b;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.skill-button:active:not(:disabled){transform:translateY(0);box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+.skill-button:disabled{opacity:0.5;cursor:not-allowed;background:linear-gradient(135deg,#0f172a,#1e293b);border-color:#334155}
+.skill-button.skill-ready{border-color:#10b981;box-shadow:0 0 12px rgba(16,185,129,0.4)}
+.skill-button.skill-ready:hover{border-color:#34d399}
+.skill-button.skill-no-mp{border-color:#ef4444;opacity:0.6}
+.skill-name{display:block;margin-bottom:4px;text-align:center}
+.skill-cost{display:block;font-size:10px;color:#94a3b8;text-align:center}
+.skill-cooldown-overlay{position:absolute;bottom:0;left:0;right:0;height:0%;background:rgba(15,23,42,0.85);transition:height 0.1s linear;pointer-events:none}
+.skill-button.skill-on-cooldown .skill-cooldown-overlay{height:100%}
 .battle-log{max-height:220px;overflow:auto;border:1px solid #262b34;border-radius:8px;padding:8px;background:#0f1216}
 .battle-log ul{list-style:none;margin:0;padding:0}
 .battle-log li{padding:4px 2px;color:#cbd5e1}

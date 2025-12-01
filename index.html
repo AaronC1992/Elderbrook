@@ -343,10 +343,29 @@
           <div id="multi-enemies" class="hidden group-enemies"></div>
           <div class="battle-actions">
             <button id="act-attack" class="primary">Attack</button>
-            <button id="act-skill1" class="hidden">Skill 1</button>
-            <button id="act-skill2" class="hidden">Skill 2</button>
-            <button id="act-item" disabled>Item</button>
             <button id="act-run">Run</button>
+          </div>
+          <div class="skill-bar">
+            <button id="skill-power-strike" class="skill-button" data-skill-id="power_strike">
+              <span class="skill-name">Power Strike</span>
+              <span class="skill-cost">15 MP</span>
+              <div class="skill-cooldown-overlay"></div>
+            </button>
+            <button id="skill-quick-jab" class="skill-button" data-skill-id="quick_jab">
+              <span class="skill-name">Quick Jab</span>
+              <span class="skill-cost">8 MP</span>
+              <div class="skill-cooldown-overlay"></div>
+            </button>
+            <button id="skill-arcane-bolt" class="skill-button" data-skill-id="arcane_bolt">
+              <span class="skill-name">Arcane Bolt</span>
+              <span class="skill-cost">20 MP</span>
+              <div class="skill-cooldown-overlay"></div>
+            </button>
+            <button id="skill-guarding-stance" class="skill-button" data-skill-id="guarding_stance">
+              <span class="skill-name">Guarding Stance</span>
+              <span class="skill-cost">12 MP</span>
+              <div class="skill-cooldown-overlay"></div>
+            </button>
           </div>
           <div class="battle-log">
             <ul id="battle-log"></ul>

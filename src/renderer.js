@@ -220,6 +220,61 @@ function renderStatusIcons(entity) {
   }).join('');
 }
 
+/**
+ * Update skill button states based on cooldowns and MP
+ */
+function updateSkillButtons(battleState, player) {
+  const skillButtons = document.querySelectorAll('.skill-button');
+  
+  skillButtons.forEach(btn => {
+    const skillId = btn.dataset.skillId;
+    if (!skillId) return;
+    
+    const cooldownRemaining = battleState.skillCooldowns[skillId] || 0;
+    const skillData = getSkillData(skillId);
+    if (!skillData) return;
+    
+    const canAfford = player.mp >= skillData.cost;
+    const onCooldown = cooldownRemaining > 0;
+    
+    // Update button classes
+    btn.classList.remove('skill-ready', 'skill-no-mp', 'skill-on-cooldown');
+    
+    if (onCooldown) {
+      btn.classList.add('skill-on-cooldown');
+      btn.disabled = true;
+      // Update cooldown overlay height
+      const overlay = btn.querySelector('.skill-cooldown-overlay');
+      if (overlay && skillData.cooldownMax > 0) {
+        const pct = (cooldownRemaining / skillData.cooldownMax) * 100;
+        overlay.style.height = `${pct}%`;
+      }
+    } else if (!canAfford) {
+      btn.classList.add('skill-no-mp');
+      btn.disabled = true;
+    } else {
+      btn.classList.add('skill-ready');
+      btn.disabled = false;
+      // Reset overlay
+      const overlay = btn.querySelector('.skill-cooldown-overlay');
+      if (overlay) overlay.style.height = '0%';
+    }
+  });
+}
+
+/**
+ * Helper to get skill data by ID
+ */
+function getSkillData(skillId) {
+  const skills = {
+    'power_strike': { cost: 15, cooldownMax: 8 },
+    'quick_jab': { cost: 8, cooldownMax: 3.5 },
+    'arcane_bolt': { cost: 20, cooldownMax: 6 },
+    'guarding_stance': { cost: 12, cooldownMax: 15 }
+  };
+  return skills[skillId];
+}
+
 export function renderTownSummary(player){
   const root = qs('#town-player-summary');
   root.innerHTML = `
@@ -264,6 +319,9 @@ export function renderBattleScreen(state){
   qs('#player-hp-text').textContent = `${Math.ceil(player.hp)}/${player.maxHp}`;
   qs('#player-mp-text').textContent = `${Math.ceil(player.mp)}/${player.maxMp}`;
   const critChance = ((0.05 + (player._modifiers?.critChanceBonus || 0))*100).toFixed(1);
+  
+  // Update skill buttons state
+  updateSkillButtons(state, player);
   
   // Add player status icons
   const playerStatusHtml = renderStatusIcons(player);

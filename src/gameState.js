@@ -75,6 +75,8 @@ export const GameState = {
       quests: { active: [], completed: [] },
       maxHp: 0, hp: 0, maxMp: 0, mp: 0,
       attackPower: 0, magicPower: 0, defense: 0,
+      // Skill system: per-skill cooldowns tracked in battle
+      skillCooldowns: {}, // { skillId: currentCooldown } managed by battleSystem
     };
     // Apply race stat bonuses (expanded definitions)
     // NOTE: Percentage / advanced bonuses like crit chance %, cooldown recovery, HP %, status resist
@@ -152,7 +154,8 @@ export const GameState = {
     p.magicPower = Math.floor(int * 2 + dex * 0.5);
     p.defense = Math.floor(vit * 1.5 + aDef);
     p.maxHp = 30 + vit * 10;
-    p.maxMp = 10 + int * 5;
+    // MP (Focus) scales with INT: 20 base + 8 per INT
+    p.maxMp = 20 + int * 8;
     p.hp = Math.min(p.hp ?? p.maxHp, p.maxHp);
     p.mp = Math.min(p.mp ?? p.maxMp, p.maxMp);
     // Apply talent modifiers (may adjust derived or attach skill/global multipliers on player)
@@ -235,6 +238,9 @@ export const GameState = {
         if (!this.player.flags) this.player.flags = {};
         if (typeof this.player.talentPoints !== 'number') this.player.talentPoints = 0;
         if (!Array.isArray(this.player.spentTalents)) this.player.spentTalents = [];
+        // Skill system migration
+        if (typeof this.player.mp !== 'number') this.player.mp = 0;
+        if (!this.player.skillCooldowns) this.player.skillCooldowns = {};
       }
       
       // Ensure all required fields exist
@@ -248,6 +254,9 @@ export const GameState = {
       if (!this.player.npcStates) this.player.npcStates = {};
       if (!this.player.inventory) this.player.inventory = [];
       if (!this.player.equipment) this.player.equipment = { weapon: null, armor: null, accessory: null };
+      // Ensure skill system fields
+      if (typeof this.player.mp !== 'number') this.player.mp = 0;
+      if (!this.player.skillCooldowns) this.player.skillCooldowns = {};
       
       this.recalculateDerived();
       return true;
@@ -334,6 +343,27 @@ export const GameState = {
     this.player.equipment[slot] = item;
     this.recalculateDerived();
     updateZoneUnlocks(this.player);
+    return true;
+  },
+
+  /**
+   * Regenerate MP over time or after battle
+   * @param {number} amount - Amount of MP to restore
+   */
+  regenerateMp(amount) {
+    if (!this.player) return;
+    this.player.mp = Math.min(this.player.maxMp, this.player.mp + amount);
+  },
+
+  /**
+   * Spend MP for a skill
+   * @param {number} cost - MP cost to spend
+   * @returns {boolean} True if player had enough MP
+   */
+  spendMp(cost) {
+    if (!this.player) return false;
+    if (this.player.mp < cost) return false;
+    this.player.mp -= cost;
     return true;
   }
 };

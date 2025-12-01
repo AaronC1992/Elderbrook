@@ -189,6 +189,11 @@ export function applyTalentsToPlayer(player){
   mods.momentumDamageMultiplier = 1.0; // scales damage portion contributed by momentum
   mods.momentumCritBonusMultiplier = 1.0; // scales crit chance bonus from momentum
   mods.momentumGainMultiplier = 1.0; // scales momentum gain per successful action
+  
+  // New skill modifiers for active skills system
+  mods.skillCostReduction = 0; // flat MP cost reduction
+  mods.skillCooldownReduction = 0; // flat cooldown reduction in seconds
+  mods.skillStatusChanceBonus = 0; // bonus to status effect application chance
 
   // Flat stat bonuses (applied to base stats prior to derived calc)
   const flat = { strFlat: 0, dexFlat: 0, intFlat: 0, vitFlat: 0 };
@@ -212,6 +217,10 @@ export function applyTalentsToPlayer(player){
     mods.powerStrikeDamageMultiplier *= (k.powerStrikeDamageMultiplier || 1.0);
     mods.fireboltDamageMultiplier *= (k.fireboltDamageMultiplier || 1.0);
     mods.quickJabCooldownMultiplier *= (k.quickJabCooldownMultiplier || 1.0);
+    // New skill system modifiers
+    mods.skillCostReduction += (k.skillCostReduction || 0);
+    mods.skillCooldownReduction += (k.skillCooldownReduction || 0);
+    mods.skillStatusChanceBonus += (k.skillStatusChanceBonus || 0);
     // Future: talents could define momentum tuning like { momentumDamageMultiplier:1.15 }
     if (k.momentumDamageMultiplier) mods.momentumDamageMultiplier *= k.momentumDamageMultiplier;
     if (k.momentumCritBonusMultiplier) mods.momentumCritBonusMultiplier *= k.momentumCritBonusMultiplier;

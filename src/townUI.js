@@ -546,6 +546,17 @@ export const TownUI = {
     const runBtn = document.querySelector('#act-run');
     runBtn?.addEventListener('click', () => Battle.tryRun());
 
+    // Skill buttons
+    const skillButtons = document.querySelectorAll('.skill-button');
+    skillButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const skillId = btn.dataset.skillId;
+        if (skillId) {
+          Battle.useSkill(skillId);
+        }
+      });
+    });
+
     const skill1Btn = document.querySelector('#act-skill1');
     skill1Btn?.addEventListener('click', () => this.usePrimarySkill());
 
