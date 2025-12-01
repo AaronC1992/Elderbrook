@@ -55,6 +55,11 @@ Then open: `http://localhost:5173/`
 - Map nodes: pulled from `zones.js` and rendered by `worldMapUI.js` with unlock checks (`canEnterZone`). Locked nodes show reasons (level, quest, item).
 - Travel flow: short animation → set background → play ambience → start an encounter. Persists `flags.mapViewed` and `flags.lastVisitedZone` in `gameState`.
 - Flavor markers: simple lore dots with tooltips; optional fog‑of‑war overlay hides after first map view.
+- Difficulty indicators: node border colors based on `recommendedLevel` vs your level:
+	- Green `easy` (≥3 levels below)
+	- Amber `fair` (within −2..+1 levels)
+	- Red `hard` (+2..+3 levels)
+	- Gray `impossible` (≥+4 levels)
 
 ## Deploy (GitHub Pages)
 

@@ -86,6 +86,18 @@ export const WorldMapUI = {
       node.classList.toggle('current', !!current);
       if (newlyUnlocked) node.classList.add('newly-unlocked');
       const displayName = cfg.displayName || z.zoneName;
+      // Difficulty indicator based on recommended level vs player level
+      const rec = Number(z.recommendedLevel ?? 1);
+      const pl = Number(p?.level ?? 1);
+      let diffClass = '';
+      if (unlocked){
+        const delta = rec - pl;
+        if (delta <= -3) diffClass = 'easy';
+        else if (delta <= 1) diffClass = 'fair';
+        else if (delta <= 3) diffClass = 'hard';
+        else diffClass = 'impossible';
+        node.classList.add(diffClass);
+      }
       const tooltip = `${displayName}\nLv ${z.recommendedLevel} • ${z.description}`;
       node.setAttribute('data-tooltip', tooltip);
       node.innerHTML = `<span class="node-label">${displayName}</span>`;

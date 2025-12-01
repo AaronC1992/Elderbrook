@@ -381,6 +381,10 @@ body.warning-flash::after {
 .map-node.locked{ opacity:0.4; border-color:#3a4350; cursor:not-allowed; }
 .map-node.current{ animation:pulse-glow 2s ease-in-out infinite; }
 .map-node.newly-unlocked{ box-shadow:0 0 12px rgba(16,185,129,0.6); }
+.map-node.easy{ border-color:#10b981; }
+.map-node.fair{ border-color:#f59e0b; }
+.map-node.hard{ border-color:#ef4444; }
+.map-node.impossible{ border-color:#6b7280; }
 .map-node:hover::after, .map-marker:hover::after{
   content: attr(data-tooltip);
   position:absolute; left:50%; top:-8px; transform:translate(-50%,-100%);
