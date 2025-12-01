@@ -3,7 +3,7 @@
 
 import { GameState } from './gameState.js';
 import { Battle } from './battleSystem.js';
-import { renderTownSummary, showModalMessage, showScreen, renderCharacterDetails, showConfirmDialog, renderNPCScreenShell } from './renderer.js';
+import { renderTownSummary, showModalMessage, showScreen, renderCharacterDetails, showConfirmDialog, renderNPCScreenShell, renderWorldMapScreenShell } from './renderer.js';
 import { listNPCs, openNPCInteraction } from './npcs.js';
 import { getShopItems, attemptPurchase } from './shops.js';
 import { getRandomForestEnemy, getRandomCaveEnemy, getRandomElfGroveEnemy, getRandomRuinsEnemy, getRandomDepthsEnemy, getCaveWyrm, getShadowPortalGroup } from './enemies.js';
@@ -14,6 +14,7 @@ import { getRecipes, attemptCraft, canCraft } from './crafting.js';
 import { getTalentsFor, requirementsMet } from './talents.js';
 import { renderQuestBoard } from './quests.js';
 import { playSoundHeal, playSoundPurchase } from './audio.js';
+import { openWorldMap } from './worldMapUI.js';
 
 export const TownUI = {
   init() {
@@ -37,8 +38,6 @@ export const TownUI = {
       document.querySelector('#btn-back-to-town').classList.add('hidden');
     });
     const groveBtn = document.querySelector('#btn-elf-grove');
-      import { renderWorldMapScreenShell } from './renderer.js';
-      import { openWorldMap } from './worldMapUI.js';
     if (groveBtn){
       groveBtn.addEventListener('click', () => {
         if (!GameState.player) { showModalMessage('Create a character first.'); return; }
@@ -152,6 +151,21 @@ export const TownUI = {
         this.openCrafting();
       });
     }
+    // Ensure world map screen shell exists and wire optional button
+    renderWorldMapScreenShell();
+    let btnMap = document.getElementById('btn-world-map');
+    if(!btnMap){
+      const actions = document.getElementById('town-actions') || document.getElementById('screen-town');
+      if (actions){
+        btnMap = document.createElement('button');
+        btnMap.id = 'btn-world-map';
+        btnMap.textContent = 'World Map';
+        actions.appendChild(btnMap);
+      }
+    }
+    btnMap?.addEventListener('click', () => {
+      openWorldMap();
+    });
         // Boss access button (gated)
         const bossBtn = document.querySelector('#btn-boss');
         if (bossBtn){
