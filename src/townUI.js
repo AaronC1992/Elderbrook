@@ -677,17 +677,44 @@ export const TownUI = {
     }
     
     // Add shop clerk hotspot based on shopId
+    // Create NPC sprites for each shop
     if (shopId === 'weapon') {
       const clerkBox = idsToGridBox([251, 111]);
       const coords = gridBoxToPercents(clerkBox);
-      // Create visible NPC sprite
       const npcEl = document.createElement('div');
       npcEl.className = 'npc-shopkeeper';
       npcEl.style.left = coords.leftPct + '%';
       npcEl.style.top = coords.topPct + '%';
       npcEl.addEventListener('click', () => renderItems());
       document.body.appendChild(npcEl);
-      // Also add invisible hotspot for consistency
+      addShopHotspot({
+        ...coords,
+        label: 'Shopkeeper',
+        onClick: () => renderItems()
+      });
+    } else if (shopId === 'armor') {
+      const clerkBox = idsToGridBox([217, 117]);
+      const coords = gridBoxToPercents(clerkBox);
+      const npcEl = document.createElement('div');
+      npcEl.className = 'npc-shopkeeper';
+      npcEl.style.left = coords.leftPct + '%';
+      npcEl.style.top = coords.topPct + '%';
+      npcEl.addEventListener('click', () => renderItems());
+      document.body.appendChild(npcEl);
+      addShopHotspot({
+        ...coords,
+        label: 'Shopkeeper',
+        onClick: () => renderItems()
+      });
+    } else if (shopId === 'potion') {
+      const clerkBox = idsToGridBox([255, 175]);
+      const coords = gridBoxToPercents(clerkBox);
+      const npcEl = document.createElement('div');
+      npcEl.className = 'npc-shopkeeper';
+      npcEl.style.left = coords.leftPct + '%';
+      npcEl.style.top = coords.topPct + '%';
+      npcEl.addEventListener('click', () => renderItems());
+      document.body.appendChild(npcEl);
       addShopHotspot({
         ...coords,
         label: 'Shopkeeper',
