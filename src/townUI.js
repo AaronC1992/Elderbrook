@@ -606,10 +606,7 @@ export const TownUI = {
   },
 
   openShop(shopId) {
-    const titleEl = document.querySelector('#shop-title');
     const contentEl = document.querySelector('#shop-content');
-    const exitBtn = document.querySelector('#shop-exit');
-    titleEl.textContent = shopId === 'weapon' ? 'Weapon Shop' : (shopId === 'relic' ? 'Relic Merchant' : (shopId === 'potion' ? 'Potion Shop' : 'Armor Shop'));
     const items = getShopItems(shopId);
     
     // Set shop-specific backgrounds
@@ -711,15 +708,14 @@ export const TownUI = {
       });
     };
     
-    // Wire both exit button and back arrow
+    // Wire back arrow to return to village
     const backArrow = document.querySelector('#shop-back-arrow');
-    const exitHandler = () => { 
-      this.showTown();
-      // Re-render hotspots when returning to village
-      this.init();
-    };
-    exitBtn.onclick = exitHandler;
-    if (backArrow) backArrow.onclick = exitHandler;
+    if (backArrow) {
+      backArrow.onclick = () => { 
+        this.showTown();
+        this.init();
+      };
+    }
     showScreen('screen-shop');
   },
 
