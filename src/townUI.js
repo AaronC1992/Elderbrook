@@ -816,6 +816,13 @@ export const TownUI = {
   openForest() {
     const p = GameState.player;
     if (!p) { showModalMessage('Create a character first.'); return; }
+    // Hide any village hotspots/arrows so they don't appear in the forest screen
+    const hotspotContainer = document.querySelector('.village-hotspots');
+    if (hotspotContainer) {
+      hotspotContainer.innerHTML = '';
+      hotspotContainer.style.display = 'none';
+    }
+    document.querySelectorAll('.village-arrow').forEach(el => el.remove());
     import('./renderer.js').then(r => r.setBackground('forest'));
     showScreen('screen-forest');
     playAmbience('forest');
@@ -837,6 +844,9 @@ export const TownUI = {
         backArrow.onclick = () => {
           import('./renderer.js').then(r => r.setBackground('town'));
           this.showTown();
+          // Restore hotspot container visibility when returning
+          const hc = document.querySelector('.village-hotspots');
+          if (hc) hc.style.display = '';
           this.init();
         };
       }
