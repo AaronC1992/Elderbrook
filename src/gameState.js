@@ -168,6 +168,20 @@ export const GameState = {
   gainXp(amount) {
     if (!this.player) return;
     this.player.xp += amount;
+      /**
+       * Respawn the player in town after death.
+       * Restores HP/MP to max and clears temporary battle-only statuses.
+       */
+      respawnPlayer(){
+        const p = this.player;
+        if (!p) return;
+        p.hp = p.maxHp;
+        p.mp = p.maxMp;
+        // Clear transient statuses like stun/poison flags if tracked on player
+        try { p.statuses = (p.statuses || []).filter(s => !s.battleOnly); } catch {}
+        // Reset any battle flags
+        try { window.__activeBattleState = null; } catch {}
+      },
     while (this.player.xp >= this.player.xpToNextLevel) {
       this.player.xp -= this.player.xpToNextLevel;
       this.levelUp();

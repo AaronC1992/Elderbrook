@@ -1094,16 +1094,26 @@ export const Battle = {
         }
       }
     } else if (outcome === 'defeat') {
+      // Player defeated: stop battle and show Death Screen (do not jump to town)
       playSoundDefeat();
-      addBattleLogEntry('Defeat… You limp back to town.', 'defeat');
-      // small penalty
+      // Small gold penalty; HP remains at current (0) until respawn
       p.gold = Math.max(0, p.gold - 5);
-      p.hp = Math.max(1, Math.floor(p.maxHp * 0.3));
+      try { window.__activeBattleState = null; } catch {}
+      // Build summary and hand off to renderer
+      const enemyName = this.isGroupBattle
+        ? (this.currentEnemies.find(e => e.hp > 0)?.name || 'the foes')
+        : (this.currentEnemy?.name || 'the foe');
+      const enemyLevel = this.isGroupBattle
+        ? (this.currentEnemies.find(e => e.hp > 0)?.level ?? '')
+        : (this.currentEnemy?.level ?? '');
+      const summary = `You were defeated by ${enemyName}${enemyLevel !== '' ? ` (Level ${enemyLevel})` : ''}.`;
+      import('./renderer.js').then(m => m.showDeathScreen(summary));
+      return;
     }
-    // Show return button
+    // Victory or other outcomes: wrap up zone and enable back button
     if (this.currentZoneKey) try { applyZoneEndEffects(this.currentZoneKey, this); } catch {}
     const backBtn = document.querySelector('#btn-back-to-town');
-    backBtn.classList.remove('hidden');
+    if (backBtn) backBtn.classList.remove('hidden');
     try { window.__activeBattleState = null; } catch {}
   }
 };

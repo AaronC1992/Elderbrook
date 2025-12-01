@@ -89,6 +89,15 @@ body.disable-animations::before {
   transition: none !important;
 }
 
+/* Death Screen Styles */
+.death-panel { max-width: 680px; margin: 80px auto; padding: 24px; background: rgba(12, 12, 18, 0.85); border: 1px solid rgba(239,68,68,0.35); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+.death-title { font-size: 32px; margin: 0 0 12px; color: #ef4444; text-align: center; }
+.death-summary { color: #e7eaf0; text-align: center; margin: 0 0 16px; }
+.death-buttons { display: flex; gap: 12px; justify-content: center; }
+.death-buttons button { padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.08); color: #e7eaf0; cursor: pointer; transition: transform 0.12s ease, background 0.12s ease; }
+.death-buttons button:hover { transform: translateY(-1px); background: rgba(255,255,255,0.12); }
+.death-buttons button:active { transform: translateY(0); }
+
 /* Momentum bar styling */
 .bar.momentum { background:#1e2430; height:6px; margin-top:4px; position:relative; }
 .bar.momentum > div { background:linear-gradient(90deg,#2563eb,#7c3aed); height:100%; width:0%; transition:width .15s linear; }

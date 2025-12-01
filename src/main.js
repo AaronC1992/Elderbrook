@@ -321,6 +321,26 @@ function verifyCriticalAssets() {
 window.addEventListener('DOMContentLoaded', () => {
   // defer a tick so boot can run first
   setTimeout(verifyCriticalAssets, 50);
+
+  // Wire Death Screen buttons
+  const btnRespawn = document.querySelector('#btn-death-respawn');
+  const btnLoad = document.querySelector('#btn-death-load');
+  if (btnRespawn) {
+    btnRespawn.addEventListener('click', () => {
+      GameState.respawnPlayer();
+      import('./renderer.js').then(r => { r.setBackground('town'); r.showScreen('screen-town'); });
+    });
+  }
+  if (btnLoad) {
+    btnLoad.addEventListener('click', () => {
+      try {
+        GameState.loadFromStorage?.();
+        import('./renderer.js').then(r => { r.setBackground('town'); r.showScreen('screen-town'); });
+      } catch {
+        import('./renderer.js').then(r => r.showModalMessage('Loading is not implemented yet.'));
+      }
+    });
+  }
 });
 
 // Global error handler to surface issues instead of blank screen

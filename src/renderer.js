@@ -48,6 +48,16 @@ export function showScreen(id){
 }
 
 /**
+ * Show the Death Screen with a summary line
+ * Used when the player is defeated in battle.
+ */
+export function showDeathScreen(summaryText){
+  const summaryEl = qs('#death-summary');
+  if (summaryEl && summaryText) summaryEl.textContent = summaryText;
+  showScreen('screen-death');
+}
+
+/**
  * Display modal message to user
  */
 export function showModalMessage(text, onClose){
