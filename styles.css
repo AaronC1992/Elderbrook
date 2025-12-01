@@ -51,7 +51,7 @@ body.bg-town::before {
 /* Forest background */
 body.bg-forest::before {
   background-image: url('./backgrounds/forest-1.png');
-  opacity: 0.35;
+  opacity: 0.9;
 }
 
 /* Cave background */
