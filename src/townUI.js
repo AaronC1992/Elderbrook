@@ -592,8 +592,6 @@ export const TownUI = {
    * Open settings screen
    */
   openSettings() {
-    const { updateAudioSettings, AudioSettings } = require('./audio.js');
-    
     const soundCheckbox = document.querySelector('#setting-sound');
     const musicCheckbox = document.querySelector('#setting-music');
     const soundVolumeSlider = document.querySelector('#setting-sound-volume');
