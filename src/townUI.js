@@ -607,14 +607,26 @@ export const TownUI = {
   },
 
   openShop(shopId) {
+    console.log('[openShop] Opening shop:', shopId);
     const contentEl = document.querySelector('#shop-content');
     const items = getShopItems(shopId);
     
     // Set shop-specific backgrounds
     import('./renderer.js').then(r => {
-      if (shopId === 'weapon') r.setBackground('weapon-shop');
-      else if (shopId === 'armor') r.setBackground('armor-shop');
-      else r.setBackground('town');
+      if (shopId === 'weapon') {
+        console.log('[openShop] Setting weapon-shop background');
+        r.setBackground('weapon-shop');
+      } else if (shopId === 'armor') {
+        console.log('[openShop] Setting armor-shop background');
+        r.setBackground('armor-shop');
+      } else if (shopId === 'potion') {
+        console.log('[openShop] Setting potion-shop background');
+        r.setBackground('potion-shop');
+      } else {
+        console.log('[openShop] Setting default town background');
+        r.setBackground('town');
+      }
+      console.log('[openShop] Body classes after setBackground:', document.body.className);
     });
     // Hide town hotspots when entering a shop screen
     const host = document.querySelector('.village-hotspots');

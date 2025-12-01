@@ -79,10 +79,10 @@ body.bg-depths::before {
 }
 
 /* Shops and questboard backgrounds */
-body.bg-weapon-shop::before { background-image: url('backgrounds/elderbrook-village-weapon-shop.png'); opacity: 0.35; }
-body.bg-armor-shop::before { background-image: url('backgrounds/elderbrook-village-armor-shop.png'); opacity: 0.35; }
-body.bg-potion-shop::before { background-image: url('backgrounds/elderbrook-village-potion-shop.png'); opacity: 0.35; }
-body.bg-questboard::before { background-image: url('backgrounds/elderbrook-village-questboard.png'); opacity: 0.4; }
+body.bg-weapon-shop::before { background-image: url('backgrounds/elderbrook-village-weapon-shop.png'); opacity: 1; }
+body.bg-armor-shop::before { background-image: url('backgrounds/elderbrook-village-armor-shop.png'); opacity: 1; }
+body.bg-potion-shop::before { background-image: url('backgrounds/elderbrook-village-potion-shop.png'); opacity: 1; }
+body.bg-questboard::before { background-image: url('backgrounds/elderbrook-village-questboard.png'); opacity: 1; }
 
 /* Disable background transitions when animations off */
 body.disable-animations::before {
