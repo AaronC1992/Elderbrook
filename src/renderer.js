@@ -77,6 +77,7 @@ export function renderWorldMapScreenShell(){
   if(!scr){
     scr = document.createElement('div');
     scr.id = 'screen-world-map';
+    scr.className = 'screen hidden';
     scr.innerHTML = `
       <div class="world-map-panel">
         <h2>World Map</h2>
@@ -88,7 +89,12 @@ export function renderWorldMapScreenShell(){
           <button id="world-map-close">Back to Town</button>
         </div>
       </div>`;
-    document.getElementById('screens').appendChild(scr);
+    document.body.appendChild(scr);
+    const btn = scr.querySelector('#world-map-close');
+    btn?.addEventListener('click', () => {
+      showScreen('screen-town');
+      setBackground('town');
+    });
   }
 }
 
