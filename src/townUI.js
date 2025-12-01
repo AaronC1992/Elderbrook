@@ -16,30 +16,36 @@ import { openWorldMap } from './worldMapUI.js';
 
 export const TownUI = {
   init() {
-    // Development grid toggle
+    // Development grid toggle - works globally
     const toggleGridBtn = document.querySelector('#toggle-grid');
     const gridOverlay = document.querySelector('#village-grid');
     
-    toggleGridBtn?.addEventListener('click', () => {
-      if (gridOverlay.classList.contains('active')) {
-        gridOverlay.classList.remove('active');
-        gridOverlay.innerHTML = '';
-      } else {
-        gridOverlay.classList.add('active');
-        // Create 20x15 grid (300 cells)
-        gridOverlay.innerHTML = '';
-        for (let row = 0; row < 15; row++) {
-          for (let col = 0; col < 20; col++) {
-            const cell = document.createElement('div');
-            cell.className = 'grid-cell';
-            const cellNum = row * 20 + col + 1;
-            cell.textContent = cellNum;
-            cell.title = `Cell ${cellNum} (Row ${row + 1}, Col ${col + 1})`;
-            gridOverlay.appendChild(cell);
+    if (toggleGridBtn && gridOverlay) {
+      // Remove old listener to avoid duplicates
+      const newBtn = toggleGridBtn.cloneNode(true);
+      toggleGridBtn.parentNode.replaceChild(newBtn, toggleGridBtn);
+      
+      newBtn.addEventListener('click', () => {
+        if (gridOverlay.classList.contains('active')) {
+          gridOverlay.classList.remove('active');
+          gridOverlay.innerHTML = '';
+        } else {
+          gridOverlay.classList.add('active');
+          // Create 20x15 grid (300 cells)
+          gridOverlay.innerHTML = '';
+          for (let row = 0; row < 15; row++) {
+            for (let col = 0; col < 20; col++) {
+              const cell = document.createElement('div');
+              cell.className = 'grid-cell';
+              const cellNum = row * 20 + col + 1;
+              cell.textContent = cellNum;
+              cell.title = `Cell ${cellNum} (Row ${row + 1}, Col ${col + 1})`;
+              gridOverlay.appendChild(cell);
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     // Hotspots container: create if missing
     // Ensure global hotspots container exists (aligned to viewport like the grid)
@@ -618,19 +624,8 @@ export const TownUI = {
     
     const p = GameState.player;
 
-    // Gate shop access behind clicking the clerk
-    const clerkWrap = document.createElement('div');
-    clerkWrap.className = 'shop-intro';
-    clerkWrap.innerHTML = `
-      <div>
-        <div class="shop-clerk" id="shop-clerk"></div>
-        <div class="shop-clerk-label">Shopkeeper</div>
-        <div class="shop-hint">Click the shopkeeper to talk.</div>
-      </div>
-      <div class="bubble">Welcome! Speak to me to browse wares.</div>
-    `;
+    // Clear content initially; shop clerk will be a hotspot
     contentEl.innerHTML = '';
-    contentEl.appendChild(clerkWrap);
 
     const renderItems = () => {
       contentEl.innerHTML = '';
@@ -666,11 +661,6 @@ export const TownUI = {
         contentEl.appendChild(row);
       });
     };
-    
-    // Talk to clerk to access items
-    clerkWrap.querySelector('#shop-clerk')?.addEventListener('click', () => {
-      showModalMessage('Shopkeeper: Take a look — finest goods in Elderbrook!', () => renderItems());
-    });
     
     // Wire both exit button and back arrow
     const backArrow = document.querySelector('#shop-back-arrow');
