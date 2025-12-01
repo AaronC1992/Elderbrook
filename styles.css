@@ -252,9 +252,10 @@ body.disable-animations::before {
 
 /* Hotspots overlay */
 .village-hotspots {
-  position: absolute;
+  position: fixed; /* align with full-screen grid overlay */
   inset: 0;
   pointer-events: none; /* container doesn't block; children will */
+  z-index: 9; /* above background, below most UI */
 }
 
 .hotspot {

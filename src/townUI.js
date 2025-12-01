@@ -42,16 +42,17 @@ export const TownUI = {
     });
 
     // Hotspots container: create if missing
-    const scene = document.querySelector('.village-scene');
-    if (scene && !scene.querySelector('.village-hotspots')) {
-      const hotspots = document.createElement('div');
+    // Ensure global hotspots container exists (aligned to viewport like the grid)
+    let hotspots = document.querySelector('.village-hotspots');
+    if (!hotspots) {
+      hotspots = document.createElement('div');
       hotspots.className = 'village-hotspots';
-      scene.appendChild(hotspots);
+      document.body.appendChild(hotspots);
     }
 
     // Helper: add hotspot by percentage box
     function addHotspot({ leftPct, topPct, widthPct, heightPct, label, onClick }) {
-      const host = scene?.querySelector('.village-hotspots');
+      const host = document.querySelector('.village-hotspots');
       if (!host) return;
       const el = document.createElement('div');
       el.className = 'hotspot';
