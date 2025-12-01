@@ -8,47 +8,58 @@ import { listNPCs, openNPCInteraction } from './npcs.js';
 import { getShopItems, attemptPurchase } from './shops.js';
 import { getRandomForestEnemy, getRandomCaveEnemy, getRandomElfGroveEnemy, getRandomRuinsEnemy, getRandomDepthsEnemy, getCaveWyrm, getShadowPortalGroup } from './enemies.js';
 import { getElderDeepWyrm } from './enemies.js';
-import { canEnterZone } from './zones.js';
-import { playSoundZoneTransition, playAmbience } from './audio.js';
-import { getRecipes, attemptCraft, canCraft } from './crafting.js';
-import { getTalentsFor, requirementsMet } from './talents.js';
-import { renderQuestBoard } from './quests.js';
-import { playSoundHeal, playSoundPurchase } from './audio.js';
-import { openWorldMap } from './worldMapUI.js';
+    // Gate shop access behind clicking the clerk
+    const clerkWrap = document.createElement('div');
+    clerkWrap.className = 'shop-intro';
+    clerkWrap.innerHTML = `
+      <div>
+        <div class="shop-clerk" id="shop-clerk"></div>
+        <div class="shop-clerk-label">Shopkeeper</div>
+        <div class="shop-hint">Click the shopkeeper to talk.</div>
+      </div>
+      <div class="bubble">Welcome! Speak to me to browse wares.</div>
+    `;
+    contentEl.innerHTML = '';
+    contentEl.appendChild(clerkWrap);
 
-export const TownUI = {
-  init() {
-    // Town buttons
-    document.querySelector('#btn-fight').addEventListener('click', () => {
-      const p = GameState.player; if (!p) { showModalMessage('Create a character first.'); return; }
-      if (!canEnterZone('forest', p)) { showModalMessage('The forest awaits, but you are not yet ready.'); return; }
-      const enemy = getRandomForestEnemy(p.level);
-      playSoundZoneTransition(); playAmbience('forest');
-      Battle.startBattle(enemy, 'forest');
-      this.configureSkillButtons();
-      document.querySelector('#btn-back-to-town').classList.add('hidden');
-    });
-    document.querySelector('#btn-cave').addEventListener('click', () => {
-      const p = GameState.player; if (!p) { showModalMessage('Create a character first.'); return; }
-      if (!canEnterZone('cave', p)) { showModalMessage('The Hollow Cave remains perilous. Meet its entry requirements first.'); return; }
-      const enemy = getRandomCaveEnemy(p.level);
-      playSoundZoneTransition(); playAmbience('cave');
-      Battle.startBattle(enemy, 'cave');
-      this.configureSkillButtons();
-      document.querySelector('#btn-back-to-town').classList.add('hidden');
-    });
-    const groveBtn = document.querySelector('#btn-elf-grove');
-    if (groveBtn){
-      groveBtn.addEventListener('click', () => {
-        if (!GameState.player) { showModalMessage('Create a character first.'); return; }
-        const p = GameState.player; if (!canEnterZone('grove', p)) { showModalMessage('Attune to the Grove first (quest & level).'); return; }
-        const enemy = getRandomElfGroveEnemy(p.level);
-        playSoundZoneTransition(); playAmbience('grove');
-        Battle.startBattle(enemy, 'grove');
-        this.configureSkillButtons();
-        document.querySelector('#btn-back-to-town').classList.add('hidden');
+    const renderItems = () => {
+      contentEl.innerHTML = '';
+      items.forEach(it => {
+        const row = document.createElement('div');
+        const canAfford = p.gold >= it.price;
+        const canEquip = !it.elfOnly || p.race === 'Elf';
+        const alreadyOwned = p.inventory.includes(it.id) || 
+          (it.type === 'weapon' && p.equipment.weapon?.id === it.id) ||
+          (it.type === 'armor' && p.equipment.armor?.id === it.id);
+        
+        row.className = 'row shop-item item-tooltip';
+        if (!canAfford) row.classList.add('unaffordable');
+        if (alreadyOwned) row.classList.add('owned');
+        const tooltip = this.generateItemTooltip(it);
+        row.setAttribute('data-tooltip', tooltip);
+        const rarity = this.getItemRarity(it);
+        const stats = it.type === 'weapon'
+          ? `ATK +${it.attackBonus ?? 0}${it.magicBonus ? ` • MAG +${it.magicBonus}` : ''}`
+          : `DEF +${it.defenseBonus ?? 0}`;
+        const restriction = it.elfOnly ? ' [Elf Only]' : '';
+        row.innerHTML = `<div class="item-${rarity}">${it.name} — ${stats}${restriction} • <span class="price">${it.price}g</span></div>`;
+        const buy = document.createElement('button');
+        buy.textContent = alreadyOwned ? 'Owned' : 'Buy';
+        buy.disabled = !canAfford || !canEquip || alreadyOwned;
+        buy.addEventListener('click', () => {
+          if (attemptPurchase(it)) {
+            showModalMessage(`Purchased ${it.name}.`, () => renderItems());
+            renderTownSummary(GameState.player);
+          }
+        });
+        row.appendChild(buy);
+        contentEl.appendChild(row);
       });
-    }
+    };
+    // Talk to clerk to access items
+    clerkWrap.querySelector('#shop-clerk')?.addEventListener('click', () => {
+      showModalMessage('Shopkeeper: Take a look — finest goods in Elderbrook!', () => renderItems());
+    });
     document.querySelector('#btn-weapon-shop').addEventListener('click', () => {
       if (!GameState.player) { showModalMessage('Create a character first.'); return; }
       this.openShop('weapon');
