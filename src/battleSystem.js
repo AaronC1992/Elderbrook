@@ -4,7 +4,7 @@
 import { GameState } from './gameState.js';
 import { addBattleLogEntry, renderBattleScreen, showScreen, flashHit, shakeElement, spawnFloatingDamage, flashWarning } from './renderer.js';
 import { updateQuestProgress } from './quests.js';
-import { clamp, randInt } from './utils.js';
+import { clamp, randInt, randChoice } from './utils.js';
 import { applyStatus, tickStatuses } from './statuses.js';
 import { playSoundAttack, playSoundHit, playSoundSkill, playSoundVictory, playSoundDefeat, playSoundCrit, playSoundBlock, playSoundEnemySpecial, playBossMusic, stopBossMusic } from './audio.js';
 import { applyZoneStartEffects, tickZoneEffects, applyZoneEndEffects } from './zones.js';
@@ -45,6 +45,11 @@ export const Battle = {
 
   // Skill cooldowns: tracks per-skill cooldown state { skillId: currentTime }
   skillCooldowns: {},
+
+  // Enemy skill system: tracks per-skill cooldowns for enemies
+  enemySkillCooldowns: {},
+  enemyCastingSkill: null, // { skill, windupRemaining } for telegraph
+  enemySkillWindupTime: 1.2, // seconds to telegraph before skill executes
 
   // Enemy special attack tracking (telegraphing)
   enemySpecialCooldownCurrent: 0,
@@ -96,6 +101,15 @@ export const Battle = {
     // Initialize skill cooldowns
     this.skillCooldowns = {};
     this._mpRegenAccumulator = 0;
+    // Initialize enemy skill system
+    this.enemySkillCooldowns = {};
+    this.enemyCastingSkill = null;
+    if (enemy.skills) {
+      // Start enemy skills partially cooled down (random start)
+      enemy.skills.forEach(skill => {
+        this.enemySkillCooldowns[skill.id] = skill.cooldownMax * (0.3 + Math.random() * 0.4);
+      });
+    }
     if (enemy.specialAttack) {
       this.enemySpecialCooldownMax = enemy.specialAttack.cooldown;
       this.enemySpecialCooldownCurrent = this.enemySpecialCooldownMax * 0.6; // start partially charged
@@ -165,6 +179,9 @@ export const Battle = {
     // Initialize skill cooldowns and MP regen
     this.skillCooldowns = {};
     this._mpRegenAccumulator = 0;
+    // Initialize enemy skill system for group battles
+    this.enemySkillCooldowns = {};
+    this.enemyCastingSkill = null;
     this.isBattleActive = true;
     this._lastTs = performance.now();
     showScreen('screen-battle');
@@ -223,6 +240,22 @@ export const Battle = {
     for (const skillId in this.skillCooldowns) {
       if (this.skillCooldowns[skillId] > 0) {
         this.skillCooldowns[skillId] = Math.max(0, this.skillCooldowns[skillId] - dt);
+      }
+    }
+
+    // Tick enemy skill cooldowns
+    for (const skillId in this.enemySkillCooldowns) {
+      if (this.enemySkillCooldowns[skillId] > 0) {
+        this.enemySkillCooldowns[skillId] = Math.max(0, this.enemySkillCooldowns[skillId] - dt);
+      }
+    }
+
+    // Handle enemy skill casting (telegraph and execution)
+    if (this.enemyCastingSkill) {
+      this.enemyCastingSkill.windupRemaining -= dt;
+      if (this.enemyCastingSkill.windupRemaining <= 0) {
+        this._executeEnemySkill(this.enemyCastingSkill.skill, e, p);
+        this.enemyCastingSkill = null;
       }
     }
 
@@ -308,6 +341,44 @@ export const Battle = {
       }
       this.playerCooldownCurrent = this.playerCooldownMax;
     }
+
+    // Enemy attack/skill logic (single battle)
+    if (!this.enemyCastingSkill && e.hp > 0 && p.hp > 0) {
+      if (this.enemyCooldownCurrent >= this.enemyCooldownMax) {
+        // Enemy AI: decide between skill and basic attack
+        const chosenSkill = this._shouldEnemyUseSkill(e);
+        
+        if (chosenSkill) {
+          // Telegraph the skill
+          this._telegraphEnemySkill(chosenSkill, e);
+          // Keep cooldown at max during telegraph
+        } else {
+          // Perform basic attack
+          let raw = Math.max(1, e.attackPower - p.defense);
+          raw += randInt(-2, 2);
+          const dmg = Math.max(1, raw);
+          p.hp = clamp(p.hp - dmg, 0, p.maxHp);
+          
+          // Momentum reset on hit
+          if (this._momentumDecayOnHit) this.playerMomentum = 0;
+          
+          // Visual feedback
+          playSoundHit();
+          const playerEl = document.querySelector('.combatant.player');
+          flashHit(playerEl);
+          shakeElement(playerEl);
+          spawnFloatingDamage(playerEl, dmg, 'normal');
+          
+          addBattleLogEntry(`${e.name} attacks for ${dmg} damage.`, 'damage');
+          
+          // Reset cooldown after basic attack
+          this.enemyCooldownCurrent = 0;
+          
+          if (p.hp <= 0) return this.endBattle('defeat');
+        }
+      }
+    }
+
     renderBattleScreen(this);
   },
 
@@ -348,26 +419,37 @@ export const Battle = {
       if (e.hp <= 0) continue;
       if (e.cdCurrent >= e.cdMax){
         e.cdCurrent = 0;
-        let raw = Math.max(1, e.attackPower - p.defense);
-        let variance = randInt(-2,2);
-        if (!e._stunned){
-          const dmgBase = Math.max(1, raw + variance);
-          const isBlock = dmgBase <= 2 && Math.random() < 0.5;
-          const dmg = isBlock ? Math.max(1, Math.round(dmgBase * 0.5)) : dmgBase;
-          p.hp = clamp(p.hp - dmg, 0, p.maxHp);
-          // Momentum reset on hit (group battle shares same rule)
-          if (this._momentumDecayOnHit) this.playerMomentum = 0;
-          // Visual and audio feedback
-          playSoundHit();
-          const playerCombatant = document.querySelector('.combatant.player');
-          flashHit(playerCombatant);
-          shakeElement(playerCombatant);
-          spawnFloatingDamage(playerCombatant, dmg, isBlock ? 'block' : 'normal');
-          if (isBlock) playSoundBlock();
-          addBattleLogEntry(`${e.name} strikes ${p.name} for ${dmg}.` + (isBlock ? ' (BLOCK)' : ''), isBlock ? 'info' : 'damage');
+        
+        // Enemy AI: decide between skill and basic attack
+        const chosenSkill = this._shouldEnemyUseSkill(e);
+        
+        if (chosenSkill) {
+          // For group battles, execute skills immediately (no telegraph for now to keep it simpler)
+          this._executeEnemySkill(chosenSkill, e, p);
         } else {
-          addBattleLogEntry(`${e.name} is stunned and cannot act.`, 'status');
+          // Basic attack
+          let raw = Math.max(1, e.attackPower - p.defense);
+          let variance = randInt(-2,2);
+          if (!e._stunned){
+            const dmgBase = Math.max(1, raw + variance);
+            const isBlock = dmgBase <= 2 && Math.random() < 0.5;
+            const dmg = isBlock ? Math.max(1, Math.round(dmgBase * 0.5)) : dmgBase;
+            p.hp = clamp(p.hp - dmg, 0, p.maxHp);
+            // Momentum reset on hit (group battle shares same rule)
+            if (this._momentumDecayOnHit) this.playerMomentum = 0;
+            // Visual and audio feedback
+            playSoundHit();
+            const playerCombatant = document.querySelector('.combatant.player');
+            flashHit(playerCombatant);
+            shakeElement(playerCombatant);
+            spawnFloatingDamage(playerCombatant, dmg, isBlock ? 'block' : 'normal');
+            if (isBlock) playSoundBlock();
+            addBattleLogEntry(`${e.name} strikes ${p.name} for ${dmg}.` + (isBlock ? ' (BLOCK)' : ''), isBlock ? 'info' : 'damage');
+          } else {
+            addBattleLogEntry(`${e.name} is stunned and cannot act.`, 'status');
+          }
         }
+        
         if (p.hp <= 0){
           this.endBattle('defeat');
           return;
@@ -811,6 +893,136 @@ export const Battle = {
         return this.endBattle('victory');
       }
     }
+  },
+
+  /**
+   * ENEMY SKILL SYSTEM - AI DECISION LOGIC
+   * Decides whether enemy should use a skill or basic attack
+   * Priority system: high-priority skills > off-cooldown skills > basic attack
+   */
+  _shouldEnemyUseSkill(enemy) {
+    if (!enemy.skills || enemy.skills.length === 0) return null;
+    if (this.enemyCastingSkill) return null; // Already casting
+
+    // Find available skills (not on cooldown)
+    const availableSkills = enemy.skills.filter(skill => {
+      const cooldown = this.enemySkillCooldowns[skill.id] || 0;
+      return cooldown <= 0;
+    });
+
+    if (availableSkills.length === 0) return null;
+
+    // Prioritize high-priority skills
+    const highPriority = availableSkills.filter(s => s.priority === 'high');
+    if (highPriority.length > 0) {
+      return randChoice(highPriority);
+    }
+
+    // 60% chance to use medium priority skill if available
+    const mediumPriority = availableSkills.filter(s => s.priority === 'medium');
+    if (mediumPriority.length > 0 && Math.random() < 0.6) {
+      return randChoice(mediumPriority);
+    }
+
+    // 30% chance to use any available skill as fallback
+    if (Math.random() < 0.3) {
+      return randChoice(availableSkills);
+    }
+
+    return null; // Use basic attack
+  },
+
+  /**
+   * Execute an enemy skill with damage calculation and status effects
+   */
+  _executeEnemySkill(skill, enemy, player) {
+    if (!skill) return;
+
+    const p = player;
+    const e = enemy;
+
+    // Calculate skill damage
+    let dmg = 0;
+    if (skill.effectType === 'damage') {
+      // Get scaling stat value (enemies use attackPower as STR equivalent)
+      let scalingValue = e.attackPower;
+      if (skill.scalingStat === 'intelligence') {
+        scalingValue = Math.round(e.attackPower * 0.8); // INT skills slightly weaker for physical enemies
+      } else if (skill.scalingStat === 'dexterity') {
+        scalingValue = Math.round(e.attackPower * 0.9);
+      }
+
+      if (skill.damageType === 'physical') {
+        dmg = Math.max(1, Math.round((scalingValue + skill.basePower - p.defense) * 0.9));
+      } else if (skill.damageType === 'magical') {
+        dmg = Math.max(1, Math.round((scalingValue + skill.basePower - Math.floor(p.defense * 0.3)) * 0.85));
+      }
+
+      // Add variance
+      dmg += randInt(-2, 2);
+      dmg = Math.max(1, dmg);
+
+      // Safety cap: enemy skills can't exceed 40% of player max HP in one hit (early game balance)
+      const maxSkillDmg = Math.round(p.maxHp * 0.4);
+      dmg = Math.min(dmg, maxSkillDmg);
+
+      // Apply damage
+      p.hp = clamp(p.hp - dmg, 0, p.maxHp);
+
+      // Visual feedback
+      playSoundEnemySpecial();
+      const playerEl = document.querySelector('.combatant.player');
+      flashHit(playerEl);
+      shakeElement(playerEl);
+      spawnFloatingDamage(playerEl, dmg, 'normal');
+
+      addBattleLogEntry(`${e.name} uses ${skill.name} for ${dmg} damage!`, 'damage');
+
+      // Apply status effect if present
+      if (skill.appliedStatus && skill.statusChance) {
+        if (Math.random() < skill.statusChance) {
+          applyStatus(p, skill.appliedStatus, addBattleLogEntry);
+        }
+      }
+
+      // Check defeat
+      if (p.hp <= 0) {
+        this.endBattle('defeat');
+        return;
+      }
+    } else if (skill.effectType === 'buff') {
+      // Apply buff to enemy
+      if (skill.appliedStatus) {
+        applyStatus(e, skill.appliedStatus, addBattleLogEntry);
+      }
+      addBattleLogEntry(`${e.name} uses ${skill.name}!`, 'status');
+      playSoundEnemySpecial();
+    }
+
+    // Set skill on cooldown
+    this.enemySkillCooldowns[skill.id] = skill.cooldownMax;
+
+    // Reset momentum on enemy skill hit
+    if (this._momentumDecayOnHit && skill.effectType === 'damage') {
+      this.playerMomentum = 0;
+    }
+  },
+
+  /**
+   * Start telegraphing an enemy skill (warns player before execution)
+   */
+  _telegraphEnemySkill(skill, enemy) {
+    if (!skill) return;
+    
+    this.enemyCastingSkill = {
+      skill: skill,
+      windupRemaining: this.enemySkillWindupTime
+    };
+
+    // Show telegraph message
+    const telegraphMsg = skill.telegraphText || `${enemy.name} prepares ${skill.name}!`;
+    addBattleLogEntry(telegraphMsg, 'info');
+    playSoundEnemySpecial();
   },
 
   /**
