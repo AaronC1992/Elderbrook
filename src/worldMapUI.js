@@ -160,3 +160,8 @@ export const WorldMapUI = {
     }, 900);
   }
 };
+
+// Convenience export to open the world map screen from other modules
+export function openWorldMap(){
+  WorldMapUI.show();
+}
