@@ -9,11 +9,13 @@ import { playSoundPurchase } from './audio.js';
 export const Shops = {
   weaponShopInventory: items.weapon.map(i => i.id),
   armorShopInventory: items.armor.map(i => i.id),
+  potionShopInventory: (items.consumable||[]).map(i => i.id),
 };
 
 export function getShopInventory(shopId) {
   if (shopId === 'weapon') return Shops.weaponShopInventory;
   if (shopId === 'armor') return Shops.armorShopInventory;
+  if (shopId === 'potion') return Shops.potionShopInventory;
   return [];
 }
 
@@ -23,6 +25,11 @@ export function getShopItems(shopId){
       ...items.weapon.filter(w => w.id.startsWith('relic_')),
       ...items.armor.filter(a => a.id.startsWith('relic_'))
     ];
+  }
+  if (shopId === 'potion') {
+    const ids = getShopInventory(shopId);
+    const all = [...(items.consumable||[])];
+    return ids.map(id => all.find(i => i.id === id)).filter(Boolean);
   }
   const ids = getShopInventory(shopId);
   const all = [...items.weapon, ...items.armor];
