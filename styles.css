@@ -1,0 +1,393 @@
+:root{
+  --bg:#0e0f12; --panel:#171a1f; --text:#e7eaf0; --muted:#9aa3af;
+  --accent:#4aa3ff; --accent-2:#8b5cf6; --danger:#ef4444; --ok:#10b981;
+  --hp:#ef4444; --mp:#60a5fa; --cd:#f59e0b;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:14px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Dynamic backgrounds with overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  z-index: -1;
+}
+
+/* Background overlays for readability */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(14,15,18,0.7), rgba(14,15,18,0.85));
+  z-index: -1;
+}
+
+/* Town background */
+body.bg-town::before {
+  background-image: url('./backgrounds/Elderbrook-village.png');
+  opacity: 0.4;
+}
+
+/* Forest background */
+body.bg-forest::before {
+  background-image: url('./backgrounds/Forrest-1.png');
+  opacity: 0.35;
+}
+
+/* Cave background */
+body.bg-cave::before {
+  background-image: url('./backgrounds/Cave-1.png');
+  opacity: 0.3;
+}
+
+/* Grove background */
+body.bg-grove::before {
+  background-image: url('./backgrounds/Grove-1.png');
+  opacity: 0.32;
+}
+
+/* Ruins background */
+body.bg-ruins::before {
+  background-image: url('./backgrounds/Ruins-1.png');
+  opacity: 0.32;
+}
+
+/* Depths background */
+body.bg-depths::before {
+  background-image: url('./backgrounds/Depths-1.png');
+  opacity: 0.28;
+}
+
+/* Disable background transitions when animations off */
+body.disable-animations::before {
+  transition: none !important;
+}
+
+/* Momentum bar styling */
+.bar.momentum { background:#1e2430; height:6px; margin-top:4px; position:relative; }
+.bar.momentum > div { background:linear-gradient(90deg,#2563eb,#7c3aed); height:100%; width:0%; transition:width .15s linear; }
+
+/* Enemy special telegraph */
+.enemy-special-windup { color:#f87171; font-weight:bold; font-size:12px; margin-left:4px; animation:pulse-glow 1.6s ease-in-out infinite; }
+.enemy-special-soon { color:#fb923c; font-size:11px; margin-left:4px; }
+
+/* Floating damage numbers */
+.floating-dmg { position:absolute; left:50%; top:20%; transform:translateX(-50%); pointer-events:none; font-weight:600; opacity:0; animation:float-dmg 0.9s ease-out forwards; text-shadow:0 0 4px rgba(0,0,0,0.5); }
+.floating-dmg.normal { color:#f87171; }
+.floating-dmg.crit { color:#fbbf24; font-size:16px; text-shadow:0 0 6px rgba(251,191,36,0.6); }
+.floating-dmg.block { color:#94a3b8; }
+@keyframes float-dmg { 0% { opacity:0; transform:translate(-50%,0); } 10% { opacity:1; } 80% { opacity:1; transform:translate(-50%,-28px); } 100% { opacity:0; transform:translate(-50%,-32px); } }
+#game-root{max-width:1000px;margin:24px auto;padding:0 16px}
+.hidden{display:none !important}
+.screen{padding:8px}
+.panel{background:var(--panel);border:1px solid #22262e;border-radius:10px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+h1{margin:0 0 8px;font-size:28px;letter-spacing:.5px}
+h2{margin:0 0 12px;font-size:20px;color:#ced4dd}
+.form-row{margin:12px 0}
+label{display:block;margin-bottom:6px;color:var(--muted)}
+input[type="text"]{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #2a2f38;background:#0f1216;color:var(--text)}
+.radio-row{display:flex;gap:16px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:#0f1216;border:1px solid #262b34;border-radius:8px;padding:8px;text-align:center}
+.stat-controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:6px}
+button{appearance:none;border:1px solid #2b313b;background:#12161b;color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer}
+button:hover{border-color:#3a4350}
+button.primary{background:linear-gradient(180deg,#1a6bf0,#144fb3);border-color:#1e51b2}
+button.primary:disabled{opacity:.5}
+button.danger{background:linear-gradient(180deg,#c73535,#981b1b);border-color:#7f1d1d}
+.row{display:flex;align-items:center;gap:12px}
+.row.right{justify-content:flex-end}
+.row.gap{gap:8px}
+.column{display:flex;flex-direction:column;gap:8px}
+.battle-top{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.combatant .name{font-weight:700}
+.combatant .meta{color:var(--muted);font-size:12px}
+.bar{height:12px;background:#0f1216;border:1px solid #262b34;border-radius:6px;overflow:hidden;margin:6px 0}
+.bar > div{height:100%;width:0%}
+.bar.hp > div{background:linear-gradient(90deg,#ef4444,#f97316)}
+.bar.mp > div{background:linear-gradient(90deg,#60a5fa,#22d3ee)}
+.bar.cd > div{background:linear-gradient(90deg,#f59e0b,#fde047)}
+.values{color:#cbd5e1;font-size:12px}
+.battle-actions{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.battle-log{max-height:220px;overflow:auto;border:1px solid #262b34;border-radius:8px;padding:8px;background:#0f1216}
+.battle-log ul{list-style:none;margin:0;padding:0}
+.battle-log li{padding:4px 2px;color:#cbd5e1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center}
+.modal-content{max-width:520px}
+
+/* Talents UI */
+#screen-talents h2{margin-top:0}
+#talents-tabs{margin-bottom:12px}
+#talents-content .row{justify-content:space-between;align-items:flex-start;border:1px solid #262b34;background:#12161b;padding:10px;border-radius:8px;flex-wrap:wrap}
+.talent-locked{opacity:.45;filter:grayscale(.4)}
+.talent-taken{border-color:var(--ok);background:#10221a}
+.talent-meta{font-size:11px;color:var(--muted);margin-top:4px}
+.talent-name{font-weight:600}
+.talent-requirements{font-size:11px;color:#fbbf24}
+.talent-spend-btn{min-width:80px}
+
+/* Boss button highlight */
+#btn-boss{background:linear-gradient(180deg,#5e3aa7,#432c7a);border-color:#4c2f86}
+#btn-boss:hover{border-color:#6d42c3}
+
+/* Animations & Visual Effects */
+@keyframes hit-flash {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.8) drop-shadow(0 0 8px rgba(255,100,100,0.8)); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 4px rgba(74, 163, 255, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(74, 163, 255, 0.6); }
+}
+@keyframes screen-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Apply animations */
+.hit-flash { animation: hit-flash 0.4s ease-out; }
+.shake { animation: shake 0.3s ease-out; }
+button:hover:not(:disabled) { animation: pulse-glow 2s ease-in-out infinite; }
+.screen:not(.hidden) { animation: screen-fade-in 0.3s ease-out; }
+
+/* Disable animations when user prefers */
+body.disable-animations .hit-flash,
+body.disable-animations .shake,
+body.disable-animations button:hover:not(:disabled),
+body.disable-animations .screen:not(.hidden) {
+  animation: none !important;
+}
+
+/* Status effect icons */
+.status-effects {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.status-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 10px;
+  text-align: center;
+  line-height: 20px;
+  position: relative;
+  cursor: help;
+}
+.status-icon.poison { background: #10b981; color: #fff; }
+.status-icon.burn { background: #f97316; color: #fff; }
+.status-icon.stun { background: #fbbf24; color: #000; }
+.status-icon:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.9);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 11px;
+  z-index: 100;
+  margin-bottom: 4px;
+  pointer-events: none;
+}
+
+/* Combat log enhancements */
+.battle-log li.damage { color: #f87171; }
+.battle-log li.heal { color: #4ade80; }
+.battle-log li.crit { color: #fbbf24; font-weight: 600; }
+.battle-log li.status { color: #a78bfa; }
+.battle-log li.info { color: #60a5fa; }
+.battle-log li.victory { color: #10b981; font-weight: 600; }
+.battle-log li.defeat { color: #ef4444; font-weight: 600; }
+.battle-log li.boss { color: #f472b6; font-weight: 700; }
+
+/* Warning flash overlay for deadly telegraphs */
+@keyframes warning-flash-anim {
+  0% { box-shadow: inset 0 0 0 0 rgba(239,68,68,0.0); }
+  40% { box-shadow: inset 0 0 0 120vmax rgba(239,68,68,0.2); }
+  100% { box-shadow: inset 0 0 0 0 rgba(239,68,68,0.0); }
+}
+body.warning-flash::after {
+  animation: warning-flash-anim 0.6s ease-out 1;
+}
+
+/* Item rarity colors */
+.item-common { color: #9ca3af; }
+.item-uncommon { color: #4ade80; }
+.item-rare { color: #60a5fa; }
+.item-epic { color: #a78bfa; }
+.item-legendary { color: #f59e0b; }
+
+/* Item tooltips */
+.item-tooltip {
+  position: relative;
+  cursor: help;
+}
+.item-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: rgba(0,0,0,0.95);
+  color: #e7eaf0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font-size: 12px;
+  z-index: 100;
+  margin-bottom: 4px;
+  min-width: 200px;
+  border: 1px solid #3a4350;
+}
+
+/* Shop item states */
+.shop-item.unaffordable {
+  opacity: 0.5;
+  background: #1a1a1a;
+}
+.shop-item.unaffordable .price {
+  color: #ef4444;
+}
+.shop-item.owned {
+  border-color: #10b981;
+  background: #0a2419;
+}
+
+/* Enemy attack indicator */
+.enemy-attack-indicator {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Cooldown ready indicator */
+.cd-ready {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Group enemy rows */
+.enemy-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  margin: 4px 0;
+  border: 1px solid #262b34;
+  border-radius: 6px;
+  background: #12161b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.enemy-row:hover {
+  border-color: #3a4350;
+  background: #1a1f26;
+}
+.enemy-row.active-target {
+  border-color: #4aa3ff;
+  background: #0f1a2e;
+}
+.er-name { font-weight: 600; }
+.er-hp { color: #cbd5e1; font-size: 12px; }
+
+/* Save confirmation modal */
+.confirm-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.confirm-content {
+  background: var(--panel);
+  border: 1px solid #3a4350;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.confirm-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+/* NPC screen */
+#screen-npc .portrait {
+  width: 80px; height: 80px; border-radius: 8px; background:#0f1216; border:1px solid #2a2f38; margin-right:12px;
+}
+.npc-line { margin: 6px 0; color: #e7eaf0; }
+.portrait-guard_lyra { background-image: url('./portraits/guard.png'); background-size: cover; }
+.portrait-blacksmith_garr { background-image: url('./portraits/blacksmith.png'); background-size: cover; }
+.portrait-alchemist_miri { background-image: url('./portraits/alchemist.png'); background-size: cover; }
+.portrait-innkeeper_bren { background-image: url('./portraits/innkeeper.png'); background-size: cover; }
+.portrait-questmaster_rho { background-image: url('./portraits/questmaster.png'); background-size: cover; }
+.portrait-historian_ane { background-image: url('./portraits/historian.png'); background-size: cover; }
+.portrait-child_fen { background-image: url('./portraits/child.png'); background-size: cover; }
+
+/* responsive */
+@media (max-width:760px){
+  #game-root{max-width:680px}
+  .battle-top{grid-template-columns:1fr}
+}
+
+/* World Map */
+#screen-world-map .world-map-bg{
+  position: relative; min-height: 420px; background-image: url('./backgrounds/world-map.png');
+  background-size: cover; background-position: center; border:1px solid #2a2f38; border-radius: 10px;
+}
+#world-map-nodes, #world-map-markers{ position:absolute; inset:0; }
+.map-node{ position:absolute; transform:translate(-50%,-50%); left:50%; top:50%;
+  background:#12161b; border:2px solid #4aa3ff; color:#e7eaf0; border-radius:10px; padding:6px 8px; cursor:pointer; font-size:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+.map-node.locked{ opacity:0.4; border-color:#3a4350; cursor:not-allowed; }
+.map-node.current{ animation:pulse-glow 2s ease-in-out infinite; }
+.map-node.newly-unlocked{ box-shadow:0 0 12px rgba(16,185,129,0.6); }
+.map-node:hover::after, .map-marker:hover::after{
+  content: attr(data-tooltip);
+  position:absolute; left:50%; top:-8px; transform:translate(-50%,-100%);
+  background:rgba(0,0,0,0.95); color:#fff; padding:6px 8px; border-radius:6px; font-size:11px; white-space:pre;
+  border:1px solid #3a4350;
+}
+.node-label{ pointer-events:none; }
+.map-marker{ position:absolute; width:10px; height:10px; border-radius:50%; background:#f59e0b; box-shadow:0 0 8px rgba(245,158,11,0.6); }
+.world-map-panel.traveling{ filter:blur(1px) brightness(0.9); }
+

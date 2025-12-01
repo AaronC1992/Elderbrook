@@ -1,0 +1,38 @@
+# Node/npm artifacts (if used for tooling)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+/dist
+/build
+
+# Local env
+.env
+
+# Editor
+.vscode/
+.idea/
+
+# Cache
+*.cache
+.cache/
+
+# Coverage
+coverage/
+
+# Misc
+*.tmp
+*.swp
+
+# Generated images (placeholder; include your real assets)
+backgrounds/world-map.png
