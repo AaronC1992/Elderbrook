@@ -3,7 +3,7 @@
 
 import { GameState } from './gameState.js';
 import { TownUI } from './townUI.js';
-import { showScreen, renderTownSummary, showModalMessage, renderTitleScreenShell } from './renderer.js';
+import { showScreen, renderTownSummary, showModalMessage } from './renderer.js';
 
 function handleCharacterCreation() {
   const nameInput = document.querySelector('#cc-name');
@@ -68,31 +68,23 @@ function handleCharacterCreation() {
 
 function boot() {
   TownUI.init();
-  // Render title screen
-  renderTitleScreenShell();
-  showScreen('screen-title');
-  import('./renderer.js').then(r => r.setBackground('town'));
-  // Wire title screen buttons
-  const btnNew = document.querySelector('#title-new');
-  const btnLoad = document.querySelector('#title-load');
-  btnNew?.addEventListener('click', () => {
+  // Auto-load if save exists; otherwise show character creation
+  let loaded = false;
+  try {
+    if (GameState.loadFromLocalStorage() && GameState.player && GameState.player.stats) {
+      loaded = true;
+      renderTownSummary(GameState.player);
+      showScreen('screen-town');
+      import('./renderer.js').then(r => r.setBackground('town'));
+    }
+  } catch (e) {
+    console.error('Load error', e);
+  }
+  if (!loaded) {
     handleCharacterCreation();
     showScreen('screen-character-creation');
-  });
-  btnLoad?.addEventListener('click', () => {
-    try {
-      if (GameState.loadFromLocalStorage() && GameState.player && GameState.player.stats) {
-        renderTownSummary(GameState.player);
-        showScreen('screen-town');
-        import('./renderer.js').then(r => r.setBackground('town'));
-      } else {
-        showModalMessage('No save data found.');
-      }
-    } catch (e) {
-      console.error('Load error', e);
-      showModalMessage('Load failed.');
-    }
-  });
+    import('./renderer.js').then(r => r.setBackground('town'));
+  }
 }
 
 window.addEventListener('DOMContentLoaded', boot);
