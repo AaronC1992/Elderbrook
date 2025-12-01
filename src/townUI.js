@@ -348,47 +348,58 @@ import { getElderDeepWyrm } from './enemies.js';
       else r.setBackground('town');
     });
     const p = GameState.player;
-    
+
+    // Gate shop access behind clicking the clerk
+    const clerkWrap = document.createElement('div');
+    clerkWrap.className = 'shop-intro';
+    clerkWrap.innerHTML = `
+      <div>
+        <div class="shop-clerk" id="shop-clerk"></div>
+        <div class="shop-clerk-label">Shopkeeper</div>
+        <div class="shop-hint">Click the shopkeeper to talk.</div>
+      </div>
+      <div class="bubble">Welcome! Speak to me to browse wares.</div>
+    `;
     contentEl.innerHTML = '';
-    items.forEach(it => {
-      const row = document.createElement('div');
-      const canAfford = p.gold >= it.price;
-      const canEquip = !it.elfOnly || p.race === 'Elf';
-      const alreadyOwned = p.inventory.includes(it.id) || 
-        (it.type === 'weapon' && p.equipment.weapon?.id === it.id) ||
-        (it.type === 'armor' && p.equipment.armor?.id === it.id);
-      
-      // Apply CSS classes based on state
-      row.className = 'row shop-item item-tooltip';
-      if (!canAfford) row.classList.add('unaffordable');
-      if (alreadyOwned) row.classList.add('owned');
-      
-      // Generate tooltip
-      const tooltip = this.generateItemTooltip(it);
-      row.setAttribute('data-tooltip', tooltip);
-      
-      // Determine rarity color
-      const rarity = this.getItemRarity(it);
-      
-      const stats = it.type === 'weapon'
-        ? `ATK +${it.attackBonus ?? 0}${it.magicBonus ? ` • MAG +${it.magicBonus}` : ''}`
-        : `DEF +${it.defenseBonus ?? 0}`;
-      
-      const restriction = it.elfOnly ? ' [Elf Only]' : '';
-      row.innerHTML = `<div class="item-${rarity}">${it.name} — ${stats}${restriction} • <span class="price">${it.price}g</span></div>`;
-      
-      const buy = document.createElement('button');
-      buy.textContent = alreadyOwned ? 'Owned' : 'Buy';
-      buy.disabled = !canAfford || !canEquip || alreadyOwned;
-      
-      buy.addEventListener('click', () => {
-        if (attemptPurchase(it)) {
-          showModalMessage(`Purchased ${it.name}.`, () => this.openShop(shopId));
-          renderTownSummary(GameState.player);
-        }
+    contentEl.appendChild(clerkWrap);
+
+    const renderItems = () => {
+      contentEl.innerHTML = '';
+      items.forEach(it => {
+        const row = document.createElement('div');
+        const canAfford = p.gold >= it.price;
+        const canEquip = !it.elfOnly || p.race === 'Elf';
+        const alreadyOwned = p.inventory.includes(it.id) || 
+          (it.type === 'weapon' && p.equipment.weapon?.id === it.id) ||
+          (it.type === 'armor' && p.equipment.armor?.id === it.id);
+        
+        row.className = 'row shop-item item-tooltip';
+        if (!canAfford) row.classList.add('unaffordable');
+        if (alreadyOwned) row.classList.add('owned');
+        const tooltip = this.generateItemTooltip(it);
+        row.setAttribute('data-tooltip', tooltip);
+        const rarity = this.getItemRarity(it);
+        const stats = it.type === 'weapon'
+          ? `ATK +${it.attackBonus ?? 0}${it.magicBonus ? ` • MAG +${it.magicBonus}` : ''}`
+          : `DEF +${it.defenseBonus ?? 0}`;
+        const restriction = it.elfOnly ? ' [Elf Only]' : '';
+        row.innerHTML = `<div class="item-${rarity}">${it.name} — ${stats}${restriction} • <span class="price">${it.price}g</span></div>`;
+        const buy = document.createElement('button');
+        buy.textContent = alreadyOwned ? 'Owned' : 'Buy';
+        buy.disabled = !canAfford || !canEquip || alreadyOwned;
+        buy.addEventListener('click', () => {
+          if (attemptPurchase(it)) {
+            showModalMessage(`Purchased ${it.name}.`, () => renderItems());
+            renderTownSummary(GameState.player);
+          }
+        });
+        row.appendChild(buy);
+        contentEl.appendChild(row);
       });
-      row.appendChild(buy);
-      contentEl.appendChild(row);
+    };
+    // Talk to clerk to access items
+    clerkWrap.querySelector('#shop-clerk')?.addEventListener('click', () => {
+      showModalMessage('Shopkeeper: Take a look — finest goods in Elderbrook!', () => renderItems());
     });
     exitBtn.onclick = () => { this.showTown(); };
     showScreen('screen-shop');
