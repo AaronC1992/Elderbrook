@@ -8,9 +8,21 @@
   </head>
   <body>
     <div id="game-root">
+      <!-- Title Screen -->
+      <section id="screen-title" class="screen">
+        <div class="panel title-screen">
+          <h1 class="title-logo">Elderbrook</h1>
+          <p class="title-subtitle">A Tale of Shadows and Steel</p>
+          <div class="buttons column title-buttons">
+            <button id="title-new-game" class="primary">New Game</button>
+            <button id="title-load-game">Load Game</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Character Creation -->
       <!-- Make character creation visible by default; JS will swap if save loads -->
-      <section id="screen-character-creation" class="screen">
+      <section id="screen-character-creation" class="screen hidden">
         <div class="panel">
           <h1>Elderbrook</h1>
           <h2>Create Your Hero</h2>

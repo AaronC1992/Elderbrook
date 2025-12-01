@@ -106,6 +106,38 @@ body.disable-animations::before {
 .hidden{display:none !important}
 .screen{padding:8px}
 .panel{background:var(--panel);border:1px solid #22262e;border-radius:10px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+
+/* Title Screen */
+.title-screen {
+  text-align: center;
+  padding: 48px 32px;
+  max-width: 500px;
+  margin: 80px auto;
+}
+.title-logo {
+  font-size: 48px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #4aa3ff, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.title-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  margin: 0 0 40px;
+  font-style: italic;
+}
+.title-buttons {
+  gap: 12px;
+}
+.title-buttons button {
+  font-size: 16px;
+  padding: 12px 24px;
+}
+
 h1{margin:0 0 8px;font-size:28px;letter-spacing:.5px}
 h2{margin:0 0 12px;font-size:20px;color:#ced4dd}
 .form-row{margin:12px 0}

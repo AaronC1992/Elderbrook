@@ -68,23 +68,38 @@ function handleCharacterCreation() {
 
 function boot() {
   TownUI.init();
-  // Auto-load if save exists; otherwise show character creation
-  let loaded = false;
-  try {
-    if (GameState.loadFromLocalStorage() && GameState.player && GameState.player.stats) {
-      loaded = true;
-      renderTownSummary(GameState.player);
-      showScreen('screen-town');
-      import('./renderer.js').then(r => r.setBackground('town'));
-    }
-  } catch (e) {
-    console.error('Load error', e);
-  }
-  if (!loaded) {
+  
+  // Title screen handlers
+  const newGameBtn = document.querySelector('#title-new-game');
+  const loadGameBtn = document.querySelector('#title-load-game');
+  
+  newGameBtn?.addEventListener('click', () => {
     handleCharacterCreation();
     showScreen('screen-character-creation');
     import('./renderer.js').then(r => r.setBackground('town'));
-  }
+  });
+  
+  loadGameBtn?.addEventListener('click', () => {
+    let loaded = false;
+    try {
+      if (GameState.loadFromLocalStorage() && GameState.player && GameState.player.stats) {
+        loaded = true;
+        renderTownSummary(GameState.player);
+        showScreen('screen-town');
+        import('./renderer.js').then(r => r.setBackground('town'));
+        showModalMessage('Game loaded successfully!');
+      }
+    } catch (e) {
+      console.error('Load error', e);
+    }
+    if (!loaded) {
+      showModalMessage('No save data found. Please start a New Game.');
+    }
+  });
+  
+  // Show title screen on boot
+  showScreen('screen-title');
+  import('./renderer.js').then(r => r.setBackground('town'));
 }
 
 window.addEventListener('DOMContentLoaded', boot);
