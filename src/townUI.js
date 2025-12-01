@@ -139,12 +139,12 @@ export const TownUI = {
     arrowEl.className = 'village-arrow';
     arrowEl.style.left = arrowCoords.leftPct + '%';
     arrowEl.style.top = arrowCoords.topPct + '%';
-    arrowEl.style.transform = 'rotate(135deg)';
+    arrowEl.style.transform = 'rotate(45deg)';
     arrowEl.addEventListener('mouseenter', () => {
-      arrowEl.style.transform = 'rotate(135deg) scale(1.1)';
+      arrowEl.style.transform = 'rotate(45deg) scale(1.1)';
     });
     arrowEl.addEventListener('mouseleave', () => {
-      arrowEl.style.transform = 'rotate(135deg)';
+      arrowEl.style.transform = 'rotate(45deg)';
     });
     arrowEl.addEventListener('click', () => {
       console.log('Diagonal arrow clicked at grid 294');

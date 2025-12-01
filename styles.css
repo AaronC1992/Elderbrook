@@ -310,15 +310,15 @@ body.disable-animations::before {
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 1000;
-  transform: rotate(180deg);
+  transform: rotate(-90deg);
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
 }
 .back-arrow:hover {
-  transform: rotate(180deg) scale(1.08);
+  transform: rotate(-90deg) scale(1.08);
   filter: drop-shadow(0 6px 16px rgba(74,163,255,0.5));
 }
 .back-arrow:active {
-  transform: rotate(180deg) scale(0.95);
+  transform: rotate(-90deg) scale(0.95);
 }
 
 /* Grid toggle button for shops */
