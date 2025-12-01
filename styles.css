@@ -277,6 +277,37 @@ body.disable-animations::before {
   content: '';
 }
 
+/* Back arrow for shop and other sub-screens */
+.back-arrow {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--panel), #1a1f28);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 28px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.back-arrow:hover {
+  background: linear-gradient(135deg, #1e2530, var(--panel));
+  border-color: #6bc1ff;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(74,163,255,0.3);
+}
+.back-arrow:active {
+  transform: scale(0.95);
+}
+
 .village-title {
   display: none; /* Hide the title */
 }

@@ -672,7 +672,11 @@ export const TownUI = {
       showModalMessage('Shopkeeper: Take a look — finest goods in Elderbrook!', () => renderItems());
     });
     
-    exitBtn.onclick = () => { this.showTown(); };
+    // Wire both exit button and back arrow
+    const backArrow = document.querySelector('#shop-back-arrow');
+    const exitHandler = () => { this.showTown(); };
+    exitBtn.onclick = exitHandler;
+    if (backArrow) backArrow.onclick = exitHandler;
     showScreen('screen-shop');
   },
 
