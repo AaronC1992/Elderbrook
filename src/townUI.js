@@ -674,7 +674,11 @@ export const TownUI = {
     
     // Wire both exit button and back arrow
     const backArrow = document.querySelector('#shop-back-arrow');
-    const exitHandler = () => { this.showTown(); };
+    const exitHandler = () => { 
+      this.showTown();
+      // Re-render hotspots when returning to village
+      this.init();
+    };
     exitBtn.onclick = exitHandler;
     if (backArrow) backArrow.onclick = exitHandler;
     showScreen('screen-shop');
