@@ -323,6 +323,16 @@ body.disable-animations::before {
   transform: rotate(90deg) scale(0.95);
 }
 
+/* Forest exit arrow: centered vertically on left edge */
+.forest-exit {
+  top: 50% !important;
+  left: 12px !important;
+  transform: translateY(-50%) rotate(90deg) !important;
+}
+.forest-exit:hover {
+  transform: translateY(-50%) rotate(90deg) scale(1.08) !important;
+}
+
 /* Grid toggle button for shops */
 .toggle-grid-btn {
   position: fixed;
