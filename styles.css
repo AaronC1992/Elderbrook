@@ -328,6 +328,8 @@ body.disable-animations::before {
   top: 50% !important;
   left: 12px !important;
   transform: translateY(-50%) rotate(90deg) !important;
+  opacity: 1 !important;
+  display: block !important;
 }
 .forest-exit:hover {
   transform: translateY(-50%) rotate(90deg) scale(1.08) !important;
