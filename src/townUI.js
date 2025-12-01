@@ -626,6 +626,55 @@ export const TownUI = {
 
     // Clear content initially; shop clerk will be a hotspot
     contentEl.innerHTML = '';
+    
+    // Helper: add shop NPC hotspot
+    function addShopHotspot({ leftPct, topPct, widthPct, heightPct, label, onClick }) {
+      const container = document.querySelector('.village-hotspots');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = 'hotspot';
+      el.style.left = leftPct + '%';
+      el.style.top = topPct + '%';
+      el.style.width = widthPct + '%';
+      el.style.height = heightPct + '%';
+      if (label) el.setAttribute('data-label', label);
+      el.addEventListener('click', (e) => { e.stopPropagation(); onClick?.(); });
+      container.appendChild(el);
+    }
+    
+    // Helper: derive box from 4 cell IDs
+    function idsToGridBox(cellIds) {
+      const cols = 20, rows = 15;
+      const toRC = (id) => ({
+        row: Math.floor((id - 1) / cols) + 1,
+        col: ((id - 1) % cols) + 1,
+      });
+      const pts = cellIds.map(toRC);
+      const rowMin = Math.max(1, Math.min(...pts.map(p => p.row)));
+      const rowMax = Math.min(rows, Math.max(...pts.map(p => p.row)));
+      const colMin = Math.max(1, Math.min(...pts.map(p => p.col)));
+      const colMax = Math.min(cols, Math.max(...pts.map(p => p.col)));
+      return { colMin, colMax, rowMin, rowMax };
+    }
+    
+    function gridBoxToPercents({ colMin, colMax, rowMin, rowMax }) {
+      const cols = 20, rows = 15;
+      const leftPct = ((colMin - 1) / cols) * 100;
+      const topPct = ((rowMin - 1) / rows) * 100;
+      const widthPct = ((colMax - colMin + 1) / cols) * 100;
+      const heightPct = ((rowMax - rowMin + 1) / rows) * 100;
+      return { leftPct, topPct, widthPct, heightPct };
+    }
+    
+    // Add shop clerk hotspot based on shopId
+    if (shopId === 'weapon') {
+      const clerkBox = idsToGridBox([251, 111]);
+      addShopHotspot({
+        ...gridBoxToPercents(clerkBox),
+        label: 'Shopkeeper',
+        onClick: () => renderItems()
+      });
+    }
 
     const renderItems = () => {
       contentEl.innerHTML = '';
