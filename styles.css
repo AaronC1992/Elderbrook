@@ -303,36 +303,43 @@ body.disable-animations::before {
   left: 20px;
   width: 50px;
   height: 50px;
-  background-image: url('./backgrounds/direction-arrow.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: none;
+  background: rgba(20, 20, 30, 0.8);
+  border: 2px solid #4a90e2;
+  border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 1000;
-  transform: rotate(90deg);
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #4a90e2;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.back-arrow::before {
+  content: '←';
 }
 .back-arrow:hover {
-  transform: rotate(90deg) scale(1.08);
-  filter: drop-shadow(0 6px 16px rgba(74,163,255,0.5));
+  background: rgba(30, 30, 40, 0.9);
+  border-color: #74a3ff;
+  color: #74a3ff;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(74,163,255,0.5);
 }
 .back-arrow:active {
-  transform: rotate(90deg) scale(0.95);
+  transform: scale(0.95);
 }
 
 /* Forest exit arrow: centered vertically on left edge */
 .forest-exit {
   top: 50% !important;
   left: 12px !important;
-  transform: translateY(-50%) rotate(90deg) !important;
+  transform: translateY(-50%) !important;
   opacity: 1 !important;
-  display: block !important;
+  display: flex !important;
 }
 .forest-exit:hover {
-  transform: translateY(-50%) rotate(90deg) scale(1.08) !important;
+  transform: translateY(-50%) scale(1.08) !important;
 }
 
 /* Grid toggle button for shops */
