@@ -98,6 +98,24 @@ export function renderWorldMapScreenShell(){
   }
 }
 
+// Title screen shell for starting a new game or loading
+export function renderTitleScreenShell(){
+  if (qs('#screen-title')) return;
+  const screen = document.createElement('div');
+  screen.id = 'screen-title';
+  screen.className = 'screen';
+  screen.innerHTML = `
+    <div class="panel" style="text-align:center; max-width:520px; margin:40px auto;">
+      <h1>Elderbrook</h1>
+      <p style="color:#cbd5e1">A small RPG in your browser.</p>
+      <div class="row" style="justify-content:center; gap:12px; margin-top:12px;">
+        <button id="title-new" class="primary">Start New Game</button>
+        <button id="title-load">Load Game</button>
+      </div>
+    </div>`;
+  document.body.appendChild(screen);
+}
+
 /**
  * Display confirmation dialog with Yes/No buttons
  */

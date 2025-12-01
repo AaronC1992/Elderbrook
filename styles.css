@@ -62,21 +62,26 @@ body.bg-cave::before {
 
 /* Grove background */
 body.bg-grove::before {
-  background-image: url('./backgrounds/Grove-1.png');
+  background-image: url('./backgrounds/forrest-boss.png');
   opacity: 0.32;
 }
 
 /* Ruins background */
 body.bg-ruins::before {
-  background-image: url('./backgrounds/Ruins-1.png');
+  background-image: url('./backgrounds/forrest-boss.png');
   opacity: 0.32;
 }
 
 /* Depths background */
 body.bg-depths::before {
-  background-image: url('./backgrounds/Depths-1.png');
+  background-image: url('./backgrounds/forrest-boss.png');
   opacity: 0.28;
 }
+
+/* Shops and questboard backgrounds */
+body.bg-weapon-shop::before { background-image: url('./backgrounds/elderbrook-village-weapon-shop.png'); opacity: 0.35; }
+body.bg-armor-shop::before { background-image: url('./backgrounds/elderbrook-village-armor-shop.png'); opacity: 0.35; }
+body.bg-questboard::before { background-image: url('./backgrounds/elderbrook-village-questboard.png'); opacity: 0.4; }
 
 /* Disable background transitions when animations off */
 body.disable-animations::before {

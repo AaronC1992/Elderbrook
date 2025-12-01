@@ -330,6 +330,12 @@ export const TownUI = {
     const exitBtn = document.querySelector('#shop-exit');
     titleEl.textContent = shopId === 'weapon' ? 'Weapon Shop' : (shopId === 'relic' ? 'Relic Merchant' : 'Armor Shop');
     const items = getShopItems(shopId);
+    // Set shop-specific backgrounds
+    import('./renderer.js').then(r => {
+      if (shopId === 'weapon') r.setBackground('weapon-shop');
+      else if (shopId === 'armor') r.setBackground('armor-shop');
+      else r.setBackground('town');
+    });
     const p = GameState.player;
     
     contentEl.innerHTML = '';
@@ -459,6 +465,8 @@ export const TownUI = {
     const exitBtn = document.querySelector('#quests-exit');
     contentEl.innerHTML = '';
     contentEl.appendChild(renderQuestBoard());
+    // Set questboard background
+    import('./renderer.js').then(r => r.setBackground('questboard'));
     exitBtn.onclick = () => { this.showTown(); };
     showScreen('screen-quests');
   },
