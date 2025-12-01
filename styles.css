@@ -908,7 +908,13 @@ body.warning-flash::after {
 .cc-footer {
   display: flex;
   justify-content: center;
-  padding-top: 10px;
+  padding: 12px 0 4px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(14,15,18,0.6), rgba(14,15,18,0.95));
+  backdrop-filter: blur(4px);
+  border-top: 1px solid #22262e;
+  margin-top: auto;
 }
 
 .cc-footer button {
@@ -916,6 +922,10 @@ body.warning-flash::after {
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
+}
+
+.cc-footer button.enabled {
+  box-shadow: 0 0 12px rgba(74,163,255,0.35);
 }
 
 /* Responsive adjustments */

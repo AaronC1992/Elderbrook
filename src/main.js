@@ -80,6 +80,7 @@ function handleCharacterCreation() {
     
     // Enable confirm button only if race is selected
     confirmBtn.disabled = !selectedRace;
+    if (!confirmBtn.disabled) confirmBtn.classList.add('enabled'); else confirmBtn.classList.remove('enabled');
   }
 
   function updatePreview() {
@@ -198,6 +199,16 @@ function handleCharacterCreation() {
     updateRaceDetails('Human');
     updateUI();
   }
+
+  // Enter key convenience to continue
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const screen = document.getElementById('screen-character-creation');
+      if (screen && !screen.classList.contains('hidden') && !confirmBtn.disabled) {
+        confirmBtn.click();
+      }
+    }
+  });
 
   // Stat allocation buttons
   document.querySelectorAll('[data-stat]')?.forEach(btn => {
