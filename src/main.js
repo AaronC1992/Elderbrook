@@ -294,6 +294,7 @@ window.addEventListener('DOMContentLoaded', boot);
 // Debug: verify critical asset paths to help diagnose 404 issues
 function verifyCriticalAssets() {
   const assets = [
+    // Normalize to lowercase filenames actually present in repo
     'backgrounds/elderbrook-village.jpg',
     'backgrounds/forest-1.png',
     'backgrounds/cave-1.png',
