@@ -44,45 +44,45 @@ body::after {
 
 /* Town background - increased opacity to see buildings */
 body.bg-town::before {
-  background-image: url('backgrounds/elderbrook-village.jpg');
+  background-image: url('./backgrounds/elderbrook-village.jpg');
   opacity: 1; /* Full visibility for village */
 }
 
 /* Forest background */
 body.bg-forest::before {
-  background-image: url('backgrounds/forest-1.png');
+  background-image: url('./backgrounds/forest-1.png');
   opacity: 0.35;
 }
 
 /* Cave background */
 body.bg-cave::before {
-  background-image: url('backgrounds/cave-1.png');
+  background-image: url('./backgrounds/cave-1.png');
   opacity: 0.3;
 }
 
 /* Grove background */
 body.bg-grove::before {
-  background-image: url('backgrounds/forest-boss.png');
+  background-image: url('./backgrounds/forest-boss.png');
   opacity: 0.32;
 }
 
 /* Ruins background */
 body.bg-ruins::before {
-  background-image: url('backgrounds/forest-boss.png');
+  background-image: url('./backgrounds/forest-boss.png');
   opacity: 0.32;
 }
 
 /* Depths background */
 body.bg-depths::before {
-  background-image: url('backgrounds/forest-boss.png');
+  background-image: url('./backgrounds/forest-boss.png');
   opacity: 0.28;
 }
 
 /* Shops and questboard backgrounds */
-body.bg-weapon-shop::before { background-image: url('backgrounds/elderbrook-village-weapon-shop.png'); opacity: 1; }
-body.bg-armor-shop::before { background-image: url('backgrounds/elderbrook-village-armor-shop.png'); opacity: 1; }
-body.bg-potion-shop::before { background-image: url('backgrounds/elderbrook-village-potion-shop.png'); opacity: 1; }
-body.bg-questboard::before { background-image: url('backgrounds/elderbrook-village-questboard.png'); opacity: 1; }
+body.bg-weapon-shop::before { background-image: url('./backgrounds/elderbrook-village-weapon-shop.png'); opacity: 1; }
+body.bg-armor-shop::before { background-image: url('./backgrounds/elderbrook-village-armor-shop.png'); opacity: 1; }
+body.bg-potion-shop::before { background-image: url('./backgrounds/elderbrook-village-potion-shop.png'); opacity: 1; }
+body.bg-questboard::before { background-image: url('./backgrounds/elderbrook-village-questboard.png'); opacity: 1; }
 
 /* Disable background transitions when animations off */
 body.disable-animations::before {
@@ -224,7 +224,7 @@ body.disable-animations::before {
   position: fixed;
   width: 40px;
   height: 40px;
-  background-image: url('backgrounds/direction-arrow.png');
+  background-image: url('./backgrounds/direction-arrow.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -303,7 +303,7 @@ body.disable-animations::before {
   left: 20px;
   width: 50px;
   height: 50px;
-  background-image: url('backgrounds/direction-arrow.png');
+  background-image: url('./backgrounds/direction-arrow.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
