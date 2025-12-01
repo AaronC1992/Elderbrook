@@ -955,39 +955,10 @@ export const TownUI = {
   },
 
   configureSkillButtons() {
-    const p = GameState.player;
-    const s1 = document.querySelector('#act-skill1');
-    const s2 = document.querySelector('#act-skill2');
-    s1?.classList.add('hidden');
-    s2?.classList.add('hidden');
-    
-    if (p.class === 'Warrior') {
-      s1.textContent = 'Power Strike';
-      s1.dataset.skill = 'power_strike';
-      s1.classList.remove('hidden');
-    } else if (p.class === 'Mage') {
-      s1.textContent = 'Firebolt';
-      s1.dataset.skill = 'firebolt';
-      s1.classList.remove('hidden');
-    } else if (p.class === 'Rogue') {
-      s1.textContent = 'Quick Jab';
-      s1.dataset.skill = 'quick_jab';
-      s1.classList.remove('hidden');
-    }
-    
-    // Race-specific secondary skill (Elf only)
-    if (p.race === 'Elf') {
-      s2.textContent = 'Elf Precision';
-      s2.dataset.skill = 'elf_precision';
-      s2.classList.remove('hidden');
-    }
-    
-    // Rogue poison secondary
-    if (p.class === 'Rogue') {
-      s2.textContent = 'Poison Dart';
-      s2.dataset.skill = 'poison_dart';
-      s2.classList.remove('hidden');
-    }
+    // Legacy function - now using skill bar with fixed skills
+    // Skills are now hardcoded in HTML with MP costs
+    // This function kept for compatibility but does nothing
+    return;
   },
 
   usePrimarySkill() {
