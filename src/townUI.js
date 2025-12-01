@@ -49,6 +49,8 @@ export const TownUI = {
       hotspots.className = 'village-hotspots';
       document.body.appendChild(hotspots);
     }
+    // Clear any previous hotspots when entering town
+    hotspots.innerHTML = '';
 
     // Helper: add hotspot by percentage box
     function addHotspot({ leftPct, topPct, widthPct, heightPct, label, onClick }) {
@@ -546,6 +548,9 @@ export const TownUI = {
   showTown() {
     renderTownSummary(GameState.player);
     showScreen('screen-town');
+    // Ensure hotspots refresh only in town
+    const host = document.querySelector('.village-hotspots');
+    if (host) host.innerHTML = '';
     
     // Update village building visibility
     const relicShopBuilding = document.querySelector('#village-relic-shop');
@@ -607,6 +612,9 @@ export const TownUI = {
       else if (shopId === 'armor') r.setBackground('armor-shop');
       else r.setBackground('town');
     });
+    // Hide town hotspots when entering a shop screen
+    const host = document.querySelector('.village-hotspots');
+    if (host) host.innerHTML = '';
     
     const p = GameState.player;
 

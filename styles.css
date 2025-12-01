@@ -261,25 +261,20 @@ body.disable-animations::before {
 .hotspot {
   position: absolute;
   pointer-events: auto;
-  border: 2px dashed rgba(74,163,255,0.55);
-  background: rgba(74,163,255,0.12);
+  /* Invisible by default; debug styles commented */
+  /* border: 2px dashed rgba(74,163,255,0.55);
+  background: rgba(74,163,255,0.12); */
+  border: none;
+  background: transparent;
   border-radius: 8px;
   transition: transform 0.08s ease-in-out, background 0.12s;
 }
 .hotspot:hover {
-  background: rgba(74,163,255,0.2);
+  background: rgba(74,163,255,0.12);
   transform: translateZ(0) scale(1.02);
 }
 .hotspot[data-label]::after {
-  content: attr(data-label);
-  position: absolute;
-  bottom: -22px;
-  left: 0;
-  padding: 2px 6px;
-  font-size: 11px;
-  background: rgba(23,26,31,0.9);
-  border: 1px solid #22262e;
-  border-radius: 6px;
+  content: '';
 }
 
 .village-title {
