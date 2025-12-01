@@ -224,7 +224,7 @@ body.disable-animations::before {
   position: fixed;
   width: 40px;
   height: 40px;
-  background-image: url('backgrounds/arrow.png');
+  background-image: url('backgrounds/Direction-Arrow.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -234,7 +234,6 @@ body.disable-animations::before {
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
 }
 .village-arrow:hover {
-  transform: scale(1.1);
   filter: drop-shadow(0 4px 12px rgba(74,163,255,0.5));
 }
 
@@ -303,7 +302,7 @@ body.disable-animations::before {
   left: 20px;
   width: 50px;
   height: 50px;
-  background-image: url('backgrounds/arrow.png');
+  background-image: url('backgrounds/Direction-Arrow.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

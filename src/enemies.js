@@ -15,6 +15,7 @@ const forestBase = [
   { id: 'bandit', name: 'Bandit', level: 3, maxHp: 40, attackPower: 10, defense: 3, goldReward: 12, xpReward: 22, attackCooldownMax: 2.2, attackSpeedModifier: 1.0 },
   { id: 'wolf', name: 'Grey Wolf', level: 4, maxHp: 44, attackPower: 12, defense: 3, goldReward: 12, xpReward: 26, attackCooldownMax: 1.9, attackSpeedModifier: 1.1 },
   { id: 'spriggan', name: 'Lesser Spriggan', level: 5, maxHp: 52, attackPower: 14, defense: 4, goldReward: 16, xpReward: 30, attackCooldownMax: 2.3, attackSpeedModifier: 1.0 },
+  { id: 'bee', name: 'Giant Bee', level: 2, maxHp: 30, attackPower: 8, defense: 2, goldReward: 8, xpReward: 15, attackCooldownMax: 1.8, attackSpeedModifier: 1.25, image: 'enemy/enemy-bee.png' },
 ];
 
 // Cave enemies: tougher variants, diverse speed profiles

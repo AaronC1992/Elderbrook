@@ -140,6 +140,12 @@ export const TownUI = {
     arrowEl.style.left = arrowCoords.leftPct + '%';
     arrowEl.style.top = arrowCoords.topPct + '%';
     arrowEl.style.transform = 'rotate(135deg)';
+    arrowEl.addEventListener('mouseenter', () => {
+      arrowEl.style.transform = 'rotate(135deg) scale(1.1)';
+    });
+    arrowEl.addEventListener('mouseleave', () => {
+      arrowEl.style.transform = 'rotate(135deg)';
+    });
     arrowEl.addEventListener('click', () => {
       console.log('Diagonal arrow clicked at grid 294');
       // TODO: Add navigation logic here
@@ -642,9 +648,10 @@ export const TownUI = {
       }
       console.log('[openShop] Body classes after setBackground:', document.body.className);
     });
-    // Hide town hotspots when entering a shop screen
+    // Hide town hotspots and village arrows when entering a shop screen
     const host = document.querySelector('.village-hotspots');
     if (host) host.innerHTML = '';
+    document.querySelectorAll('.village-arrow').forEach(el => el.remove());
     
     const p = GameState.player;
 
