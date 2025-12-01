@@ -23,6 +23,14 @@ VS Code Live Server:
 
 Then open: `http://localhost:5173/`
 
+## Play Online
+
+Once GitHub Pages is enabled for this repo, you can play directly in your browser here:
+
+https://aaronc1992.github.io/Elderbrook/
+
+If the link shows a 404, enable Pages first (see Deploy section below), wait ~2 minutes, then refresh.
+
 ## Structure
 
 - `index.html` — screens and UI containers
