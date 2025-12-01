@@ -291,6 +291,37 @@ function boot() {
 
 window.addEventListener('DOMContentLoaded', boot);
 
+// Debug: verify critical asset paths to help diagnose 404 issues
+function verifyCriticalAssets() {
+  const assets = [
+    'backgrounds/elderbrook-village.jpg',
+    'backgrounds/forest-1.png',
+    'backgrounds/cave-1.png',
+    'backgrounds/forest-boss.png',
+    'backgrounds/elderbrook-village-weapon-shop.png',
+    'backgrounds/elderbrook-village-armor-shop.png',
+    'backgrounds/elderbrook-village-potion-shop.png',
+    'backgrounds/elderbrook-village-questboard.png',
+    'backgrounds/direction-arrow.png'
+  ];
+  assets.forEach(path => {
+    fetch(path, { method: 'HEAD' }).then(r => {
+      if (!r.ok) {
+        console.warn('[Asset Missing]', path, 'status:', r.status);
+      } else {
+        console.log('[Asset OK]', path);
+      }
+    }).catch(err => {
+      console.warn('[Asset Error]', path, err.message);
+    });
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  // defer a tick so boot can run first
+  setTimeout(verifyCriticalAssets, 50);
+});
+
 // Global error handler to surface issues instead of blank screen
 window.addEventListener('error', (e) => {
   import('./renderer.js').then(mod => {
