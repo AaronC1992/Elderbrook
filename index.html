@@ -9,7 +9,7 @@
   <body>
     <div id="game-root">
       <!-- Title Screen -->
-      <section id="screen-title" class="screen">
+      <section id="screen-title" class="screen full-page">
         <div class="panel title-screen">
           <h1 class="title-logo">Elderbrook</h1>
           <p class="title-subtitle">A Tale of Shadows and Steel</p>
@@ -21,83 +21,268 @@
       </section>
 
       <!-- Character Creation -->
-      <!-- Make character creation visible by default; JS will swap if save loads -->
-      <section id="screen-character-creation" class="screen hidden">
-        <div class="panel">
-          <h1>Elderbrook</h1>
-          <h2>Create Your Hero</h2>
-          <div class="form-row">
-            <label for="cc-name">Name</label>
-            <input id="cc-name" type="text" placeholder="Hero" maxlength="16" />
+      <section id="screen-character-creation" class="screen full-page hidden">
+        <div class="character-creation-container">
+          <div class="cc-header">
+            <h1>Elderbrook</h1>
+            <h2>Create Your Hero</h2>
           </div>
-          <div class="form-row">
-            <label>Class</label>
-            <div class="radio-row">
-              <label><input type="radio" name="cc-class" value="Warrior" checked /> Warrior</label>
-              <label><input type="radio" name="cc-class" value="Mage" /> Mage</label>
-              <label><input type="radio" name="cc-class" value="Rogue" /> Rogue</label>
-            </div>
-          </div>
-          <div class="form-row">
-            <label>Race</label>
-            <div class="radio-row">
-              <label><input type="radio" name="cc-race" value="Human" checked /> Human</label>
-              <label><input type="radio" name="cc-race" value="Beast" /> Beast</label>
-              <label><input type="radio" name="cc-race" value="Elf" /> Elf</label>
-              <label><input type="radio" name="cc-race" value="Bug" /> Bug</label>
-            </div>
-          </div>
-          <div class="form-row">
-            <label>Distribute Stat Points <span id="cc-points">5</span></label>
-            <div class="stats-grid">
-              <div class="stat">
-                <span>STR</span>
-                <div class="stat-controls">
-                  <button data-stat="str" data-delta="-1">-</button>
-                  <span id="cc-str">1</span>
-                  <button data-stat="str" data-delta="1">+</button>
+
+          <div class="cc-layout">
+            <!-- Left: Race Selection -->
+            <div class="cc-race-list">
+              <h3>Choose Your Race</h3>
+              <div class="race-options">
+                <!-- Race cards with portrait placeholders -->
+                <div class="race-card" data-race="Human">
+                  <div class="race-portrait human-portrait">👤</div>
+                  <div class="race-name">Human</div>
                 </div>
-              </div>
-              <div class="stat">
-                <span>DEX</span>
-                <div class="stat-controls">
-                  <button data-stat="dex" data-delta="-1">-</button>
-                  <span id="cc-dex">1</span>
-                  <button data-stat="dex" data-delta="1">+</button>
+                <div class="race-card" data-race="Beast">
+                  <div class="race-portrait beast-portrait">🐺</div>
+                  <div class="race-name">Beast</div>
                 </div>
-              </div>
-              <div class="stat">
-                <span>INT</span>
-                <div class="stat-controls">
-                  <button data-stat="int" data-delta="-1">-</button>
-                  <span id="cc-int">1</span>
-                  <button data-stat="int" data-delta="1">+</button>
+                <div class="race-card" data-race="Elf">
+                  <div class="race-portrait elf-portrait">🧝</div>
+                  <div class="race-name">Elf</div>
                 </div>
-              </div>
-              <div class="stat">
-                <span>VIT</span>
-                <div class="stat-controls">
-                  <button data-stat="vit" data-delta="-1">-</button>
-                  <span id="cc-vit">1</span>
-                  <button data-stat="vit" data-delta="1">+</button>
+                <div class="race-card" data-race="Bug">
+                  <div class="race-portrait bug-portrait">🦗</div>
+                  <div class="race-name">Bug</div>
+                </div>
+                <div class="race-card" data-race="Undead">
+                  <div class="race-portrait undead-portrait">💀</div>
+                  <div class="race-name">Undead</div>
                 </div>
               </div>
             </div>
+
+            <!-- Center: Character Details -->
+            <div class="cc-center">
+              <!-- Name and Class -->
+              <div class="cc-name-class">
+                <div class="form-row">
+                  <label for="cc-name">Hero Name</label>
+                  <input id="cc-name" type="text" placeholder="Enter name" maxlength="16" />
+                </div>
+                <div class="form-row">
+                  <label>Class</label>
+                  <div class="radio-row">
+                    <label><input type="radio" name="cc-class" value="Warrior" checked /> Warrior</label>
+                    <label><input type="radio" name="cc-class" value="Mage" /> Mage</label>
+                    <label><input type="radio" name="cc-class" value="Rogue" /> Rogue</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stat Distribution -->
+              <div class="cc-stat-allocation">
+                <label>Distribute Stat Points <span id="cc-points" class="points-remaining">5</span></label>
+                <div class="stats-grid-cc">
+                  <div class="stat-item">
+                    <div class="stat-label">STR</div>
+                    <div class="stat-controls">
+                      <button data-stat="str" data-delta="-1">-</button>
+                      <span id="cc-str" class="stat-value">1</span>
+                      <button data-stat="str" data-delta="1">+</button>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-label">DEX</div>
+                    <div class="stat-controls">
+                      <button data-stat="dex" data-delta="-1">-</button>
+                      <span id="cc-dex" class="stat-value">1</span>
+                      <button data-stat="dex" data-delta="1">+</button>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-label">INT</div>
+                    <div class="stat-controls">
+                      <button data-stat="int" data-delta="-1">-</button>
+                      <span id="cc-int" class="stat-value">1</span>
+                      <button data-stat="int" data-delta="1">+</button>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-label">VIT</div>
+                    <div class="stat-controls">
+                      <button data-stat="vit" data-delta="-1">-</button>
+                      <span id="cc-vit" class="stat-value">1</span>
+                      <button data-stat="vit" data-delta="1">+</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stat Explanation Panel -->
+              <div class="cc-stat-info panel">
+                <h4>Core Stats Explained</h4>
+                <div class="stat-explanations">
+                  <div class="stat-explain-item">
+                    <span class="stat-icon str-icon">💪</span>
+                    <strong>STR</strong> – Increases physical damage
+                  </div>
+                  <div class="stat-explain-item">
+                    <span class="stat-icon dex-icon">⚡</span>
+                    <strong>DEX</strong> – Increases crit chance and attack cooldown speed
+                  </div>
+                  <div class="stat-explain-item">
+                    <span class="stat-icon int-icon">🔮</span>
+                    <strong>INT</strong> – Increases magic/elemental damage and abilities
+                  </div>
+                  <div class="stat-explain-item">
+                    <span class="stat-icon vit-icon">❤️</span>
+                    <strong>VIT</strong> – Increases max HP and reduces incoming damage
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Race Details & Preview -->
+            <div class="cc-right">
+              <!-- Race Details -->
+              <div id="cc-race-details" class="panel race-details">
+                <h3>Race Details</h3>
+                <div id="race-lore" class="race-lore">Select a race to see details</div>
+                <div id="race-bonuses" class="race-bonuses"></div>
+                <div id="race-playstyle" class="race-playstyle"></div>
+              </div>
+
+              <!-- Live Preview -->
+              <div id="cc-preview" class="panel cc-preview">
+                <h4>Starting Stats Preview</h4>
+                <div class="preview-stats">
+                  <div class="preview-row">
+                    <span>STR:</span><span id="preview-str">1</span>
+                  </div>
+                  <div class="preview-row">
+                    <span>DEX:</span><span id="preview-dex">1</span>
+                  </div>
+                  <div class="preview-row">
+                    <span>INT:</span><span id="preview-int">1</span>
+                  </div>
+                  <div class="preview-row">
+                    <span>VIT:</span><span id="preview-vit">1</span>
+                  </div>
+                </div>
+                <div class="preview-derived">
+                  <div class="preview-note">Race bonuses will be applied automatically</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="buttons">
-            <button id="cc-confirm" class="primary">Confirm</button>
+
+          <!-- Confirm Button -->
+          <div class="cc-footer">
+            <button id="cc-confirm" class="primary" disabled>Create Hero</button>
           </div>
         </div>
       </section>
 
       <!-- Town Screen -->
       <section id="screen-town" class="screen hidden">
+        <!-- Development Grid Overlay -->
+        <div id="village-grid" class="village-grid-overlay"></div>
+        
+        <div class="village-map">
+          <!-- Player Stats Panel (top) -->
+          <div class="village-hud">
+            <div id="town-player-summary"></div>
+            <div id="town-speed-summary" class="values"></div>
+            <div class="village-hud-buttons">
+              <button id="btn-view-char">Character</button>
+              <button id="btn-talents">Skills</button>
+              <button id="btn-save">Save</button>
+              <button id="btn-load">Load</button>
+              <button id="btn-settings">Settings</button>
+              <button id="toggle-grid" style="background: #ef4444;">Toggle Grid</button>
+            </div>
+          </div>
+
+          <!-- Interactive Village Buildings -->
+          <div class="village-scene">
+            <h2 class="village-title">Elderbrook Village</h2>
+            
+            <!-- Buildings Grid -->
+            <div class="village-buildings">
+              <!-- Row 1 -->
+              <div class="building weapon-shop" id="village-weapon-shop">
+                <div class="building-icon">⚔️</div>
+                <div class="building-label">Weapon Shop</div>
+              </div>
+              <div class="building armor-shop" id="village-armor-shop">
+                <div class="building-icon">🛡️</div>
+                <div class="building-label">Armor Shop</div>
+              </div>
+              <div class="building inn" id="village-inn">
+                <div class="building-icon">🏠</div>
+                <div class="building-label">Inn</div>
+              </div>
+
+              <!-- Row 2 -->
+              <div class="building training-hall" id="village-training">
+                <div class="building-icon">💪</div>
+                <div class="building-label">Training Hall</div>
+              </div>
+              <div class="building quest-board" id="village-quests">
+                <div class="building-icon">📜</div>
+                <div class="building-label">Quest Board</div>
+              </div>
+              <div class="building crafting-station" id="village-crafting">
+                <div class="building-icon">🔨</div>
+                <div class="building-label">Crafting</div>
+              </div>
+
+              <!-- Row 3 - NPCs and Exploration -->
+              <div class="building npc-area" id="village-npcs">
+                <div class="building-icon">👥</div>
+                <div class="building-label">Villagers</div>
+              </div>
+              <div class="building relic-shop hidden" id="village-relic-shop">
+                <div class="building-icon">✨</div>
+                <div class="building-label">Relic Merchant</div>
+              </div>
+            </div>
+
+            <!-- Exploration Zones -->
+            <div class="village-zones">
+              <h3>Exploration</h3>
+              <div class="zone-buttons">
+                <button id="btn-fight" class="zone-btn primary">🌲 Forest</button>
+                <button id="btn-cave" class="zone-btn">🕳️ Cave</button>
+                <button id="btn-elf-grove" class="zone-btn">🌿 Elf Grove</button>
+                <button id="btn-ruins" class="zone-btn hidden">🏛️ Ruins</button>
+                <button id="btn-depths" class="zone-btn hidden">🔥 Depths</button>
+                <button id="btn-boss" class="zone-btn hidden">💀 Cave Wyrm</button>
+                <button id="btn-elder-wyrm" class="zone-btn hidden">🐉 Elder Wyrm</button>
+                <button id="btn-shadow-portal" class="zone-btn hidden">🌀 Shadow Portal</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden legacy buttons for compatibility -->
+          <div class="hidden">
+            <button id="btn-weapon-shop"></button>
+            <button id="btn-armor-shop"></button>
+            <button id="btn-train"></button>
+            <button id="btn-rest"></button>
+            <button id="btn-quests"></button>
+            <button id="btn-relic-shop"></button>
+            <button id="btn-npcs"></button>
+            <button id="btn-crafting"></button>
+            <button id="btn-reset"></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Old Town Screen Layout (kept for reference, can be removed) -->
+      <section id="screen-town-old" class="screen hidden">
         <div class="panel">
           <h1>Elderbrook</h1>
           <div class="row">
             <div>
-              <div id="town-player-summary"></div>
-              <div id="town-speed-summary" class="values" style="margin-top:6px"></div>
+              <div id="town-player-summary-old"></div>
+              <div id="town-speed-summary-old" class="values" style="margin-top:6px"></div>
             </div>
             <div class="buttons column">
               <button id="btn-fight" class="primary">Hunt in the Forest</button>

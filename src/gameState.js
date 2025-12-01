@@ -5,6 +5,14 @@
 // Beast: +1 STR
 // Elf: +1 INT & modest attack speed bonus
 // Bug: +1 DEX & increased attack speed
+// UPDATED RACE BONUSES (expanded):
+// Human: +2 to chosen stat (selected during character creation)
+// Beast: +4 STR (future: +8% max HP scaling)
+// Elf: +3 INT (future: +5% crit chance, cooldown recovery bonus)
+// Bug: +3 DEX (future: attack speed scaling passive)
+// Undead: +3 VIT (future: +10% status resistance)
+// NOTE: Future percentage / special passives intentionally deferred. Implement by storing passive modifiers
+// on player (e.g., player.passives = { critChancePct:5, hpPct:8 }) and integrating them inside recalculateDerived().
 //
 // Talent System:
 // - player.talentPoints: unspent points gained on level-up
@@ -37,7 +45,7 @@ export const GameState = {
       return;
     }
     
-    const { name, className, stats, race } = options;
+    const { name, className, stats, race, humanBonusTarget } = options; // humanBonusTarget used when race === 'Human'
     const base = {
       name: name || "Hero",
       class: className || "Warrior",
@@ -68,11 +76,40 @@ export const GameState = {
       maxHp: 0, hp: 0, maxMp: 0, mp: 0,
       attackPower: 0, magicPower: 0, defense: 0,
     };
-    // Apply small race bonuses (kept simple)
+    // Apply race stat bonuses (expanded definitions)
+    // NOTE: Percentage / advanced bonuses like crit chance %, cooldown recovery, HP %, status resist
+    // are NOT yet implemented mechanically. Future extension point: store passive modifiers and apply in recalculateDerived().
     switch (base.race) {
-      case 'Beast': base.stats.strength += 1; break;
-      case 'Elf': base.stats.intelligence += 1; break;
-      case 'Bug': base.stats.dexterity += 1; break;
+      case 'Human': {
+        // Flexible +2 to chosen stat (defaults to strength if missing)
+        const target = (humanBonusTarget || 'str').toLowerCase();
+        if (target === 'str') base.stats.strength += 2;
+        else if (target === 'dex') base.stats.dexterity += 2;
+        else if (target === 'int') base.stats.intelligence += 2;
+        else if (target === 'vit') base.stats.vitality += 2;
+        else base.stats.strength += 2; // fallback
+        break;
+      }
+      case 'Beast': {
+        base.stats.strength += 4;
+        // Future: base.maxHp scaling +8% after derived calc
+        break;
+      }
+      case 'Elf': {
+        base.stats.intelligence += 3;
+        // Future: crit chance +5%, cooldown recovery bonus
+        break;
+      }
+      case 'Bug': {
+        base.stats.dexterity += 3;
+        // Future: attack speed scaling passive
+        break;
+      }
+      case 'Undead': {
+        base.stats.vitality += 3;
+        // Future: status resistance +10%
+        break;
+      }
     }
 
     // Elf starts with an Elven Shortbow (if defined) auto-equipped.

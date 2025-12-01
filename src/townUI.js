@@ -16,6 +16,107 @@ import { openWorldMap } from './worldMapUI.js';
 
 export const TownUI = {
   init() {
+    // Development grid toggle
+    const toggleGridBtn = document.querySelector('#toggle-grid');
+    const gridOverlay = document.querySelector('#village-grid');
+    
+    toggleGridBtn?.addEventListener('click', () => {
+      if (gridOverlay.classList.contains('active')) {
+        gridOverlay.classList.remove('active');
+        gridOverlay.innerHTML = '';
+      } else {
+        gridOverlay.classList.add('active');
+        // Create 20x15 grid (300 cells)
+        gridOverlay.innerHTML = '';
+        for (let row = 0; row < 15; row++) {
+          for (let col = 0; col < 20; col++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            const cellNum = row * 20 + col + 1;
+            cell.textContent = cellNum;
+            cell.title = `Cell ${cellNum} (Row ${row + 1}, Col ${col + 1})`;
+            gridOverlay.appendChild(cell);
+          }
+        }
+      }
+    });
+
+    // Village building interactions
+    const weaponShopBuilding = document.querySelector('#village-weapon-shop');
+    weaponShopBuilding?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      this.openShop('weapon');
+    });
+
+    const armorShopBuilding = document.querySelector('#village-armor-shop');
+    armorShopBuilding?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      this.openShop('armor');
+    });
+
+    const innBuilding = document.querySelector('#village-inn');
+    innBuilding?.addEventListener('click', () => {
+      const p = GameState.player;
+      if (!p) { showModalMessage('Create a character first.'); return; }
+      const cost = 15;
+      if (p.gold >= cost) {
+        p.gold -= cost;
+        p.hp = p.maxHp;
+        p.mp = p.maxMp;
+        playSoundHeal();
+        renderTownSummary(p);
+        showModalMessage('You rest at the inn. HP and MP fully restored.');
+      } else {
+        showModalMessage("You can't afford to stay at the inn (15g needed).");
+      }
+    });
+
+    const trainingBuilding = document.querySelector('#village-training');
+    trainingBuilding?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      this.openTraining();
+    });
+
+    const questBuilding = document.querySelector('#village-quests');
+    questBuilding?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      this.openQuestBoard();
+    });
+
+    const craftingBuilding = document.querySelector('#village-crafting');
+    craftingBuilding?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      this.openCrafting();
+    });
+
+    const npcsBuilding = document.querySelector('#village-npcs');
+    npcsBuilding?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      const screen = renderNPCScreenShell();
+      const host = screen.querySelector('#npc-content');
+      const roster = listNPCs();
+      host.innerHTML = '<h3>Village Folk</h3>' + roster.map(n => `<button class="npc-select" data-id="${n.id}">${n.name} — ${n.role}</button>`).join('');
+      host.querySelectorAll('.npc-select').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const npc = roster.find(r => r.id === id);
+          openNPCInteraction(npc);
+        });
+      });
+      showScreen('screen-npc');
+    });
+
+    const relicShopBuilding = document.querySelector('#village-relic-shop');
+    relicShopBuilding?.addEventListener('click', () => {
+      const p = GameState.player;
+      if (!p) { showModalMessage('Create a character first.'); return; }
+      if (!p.flags?.boss_cave_wyrm_defeated) {
+        showModalMessage('The Relic Merchant only appears after the Cave Wyrm is defeated.');
+        return;
+      }
+      this.openShop('relic');
+    });
+
     // Zone exploration buttons
     const fightBtn = document.querySelector('#btn-fight');
     fightBtn?.addEventListener('click', () => {
@@ -61,7 +162,7 @@ export const TownUI = {
       backBtn?.classList.add('hidden');
     });
 
-    // Shop buttons
+    // Legacy button handlers (kept for hidden buttons used by existing code)
     const weaponShopBtn = document.querySelector('#btn-weapon-shop');
     weaponShopBtn?.addEventListener('click', () => {
       if (!GameState.player) { showModalMessage('Create a character first.'); return; }
@@ -102,6 +203,30 @@ export const TownUI = {
       }
     });
 
+    const npcsBtn = document.querySelector('#btn-npcs');
+    npcsBtn?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      const screen = renderNPCScreenShell();
+      const host = screen.querySelector('#npc-content');
+      const roster = listNPCs();
+      host.innerHTML = '<h3>Village Folk</h3>' + roster.map(n => `<button class="npc-select" data-id="${n.id}">${n.name} — ${n.role}</button>`).join('');
+      host.querySelectorAll('.npc-select').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const npc = roster.find(r => r.id === id);
+          openNPCInteraction(npc);
+        });
+      });
+      showScreen('screen-npc');
+    });
+
+    const craftBtnLegacy = document.querySelector('#btn-crafting');
+    craftBtnLegacy?.addEventListener('click', () => {
+      if (!GameState.player) { showModalMessage('Create a character first.'); return; }
+      this.openCrafting();
+    });
+
+    // HUD buttons (always visible)
     const viewCharBtn = document.querySelector('#btn-view-char');
     viewCharBtn?.addEventListener('click', () => {
       const modal = document.querySelector('#screen-message');
@@ -162,46 +287,32 @@ export const TownUI = {
       this.openSettings();
     });
 
-    const npcsBtn = document.querySelector('#btn-npcs');
-    if (npcsBtn) {
-      npcsBtn.addEventListener('click', () => {
-        const screen = renderNPCScreenShell();
-        const host = screen.querySelector('#npc-content');
-        const roster = listNPCs();
-        host.innerHTML = '<h3>Village Folk</h3>' + roster.map(n => `<button class="npc-select" data-id="${n.id}">${n.name} — ${n.role}</button>`).join('');
-        host.querySelectorAll('.npc-select').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-id');
-            const npc = roster.find(r => r.id === id);
-            openNPCInteraction(npc);
-          });
-        });
-        showScreen('screen-npc');
-      });
-    }
-
-    const craftBtn = document.querySelector('#btn-crafting');
-    if (craftBtn) {
-      craftBtn.addEventListener('click', () => {
-        if (!GameState.player) { showModalMessage('Create a character first.'); return; }
-        this.openCrafting();
-      });
-    }
-
     // World map button setup
     renderWorldMapScreenShell();
     let btnMap = document.getElementById('btn-world-map');
     if (!btnMap) {
-      const actions = document.getElementById('town-actions') || document.getElementById('screen-town');
-      if (actions) {
+      const villageZones = document.querySelector('.village-zones');
+      if (villageZones) {
         btnMap = document.createElement('button');
         btnMap.id = 'btn-world-map';
-        btnMap.textContent = 'World Map';
-        actions.appendChild(btnMap);
+        btnMap.className = 'zone-btn';
+        btnMap.textContent = '🗺️ World Map';
+        villageZones.querySelector('.zone-buttons')?.appendChild(btnMap);
       }
     }
     btnMap?.addEventListener('click', () => {
       openWorldMap();
+    });
+
+    const relicBtnLegacy = document.querySelector('#btn-relic-shop');
+    relicBtnLegacy?.addEventListener('click', () => {
+      const p = GameState.player;
+      if (!p) { showModalMessage('Create a character first.'); return; }
+      if (!p.flags?.boss_cave_wyrm_defeated) {
+        showModalMessage('The Relic Merchant only appears after the Cave Wyrm is defeated.');
+        return;
+      }
+      this.openShop('relic');
     });
 
     // Boss and endgame buttons
@@ -221,19 +332,6 @@ export const TownUI = {
         this.configureSkillButtons();
         const backBtn = document.querySelector('#btn-back-to-town');
         backBtn?.classList.add('hidden');
-      });
-    }
-
-    const relicBtn = document.querySelector('#btn-relic-shop');
-    if (relicBtn) {
-      relicBtn.addEventListener('click', () => {
-        const p = GameState.player;
-        if (!p) { showModalMessage('Create a character first.'); return; }
-        if (!p.flags?.boss_cave_wyrm_defeated) {
-          showModalMessage('The Relic Merchant only appears after the Cave Wyrm is defeated.');
-          return;
-        }
-        this.openShop('relic');
       });
     }
 
@@ -366,7 +464,17 @@ export const TownUI = {
     renderTownSummary(GameState.player);
     showScreen('screen-town');
     
-    // Update relic merchant visibility
+    // Update village building visibility
+    const relicShopBuilding = document.querySelector('#village-relic-shop');
+    if (relicShopBuilding) {
+      if (GameState.player?.flags?.boss_cave_wyrm_defeated) {
+        relicShopBuilding.classList.remove('hidden');
+      } else {
+        relicShopBuilding.classList.add('hidden');
+      }
+    }
+    
+    // Update relic merchant button visibility (legacy)
     const relicBtn = document.querySelector('#btn-relic-shop');
     if (relicBtn) {
       if (GameState.player?.flags?.boss_cave_wyrm_defeated) {

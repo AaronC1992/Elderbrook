@@ -11,7 +11,7 @@ export function qs(sel, root=document){ return root.querySelector(sel); }
 export function qsa(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
 
 const screens = [
-  '#screen-character-creation', '#screen-town', '#screen-battle', '#screen-shop', 
+  '#screen-title', '#screen-character-creation', '#screen-town', '#screen-battle', '#screen-shop', 
   '#screen-training', '#screen-message', '#screen-settings'
 ];
 
