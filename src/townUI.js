@@ -837,6 +837,22 @@ export const TownUI = {
     import('./renderer.js').then(r => r.setBackground('forest'));
     showScreen('screen-forest');
     playAmbience('forest');
+    
+    // Show the forest back arrow
+    const backArrow = document.querySelector('#forest-back-arrow');
+    if (backArrow) {
+      backArrow.classList.remove('hidden');
+      backArrow.onclick = () => {
+        backArrow.classList.add('hidden');
+        import('./renderer.js').then(r => r.setBackground('town'));
+        this.showTown();
+        // Restore hotspot container visibility when returning
+        const hc = document.querySelector('.village-hotspots');
+        if (hc) hc.style.display = '';
+        this.init();
+      };
+    }
+    
     const forestStatus = document.querySelector('#forest-status');
     // Roll for encounter
     if (Math.random() < 0.3) {
@@ -849,18 +865,6 @@ export const TownUI = {
       backBtn?.classList.add('hidden');
     } else {
       forestStatus.textContent = 'The forest is calm. (No encounter this time)';
-      // Wire back arrow
-      const backArrow = document.querySelector('#forest-back-arrow');
-      if (backArrow) {
-        backArrow.onclick = () => {
-          import('./renderer.js').then(r => r.setBackground('town'));
-          this.showTown();
-          // Restore hotspot container visibility when returning
-          const hc = document.querySelector('.village-hotspots');
-          if (hc) hc.style.display = '';
-          this.init();
-        };
-      }
     }
   },
 
