@@ -106,7 +106,10 @@ export const TownUI = {
     });
 
     // Weapon Shop hotspot (IDs: 233, 83, 86, 226)
-    const weaponBox = idsToGridBox([233, 83, 86, 226]);
+    let weaponBox = idsToGridBox([233, 83, 86, 226]);
+    // Adjust width to use cells 223–226 (columns 3–6)
+    weaponBox.colMin = 3; // 223 → col 3
+    weaponBox.colMax = 6; // 226 → col 6
     addHotspot({
       ...gridBoxToPercents(weaponBox),
       label: 'Weapon Shop',
