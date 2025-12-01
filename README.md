@@ -1,5 +1,7 @@
 # Elderbrook (HTML/CSS/JS)
 
+[Live Demo](https://aaronc1992.github.io/Elderbrook/) · GitHub Pages enabled
+
 Cooldown-based browser RPG with zones, a world map, NPCs, and an endgame boss — built in plain HTML/CSS and vanilla ES modules.
 
 ## Run Locally
@@ -30,6 +32,10 @@ Once GitHub Pages is enabled for this repo, you can play directly in your browse
 https://aaronc1992.github.io/Elderbrook/
 
 If the link shows a 404, enable Pages first (see Deploy section below), wait ~2 minutes, then refresh.
+
+### Troubleshooting
+- If assets don’t load, ensure paths in `index.html`/`styles.css` are relative (e.g., `./src/main.js`, `./backgrounds/...`).
+- Clear browser cache or use a hard refresh (Ctrl+F5) after enabling Pages.
 
 ## Structure
 
