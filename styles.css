@@ -308,6 +308,33 @@ body.disable-animations::before {
   transform: scale(0.95);
 }
 
+/* Grid toggle button for shops */
+.toggle-grid-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, var(--panel), #1a1f28);
+  border: 2px solid var(--accent-2);
+  border-radius: 8px;
+  color: var(--accent-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.toggle-grid-btn:hover {
+  background: linear-gradient(135deg, #1e2530, var(--panel));
+  border-color: #a78bfa;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(139,92,246,0.3);
+}
+.toggle-grid-btn:active {
+  transform: scale(0.95);
+}
+
 /* CSS-drawn shopkeeper NPC */
 .npc-shopkeeper {
   position: fixed;

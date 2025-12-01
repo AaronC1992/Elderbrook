@@ -728,6 +728,34 @@ export const TownUI = {
         this.init();
       };
     }
+    
+    // Wire grid toggle for shop screen
+    const shopGridBtn = document.querySelector('#shop-toggle-grid');
+    const gridOverlay = document.querySelector('#village-grid');
+    if (shopGridBtn && gridOverlay) {
+      shopGridBtn.onclick = () => {
+        if (gridOverlay.classList.contains('active')) {
+          gridOverlay.classList.remove('active');
+          gridOverlay.innerHTML = '';
+          shopGridBtn.textContent = 'Grid';
+        } else {
+          gridOverlay.classList.add('active');
+          shopGridBtn.textContent = 'Hide Grid';
+          gridOverlay.innerHTML = '';
+          for (let row = 0; row < 15; row++) {
+            for (let col = 0; col < 20; col++) {
+              const cell = document.createElement('div');
+              cell.className = 'grid-cell';
+              const cellNum = row * 20 + col + 1;
+              cell.textContent = cellNum;
+              cell.title = `Cell ${cellNum} (Row ${row + 1}, Col ${col + 1})`;
+              gridOverlay.appendChild(cell);
+            }
+          }
+        }
+      };
+    }
+    
     showScreen('screen-shop');
   },
 
