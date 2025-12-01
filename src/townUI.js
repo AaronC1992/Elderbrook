@@ -554,6 +554,7 @@ export const TownUI = {
   showTown() {
     renderTownSummary(GameState.player);
     showScreen('screen-town');
+    import('./renderer.js').then(r => r.setBackground('town'));
     // Ensure hotspots refresh only in town
     const host = document.querySelector('.village-hotspots');
     if (host) host.innerHTML = '';
@@ -666,8 +667,17 @@ export const TownUI = {
     // Add shop clerk hotspot based on shopId
     if (shopId === 'weapon') {
       const clerkBox = idsToGridBox([251, 111]);
+      const coords = gridBoxToPercents(clerkBox);
+      // Create visible NPC sprite
+      const npcEl = document.createElement('div');
+      npcEl.className = 'npc-shopkeeper';
+      npcEl.style.left = coords.leftPct + '%';
+      npcEl.style.top = coords.topPct + '%';
+      npcEl.addEventListener('click', () => renderItems());
+      document.body.appendChild(npcEl);
+      // Also add invisible hotspot for consistency
       addShopHotspot({
-        ...gridBoxToPercents(clerkBox),
+        ...coords,
         label: 'Shopkeeper',
         onClick: () => renderItems()
       });
@@ -711,7 +721,9 @@ export const TownUI = {
     // Wire back arrow to return to village
     const backArrow = document.querySelector('#shop-back-arrow');
     if (backArrow) {
-      backArrow.onclick = () => { 
+      backArrow.onclick = () => {
+        // Remove NPC sprite
+        document.querySelectorAll('.npc-shopkeeper').forEach(el => el.remove());
         this.showTown();
         this.init();
       };
