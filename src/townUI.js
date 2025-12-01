@@ -41,6 +41,85 @@ export const TownUI = {
       }
     });
 
+    // Hotspots container: create if missing
+    const scene = document.querySelector('.village-scene');
+    if (scene && !scene.querySelector('.village-hotspots')) {
+      const hotspots = document.createElement('div');
+      hotspots.className = 'village-hotspots';
+      scene.appendChild(hotspots);
+    }
+
+    // Helper: add hotspot by percentage box
+    function addHotspot({ leftPct, topPct, widthPct, heightPct, label, onClick }) {
+      const host = scene?.querySelector('.village-hotspots');
+      if (!host) return;
+      const el = document.createElement('div');
+      el.className = 'hotspot';
+      el.style.left = leftPct + '%';
+      el.style.top = topPct + '%';
+      el.style.width = widthPct + '%';
+      el.style.height = heightPct + '%';
+      if (label) el.setAttribute('data-label', label);
+      el.addEventListener('click', (e) => { e.stopPropagation(); onClick?.(); });
+      host.appendChild(el);
+    }
+
+    // Helper: convert 20x15 grid ranges to percentage box
+    // Assumes grid cells numbered left-to-right, top-to-bottom.
+    // Provide min/max col (1-20) and row (1-15).
+    function gridBoxToPercents({ colMin, colMax, rowMin, rowMax }) {
+      const cols = 20, rows = 15;
+      const leftPct = ((colMin - 1) / cols) * 100;
+      const topPct = ((rowMin - 1) / rows) * 100;
+      const widthPct = ((colMax - colMin + 1) / cols) * 100;
+      const heightPct = ((rowMax - rowMin + 1) / rows) * 100;
+      return { leftPct, topPct, widthPct, heightPct };
+    }
+
+    // Helper: derive box from 4 cell IDs (any order)
+    function idsToGridBox(cellIds) {
+      const cols = 20;
+      const rows = 15;
+      const toRC = (id) => ({
+        row: Math.floor((id - 1) / cols) + 1,
+        col: ((id - 1) % cols) + 1,
+      });
+      const pts = cellIds.map(toRC);
+      const rowMin = Math.max(1, Math.min(...pts.map(p => p.row)));
+      const rowMax = Math.min(rows, Math.max(...pts.map(p => p.row)));
+      const colMin = Math.max(1, Math.min(...pts.map(p => p.col)));
+      const colMax = Math.min(cols, Math.max(...pts.map(p => p.col)));
+      return { colMin, colMax, rowMin, rowMax };
+    }
+
+    // Example wiring (will replace with your provided coordinates):
+    // Potion Shop hotspot from provided cell IDs:
+    // Height cells 255 to 95; Width cells 238 to 98
+    // Derived rows/cols (20 columns grid):
+    // 255 -> row 13, col 15; 95 -> row 5, col 15; 238 -> row 12, col 18; 98 -> row 5, col 18
+    // Final box: rows 5-13, cols 15-18
+    addHotspot({
+      ...gridBoxToPercents({ colMin: 15, colMax: 18, rowMin: 5, rowMax: 13 }),
+      label: 'Potion Shop',
+      onClick: () => this.openShop('potion')
+    });
+
+    // Weapon Shop hotspot (IDs: 233, 83, 86, 226)
+    const weaponBox = idsToGridBox([233, 83, 86, 226]);
+    addHotspot({
+      ...gridBoxToPercents(weaponBox),
+      label: 'Weapon Shop',
+      onClick: () => this.openShop('weapon')
+    });
+
+    // Armor Shop hotspot (IDs: 228, 148, 150, 230)
+    const armorBox = idsToGridBox([228, 148, 150, 230]);
+    addHotspot({
+      ...gridBoxToPercents(armorBox),
+      label: 'Armor Shop',
+      onClick: () => this.openShop('armor')
+    });
+
     // Village building interactions
     const weaponShopBuilding = document.querySelector('#village-weapon-shop');
     weaponShopBuilding?.addEventListener('click', () => {
@@ -515,7 +594,7 @@ export const TownUI = {
     const titleEl = document.querySelector('#shop-title');
     const contentEl = document.querySelector('#shop-content');
     const exitBtn = document.querySelector('#shop-exit');
-    titleEl.textContent = shopId === 'weapon' ? 'Weapon Shop' : (shopId === 'relic' ? 'Relic Merchant' : 'Armor Shop');
+    titleEl.textContent = shopId === 'weapon' ? 'Weapon Shop' : (shopId === 'relic' ? 'Relic Merchant' : (shopId === 'potion' ? 'Potion Shop' : 'Armor Shop'));
     const items = getShopItems(shopId);
     
     // Set shop-specific backgrounds
