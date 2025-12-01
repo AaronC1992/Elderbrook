@@ -132,13 +132,14 @@ export const TownUI = {
       onClick: () => this.openShop('armor')
     });
 
-    // Diagonal arrow at grid cell 294 (pointing down-right)
+    // Diagonal arrow at grid cell 294 (pointing down-right) -> enters Forest screen
     const arrowBox = idsToGridBox([294]);
     const arrowCoords = gridBoxToPercents(arrowBox);
     const arrowEl = document.createElement('div');
     arrowEl.className = 'village-arrow';
     arrowEl.style.left = arrowCoords.leftPct + '%';
     arrowEl.style.top = arrowCoords.topPct + '%';
+    // Down-right (image faces down) rotate -45deg
     arrowEl.style.transform = 'rotate(-45deg)';
     arrowEl.addEventListener('mouseenter', () => {
       arrowEl.style.transform = 'rotate(-45deg) scale(1.1)';
@@ -147,8 +148,7 @@ export const TownUI = {
       arrowEl.style.transform = 'rotate(-45deg)';
     });
     arrowEl.addEventListener('click', () => {
-      console.log('Diagonal arrow clicked at grid 294');
-      // TODO: Add navigation logic here
+      this.openForest();
     });
     document.body.appendChild(arrowEl);
 
@@ -231,16 +231,7 @@ export const TownUI = {
     // Zone exploration buttons
     const fightBtn = document.querySelector('#btn-fight');
     fightBtn?.addEventListener('click', () => {
-      const p = GameState.player;
-      if (!p) { showModalMessage('Create a character first.'); return; }
-      const enemy = getRandomForestEnemy(p.level);
-      import('./renderer.js').then(r => r.setBackground('forest'));
-      playAmbience('forest');
-      playSoundZoneTransition();
-      Battle.startBattle(enemy, 'forest');
-      this.configureSkillButtons();
-      const backBtn = document.querySelector('#btn-back-to-town');
-      backBtn?.classList.add('hidden');
+      this.openForest();
     });
 
     const caveBtn = document.querySelector('#btn-cave');
@@ -817,6 +808,39 @@ export const TownUI = {
     }
     
     showScreen('screen-shop');
+  },
+
+  /**
+   * Enter the Forest room. 30% chance to immediately start a battle.
+   */
+  openForest() {
+    const p = GameState.player;
+    if (!p) { showModalMessage('Create a character first.'); return; }
+    import('./renderer.js').then(r => r.setBackground('forest'));
+    showScreen('screen-forest');
+    playAmbience('forest');
+    const forestStatus = document.querySelector('#forest-status');
+    // Roll for encounter
+    if (Math.random() < 0.3) {
+      forestStatus.textContent = 'A hostile presence emerges!';
+      playSoundZoneTransition();
+      const enemy = getRandomForestEnemy(p.level);
+      Battle.startBattle(enemy, 'forest');
+      this.configureSkillButtons();
+      const backBtn = document.querySelector('#btn-back-to-town');
+      backBtn?.classList.add('hidden');
+    } else {
+      forestStatus.textContent = 'The forest is calm. (No encounter this time)';
+      // Wire back arrow
+      const backArrow = document.querySelector('#forest-back-arrow');
+      if (backArrow) {
+        backArrow.onclick = () => {
+          import('./renderer.js').then(r => r.setBackground('town'));
+          this.showTown();
+          this.init();
+        };
+      }
+    }
   },
 
   updateZoneButtons() {
