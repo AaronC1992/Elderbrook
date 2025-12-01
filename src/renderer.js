@@ -39,6 +39,12 @@ export function showScreen(id){
     if (!el) continue;
     if (s === `#${id}`) el.classList.remove('hidden'); else el.classList.add('hidden');
   }
+  // Toggle forest back arrow visibility based on active screen
+  const forestArrow = qs('#forest-back-arrow');
+  if (forestArrow) {
+    if (id === 'screen-forest') forestArrow.classList.remove('hidden');
+    else forestArrow.classList.add('hidden');
+  }
 }
 
 /**
