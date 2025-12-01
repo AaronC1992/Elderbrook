@@ -132,6 +132,20 @@ export const TownUI = {
       onClick: () => this.openShop('armor')
     });
 
+    // Diagonal arrow at grid cell 294 (pointing down-right)
+    const arrowBox = idsToGridBox([294]);
+    const arrowCoords = gridBoxToPercents(arrowBox);
+    const arrowEl = document.createElement('div');
+    arrowEl.className = 'village-arrow';
+    arrowEl.style.left = arrowCoords.leftPct + '%';
+    arrowEl.style.top = arrowCoords.topPct + '%';
+    arrowEl.style.transform = 'rotate(135deg)';
+    arrowEl.addEventListener('click', () => {
+      console.log('Diagonal arrow clicked at grid 294');
+      // TODO: Add navigation logic here
+    });
+    document.body.appendChild(arrowEl);
+
     // Village building interactions
     const weaponShopBuilding = document.querySelector('#village-weapon-shop');
     weaponShopBuilding?.addEventListener('click', () => {

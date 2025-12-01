@@ -220,6 +220,24 @@ body.disable-animations::before {
   text-shadow: 0 0 3px #000, 0 0 3px #000;
 }
 
+.village-arrow {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  background-image: url('backgrounds/arrow.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+}
+.village-arrow:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 12px rgba(74,163,255,0.5));
+}
+
 .village-hud {
   background: var(--panel);
   border: 1px solid #22262e;
@@ -285,28 +303,23 @@ body.disable-animations::before {
   left: 20px;
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, var(--panel), #1a1f28);
-  border: 2px solid var(--accent);
-  border-radius: 50%;
-  color: var(--accent);
-  font-size: 28px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-image: url('backgrounds/arrow.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transform: rotate(180deg);
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
 }
 .back-arrow:hover {
-  background: linear-gradient(135deg, #1e2530, var(--panel));
-  border-color: #6bc1ff;
-  transform: scale(1.08);
-  box-shadow: 0 6px 16px rgba(74,163,255,0.3);
+  transform: rotate(180deg) scale(1.08);
+  filter: drop-shadow(0 6px 16px rgba(74,163,255,0.5));
 }
 .back-arrow:active {
-  transform: scale(0.95);
+  transform: rotate(180deg) scale(0.95);
 }
 
 /* Grid toggle button for shops */
