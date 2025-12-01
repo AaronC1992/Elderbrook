@@ -44,7 +44,7 @@ body::after {
 
 /* Town background - increased opacity to see buildings */
 body.bg-town::before {
-  background-image: url('./backgrounds/Elderbrook-village.jpg');
+  background-image: url('backgrounds/Elderbrook-village.jpg');
   opacity: 1; /* Full visibility for village */
 }
 
