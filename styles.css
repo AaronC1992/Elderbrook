@@ -378,6 +378,41 @@ body.disable-animations::before {
   transform: scale(0.95);
 }
 
+
+/* Animated Blacksmith Sprite */
+.blacksmith-animated {
+  position: fixed;
+  width: 80px;
+  height: 120px;
+  cursor: pointer;
+  z-index: 8;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: blacksmith-idle 0.8s steps(15) infinite;
+  transition: transform 0.15s ease;
+}
+.blacksmith-animated:hover {
+  transform: scale(1.05);
+}
+@keyframes blacksmith-idle {
+  0% { background-image: url('./NPC/Blacksmith/blacksmith_idle_01.png'); }
+  6.67% { background-image: url('./NPC/Blacksmith/blacksmith_idle_02.png'); }
+  13.33% { background-image: url('./NPC/Blacksmith/blacksmith_idle_03.png'); }
+  20% { background-image: url('./NPC/Blacksmith/blacksmith_idle_04.png'); }
+  26.67% { background-image: url('./NPC/Blacksmith/blacksmith_idle_05.png'); }
+  33.33% { background-image: url('./NPC/Blacksmith/blacksmith_idle_06.png'); }
+  40% { background-image: url('./NPC/Blacksmith/blacksmith_idle_07.png'); }
+  46.67% { background-image: url('./NPC/Blacksmith/blacksmith_idle_08.png'); }
+  53.33% { background-image: url('./NPC/Blacksmith/blacksmith_idle_09.png'); }
+  60% { background-image: url('./NPC/Blacksmith/blacksmith_idle_10.png'); }
+  66.67% { background-image: url('./NPC/Blacksmith/blacksmith_idle_11.png'); }
+  73.33% { background-image: url('./NPC/Blacksmith/blacksmith_idle_12.png'); }
+  80% { background-image: url('./NPC/Blacksmith/blacksmith_idle_13.png'); }
+  86.67% { background-image: url('./NPC/Blacksmith/blacksmith_idle_14.png'); }
+  93.33% { background-image: url('./NPC/Blacksmith/blacksmith_idle_15.png'); }
+}
+
 /* CSS-drawn shopkeeper NPC */
 .npc-shopkeeper {
   position: fixed;

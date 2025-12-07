@@ -702,37 +702,19 @@ export const TownUI = {
     // Add shop clerk hotspot based on shopId
     // Create NPC sprites for each shop
     if (shopId === 'weapon') {
-      const clerkBox = idsToGridBox([251, 111]);
-      const coords = gridBoxToPercents(clerkBox);
-      const npcEl = document.createElement('div');
-      npcEl.className = 'npc-shopkeeper';
-      npcEl.style.left = coords.leftPct + '%';
-      npcEl.style.top = coords.topPct + '%';
-      npcEl.addEventListener('click', () => renderItems());
-      document.body.appendChild(npcEl);
+      // Add animated blacksmith sprite
+      const smithBox = idsToGridBox([185, 100]);
+      const smithCoords = gridBoxToPercents(smithBox);
+      const smithEl = document.createElement('div');
+      smithEl.className = 'blacksmith-animated';
+      smithEl.style.left = smithCoords.leftPct + '%';
+      smithEl.style.top = smithCoords.topPct + '%';
+      smithEl.addEventListener('click', () => renderItems());
+      document.body.appendChild(smithEl);
       addShopHotspot({
-        ...coords,
-        label: 'Shopkeeper',
+        ...smithCoords,
+        label: 'Blacksmith',
         onClick: () => renderItems()
-      });
-      // Add blacksmith NPC to weapon shop
-      import('./npcs.js').then(({ getNPCById, openNPCInteraction }) => {
-        const blacksmith = getNPCById('blacksmith_garr');
-        if (blacksmith) {
-          const smithBox = idsToGridBox([185, 100]);
-          const smithCoords = gridBoxToPercents(smithBox);
-          const smithEl = document.createElement('div');
-          smithEl.className = 'npc-shopkeeper';
-          smithEl.style.left = smithCoords.leftPct + '%';
-          smithEl.style.top = smithCoords.topPct + '%';
-          smithEl.addEventListener('click', () => openNPCInteraction(blacksmith));
-          document.body.appendChild(smithEl);
-          addShopHotspot({
-            ...smithCoords,
-            label: blacksmith.name + ' (Blacksmith)',
-            onClick: () => openNPCInteraction(blacksmith)
-          });
-        }
       });
     } else if (shopId === 'armor') {
       const clerkBox = idsToGridBox([217, 117]);
