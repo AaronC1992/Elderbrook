@@ -382,23 +382,24 @@ body.disable-animations::before {
 /* Animated Blacksmith Sprite */
 .blacksmith-animated {
   position: fixed;
-  width: 420px;
-  height: 540px;
+  width: 560px;
+  height: 720px;
   cursor: pointer;
   z-index: 8;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center bottom;
-  animation: blacksmith-idle 1.2s steps(15) infinite;
+  animation: blacksmith-idle 1.8s infinite;
   transition: transform 0.15s ease;
   filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3));
+  image-rendering: crisp-edges;
 }
 .blacksmith-animated:hover {
   transform: scale(1.08);
   filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.4));
 }
 @keyframes blacksmith-idle {
-  0% { background-image: url('./NPC/Blacksmith/blacksmith_idle_01.png'); }
+  0%, 100% { background-image: url('./NPC/Blacksmith/blacksmith_idle_01.png'); }
   6.67% { background-image: url('./NPC/Blacksmith/blacksmith_idle_02.png'); }
   13.33% { background-image: url('./NPC/Blacksmith/blacksmith_idle_03.png'); }
   20% { background-image: url('./NPC/Blacksmith/blacksmith_idle_04.png'); }
