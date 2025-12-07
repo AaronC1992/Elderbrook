@@ -715,6 +715,25 @@ export const TownUI = {
         label: 'Shopkeeper',
         onClick: () => renderItems()
       });
+      // Add blacksmith NPC to weapon shop
+      import('./npcs.js').then(({ getNPCById, openNPCInteraction }) => {
+        const blacksmith = getNPCById('blacksmith_garr');
+        if (blacksmith) {
+          const smithBox = idsToGridBox([185, 100]);
+          const smithCoords = gridBoxToPercents(smithBox);
+          const smithEl = document.createElement('div');
+          smithEl.className = 'npc-shopkeeper';
+          smithEl.style.left = smithCoords.leftPct + '%';
+          smithEl.style.top = smithCoords.topPct + '%';
+          smithEl.addEventListener('click', () => openNPCInteraction(blacksmith));
+          document.body.appendChild(smithEl);
+          addShopHotspot({
+            ...smithCoords,
+            label: blacksmith.name + ' (Blacksmith)',
+            onClick: () => openNPCInteraction(blacksmith)
+          });
+        }
+      });
     } else if (shopId === 'armor') {
       const clerkBox = idsToGridBox([217, 117]);
       const coords = gridBoxToPercents(clerkBox);
