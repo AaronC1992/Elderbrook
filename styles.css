@@ -382,8 +382,8 @@ body.disable-animations::before {
 /* Animated Blacksmith Sprite */
 .blacksmith-animated {
   position: fixed;
-  width: 280px;
-  height: 360px;
+  width: 420px;
+  height: 540px;
   cursor: pointer;
   z-index: 8;
   background-size: contain;
