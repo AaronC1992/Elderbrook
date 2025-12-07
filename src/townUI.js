@@ -702,8 +702,8 @@ export const TownUI = {
     // Add shop clerk hotspot based on shopId
     // Create NPC sprites for each shop
     if (shopId === 'weapon') {
-      // Add animated blacksmith sprite
-      const smithBox = idsToGridBox([185, 100]);
+      // Add animated blacksmith sprite positioned near the window
+      const smithBox = idsToGridBox([50, 80]);
       const smithCoords = gridBoxToPercents(smithBox);
       const smithEl = document.createElement('div');
       smithEl.className = 'blacksmith-animated';

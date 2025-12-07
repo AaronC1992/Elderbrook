@@ -382,18 +382,20 @@ body.disable-animations::before {
 /* Animated Blacksmith Sprite */
 .blacksmith-animated {
   position: fixed;
-  width: 80px;
-  height: 120px;
+  width: 140px;
+  height: 180px;
   cursor: pointer;
   z-index: 8;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
-  background-position: center;
-  animation: blacksmith-idle 0.8s steps(15) infinite;
+  background-position: center bottom;
+  animation: blacksmith-idle 1.2s steps(15) infinite;
   transition: transform 0.15s ease;
+  filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3));
 }
 .blacksmith-animated:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.4));
 }
 @keyframes blacksmith-idle {
   0% { background-image: url('./NPC/Blacksmith/blacksmith_idle_01.png'); }
