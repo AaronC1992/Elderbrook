@@ -703,8 +703,8 @@ export const TownUI = {
     // Create NPC sprites for each shop
     if (shopId === 'weapon') {
       // Add animated blacksmith sprite in front of counter
-      const smithBox = idsToGridBox([140, 120]);
-      const smithCoords = gridBoxToPercents(smithBox);
+      // Position directly with percentages instead of grid system
+      const smithCoords = { leftPct: 50, topPct: 30, widthPct: 20, heightPct: 40 };
       console.log('[openShop] Blacksmith coords:', smithCoords);
       const smithEl = document.createElement('div');
       smithEl.className = 'blacksmith-animated';
