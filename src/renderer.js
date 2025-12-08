@@ -45,6 +45,11 @@ export function showScreen(id){
     if (id === 'screen-forest') forestArrow.classList.remove('hidden');
     else forestArrow.classList.add('hidden');
   }
+  // Hide all village arrows on title and character creation screens
+  const villageArrows = document.querySelectorAll('.village-arrow, .back-arrow');
+  if (id === 'screen-title' || id === 'screen-character-creation') {
+    villageArrows.forEach(arrow => arrow.classList.add('hidden'));
+  }
 }
 
 /**

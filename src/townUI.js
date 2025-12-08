@@ -712,11 +712,6 @@ export const TownUI = {
       smithEl.addEventListener('click', () => renderItems());
       document.body.appendChild(smithEl);
       
-      // Add counter overlay to clip lower body
-      const counterOverlay = document.createElement('div');
-      counterOverlay.className = 'counter-overlay';
-      document.body.appendChild(counterOverlay);
-      
       addShopHotspot({
         ...smithCoords,
         label: 'Blacksmith',
