@@ -385,7 +385,7 @@ body.disable-animations::before {
   width: 560px;
   height: 720px;
   cursor: pointer;
-  z-index: 5;
+  z-index: 8;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center bottom;
@@ -393,7 +393,6 @@ body.disable-animations::before {
   transition: transform 0.15s ease;
   filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.5)) saturate(1.1) brightness(1.05);
   image-rendering: crisp-edges;
-  clip-path: inset(0 0 42% 0);
 }
 .blacksmith-animated:hover {
   transform: scale(1.08);
