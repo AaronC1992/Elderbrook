@@ -705,12 +705,15 @@ export const TownUI = {
       // Add animated blacksmith sprite in front of counter
       const smithBox = idsToGridBox([200, 180]);
       const smithCoords = gridBoxToPercents(smithBox);
+      console.log('[openShop] Blacksmith coords:', smithCoords);
       const smithEl = document.createElement('div');
       smithEl.className = 'blacksmith-animated';
       smithEl.style.left = smithCoords.leftPct + '%';
       smithEl.style.top = smithCoords.topPct + '%';
       smithEl.addEventListener('click', () => renderItems());
       document.body.appendChild(smithEl);
+      console.log('[openShop] Blacksmith element created:', smithEl);
+      console.log('[openShop] Blacksmith computed style:', window.getComputedStyle(smithEl).backgroundImage);
       
       addShopHotspot({
         ...smithCoords,
