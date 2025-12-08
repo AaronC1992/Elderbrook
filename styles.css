@@ -385,7 +385,7 @@ body.disable-animations::before {
   width: 560px;
   height: 720px;
   cursor: pointer;
-  z-index: 8;
+  z-index: 5;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center bottom;
@@ -397,6 +397,19 @@ body.disable-animations::before {
 .blacksmith-animated:hover {
   transform: scale(1.08);
   filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.4));
+}
+
+/* Counter overlay to clip blacksmith lower body */
+.counter-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 42%;
+  background: transparent;
+  z-index: 6;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 9999px rgba(0,0,0,0);
 }
 @keyframes blacksmith-idle {
   0%, 100% { background-image: url('./NPC/Blacksmith/blacksmith_idle_01.png'); }
