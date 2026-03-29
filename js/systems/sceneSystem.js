@@ -39,6 +39,11 @@ function buildUiFromStep(step, scene, overrideText) {
   const currentState = getState();
   const { player } = currentState;
 
+  const visibleNpcs = (step.npcs ?? []).filter((npc) => {
+    if (!npc.requireFlag) return true;
+    return currentState.flags.includes(npc.requireFlag);
+  });
+
   return {
     speaker: step.speaker,
     text: overrideText || fillTemplate(step.text, player),
@@ -47,7 +52,7 @@ function buildUiFromStep(step, scene, overrideText) {
       left: resolvePortrait(step.portraits?.left, player),
       right: resolvePortrait(step.portraits?.right, player)
     },
-    npcs: step.npcs ?? [],
+    npcs: visibleNpcs,
     choices: step.choices ?? []
   };
 }

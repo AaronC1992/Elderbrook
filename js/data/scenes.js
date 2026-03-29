@@ -72,6 +72,13 @@ export const SCENES = {
             action: { type: "openShop", payload: { shopId: "potions" } }
           },
           {
+            id: "loc-guild",
+            label: "Adventurers Guild",
+            x: 50,
+            y: 25,
+            action: { type: "goGuildHall" }
+          },
+          {
             id: "loc-gate",
             label: "Town Gate",
             x: 80,
@@ -116,13 +123,69 @@ export const SCENES = {
             label: "Goblin Cave",
             x: 65,
             y: 42,
-            action: { type: "startCombat", payload: { enemyId: "goblinScout" } }
+            action: { type: "startCombat", payload: { enemyId: "goblinScout" } },
+            requireFlag: "quest:goblinCave"
           }
         ],
         choices: [
           {
             text: "Inventory",
             type: "openInventory"
+          }
+        ]
+      }
+    ]
+  },
+  guildHall: {
+    id: "guildHall",
+    chapterLabel: "Chapter 1",
+    locationLabel: "Adventurers Guild",
+    steps: [
+      {
+        id: "guild-main",
+        speaker: "Guildmaster Rowan",
+        text: "Welcome back, {playerName}. Check the quest board if you are looking for work, or speak up if you need guidance.",
+        background: ASSETS.backgrounds.guildHall,
+        portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
+        npcs: [
+          {
+            id: "loc-questboard",
+            label: "Quest Board",
+            x: 50,
+            y: 30,
+            action: { type: "goQuestBoard" }
+          }
+        ],
+        choices: [
+          {
+            text: "Return to Town",
+            type: "returnTown"
+          }
+        ]
+      }
+    ]
+  },
+  questBoard: {
+    id: "questBoard",
+    chapterLabel: "Chapter 1",
+    locationLabel: "Quest Board",
+    steps: [
+      {
+        id: "board-view",
+        speaker: "Quest Board",
+        text: "Pinned notices flutter in the draught. One job catches your eye.",
+        background: ASSETS.backgrounds.guildHall,
+        portraits: { left: null, right: null },
+        npcs: [],
+        choices: [
+          {
+            text: "Clear the Goblin Cave (Combat)",
+            type: "acceptQuest",
+            payload: { flag: "quest:goblinCave", nextScene: "worldMap" }
+          },
+          {
+            text: "Back to Guild Hall",
+            type: "goGuildHall"
           }
         ]
       }

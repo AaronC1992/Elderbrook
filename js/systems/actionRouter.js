@@ -33,6 +33,25 @@ export function handleActionChoice(choice) {
     case "goWorldMap":
       loadScene("worldMap", 0);
       break;
+    case "goGuildHall":
+      loadScene("guildHall", 0);
+      break;
+    case "goQuestBoard":
+      loadScene("questBoard", 0);
+      break;
+    case "acceptQuest": {
+      const flag = choice.payload?.flag;
+      if (flag) {
+        setState((draftState) => {
+          if (!draftState.flags.includes(flag)) {
+            draftState.flags.push(flag);
+          }
+        });
+      }
+      const dest = choice.payload?.nextScene ?? "guildHall";
+      loadScene(dest, 0, "Quest accepted. The location is now marked on your map.");
+      break;
+    }
     case "restTown": {
       const current = getState();
       if (current.hp >= current.maxHp) {
