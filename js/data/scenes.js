@@ -83,6 +83,10 @@ export const SCENES = {
           {
             text: "Rest at the fountain (recover 5 HP)",
             type: "restTown"
+          },
+          {
+            text: "Inventory",
+            type: "openInventory"
           }
         ]
       }
@@ -115,7 +119,12 @@ export const SCENES = {
             action: { type: "startCombat", payload: { enemyId: "goblinScout" } }
           }
         ],
-        choices: []
+        choices: [
+          {
+            text: "Inventory",
+            type: "openInventory"
+          }
+        ]
       }
     ]
   }

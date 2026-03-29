@@ -1,6 +1,7 @@
 import { choose, loadScene } from "./sceneSystem.js";
 import { openShop, buyItem, buyPotion } from "./shopSystem.js";
 import { startCombat, combatAttack, combatUsePotion, combatUseManaPotion, combatFlee } from "./combatSystem.js";
+import { openInventory, equipWeapon, equipArmor, closeInventory } from "./inventorySystem.js";
 import { setState, getState } from "../core/state.js";
 
 export function handleActionChoice(choice) {
@@ -57,6 +58,20 @@ export function handleActionChoice(choice) {
       break;
     case "combatFlee":
       combatFlee();
+      break;
+    case "openInventory":
+      openInventory();
+      break;
+    case "equipWeapon":
+      equipWeapon(choice.payload.itemId);
+      break;
+    case "equipArmor":
+      equipArmor(choice.payload.itemId);
+      break;
+    case "closeInventory":
+      closeInventory();
+      break;
+    case "none":
       break;
     default:
       if (choice.nextScene) {
