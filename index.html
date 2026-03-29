@@ -12,9 +12,12 @@
         <h2 class="setup-title">Create Your Adventurer</h2>
         <p class="setup-subtitle">Choose who you are before stepping into Elderbrook.</p>
 
-        <img id="setup-portrait" class="setup-portrait" src="assets/portraits/male-player.png" alt="Player portrait" />
+        <div class="setup-body">
+          <div class="setup-portrait-panel">
+            <img id="setup-portrait" class="setup-portrait" src="assets/portraits/male-player.png" alt="Player portrait" />
+          </div>
 
-        <form id="player-setup-form" class="setup-form">
+          <form id="player-setup-form" class="setup-form">
           <label class="setup-label" for="player-name">Name</label>
           <input id="player-name" name="playerName" class="setup-input" type="text" maxlength="20" required />
 
@@ -41,7 +44,8 @@
           <p id="setup-error" class="setup-error" aria-live="polite"></p>
 
           <button class="primary-btn setup-submit" type="submit">Begin Journey</button>
-        </form>
+          </form>
+        </div>
       </div>
     </section>
 

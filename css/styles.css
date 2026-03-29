@@ -48,12 +48,25 @@ body {
 }
 
 .setup-card {
-  width: min(540px, 100%);
+  width: min(780px, 100%);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.15rem;
   background: linear-gradient(180deg, rgba(16, 24, 34, 0.98) 0%, rgba(12, 17, 24, 0.98) 100%);
   box-shadow: var(--shadow);
+}
+
+.setup-body {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.setup-portrait-panel {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .setup-title {
@@ -69,12 +82,11 @@ body {
 
 .setup-portrait {
   display: block;
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 1rem;
+  width: 220px;
+  height: auto;
   border: 2px solid var(--border);
-  border-radius: 50%;
-  object-fit: cover;
+  border-radius: 10px;
+  object-fit: contain;
   background: rgba(22, 28, 37, 0.95);
 }
 
