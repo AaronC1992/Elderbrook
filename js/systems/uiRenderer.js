@@ -12,14 +12,17 @@ function setPortrait(element, src, side) {
   element.classList.add("is-visible");
 }
 
+const failedOverlays = new Set();
+
 function setGearOverlay(element, itemId, isBaseVisible) {
-  if (!isBaseVisible || !itemId) {
+  if (!isBaseVisible || !itemId || failedOverlays.has(itemId)) {
     element.classList.remove("is-visible");
     element.removeAttribute("src");
     return;
   }
 
   element.onerror = () => {
+    failedOverlays.add(itemId);
     element.classList.remove("is-visible");
     element.removeAttribute("src");
     element.onerror = null;
