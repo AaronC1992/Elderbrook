@@ -28,7 +28,7 @@ export function handleActionChoice(choice) {
       buyPotion(choice.payload?.potionType ?? "health");
       break;
     case "returnTown":
-      loadScene("townHub", 0, "You step back into the town square.");
+      loadScene("townHub", 0);
       break;
     case "goWorldMap":
       loadScene("worldMap", 0);
@@ -57,16 +57,13 @@ export function handleActionChoice(choice) {
     }
     case "restTown": {
       const current = getState();
-      if (current.hp >= current.maxHp) {
-        loadScene("townHub", 0, "You are already at full health. No rest needed.");
-        break;
+      if (current.hp < current.maxHp) {
+        const recoveredTo = Math.min(current.maxHp, current.hp + 5);
+        setState((draftState) => {
+          draftState.hp = recoveredTo;
+        });
       }
-      const recoveredTo = Math.min(current.maxHp, current.hp + 5);
-      const recovered = recoveredTo - current.hp;
-      setState((draftState) => {
-        draftState.hp = recoveredTo;
-      });
-      loadScene("townHub", 0, `You rest by the fountain and recover ${recovered} HP.`);
+      loadScene("townHub", 0);
       break;
     }
     case "combatAttack":

@@ -52,14 +52,13 @@ export function renderUI(state, onSelectChoice, onSelectNpc) {
   dom.background.style.backgroundImage = `url("${state.ui.background}")`;
 
   const isConversation = state.mode === "combat" || state.mode === "inventory" || Boolean(state.ui.portraits.left);
-  const hasChoices = state.ui.choices.length > 0;
   const hasNpcs = state.ui.npcs.length > 0;
-  const showDialogue = isConversation || hasChoices || !hasNpcs;
+  const isExploration = hasNpcs && !isConversation;
 
-  if (showDialogue) {
-    dom.dialoguePanel.classList.remove("is-hidden");
-  } else {
+  if (isExploration) {
     dom.dialoguePanel.classList.add("is-hidden");
+  } else {
+    dom.dialoguePanel.classList.remove("is-hidden");
   }
 
   if (isConversation) {

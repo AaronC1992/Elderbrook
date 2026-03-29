@@ -108,14 +108,16 @@ export const SCENES = {
             x: 80,
             y: 55,
             action: { type: "goWorldMap" }
+          },
+          {
+            id: "loc-fountain",
+            label: "Rest at Fountain",
+            x: 35,
+            y: 70,
+            action: { type: "restTown" }
           }
         ],
-        choices: [
-          {
-            text: "Rest at the fountain (recover 5 HP)",
-            type: "restTown"
-          }
-        ]
+        choices: []
       }
     ]
   },
