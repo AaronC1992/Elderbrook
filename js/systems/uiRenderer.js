@@ -51,7 +51,7 @@ function renderNpcs(npcs, onSelectNpc) {
 export function renderUI(state, onSelectChoice, onSelectNpc) {
   dom.background.style.backgroundImage = `url("${state.ui.background}")`;
 
-  const isConversation = state.mode === "combat" || (state.ui.portraits.left || state.ui.portraits.right);
+  const isConversation = state.mode === "combat" || Boolean(state.ui.portraits.left);
   if (isConversation) {
     setPortrait(dom.portraitLeft, state.ui.portraits.left, "Left");
     setPortrait(dom.portraitRight, state.ui.portraits.right, "Right");
