@@ -18,5 +18,6 @@ export const dom = {
   chapterLabel: document.getElementById("chapter-label"),
   goldLabel: document.getElementById("gold-label"),
   hpLabel: document.getElementById("hp-label"),
-  inventoryButton: document.getElementById("inventory-button")
+  inventoryButton: document.getElementById("inventory-button"),
+  dialoguePanel: document.getElementById("dialogue-panel")
 };

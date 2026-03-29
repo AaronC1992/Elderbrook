@@ -52,10 +52,13 @@ export function renderUI(state, onSelectChoice, onSelectNpc) {
   dom.background.style.backgroundImage = `url("${state.ui.background}")`;
 
   const isConversation = state.mode === "combat" || Boolean(state.ui.portraits.left);
+
   if (isConversation) {
+    dom.dialoguePanel.classList.remove("is-hidden");
     setPortrait(dom.portraitLeft, state.ui.portraits.left, "Left");
     setPortrait(dom.portraitRight, state.ui.portraits.right, "Right");
   } else {
+    dom.dialoguePanel.classList.add("is-hidden");
     setPortrait(dom.portraitLeft, null, "Left");
     setPortrait(dom.portraitRight, null, "Right");
   }

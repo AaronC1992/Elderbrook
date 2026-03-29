@@ -265,6 +265,10 @@ body {
   background: linear-gradient(0deg, var(--bg-panel) 0%, var(--bg-panel-alt) 100%);
 }
 
+.dialogue-panel.is-hidden {
+  display: none;
+}
+
 .hud-details p:first-child {
   color: var(--accent-strong);
 }
