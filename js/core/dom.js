@@ -3,6 +3,7 @@ export const dom = {
   playerSetupForm: document.getElementById("player-setup-form"),
   playerNameInput: document.getElementById("player-name"),
   setupError: document.getElementById("setup-error"),
+  setupPortrait: document.getElementById("setup-portrait"),
   background: document.getElementById("background-layer"),
   npcLayer: document.getElementById("npc-layer"),
   portraitLeft: document.getElementById("portrait-left"),

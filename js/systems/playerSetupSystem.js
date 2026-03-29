@@ -1,5 +1,6 @@
 import { dom } from "../core/dom.js";
 import { setState } from "../core/state.js";
+import { ASSETS } from "../data/assets.js";
 
 const ARCHETYPE_STARTERS = {
   sellsword: "basic-iron-sword.png",
@@ -80,9 +81,19 @@ function applyStartingLoadout(profile) {
   });
 }
 
+function updateSetupPortrait() {
+  const gender = dom.playerSetupForm.querySelector('input[name="gender"]:checked')?.value;
+  dom.setupPortrait.src = gender === "female" ? ASSETS.portraits.playerFemale : ASSETS.portraits.playerMale;
+}
+
 export function initPlayerSetup(onStartGame) {
   dom.playerNameInput.value = "";
   dom.setupError.textContent = "";
+  updateSetupPortrait();
+
+  dom.playerSetupForm.querySelectorAll('input[name="gender"]').forEach((radio) => {
+    radio.addEventListener("change", updateSetupPortrait);
+  });
 
   dom.playerSetupForm.addEventListener("submit", (event) => {
     event.preventDefault();
