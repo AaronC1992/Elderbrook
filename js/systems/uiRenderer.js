@@ -80,7 +80,7 @@ export function renderUI(state, onSelectChoice, onSelectNpc) {
   renderChoices(state.ui.choices, onSelectChoice);
   renderNpcs(state.ui.npcs, onSelectNpc);
 
-  const interactionsAvailable = hasChoices || state.ui.npcs.length > 0;
+  const interactionsAvailable = state.ui.choices.length > 0 || state.ui.npcs.length > 0;
   dom.continueButton.disabled = interactionsAvailable;
   dom.skipButton.disabled = interactionsAvailable;
 }
