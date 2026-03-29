@@ -44,7 +44,7 @@
         <button class="town-poi" data-screen="potion-shop" style="right:5%; top:28%;">Potion Shop</button>
         <button class="town-poi" data-screen="inn" style="right:5%; top:48%;">Adventurers Guild</button>
         <button class="town-poi town-poi-center" data-screen="quest-board" style="left:50%; top:18%;">Quest Board</button>
-        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:50%; bottom:8%;">Wilderness</button>
+        <button class="town-poi town-poi-center" data-screen="world-map" style="left:50%; bottom:8%;">Town Gates</button>
         <div class="town-title">Town of Elderbrook</div>
       </section>
 
@@ -115,13 +115,20 @@
         </div>
       </section>
 
-      <!-- Wilderness -->
+      <!-- World Map -->
+      <section id="screen-world-map" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
+        <div class="town-title">World Map</div>
+        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:50%; top:40%;">Goblin Cave</button>
+        <button class="town-poi town-poi-center" data-screen="town" style="left:50%; bottom:8%;">Back to Elderbrook</button>
+      </section>
+
+      <!-- Goblin Cave -->
       <section id="screen-wilderness" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
         <div class="panel">
-          <h2>Wilderness</h2>
-          <p class="flavor">Goblins roam the fields beyond town. Proceed with caution.</p>
+          <h2>Goblin Cave</h2>
+          <p class="flavor">A dank cave echoes with guttural snarls. Goblins lurk in the shadows.</p>
           <button class="btn-primary" id="btn-explore">Hunt Goblins</button>
-          <button class="btn-back" data-screen="town">Back to Town</button>
+          <button class="btn-back" data-screen="world-map">Back to World Map</button>
         </div>
       </section>
 
