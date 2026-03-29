@@ -19,26 +19,28 @@ body {
   font-family: Georgia, "Times New Roman", serif;
   background: var(--bg-dark);
   color: var(--text);
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #game-container {
-  max-width: 960px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
 /* Header */
 #game-header {
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border);
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 1.2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 #game-header h1 {
   color: var(--accent);
@@ -61,23 +63,38 @@ body {
 }
 
 /* Screens */
-#screen-area { flex: 1; padding: 1rem; }
+#screen-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
 .screen {
   display: none;
+  position: absolute;
+  inset: 0;
+  background-color: var(--bg-dark);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border-radius: var(--radius);
-  min-height: 400px;
+  overflow-y: auto;
 }
-.screen.active { display: block; }
+.screen.active {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
 
 /* Panels */
 .panel {
   background: rgba(26, 31, 46, 0.92);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.2rem;
+  padding: 1.5rem 2rem;
+  width: 100%;
+  max-width: 800px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 .panel h2 {
   color: var(--accent);
@@ -133,16 +150,19 @@ button {
 }
 .btn-back:hover { border-color: var(--accent); color: var(--text); }
 .btn-location {
-  background: var(--bg-panel-alt);
+  background: rgba(35, 40, 56, 0.85);
   color: var(--accent);
-  padding: 0.7rem 1.2rem;
+  padding: 1rem 1.2rem;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   border-color: var(--border);
+  transition: all 0.2s;
 }
 .btn-location:hover {
   border-color: var(--accent-hover);
-  background: rgba(40, 30, 15, 0.92);
+  background: rgba(60, 50, 20, 0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px rgba(212, 164, 56, 0.15);
 }
 .btn-danger {
   background: rgba(120, 30, 30, 0.8);
@@ -158,10 +178,14 @@ button {
 }
 
 /* Town */
+.town-panel {
+  margin-top: auto;
+  margin-bottom: auto;
+}
 .town-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 0.6rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
 }
 
 /* NPC Portraits & Shop Headers */
@@ -172,24 +196,26 @@ button {
   margin-bottom: 0.8rem;
 }
 .npc-portrait {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   border: 2px solid var(--accent);
   object-fit: cover;
   flex-shrink: 0;
   background: var(--bg-dark);
+  box-shadow: 0 0 12px rgba(212, 164, 56, 0.2);
 }
 
 /* Battle Portraits */
 .battle-portrait {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: var(--radius);
   border: 2px solid var(--border);
   object-fit: cover;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
   background: var(--bg-dark);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 
 /* Item Thumbnails */
@@ -206,7 +232,7 @@ button {
 /* Create */
 .create-panel {
   max-width: 400px;
-  margin: 2rem auto;
+  margin: auto;
   text-align: center;
 }
 .create-panel label {
@@ -255,7 +281,7 @@ button {
 }
 
 /* Battle */
-.battle-panel { text-align: center; }
+.battle-panel { text-align: center; margin-top: auto; margin-bottom: auto; }
 .battle-display {
   display: flex;
   justify-content: space-around;
@@ -426,9 +452,10 @@ button {
 #message-log {
   background: var(--bg-panel);
   border-top: 1px solid var(--border);
-  padding: 0.5rem 1rem;
-  max-height: 100px;
+  padding: 0.4rem 1rem;
+  max-height: 80px;
   overflow-y: auto;
+  flex-shrink: 0;
 }
 #log-entries {
   font-size: 0.82rem;
