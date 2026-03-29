@@ -1,87 +1,67 @@
-# Elderbrook (HTML/CSS/JS)
+# Elderbrook
 
-[Live Demo](https://aaronc1992.github.io/Elderbrook/) · GitHub Pages enabled
+Browser-based RPG foundation inspired by AdventureQuest and visual novels.
 
-Cooldown-based browser RPG with zones, a world map, NPCs, and an endgame boss — built in plain HTML/CSS and vanilla ES modules.
+## Stack
+
+- HTML
+- CSS
+- Vanilla JavaScript (ES modules)
+
+## Folder Structure
+
+- `assets/backgrounds` scene backgrounds
+- `assets/portraits` characters and NPC portraits
+- `assets/items` equipment and item art
+- `assets/ui` UI-specific sprites
+- `css/styles.css` global game styling
+- `js/data/assets.js` centralized asset path map
+- `js/data/items.js` item stats and potion data
+- `js/data/shops.js` shop metadata and inventories
+- `js/data/enemies.js` enemy combat stats and rewards
+- `js/data/scenes.js` story and scene definitions
+- `js/core/state.js` reactive state store
+- `js/core/dom.js` DOM references
+- `js/systems/sceneSystem.js` scene loading, step progress, choice routing
+- `js/systems/dialogueSystem.js` player input handling
+- `js/systems/actionRouter.js` routes UI actions (town, shops, combat)
+- `js/systems/shopSystem.js` buying flow and gold checks
+- `js/systems/combatSystem.js` goblin combat and reward loop
+- `js/systems/playerSetupSystem.js` character creator and starter loadout
+- `js/systems/uiRenderer.js` UI render layer
+- `js/main.js` bootstrap and debug hooks
+
+## How It Works
+
+1. `playerSetupSystem` blocks game start until the player sets name/gender/origin/archetype.
+2. `loadScene(sceneId)` loads a dialogue scene with text, portraits, choices, and optional clickable NPC hotspots.
+3. In `townHub`, clicking NPCs opens shops or starts a goblin fight.
+4. Shops spend gold and update inventory/equipment/potions.
+5. Combat uses equipped gear and rewards gold on victory.
+6. State updates trigger UI re-rendering through `subscribe()`.
+
+## Quick Test Path
+
+1. Create your character and enter town.
+2. Click `Blacksmith Ivar` and buy a weapon.
+3. Click `Armorer Sela` and buy armor.
+4. Click `Apothecary Mira` and buy Health Potions and Mana Potions.
+5. Click `Guildmaster Rowan` to start a goblin fight.
+6. Use potion actions during combat to test both potion types.
+7. Win to earn gold, then return to town and buy more upgrades.
+
+## Expanding The Game
+
+- Add new scenes in `js/data/scenes.js`.
+- Add new asset keys in `js/data/assets.js`.
+- Add more effect types in `applyEffects()` inside `js/systems/sceneSystem.js`.
+- Add combat/inventory screens as new systems under `js/systems`.
 
 ## Run Locally
 
-Open a local static server (modules won’t load via `file://`). Pick one:
+Use any static server from the project root.
 
-PowerShell (Python 3):
+Example with VS Code Live Server:
 
-```powershell
-python -m http.server 5173
-```
-
-Node.js (npx serve):
-
-```powershell
-npx serve -l 5173
-```
-
-VS Code Live Server:
-- Right‑click `index.html` → Open with Live Server
-
-Then open: `http://localhost:5173/`
-
-## Play Online
-
-Once GitHub Pages is enabled for this repo, you can play directly in your browser here:
-
-https://aaronc1992.github.io/Elderbrook/
-
-If the link shows a 404, enable Pages first (see Deploy section below), wait ~2 minutes, then refresh.
-
-### Troubleshooting
-- If assets don’t load, ensure paths in `index.html`/`styles.css` are relative (e.g., `./src/main.js`, `./backgrounds/...`).
-- Clear browser cache or use a hard refresh (Ctrl+F5) after enabling Pages.
-
-## Structure
-
-- `index.html` — screens and UI containers
-- `styles.css` — layout, components, animations, backgrounds (`bg-*` classes)
-- `backgrounds/` — background images (village, zones)
-- `src/`
-	- `main.js` — bootstrap, character creation wiring
-	- `townUI.js` — town actions (fight/rest/save/load, World Map button)
-	- `battleSystem.js` — RAF cooldown combat loop, boss hooks
-	- `renderer.js` — DOM helpers, screen shells (NPC, World Map), `setBackground`
-	- `gameState.js` — player model, derived stats, save/load
-	- `zones.js` — zone data, entry requirements, start effects
-	- `enemies.js` — enemies, elites, endgame boss
-	- `worldMapUI.js` — world map screen, nodes, travel flow
-	- `npcs.js` — NPC roster, dialogues, interactions
-	- `items.js`, `shops.js`, `crafting.js`, `talents.js`, `quests.js`, `statuses.js`, `utils.js`
-
-## Quick Test
-
-1) Enter name, choose class, allocate 5 points, Confirm
-2) Hunt in the Forest → Attack when CD is full
-3) Run (50% chance) or finish fight → Return to Town
-4) Save/Load/Rest to verify state
-
-5) World Map: from Town click “World Map” → hover nodes for details, click unlocked zones to travel and start a battle
-
-## World Map & Backgrounds
-
-- Dynamic backgrounds: `setBackground('<key>')` applies any `.bg-<key>` class — add new CSS background classes without changing JS.
-- Map nodes: pulled from `zones.js` and rendered by `worldMapUI.js` with unlock checks (`canEnterZone`). Locked nodes show reasons (level, quest, item).
-- Travel flow: short animation → set background → play ambience → start an encounter. Persists `flags.mapViewed` and `flags.lastVisitedZone` in `gameState`.
-- Flavor markers: simple lore dots with tooltips; optional fog‑of‑war overlay hides after first map view.
-- Difficulty indicators: node border colors based on `recommendedLevel` vs your level:
-	- Green `easy` (≥3 levels below)
-	- Amber `fair` (within −2..+1 levels)
-	- Red `hard` (+2..+3 levels)
-	- Gray `impossible` (≥+4 levels)
-
-## Deploy (GitHub Pages)
-
-You can host quickly via GitHub Pages:
-
-1. Push `main` to GitHub (already done).
-2. In the repo → Settings → Pages → “Source: Deploy from a branch” → Branch `main` → `/ (root)` → Save.
-3. Pages will publish in ~2 minutes. Open the public URL.
-
-If using modules, ensure the site serves via HTTPS and paths are relative. For local dev, prefer a static server over `file://` (see Run Locally).
-
+- Right click `index.html`
+- Open with Live Server

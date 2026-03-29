@@ -1,0 +1,20 @@
+export const dom = {
+  playerSetup: document.getElementById("player-setup"),
+  playerSetupForm: document.getElementById("player-setup-form"),
+  playerNameInput: document.getElementById("player-name"),
+  setupError: document.getElementById("setup-error"),
+  background: document.getElementById("background-layer"),
+  npcLayer: document.getElementById("npc-layer"),
+  portraitLeft: document.getElementById("portrait-left"),
+  portraitRight: document.getElementById("portrait-right"),
+  speakerName: document.getElementById("speaker-name"),
+  dialogueText: document.getElementById("dialogue-text"),
+  choiceList: document.getElementById("choice-list"),
+  continueButton: document.getElementById("continue-button"),
+  skipButton: document.getElementById("skip-button"),
+  playerLabel: document.getElementById("player-label"),
+  locationLabel: document.getElementById("location-label"),
+  chapterLabel: document.getElementById("chapter-label"),
+  goldLabel: document.getElementById("gold-label"),
+  hpLabel: document.getElementById("hp-label")
+};

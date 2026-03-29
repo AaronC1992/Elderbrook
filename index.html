@@ -1,483 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Elderbrook</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <div id="game-root">
-      <!-- Title Screen -->
-      <section id="screen-title" class="screen full-page">
-        <div class="panel title-screen">
-          <h1 class="title-logo">Elderbrook</h1>
-          <p class="title-subtitle">A Tale of Shadows and Steel</p>
-          <div class="buttons column title-buttons">
-            <button id="title-new-game" class="primary">New Game</button>
-            <button id="title-load-game">Load Game</button>
+    <section id="player-setup" class="player-setup" aria-label="Player setup">
+      <div class="setup-card">
+        <h2 class="setup-title">Create Your Adventurer</h2>
+        <p class="setup-subtitle">Choose who you are before stepping into Elderbrook.</p>
+
+        <form id="player-setup-form" class="setup-form">
+          <label class="setup-label" for="player-name">Name</label>
+          <input id="player-name" name="playerName" class="setup-input" type="text" maxlength="20" required />
+
+          <fieldset class="setup-fieldset">
+            <legend>Gender</legend>
+            <label><input type="radio" name="gender" value="male" checked /> Male</label>
+            <label><input type="radio" name="gender" value="female" /> Female</label>
+          </fieldset>
+
+          <label class="setup-label" for="player-origin">Origin</label>
+          <select id="player-origin" name="origin" class="setup-input">
+            <option value="brookfield">Brookfield Hamlet</option>
+            <option value="ironvale">Ironvale Outpost</option>
+            <option value="northwatch">Northwatch Border</option>
+          </select>
+
+          <label class="setup-label" for="player-archetype">Archetype</label>
+          <select id="player-archetype" name="archetype" class="setup-input">
+            <option value="sellsword">Sellsword</option>
+            <option value="ranger">Ranger</option>
+            <option value="arcanist">Arcanist</option>
+          </select>
+
+          <p id="setup-error" class="setup-error" aria-live="polite"></p>
+
+          <button class="primary-btn setup-submit" type="submit">Begin Journey</button>
+        </form>
+      </div>
+    </section>
+
+    <main class="app-shell" aria-label="Elderbrook game">
+      <section id="game-stage" class="game-stage" aria-live="polite">
+        <div id="background-layer" class="background-layer"></div>
+        <div id="npc-layer" class="npc-layer" aria-label="Scene interactions"></div>
+
+        <img id="portrait-left" class="portrait portrait-left" alt="Left character portrait" />
+        <img id="portrait-right" class="portrait portrait-right" alt="Right character portrait" />
+
+        <header class="hud">
+          <h1 class="game-title">Elderbrook</h1>
+          <div class="hud-details">
+            <p id="player-label">Player: Traveler</p>
+            <p id="location-label">Location: -</p>
+            <p id="chapter-label">Chapter: Prologue</p>
+            <p id="gold-label">Gold: 0</p>
+            <p id="hp-label">HP: 20 / 20</p>
           </div>
+        </header>
+      </section>
+
+      <section class="dialogue-panel" aria-label="Dialogue and choices">
+        <div class="speaker-row">
+          <p id="speaker-name" class="speaker-name">Narrator</p>
+          <button id="skip-button" class="secondary-btn" type="button">Skip Line</button>
+        </div>
+
+        <p id="dialogue-text" class="dialogue-text">
+          The wind over Elderbrook carries stories of old ruins and stranger things.
+        </p>
+
+        <div id="choice-list" class="choice-list" role="list"></div>
+
+        <div class="panel-actions">
+          <button id="continue-button" class="primary-btn" type="button">Continue</button>
         </div>
       </section>
+    </main>
 
-      <!-- Character Creation -->
-      <section id="screen-character-creation" class="screen full-page hidden">
-        <div class="character-creation-container">
-          <div class="cc-header">
-            <h1>Elderbrook</h1>
-            <h2>Create Your Hero</h2>
-          </div>
-
-          <div class="cc-layout">
-            <!-- Left: Race Selection -->
-            <div class="cc-race-list">
-              <h3>Choose Your Race</h3>
-              <div class="race-options">
-                <!-- Race cards with portrait placeholders -->
-                <div class="race-card" data-race="Human">
-                  <div class="race-portrait human-portrait">👤</div>
-                  <div class="race-name">Human</div>
-                </div>
-                <div class="race-card" data-race="Beast">
-                  <div class="race-portrait beast-portrait">🐺</div>
-                  <div class="race-name">Beast</div>
-                </div>
-                <div class="race-card" data-race="Elf">
-                  <div class="race-portrait elf-portrait">🧝</div>
-                  <div class="race-name">Elf</div>
-                </div>
-                <div class="race-card" data-race="Bug">
-                  <div class="race-portrait bug-portrait">🦗</div>
-                  <div class="race-name">Bug</div>
-                </div>
-                <div class="race-card" data-race="Undead">
-                  <div class="race-portrait undead-portrait">💀</div>
-                  <div class="race-name">Undead</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Center: Character Details -->
-            <div class="cc-center">
-              <!-- Name and Class -->
-              <div class="cc-name-class">
-                <div class="form-row">
-                  <label for="cc-name">Hero Name</label>
-                  <input id="cc-name" type="text" placeholder="Enter name" maxlength="16" />
-                </div>
-                <div class="form-row">
-                  <label>Class</label>
-                  <div class="radio-row">
-                    <label><input type="radio" name="cc-class" value="Warrior" checked /> Warrior</label>
-                    <label><input type="radio" name="cc-class" value="Mage" /> Mage</label>
-                    <label><input type="radio" name="cc-class" value="Rogue" /> Rogue</label>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Stat Distribution -->
-              <div class="cc-stat-allocation">
-                <label>Distribute Stat Points <span id="cc-points" class="points-remaining">5</span></label>
-                <div class="stats-grid-cc">
-                  <div class="stat-item">
-                    <div class="stat-label">STR</div>
-                    <div class="stat-controls">
-                      <button data-stat="str" data-delta="-1">-</button>
-                      <span id="cc-str" class="stat-value">1</span>
-                      <button data-stat="str" data-delta="1">+</button>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-label">DEX</div>
-                    <div class="stat-controls">
-                      <button data-stat="dex" data-delta="-1">-</button>
-                      <span id="cc-dex" class="stat-value">1</span>
-                      <button data-stat="dex" data-delta="1">+</button>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-label">INT</div>
-                    <div class="stat-controls">
-                      <button data-stat="int" data-delta="-1">-</button>
-                      <span id="cc-int" class="stat-value">1</span>
-                      <button data-stat="int" data-delta="1">+</button>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-label">VIT</div>
-                    <div class="stat-controls">
-                      <button data-stat="vit" data-delta="-1">-</button>
-                      <span id="cc-vit" class="stat-value">1</span>
-                      <button data-stat="vit" data-delta="1">+</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Stat Explanation Panel -->
-              <div class="cc-stat-info panel">
-                <h4>Core Stats Explained</h4>
-                <div class="stat-explanations">
-                  <div class="stat-explain-item">
-                    <span class="stat-icon str-icon">💪</span>
-                    <strong>STR</strong> – Increases physical damage
-                  </div>
-                  <div class="stat-explain-item">
-                    <span class="stat-icon dex-icon">⚡</span>
-                    <strong>DEX</strong> – Increases crit chance and attack cooldown speed
-                  </div>
-                  <div class="stat-explain-item">
-                    <span class="stat-icon int-icon">🔮</span>
-                    <strong>INT</strong> – Increases magic/elemental damage and abilities
-                  </div>
-                  <div class="stat-explain-item">
-                    <span class="stat-icon vit-icon">❤️</span>
-                    <strong>VIT</strong> – Increases max HP and reduces incoming damage
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right: Race Details & Preview -->
-            <div class="cc-right">
-              <!-- Race Details -->
-              <div id="cc-race-details" class="panel race-details">
-                <h3>Race Details</h3>
-                <div id="race-lore" class="race-lore">Select a race to see details</div>
-                <div id="race-bonuses" class="race-bonuses"></div>
-                <div id="race-playstyle" class="race-playstyle"></div>
-              </div>
-
-              <!-- Live Preview -->
-              <div id="cc-preview" class="panel cc-preview">
-                <h4>Starting Stats Preview</h4>
-                <div class="preview-stats">
-                  <div class="preview-row">
-                    <span>STR:</span><span id="preview-str">1</span>
-                  </div>
-                  <div class="preview-row">
-                    <span>DEX:</span><span id="preview-dex">1</span>
-                  </div>
-                  <div class="preview-row">
-                    <span>INT:</span><span id="preview-int">1</span>
-                  </div>
-                  <div class="preview-row">
-                    <span>VIT:</span><span id="preview-vit">1</span>
-                  </div>
-                </div>
-                <div class="preview-derived">
-                  <div class="preview-note">Race bonuses will be applied automatically</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Confirm Button -->
-          <div class="cc-footer">
-            <button id="cc-confirm" class="primary" disabled>Continue</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Town Screen -->
-      <section id="screen-town" class="screen hidden">
-        <div class="village-map">
-          <!-- Player Stats Panel (top) -->
-          <div class="village-hud">
-            <div id="town-player-summary"></div>
-            <div id="town-speed-summary" class="values"></div>
-            <div class="village-hud-buttons">
-              <button id="btn-view-char">Character</button>
-              <button id="btn-talents">Skills</button>
-              <button id="btn-save">Save</button>
-              <button id="btn-load">Load</button>
-              <button id="btn-settings">Settings</button>
-              <button id="toggle-grid" style="background: #ef4444;">Toggle Grid</button>
-            </div>
-          </div>
-
-          <!-- Interactive Village Buildings -->
-          <div class="village-scene">
-            <h2 class="village-title">Elderbrook Village</h2>
-            
-            <!-- Buildings Grid -->
-            <div class="village-buildings">
-              <!-- Row 1 -->
-              <div class="building weapon-shop" id="village-weapon-shop">
-                <div class="building-icon">⚔️</div>
-                <div class="building-label">Weapon Shop</div>
-              </div>
-              <div class="building armor-shop" id="village-armor-shop">
-                <div class="building-icon">🛡️</div>
-                <div class="building-label">Armor Shop</div>
-              </div>
-              <div class="building inn" id="village-inn">
-                <div class="building-icon">🏠</div>
-                <div class="building-label">Inn</div>
-              </div>
-
-              <!-- Row 2 -->
-              <div class="building training-hall" id="village-training">
-                <div class="building-icon">💪</div>
-                <div class="building-label">Training Hall</div>
-              </div>
-              <div class="building quest-board" id="village-quests">
-                <div class="building-icon">📜</div>
-                <div class="building-label">Quest Board</div>
-              </div>
-              <div class="building crafting-station" id="village-crafting">
-                <div class="building-icon">🔨</div>
-                <div class="building-label">Crafting</div>
-              </div>
-
-              <!-- Row 3 - NPCs and Exploration -->
-              <div class="building npc-area" id="village-npcs">
-                <div class="building-icon">👥</div>
-                <div class="building-label">Villagers</div>
-              </div>
-              <div class="building relic-shop hidden" id="village-relic-shop">
-                <div class="building-icon">✨</div>
-                <div class="building-label">Relic Merchant</div>
-              </div>
-            </div>
-
-            <!-- Exploration Zones -->
-            <div class="village-zones">
-              <h3>Exploration</h3>
-              <div class="zone-buttons">
-                <button id="btn-fight" class="zone-btn primary">🌲 Forest</button>
-                <button id="btn-cave" class="zone-btn">🕳️ Cave</button>
-                <button id="btn-elf-grove" class="zone-btn">🌿 Elf Grove</button>
-                <button id="btn-ruins" class="zone-btn hidden">🏛️ Ruins</button>
-                <button id="btn-depths" class="zone-btn hidden">🔥 Depths</button>
-                <button id="btn-boss" class="zone-btn hidden">💀 Cave Wyrm</button>
-                <button id="btn-elder-wyrm" class="zone-btn hidden">🐉 Elder Wyrm</button>
-                <button id="btn-shadow-portal" class="zone-btn hidden">🌀 Shadow Portal</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hidden legacy buttons for compatibility -->
-          <div class="hidden">
-            <button id="btn-weapon-shop"></button>
-            <button id="btn-armor-shop"></button>
-            <button id="btn-train"></button>
-            <button id="btn-rest"></button>
-            <button id="btn-quests"></button>
-            <button id="btn-relic-shop"></button>
-            <button id="btn-npcs"></button>
-            <button id="btn-crafting"></button>
-            <button id="btn-reset"></button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Forest Screen -->
-      <section id="screen-forest" class="screen hidden">
-        <div id="forest-content" class="panel" style="background: rgba(0,0,0,0.55); padding:16px; max-width:600px; margin:40px auto;">
-          <h2>The Forest</h2>
-          <p id="forest-status">You step into the quiet forest. The air is still.</p>
-        </div>
-      </section>
-      <button id="forest-back-arrow" class="back-arrow forest-exit hidden" title="Back to Town"></button>
-
-      <!-- Death Screen -->
-      <section id="screen-death" class="screen hidden">
-        <div class="panel death-panel">
-          <h1 class="death-title">You Have Fallen...</h1>
-          <p id="death-summary" class="death-summary"></p>
-          <div class="death-buttons">
-            <button id="btn-death-respawn">Respawn in Elderbrook</button>
-            <button id="btn-death-load">Load Last Save</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Old Town Screen Layout (kept for reference, can be removed) -->
-      <section id="screen-town-old" class="screen hidden">
-        <div class="panel">
-          <h1>Elderbrook</h1>
-          <div class="row">
-            <div>
-              <div id="town-player-summary-old"></div>
-              <div id="town-speed-summary-old" class="values" style="margin-top:6px"></div>
-            </div>
-            <div class="buttons column">
-              <button id="btn-fight" class="primary">Hunt in the Forest</button>
-              <button id="btn-cave">Explore the Cave</button>
-              <button id="btn-elf-grove">Visit Elf Grove</button>
-              <button id="btn-talents">Skill Tree</button>
-              <button id="btn-crafting">Crafting</button>
-              <button id="btn-weapon-shop">Visit Weapon Shop</button>
-              <button id="btn-armor-shop">Visit Armor Shop</button>
-              <button id="btn-train">Train Stats</button>
-              <button id="btn-rest">Rest at Inn</button>
-              <button id="btn-view-char">Character / Equipment</button>
-              <button id="btn-quests">Quest Board</button>
-              <button id="btn-boss">Enter Cave Depths (Boss)</button>
-              <button id="btn-relic-shop">Relic Merchant</button>
-               <button id="btn-ruins" class="hidden">Enter Ancient Ruins</button>
-              <button id="btn-shadow-portal" class="hidden">Shadow Portal (Group)</button>
-              <button id="btn-settings">Settings</button>
-              <div class="row gap">
-                <button id="btn-save">Save</button>
-                <button id="btn-load">Load</button>
-                <button id="btn-reset" class="danger">Reset</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Battle Screen -->
-      <section id="screen-battle" class="screen hidden">
-        <div class="panel">
-          <div class="battle-top">
-            <div class="combatant player">
-              <div class="name" id="player-name"></div>
-              <div class="meta"><span id="player-lv"></span></div>
-              <div class="bar hp"><div id="player-hp-bar"></div></div>
-              <div class="bar mp"><div id="player-mp-bar"></div></div>
-              <div class="bar cd"><div id="player-cd-bar"></div></div>
-              <div class="bar momentum"><div id="player-momentum-bar"></div></div>
-              <div class="values" id="player-speed-text"></div>
-              <div class="values"><span id="player-hp-text"></span> • <span id="player-mp-text"></span></div>
-            </div>
-            <div class="combatant enemy">
-              <div class="name" id="enemy-name"></div>
-              <div class="meta"><span id="enemy-lv"></span></div>
-              <div class="bar hp"><div id="enemy-hp-bar"></div></div>
-              <div class="bar cd"><div id="enemy-cd-bar"></div></div>
-              <div class="values" id="enemy-speed-text"></div>
-              <div class="values"><span id="enemy-hp-text"></span></div>
-            </div>
-          </div>
-          <div id="multi-enemies" class="hidden group-enemies"></div>
-          <div class="battle-actions">
-            <button id="act-attack" class="primary">Attack</button>
-            <button id="act-run">Run</button>
-          </div>
-          <div class="skill-bar">
-            <button id="skill-power-strike" class="skill-button" data-skill-id="power_strike">
-              <span class="skill-name">Power Strike</span>
-              <span class="skill-cost">15 MP</span>
-              <div class="skill-cooldown-overlay"></div>
-            </button>
-            <button id="skill-quick-jab" class="skill-button" data-skill-id="quick_jab">
-              <span class="skill-name">Quick Jab</span>
-              <span class="skill-cost">8 MP</span>
-              <div class="skill-cooldown-overlay"></div>
-            </button>
-            <button id="skill-arcane-bolt" class="skill-button" data-skill-id="arcane_bolt">
-              <span class="skill-name">Arcane Bolt</span>
-              <span class="skill-cost">20 MP</span>
-              <div class="skill-cooldown-overlay"></div>
-            </button>
-            <button id="skill-guarding-stance" class="skill-button" data-skill-id="guarding_stance">
-              <span class="skill-name">Guarding Stance</span>
-              <span class="skill-cost">12 MP</span>
-              <div class="skill-cooldown-overlay"></div>
-            </button>
-          </div>
-          <div class="battle-log">
-            <ul id="battle-log"></ul>
-          </div>
-          <div class="row right">
-            <button id="btn-back-to-town" class="hidden">Return to Town</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Shop Screen -->
-      <section id="screen-shop" class="screen hidden">
-        <button id="shop-back-arrow" class="back-arrow" title="Back to Town"></button>
-        <button id="shop-toggle-grid" class="toggle-grid-btn" title="Toggle Grid">Grid</button>
-        <div id="shop-content"></div>
-      </section>
-
-      <!-- Training Screen -->
-      <section id="screen-training" class="screen hidden">
-        <div class="panel">
-          <h2>Training Grounds</h2>
-          <div id="training-content"></div>
-          <div class="row right"><button id="training-exit">Back</button></div>
-        </div>
-      </section>
-
-      <!-- Quest Board Screen -->
-      <section id="screen-quests" class="screen hidden">
-        <div class="panel">
-          <h2>Quest Board</h2>
-          <div id="quests-content"></div>
-          <div class="row right"><button id="quests-exit">Back</button></div>
-        </div>
-      </section>
-
-      <!-- Talents Screen -->
-      <section id="screen-talents" class="screen hidden">
-        <div class="panel">
-          <h2>Skill & Talent Tree</h2>
-          <div id="talents-tabs" class="row">
-            <button id="talents-tab-class">Class Talents</button>
-            <button id="talents-tab-race">Race Talents</button>
-          </div>
-          <div id="talents-content"></div>
-          <div class="row right"><button id="talents-back">Back to Town</button></div>
-        </div>
-      </section>
-
-      <!-- Crafting Screen -->
-      <section id="screen-crafting" class="screen hidden">
-        <div class="panel">
-          <h2>Crafting Workshop</h2>
-          <div id="crafting-content"></div>
-          <div class="row right"><button id="crafting-exit">Back</button></div>
-        </div>
-      </section>
-
-      <!-- Settings Screen -->
-      <section id="screen-settings" class="screen hidden">
-        <div class="panel">
-          <h2>Settings</h2>
-          <div class="form-row">
-            <label>
-              <input type="checkbox" id="setting-sound" checked />
-              Enable Sound Effects
-            </label>
-          </div>
-          <div class="form-row">
-            <label>
-              <input type="checkbox" id="setting-music" checked />
-              Enable Music
-            </label>
-          </div>
-          <div class="form-row">
-            <label for="setting-sound-volume">Sound Volume</label>
-            <input type="range" id="setting-sound-volume" min="0" max="100" value="70" />
-            <span id="sound-volume-display">70%</span>
-          </div>
-          <div class="form-row">
-            <label>
-              <input type="checkbox" id="setting-animations" checked />
-              Enable Background Animations
-            </label>
-          </div>
-          <div class="row right"><button id="settings-back">Back to Town</button></div>
-        </div>
-      </section>
-
-      <!-- Message Modal -->
-      <section id="screen-message" class="modal hidden">
-        <div class="panel modal-content">
-          <div id="message-text"></div>
-          <div class="row right"><button id="message-ok">OK</button></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Development Grid Overlay (Global) -->
-    <div id="village-grid" class="village-grid-overlay"></div>
-
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="js/main.js"></script>
   </body>
-  </html>
+</html>
