@@ -53,7 +53,8 @@ export function renderUI(state, onSelectChoice, onSelectNpc) {
 
   const isConversation = state.mode === "combat" || state.mode === "inventory" || Boolean(state.ui.portraits.left);
   const hasChoices = state.ui.choices.length > 0;
-  const showDialogue = isConversation || hasChoices;
+  const hasNpcs = state.ui.npcs.length > 0;
+  const showDialogue = isConversation || hasChoices || !hasNpcs;
 
   if (showDialogue) {
     dom.dialoguePanel.classList.remove("is-hidden");

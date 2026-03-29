@@ -17,16 +17,11 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
   font-family: "Georgia", "Times New Roman", serif;
   color: var(--text-main);
-  background:
-    radial-gradient(circle at 15% 20%, #2c2c24 0%, transparent 42%),
-    radial-gradient(circle at 80% 10%, #3a2a21 0%, transparent 35%),
-    linear-gradient(165deg, #101010 0%, #181512 45%, #0e1218 100%);
-  display: grid;
-  place-items: center;
-  padding: 1rem;
+  background: var(--bg-page);
+  overflow: hidden;
 }
 
 .player-setup {
@@ -144,17 +139,18 @@ body {
 }
 
 .app-shell {
-  width: min(1100px, 100%);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  background: rgba(7, 10, 13, 0.92);
+  background: rgba(7, 10, 13, 1);
 }
 
 .game-stage {
   position: relative;
-  min-height: 66vh;
+  flex: 1 1 0;
+  min-height: 0;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
@@ -357,17 +353,8 @@ body {
 }
 
 @media (max-width: 780px) {
-  body {
-    padding: 0;
-  }
-
-  .app-shell {
-    border-radius: 0;
-    width: 100%;
-  }
-
   .game-stage {
-    min-height: 56vh;
+    min-height: 0;
   }
 
   .portrait {
