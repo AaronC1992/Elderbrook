@@ -29,8 +29,15 @@ export function handleActionChoice(choice) {
     case "returnTown":
       loadScene("townHub", 0, "You step back into the town square.");
       break;
+    case "goWorldMap":
+      loadScene("worldMap", 0);
+      break;
     case "restTown": {
       const current = getState();
+      if (current.hp >= current.maxHp) {
+        loadScene("townHub", 0, "You are already at full health. No rest needed.");
+        break;
+      }
       const recoveredTo = Math.min(current.maxHp, current.hp + 5);
       const recovered = recoveredTo - current.hp;
       setState((draftState) => {

@@ -36,9 +36,9 @@ function refreshCombatUi(enemy, message) {
     draftState.ui.npcs = [];
     draftState.ui.choices = [
       { text: "Attack", type: "combatAttack" },
-      { text: `Use ${POTIONS.health.name}`, type: "combatPotion" },
-      { text: `Use ${POTIONS.mana.name}`, type: "combatManaPotion" },
-      { text: "Flee to Town", type: "combatFlee" }
+      { text: `Use Health Potion (${state.potionCount})`, type: "combatPotion" },
+      { text: `Use Mana Potion (${state.manaPotionCount})`, type: "combatManaPotion" },
+      { text: "Flee", type: "combatFlee" }
     ];
   });
 }
@@ -85,7 +85,7 @@ export function combatAttack() {
       draftState.mode = "dialogue";
     });
 
-    loadScene("townHub", 0, `You defeated the ${enemy.name} and recovered ${reward} gold.`);
+    loadScene("worldMap", 0, `You defeated the ${enemy.name} and earned ${reward} gold.`);
     return;
   }
 
@@ -135,7 +135,28 @@ export function combatUsePotion() {
     draftState.hp = healedTo;
   });
 
-  refreshCombatUi(enemy, `You drink a tonic and recover ${healedAmount} HP.`);
+  const taken = enemyDamage(getState(), enemy);
+  const hpAfterHit = Math.max(0, getState().hp - taken);
+
+  setState((draftState) => {
+    draftState.hp = hpAfterHit;
+  });
+
+  if (hpAfterHit <= 0) {
+    setState((draftState) => {
+      draftState.hp = Math.ceil(draftState.maxHp * 0.6);
+      draftState.gold = Math.max(0, draftState.gold - 8);
+      draftState.combat.isActive = false;
+      draftState.combat.enemyId = null;
+      draftState.combat.enemyHp = 0;
+      draftState.combat.enemyMaxHp = 0;
+      draftState.mode = "dialogue";
+    });
+    loadScene("townHub", 0, "You fall in battle and wake in town. You lose 8 gold.");
+    return;
+  }
+
+  refreshCombatUi(enemy, `You drink a tonic and recover ${healedAmount} HP. The goblin hits back for ${taken}.`);
 }
 
 export function combatUseManaPotion() {
@@ -171,7 +192,7 @@ export function combatUseManaPotion() {
       draftState.mode = "dialogue";
     });
 
-    loadScene("townHub", 0, `Arcane force shatters the ${enemy.name}. You earn ${reward} gold.`);
+    loadScene("worldMap", 0, `Arcane force shatters the ${enemy.name}. You earn ${reward} gold.`);
     return;
   }
 
@@ -214,5 +235,5 @@ export function combatFlee() {
     draftState.mode = "dialogue";
   });
 
-  loadScene("townHub", 0, "You retreat from the cave and return to Elderbrook.");
+  loadScene("worldMap", 0, "You retreat from the cave and return to the road.");
 }

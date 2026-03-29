@@ -1,5 +1,7 @@
 # Elderbrook
 
+[![Play Now](https://img.shields.io/badge/Play%20Now-Elderbrook-cf9f4a?style=for-the-badge)](https://aaronc1992.github.io/Elderbrook/)
+
 Browser-based RPG foundation inspired by AdventureQuest and visual novels.
 
 ## Stack

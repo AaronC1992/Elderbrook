@@ -17,20 +17,23 @@ function getInventoryForShop(shop, state) {
 function buildShopChoices(shop, state) {
   const inventory = getInventoryForShop(shop, state);
 
-  const itemChoices = inventory.map((item) => ({
-    text: `Buy ${item.name} (${item.price}g)`,
-    type: "buyItem",
-    payload: { itemId: item.id }
-  }));
+  const itemChoices = inventory.map((item) => {
+    const owned = state.inventory.includes(item.id);
+    return {
+      text: owned ? `${item.name} (Owned)` : `Buy ${item.name} (${item.price}g)`,
+      type: "buyItem",
+      payload: { itemId: item.id }
+    };
+  });
 
   if (shop.id === "potions") {
-    itemChoices.unshift({
+    itemChoices.push({
       text: `Buy ${POTIONS.health.name} (${POTIONS.health.price}g)`,
       type: "buyPotion",
       payload: { potionType: "health" }
     });
 
-    itemChoices.unshift({
+    itemChoices.push({
       text: `Buy ${POTIONS.mana.name} (${POTIONS.mana.price}g)`,
       type: "buyPotion",
       payload: { potionType: "mana" }
@@ -86,6 +89,11 @@ export function buyItem(itemId) {
     return;
   }
 
+  if (state.inventory.includes(item.id)) {
+    setShopView(shop, `You already carry a ${item.name}.`);
+    return;
+  }
+
   if (state.gold < item.price) {
     setShopView(shop, `You are short on gold. ${item.name} costs ${item.price}g.`);
     return;
@@ -93,10 +101,7 @@ export function buyItem(itemId) {
 
   setState((draftState) => {
     draftState.gold -= item.price;
-
-    if (!draftState.inventory.includes(item.id)) {
-      draftState.inventory.push(item.id);
-    }
+    draftState.inventory.push(item.id);
 
     if (item.type === "weapon") {
       draftState.equippedWeapon = item.id;

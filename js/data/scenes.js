@@ -41,42 +41,42 @@ export const SCENES = {
   townHub: {
     id: "townHub",
     chapterLabel: "Chapter 1",
-    locationLabel: "Main Town",
+    locationLabel: "Elderbrook",
     steps: [
       {
         id: "hub-return",
-        speaker: "Town Square",
-        text: "Click a shopkeeper to trade, or click Guildmaster Rowan to hunt goblins in the cave.",
+        speaker: "Elderbrook",
+        text: "The town square bustles with merchants and travellers. Visit a shop or head through the gate to explore the world.",
         background: ASSETS.backgrounds.town,
         portraits: { left: null, right: "__PLAYER__" },
         npcs: [
           {
-            id: "npc-weapons",
-            label: "Blacksmith Ivar",
-            x: 22,
-            y: 68,
+            id: "loc-weapons",
+            label: "Weapon Shop",
+            x: 20,
+            y: 55,
             action: { type: "openShop", payload: { shopId: "weapons" } }
           },
           {
-            id: "npc-armor",
-            label: "Armorer Sela",
-            x: 39,
-            y: 52,
+            id: "loc-armor",
+            label: "Armor Shop",
+            x: 40,
+            y: 45,
             action: { type: "openShop", payload: { shopId: "armor" } }
           },
           {
-            id: "npc-potions",
-            label: "Apothecary Mira",
-            x: 61,
-            y: 47,
+            id: "loc-potions",
+            label: "Potion Shop",
+            x: 60,
+            y: 45,
             action: { type: "openShop", payload: { shopId: "potions" } }
           },
           {
-            id: "npc-guildmaster",
-            label: "Guildmaster Rowan",
-            x: 79,
-            y: 64,
-            action: { type: "startCombat", payload: { enemyId: "goblinScout" } }
+            id: "loc-gate",
+            label: "Town Gate",
+            x: 80,
+            y: 55,
+            action: { type: "goWorldMap" }
           }
         ],
         choices: [
@@ -85,6 +85,37 @@ export const SCENES = {
             type: "restTown"
           }
         ]
+      }
+    ]
+  },
+  worldMap: {
+    id: "worldMap",
+    chapterLabel: "Chapter 1",
+    locationLabel: "World Map",
+    steps: [
+      {
+        id: "map-view",
+        speaker: "World Map",
+        text: "The roads of Elderbrook stretch into the wilderness. Choose your destination.",
+        background: ASSETS.backgrounds.worldMap,
+        portraits: { left: null, right: null },
+        npcs: [
+          {
+            id: "loc-elderbrook",
+            label: "Elderbrook",
+            x: 35,
+            y: 52,
+            action: { type: "returnTown" }
+          },
+          {
+            id: "loc-goblin-cave",
+            label: "Goblin Cave",
+            x: 65,
+            y: 42,
+            action: { type: "startCombat", payload: { enemyId: "goblinScout" } }
+          }
+        ],
+        choices: []
       }
     ]
   }
