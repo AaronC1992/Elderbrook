@@ -42,7 +42,7 @@
         <button class="town-poi" data-screen="weapon-shop" style="left:5%; top:28%;">Weapon Shop</button>
         <button class="town-poi" data-screen="armor-shop" style="left:5%; top:48%;">Armor Shop</button>
         <button class="town-poi" data-screen="potion-shop" style="right:5%; top:28%;">Potion Shop</button>
-        <button class="town-poi" data-screen="inn" style="right:5%; top:48%;">Inn</button>
+        <button class="town-poi" data-screen="inn" style="right:5%; top:48%;">Adventurers Guild</button>
         <button class="town-poi town-poi-center" data-screen="quest-board" style="left:50%; top:18%;">Quest Board</button>
         <button class="town-poi town-poi-center" data-screen="wilderness" style="left:50%; bottom:8%;">Wilderness</button>
         <div class="town-title">Town of Elderbrook</div>
@@ -87,19 +87,22 @@
         </div>
       </section>
 
-      <!-- Inn -->
-      <section id="screen-inn" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
-        <div class="panel">
-          <h2>The Hearthstone Inn</h2>
-          <p class="flavor">A warm fire crackles. Rest here to restore HP and Mana.</p>
-          <p id="inn-cost">Cost: 10 gold</p>
-          <button class="btn-primary" id="btn-rest">Rest (10g)</button>
-          <button class="btn-back" data-screen="town">Back to Town</button>
+      <!-- Adventurers Guild -->
+      <section id="screen-inn" class="screen" style="background-image:url('assets/backgrounds/main-town-adventurers-guild.png');">
+        <div class="shop-layout">
+          <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
+          <div class="panel">
+            <h2>Adventurers Guild</h2>
+            <p class="flavor">A warm fire crackles. Rest here to restore HP and Mana.</p>
+            <p id="inn-cost">Cost: 10 gold</p>
+            <button class="btn-primary" id="btn-rest">Rest (10g)</button>
+            <button class="btn-back" data-screen="town">Back to Town</button>
+          </div>
         </div>
       </section>
 
       <!-- Quest Board -->
-      <section id="screen-quest-board" class="screen" style="background-image:url('assets/backgrounds/main-town-adventurers-guild.png');">
+      <section id="screen-quest-board" class="screen" style="background-image:url('assets/ui/main-town-questboard.png');">
         <div class="shop-layout">
           <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
           <div class="panel">
