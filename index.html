@@ -50,46 +50,40 @@
 
       <!-- Weapon Shop -->
       <section id="screen-weapon-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-weapons-shop.png');">
-        <div class="panel shop-panel">
-          <div class="shop-header">
-            <img class="npc-portrait" src="assets/portraits/main-town-weapon-shopkeep.png" alt="Weapon Shopkeeper" />
-            <div>
-              <h2>Weapon Shop</h2>
-              <p class="flavor">Racks of blades and bows line the walls.</p>
-            </div>
+        <div class="shop-layout">
+          <img class="npc-fullbody" src="assets/portraits/main-town-weapon-shopkeep.png" alt="Weapon Shopkeeper" />
+          <div class="panel shop-panel">
+            <h2>Weapon Shop</h2>
+            <p class="flavor">Racks of blades and bows line the walls.</p>
+            <div id="weapon-shop-list" class="shop-grid"></div>
+            <button class="btn-back" data-screen="town">Back to Town</button>
           </div>
-          <div id="weapon-shop-list" class="shop-grid"></div>
-          <button class="btn-back" data-screen="town">Back to Town</button>
         </div>
       </section>
 
       <!-- Armor Shop -->
       <section id="screen-armor-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-armor-shop.png');">
-        <div class="panel shop-panel">
-          <div class="shop-header">
-            <img class="npc-portrait" src="assets/portraits/main-town-armor-shopkeep.png" alt="Armor Shopkeeper" />
-            <div>
-              <h2>Armor Shop</h2>
-              <p class="flavor">Sturdy leather and polished iron on display.</p>
-            </div>
+        <div class="shop-layout">
+          <img class="npc-fullbody" src="assets/portraits/main-town-armor-shopkeep.png" alt="Armor Shopkeeper" />
+          <div class="panel shop-panel">
+            <h2>Armor Shop</h2>
+            <p class="flavor">Sturdy leather and polished iron on display.</p>
+            <div id="armor-shop-list" class="shop-grid"></div>
+            <button class="btn-back" data-screen="town">Back to Town</button>
           </div>
-          <div id="armor-shop-list" class="shop-grid"></div>
-          <button class="btn-back" data-screen="town">Back to Town</button>
         </div>
       </section>
 
       <!-- Potion Shop -->
       <section id="screen-potion-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-potions-shop.png');">
-        <div class="panel shop-panel">
-          <div class="shop-header">
-            <img class="npc-portrait" src="assets/portraits/main-town-potions-shopkeep.png" alt="Potion Shopkeeper" />
-            <div>
-              <h2>Potion Shop</h2>
-              <p class="flavor">Bottles bubble and glow on crooked shelves.</p>
-            </div>
+        <div class="shop-layout">
+          <img class="npc-fullbody" src="assets/portraits/main-town-potions-shopkeep.png" alt="Potion Shopkeeper" />
+          <div class="panel shop-panel">
+            <h2>Potion Shop</h2>
+            <p class="flavor">Bottles bubble and glow on crooked shelves.</p>
+            <div id="potion-shop-list" class="shop-grid"></div>
+            <button class="btn-back" data-screen="town">Back to Town</button>
           </div>
-          <div id="potion-shop-list" class="shop-grid"></div>
-          <button class="btn-back" data-screen="town">Back to Town</button>
         </div>
       </section>
 
@@ -106,17 +100,15 @@
 
       <!-- Quest Board -->
       <section id="screen-quest-board" class="screen" style="background-image:url('assets/backgrounds/main-town-adventurers-guild.png');">
-        <div class="panel">
-          <div class="shop-header">
-            <img class="npc-portrait" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
-            <div>
-              <h2>Quest Board</h2>
-            </div>
+        <div class="shop-layout">
+          <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
+          <div class="panel">
+            <h2>Quest Board</h2>
+            <div id="quest-list"></div>
+            <h3>Active Quests</h3>
+            <div id="active-quests"></div>
+            <button class="btn-back" data-screen="town">Back to Town</button>
           </div>
-          <div id="quest-list"></div>
-          <h3>Active Quests</h3>
-          <div id="active-quests"></div>
-          <button class="btn-back" data-screen="town">Back to Town</button>
         </div>
       </section>
 

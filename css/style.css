@@ -82,8 +82,7 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 2rem 1.5rem;
-}
+  padding: 1.5rem;\n}
 
 /* Panels */
 .panel {
@@ -226,7 +225,31 @@ button {
   z-index: 2;
 }
 
-/* NPC Portraits & Shop Headers */
+/* NPC Portraits & Shop Layout */
+.shop-layout {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+  align-self: flex-end;
+  padding-bottom: 1rem;
+}
+.npc-fullbody {
+  width: 180px;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  object-position: bottom;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+}
+.shop-layout .shop-panel {
+  flex: 1;
+  min-width: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+}
 .shop-header {
   display: flex;
   align-items: center;
@@ -521,4 +544,6 @@ button {
   #header-nav { margin-left: 0; }
   .battle-display { flex-direction: column; align-items: center; }
   .town-poi { font-size: 0.82rem; padding: 0.5rem 1rem; }
+  .npc-fullbody { width: 120px; }
+  .shop-layout { gap: 0.8rem; }
 }
