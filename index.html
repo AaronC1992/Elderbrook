@@ -1,97 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Elderbrook</title>
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body>
-    <section id="player-setup" class="player-setup" aria-label="Player setup">
-      <div class="setup-card">
-        <h2 class="setup-title">Create Your Adventurer</h2>
-        <p class="setup-subtitle">Choose who you are before stepping into Elderbrook.</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elderbrook</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <header id="game-header">
+      <h1>Elderbrook</h1>
+      <div id="header-stats">
+        <span id="header-name">Adventurer</span>
+        <span id="header-level">Lv 1</span>
+        <span id="header-hp">HP: 50/50</span>
+        <span id="header-mana">MP: 20/20</span>
+        <span id="header-gold">Gold: 50</span>
+      </div>
+      <nav id="header-nav">
+        <button class="nav-btn" data-screen="town">Town</button>
+        <button class="nav-btn" data-screen="character">Character</button>
+        <button class="nav-btn" data-screen="inventory">Inventory</button>
+        <button class="nav-btn" id="btn-save">Save</button>
+      </nav>
+    </header>
 
-        <div class="setup-body">
-          <div class="setup-portrait-panel">
-            <img id="setup-portrait" class="setup-portrait" src="assets/portraits/male-player.png" alt="Player portrait" />
-          </div>
-
-          <form id="player-setup-form" class="setup-form">
-          <label class="setup-label" for="player-name">Name</label>
-          <input id="player-name" name="playerName" class="setup-input" type="text" maxlength="20" required />
-
-          <fieldset class="setup-fieldset">
-            <legend>Gender</legend>
-            <label><input type="radio" name="gender" value="male" checked /> Male</label>
-            <label><input type="radio" name="gender" value="female" /> Female</label>
-          </fieldset>
-
-          <label class="setup-label" for="player-archetype">Archetype</label>
-          <select id="player-archetype" name="archetype" class="setup-input">
-            <option value="sellsword">Sellsword</option>
-            <option value="ranger">Ranger</option>
-            <option value="arcanist">Arcanist</option>
-          </select>
-          <p id="archetype-desc" class="setup-hint">Tough melee fighter. Highest HP and bonus melee damage.</p>
-
-          <label class="setup-label" for="player-origin">Origin</label>
-          <select id="player-origin" name="origin" class="setup-input">
-            <option value="brookfield">Brookfield Hamlet</option>
-            <option value="ironvale">Ironvale Outpost</option>
-            <option value="northwatch">Northwatch Border</option>
-          </select>
-          <p id="origin-desc" class="setup-hint">A quiet farming village at the edge of Elderbrook's reach.</p>
-
-          <p id="setup-error" class="setup-error" aria-live="polite"></p>
-
-          <button class="primary-btn setup-submit" type="submit">Begin Journey</button>
+    <main id="screen-area">
+      <!-- Character Creation -->
+      <section id="screen-create" class="screen active">
+        <div class="panel create-panel">
+          <h2>Create Your Adventurer</h2>
+          <form id="create-form">
+            <label>Name <input type="text" id="player-name" maxlength="20" value="Hero" /></label>
+            <button type="submit" class="btn-primary">Begin Journey</button>
           </form>
         </div>
-      </div>
-    </section>
-
-    <main class="app-shell" aria-label="Elderbrook game">
-      <section id="game-stage" class="game-stage" aria-live="polite">
-        <div id="background-layer" class="background-layer"></div>
-        <div id="npc-layer" class="npc-layer" aria-label="Scene interactions"></div>
-
-        <img id="portrait-left" class="portrait portrait-left" alt="Left character portrait" />
-        <img id="portrait-right" class="portrait portrait-right" alt="Right character portrait" />
-        <img id="portrait-right-armor" class="portrait portrait-right portrait-gear-overlay" alt="" />
-        <img id="portrait-right-weapon" class="portrait portrait-right portrait-gear-overlay" alt="" />
-
-        <header class="hud">
-          <h1 class="game-title">Elderbrook</h1>
-          <div class="hud-details">
-            <p id="player-label">Player: Traveler</p>
-            <p id="location-label">Location: -</p>
-            <p id="chapter-label">Chapter: Prologue</p>
-            <p id="gold-label">Gold: 0</p>
-            <p id="hp-label">HP: 20 / 20</p>
-          </div>
-          <button id="inventory-button" class="secondary-btn hud-inventory-btn" type="button">Inventory</button>
-        </header>
       </section>
 
-      <section id="dialogue-panel" class="dialogue-panel" aria-label="Dialogue and choices">
-        <div class="speaker-row">
-          <p id="speaker-name" class="speaker-name">Narrator</p>
-          <button id="skip-button" class="secondary-btn" type="button">Skip Line</button>
+      <!-- Town Hub -->
+      <section id="screen-town" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
+        <div class="panel town-panel">
+          <h2>Town of Elderbrook</h2>
+          <p class="flavor">A modest frontier town. Merchants call out their wares and adventurers gather near the quest board.</p>
+          <div class="town-buttons">
+            <button class="btn-location" data-screen="weapon-shop">Weapon Shop</button>
+            <button class="btn-location" data-screen="armor-shop">Armor Shop</button>
+            <button class="btn-location" data-screen="potion-shop">Potion Shop</button>
+            <button class="btn-location" data-screen="inn">Inn</button>
+            <button class="btn-location" data-screen="quest-board">Quest Board</button>
+            <button class="btn-location" data-screen="wilderness">Wilderness</button>
+          </div>
         </div>
+      </section>
 
-        <p id="dialogue-text" class="dialogue-text">
-          The wind over Elderbrook carries stories of old ruins and stranger things.
-        </p>
+      <!-- Weapon Shop -->
+      <section id="screen-weapon-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-weapons-shop.png');">
+        <div class="panel shop-panel">
+          <div class="shop-header">
+            <img class="npc-portrait" src="assets/portraits/main-town-weapon-shopkeep.png" alt="Weapon Shopkeeper" />
+            <div>
+              <h2>Weapon Shop</h2>
+              <p class="flavor">Racks of blades and bows line the walls.</p>
+            </div>
+          </div>
+          <div id="weapon-shop-list" class="shop-grid"></div>
+          <button class="btn-back" data-screen="town">Back to Town</button>
+        </div>
+      </section>
 
-        <div id="choice-list" class="choice-list" role="list"></div>
+      <!-- Armor Shop -->
+      <section id="screen-armor-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-armor-shop.png');">
+        <div class="panel shop-panel">
+          <div class="shop-header">
+            <img class="npc-portrait" src="assets/portraits/main-town-armor-shopkeep.png" alt="Armor Shopkeeper" />
+            <div>
+              <h2>Armor Shop</h2>
+              <p class="flavor">Sturdy leather and polished iron on display.</p>
+            </div>
+          </div>
+          <div id="armor-shop-list" class="shop-grid"></div>
+          <button class="btn-back" data-screen="town">Back to Town</button>
+        </div>
+      </section>
 
-        <div class="panel-actions">
-          <button id="continue-button" class="primary-btn" type="button">Continue</button>
+      <!-- Potion Shop -->
+      <section id="screen-potion-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-potions-shop.png');">
+        <div class="panel shop-panel">
+          <div class="shop-header">
+            <img class="npc-portrait" src="assets/portraits/main-town-potions-shopkeep.png" alt="Potion Shopkeeper" />
+            <div>
+              <h2>Potion Shop</h2>
+              <p class="flavor">Bottles bubble and glow on crooked shelves.</p>
+            </div>
+          </div>
+          <div id="potion-shop-list" class="shop-grid"></div>
+          <button class="btn-back" data-screen="town">Back to Town</button>
+        </div>
+      </section>
+
+      <!-- Inn -->
+      <section id="screen-inn" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
+        <div class="panel">
+          <h2>The Hearthstone Inn</h2>
+          <p class="flavor">A warm fire crackles. Rest here to restore HP and Mana.</p>
+          <p id="inn-cost">Cost: 10 gold</p>
+          <button class="btn-primary" id="btn-rest">Rest (10g)</button>
+          <button class="btn-back" data-screen="town">Back to Town</button>
+        </div>
+      </section>
+
+      <!-- Quest Board -->
+      <section id="screen-quest-board" class="screen" style="background-image:url('assets/backgrounds/main-town-adventurers-guild.png');">
+        <div class="panel">
+          <div class="shop-header">
+            <img class="npc-portrait" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
+            <div>
+              <h2>Quest Board</h2>
+            </div>
+          </div>
+          <div id="quest-list"></div>
+          <h3>Active Quests</h3>
+          <div id="active-quests"></div>
+          <button class="btn-back" data-screen="town">Back to Town</button>
+        </div>
+      </section>
+
+      <!-- Wilderness -->
+      <section id="screen-wilderness" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
+        <div class="panel">
+          <h2>Wilderness</h2>
+          <p class="flavor">Goblins roam the fields beyond town. Proceed with caution.</p>
+          <button class="btn-primary" id="btn-explore">Hunt Goblins</button>
+          <button class="btn-back" data-screen="town">Back to Town</button>
+        </div>
+      </section>
+
+      <!-- Battle -->
+      <section id="screen-battle" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
+        <div class="panel battle-panel">
+          <h2>Battle</h2>
+          <div class="battle-display">
+            <div class="battle-player">
+              <img class="battle-portrait" id="player-portrait" src="assets/portraits/male-player.png" alt="Player" />
+              <h3 id="battle-player-name">Player</h3>
+              <div class="bar-wrap"><div class="bar bar-hp" id="player-hp-bar"></div></div>
+              <p id="player-hp-text">HP 50/50</p>
+            </div>
+            <div class="battle-enemy">
+              <img class="battle-portrait" id="enemy-portrait" src="assets/portraits/goblin-enemy.png" alt="Enemy" />
+              <h3 id="enemy-name">Enemy</h3>
+              <div class="bar-wrap"><div class="bar bar-enemy" id="enemy-hp-bar"></div></div>
+              <p id="enemy-hp-text">HP ?/?</p>
+            </div>
+          </div>
+          <div id="battle-log" class="battle-log"></div>
+          <div id="battle-actions" class="battle-actions">
+            <button class="btn-primary" id="btn-attack">Attack</button>
+            <button class="btn-primary" id="btn-potion">Use Health Potion</button>
+            <button class="btn-secondary" id="btn-run">Run</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Character Screen -->
+      <section id="screen-character" class="screen">
+        <div class="panel">
+          <h2>Character</h2>
+          <div id="char-stats">
+            <div class="stat-row"><span class="stat-label">Name</span><span class="stat-value" id="char-name">-</span></div>
+            <div class="stat-row"><span class="stat-label">Level</span><span class="stat-value" id="char-level">-</span></div>
+            <div class="stat-row"><span class="stat-label">XP</span><span class="stat-value" id="char-xp">-</span></div>
+            <div class="stat-row"><span class="stat-label">HP</span><span class="stat-value" id="char-hp">-</span></div>
+            <div class="stat-row"><span class="stat-label">Mana</span><span class="stat-value" id="char-mana">-</span></div>
+            <div class="stat-row"><span class="stat-label">Strength</span><span class="stat-value" id="char-strength">-</span></div>
+            <div class="stat-row"><span class="stat-label">Defense</span><span class="stat-value" id="char-defense">-</span></div>
+            <div class="stat-row"><span class="stat-label">Dexterity</span><span class="stat-value" id="char-dexterity">-</span></div>
+            <div class="stat-row"><span class="stat-label">Intelligence</span><span class="stat-value" id="char-intelligence">-</span></div>
+            <div class="stat-row"><span class="stat-label">Gold</span><span class="stat-value" id="char-gold">-</span></div>
+          </div>
+          <h3>Equipment</h3>
+          <div id="char-equipment">
+            <div class="equip-slot"><span class="equip-slot-label">Weapon</span><span class="equip-slot-item" id="char-weapon">(none)</span></div>
+            <div class="equip-slot"><span class="equip-slot-label">Helmet</span><span class="equip-slot-item" id="char-helmet">(none)</span></div>
+            <div class="equip-slot"><span class="equip-slot-label">Chest</span><span class="equip-slot-item" id="char-chest">(none)</span></div>
+            <div class="equip-slot"><span class="equip-slot-label">Legs</span><span class="equip-slot-item" id="char-legs">(none)</span></div>
+            <div class="equip-slot"><span class="equip-slot-label">Accessory</span><span class="equip-slot-item" id="char-accessory">(none)</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory Screen -->
+      <section id="screen-inventory" class="screen">
+        <div class="panel">
+          <h2>Inventory <span id="inv-count" style="font-size:0.8em;color:#9e9585;">0 / 20</span></h2>
+          <h3>Equipped</h3>
+          <div id="equipped-list"></div>
+          <h3>Items</h3>
+          <div id="inv-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="weapon">Weapons</button>
+            <button class="filter-btn" data-filter="armor">Armor</button>
+            <button class="filter-btn" data-filter="potion">Potions</button>
+            <button class="filter-btn" data-filter="misc">Misc</button>
+          </div>
+          <div id="inventory-grid" class="inv-grid"></div>
         </div>
       </section>
     </main>
 
-    <script type="module" src="js/main.js"></script>
-  </body>
+    <footer id="message-log"></footer>
+  </div>
+
+  <script src="js/items.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/shops.js"></script>
+  <script src="js/quests.js"></script>
+  <script src="js/battle.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/main.js"></script>
+</body>
 </html>
