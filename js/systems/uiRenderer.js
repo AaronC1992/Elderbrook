@@ -12,6 +12,22 @@ function setPortrait(element, src, side) {
   element.classList.add("is-visible");
 }
 
+function setGearOverlay(element, itemId, isBaseVisible) {
+  if (!isBaseVisible || !itemId) {
+    element.classList.remove("is-visible");
+    element.removeAttribute("src");
+    return;
+  }
+
+  element.onerror = () => {
+    element.classList.remove("is-visible");
+    element.removeAttribute("src");
+    element.onerror = null;
+  };
+  element.src = `assets/portraits/overlays/${itemId}`;
+  element.classList.add("is-visible");
+}
+
 function renderChoices(choices, onSelectChoice) {
   dom.choiceList.innerHTML = "";
 
@@ -64,9 +80,14 @@ export function renderUI(state, onSelectChoice, onSelectNpc) {
   if (isConversation) {
     setPortrait(dom.portraitLeft, state.ui.portraits.left, "Left");
     setPortrait(dom.portraitRight, state.ui.portraits.right, "Right");
+    const rightVisible = Boolean(state.ui.portraits.right);
+    setGearOverlay(dom.portraitRightArmor, state.equippedArmor, rightVisible);
+    setGearOverlay(dom.portraitRightWeapon, state.equippedWeapon, rightVisible);
   } else {
     setPortrait(dom.portraitLeft, null, "Left");
     setPortrait(dom.portraitRight, null, "Right");
+    setGearOverlay(dom.portraitRightArmor, null, false);
+    setGearOverlay(dom.portraitRightWeapon, null, false);
   }
 
   dom.speakerName.textContent = state.ui.speaker;

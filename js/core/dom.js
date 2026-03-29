@@ -8,6 +8,8 @@ export const dom = {
   npcLayer: document.getElementById("npc-layer"),
   portraitLeft: document.getElementById("portrait-left"),
   portraitRight: document.getElementById("portrait-right"),
+  portraitRightArmor: document.getElementById("portrait-right-armor"),
+  portraitRightWeapon: document.getElementById("portrait-right-weapon"),
   speakerName: document.getElementById("speaker-name"),
   dialogueText: document.getElementById("dialogue-text"),
   choiceList: document.getElementById("choice-list"),
