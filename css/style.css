@@ -402,7 +402,8 @@ button {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 0.6rem 1rem;
-  max-height: 100px;
+  height: 100px;
+  flex-shrink: 0;
   overflow-y: auto;
   text-align: left;
   font-size: 0.85rem;
