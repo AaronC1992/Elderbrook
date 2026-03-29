@@ -178,14 +178,52 @@ button {
 }
 
 /* Town */
-.town-panel {
-  margin-top: auto;
-  margin-bottom: auto;
+#screen-town {
+  position: absolute;
+  inset: 0;
 }
-.town-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.7rem;
+.town-poi {
+  position: absolute;
+  font-family: inherit;
+  cursor: pointer;
+  background: rgba(14, 17, 23, 0.75);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1.4rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.25s;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  white-space: nowrap;
+  z-index: 2;
+}
+.town-poi:hover {
+  background: rgba(60, 50, 20, 0.9);
+  border-color: var(--accent-hover);
+  color: var(--accent-hover);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 20px rgba(212, 164, 56, 0.3);
+}
+.town-poi-center {
+  transform: translateX(-50%);
+}
+.town-poi-center:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.05);
+}
+.town-title {
+  position: absolute;
+  top: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  z-index: 2;
 }
 
 /* NPC Portraits & Shop Headers */
@@ -482,5 +520,5 @@ button {
   #game-header { flex-direction: column; align-items: flex-start; }
   #header-nav { margin-left: 0; }
   .battle-display { flex-direction: column; align-items: center; }
-  .town-buttons { grid-template-columns: 1fr 1fr; }
+  .town-poi { font-size: 0.82rem; padding: 0.5rem 1rem; }
 }

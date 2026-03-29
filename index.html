@@ -39,18 +39,13 @@
 
       <!-- Town Hub -->
       <section id="screen-town" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
-        <div class="panel town-panel">
-          <h2>Town of Elderbrook</h2>
-          <p class="flavor">A modest frontier town. Merchants call out their wares and adventurers gather near the quest board.</p>
-          <div class="town-buttons">
-            <button class="btn-location" data-screen="weapon-shop">Weapon Shop</button>
-            <button class="btn-location" data-screen="armor-shop">Armor Shop</button>
-            <button class="btn-location" data-screen="potion-shop">Potion Shop</button>
-            <button class="btn-location" data-screen="inn">Inn</button>
-            <button class="btn-location" data-screen="quest-board">Quest Board</button>
-            <button class="btn-location" data-screen="wilderness">Wilderness</button>
-          </div>
-        </div>
+        <button class="town-poi" data-screen="weapon-shop" style="left:5%; top:28%;">Weapon Shop</button>
+        <button class="town-poi" data-screen="armor-shop" style="left:5%; top:48%;">Armor Shop</button>
+        <button class="town-poi" data-screen="potion-shop" style="right:5%; top:28%;">Potion Shop</button>
+        <button class="town-poi" data-screen="inn" style="right:5%; top:48%;">Inn</button>
+        <button class="town-poi town-poi-center" data-screen="quest-board" style="left:50%; top:18%;">Quest Board</button>
+        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:50%; bottom:8%;">Wilderness</button>
+        <div class="town-title">Town of Elderbrook</div>
       </section>
 
       <!-- Weapon Shop -->
