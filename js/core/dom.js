@@ -17,5 +17,6 @@ export const dom = {
   locationLabel: document.getElementById("location-label"),
   chapterLabel: document.getElementById("chapter-label"),
   goldLabel: document.getElementById("gold-label"),
-  hpLabel: document.getElementById("hp-label")
+  hpLabel: document.getElementById("hp-label"),
+  inventoryButton: document.getElementById("inventory-button")
 };

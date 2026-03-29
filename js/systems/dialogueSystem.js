@@ -2,6 +2,7 @@ import { dom } from "../core/dom.js";
 import { getState } from "../core/state.js";
 import { nextStep } from "./sceneSystem.js";
 import { handleActionChoice } from "./actionRouter.js";
+import { openInventory } from "./inventorySystem.js";
 
 export function initDialogueSystem() {
   dom.continueButton.addEventListener("click", () => {
@@ -18,6 +19,17 @@ export function initDialogueSystem() {
     }
 
     nextStep();
+  });
+
+  dom.inventoryButton.addEventListener("click", () => {
+    const state = getState();
+    if (!state.isSetupComplete) {
+      return;
+    }
+    if (state.mode === "combat") {
+      return;
+    }
+    openInventory();
   });
 
   document.addEventListener("keydown", (event) => {
