@@ -67,13 +67,36 @@ function setShopView(shop, message) {
   });
 }
 
+const SHOP_GREETINGS = {
+  weapons: [
+    "Iron bites deeper than pride. What do you need?",
+    "Every blade here has been hammered at my forge. Choose well.",
+    "You look like you have seen a fight or two. Let us make sure you survive the next one."
+  ],
+  armor: [
+    "Armour is cheaper than a funeral. Browse what I have.",
+    "Nothing leaves my rack until I know it fits. What are you after?",
+    "The dents on that chestplate tell a story. Mine will keep you out of the next chapter."
+  ],
+  potions: [
+    "Healing draughts, mana tonics. What does your body need?",
+    "One sip could save your life out there. Do not skimp on potions.",
+    "Everything here is brewed fresh. Well, fresh enough."
+  ]
+};
+
+function shopGreeting(shopId) {
+  const lines = SHOP_GREETINGS[shopId];
+  return lines[Math.floor(Math.random() * lines.length)];
+}
+
 export function openShop(shopId) {
   const shop = SHOPS[shopId];
   if (!shop) {
     return;
   }
 
-  setShopView(shop, "Take your time. Good gear keeps adventurers breathing.");
+  setShopView(shop, shopGreeting(shopId));
 }
 
 export function buyItem(itemId) {
@@ -112,7 +135,12 @@ export function buyItem(itemId) {
     }
   });
 
-  setShopView(shop, `${item.name} is yours. Keep it maintained and it will keep you alive.`);
+  const BUY_LINES = {
+    weapons: `${item.name} is yours. Keep the edge sharp and it will not fail you.`,
+    armor: `${item.name} fitted. It will take a beating so you do not have to.`,
+    potions: `${item.name} packed. Do not forget you have it when things get ugly.`
+  };
+  setShopView(shop, BUY_LINES[shop.id] ?? `${item.name} is yours.`);
 }
 
 export function buyPotion(potionType = "health") {

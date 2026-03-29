@@ -27,19 +27,21 @@
             <label><input type="radio" name="gender" value="female" /> Female</label>
           </fieldset>
 
-          <label class="setup-label" for="player-origin">Origin</label>
-          <select id="player-origin" name="origin" class="setup-input">
-            <option value="brookfield">Brookfield Hamlet</option>
-            <option value="ironvale">Ironvale Outpost</option>
-            <option value="northwatch">Northwatch Border</option>
-          </select>
-
           <label class="setup-label" for="player-archetype">Archetype</label>
           <select id="player-archetype" name="archetype" class="setup-input">
             <option value="sellsword">Sellsword</option>
             <option value="ranger">Ranger</option>
             <option value="arcanist">Arcanist</option>
           </select>
+          <p id="archetype-desc" class="setup-hint">Tough melee fighter. Highest HP and bonus melee damage.</p>
+
+          <label class="setup-label" for="player-origin">Origin</label>
+          <select id="player-origin" name="origin" class="setup-input">
+            <option value="brookfield">Brookfield Hamlet</option>
+            <option value="ironvale">Ironvale Outpost</option>
+            <option value="northwatch">Northwatch Border</option>
+          </select>
+          <p id="origin-desc" class="setup-hint">A quiet farming village at the edge of Elderbrook's reach.</p>
 
           <p id="setup-error" class="setup-error" aria-live="polite"></p>
 

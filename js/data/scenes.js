@@ -9,15 +9,39 @@ export const SCENES = {
       {
         id: "arrival",
         speaker: "Narrator",
-        text: "{playerName} arrives in Elderbrook from {playerOrigin} with a worn satchel, a blunt blade, and a letter bearing the guild's seal.",
+        text: "Dust clings to worn boots as {playerName} steps through the eastern gate of Elderbrook. The road from {playerOrigin} was long, but the promise of coin and purpose kept one foot ahead of the other. A crumpled letter bearing the guild's seal rests in a satchel alongside a blunt blade and a few dwindling rations.",
         background: ASSETS.backgrounds.town,
-        portraits: { left: null, right: "__PLAYER__" },
+        portraits: { left: null, right: null },
+        npcs: []
+      },
+      {
+        id: "town-first-look",
+        speaker: "Narrator",
+        text: "Elderbrook is small but alive. Market stalls line cobbled paths, the clang of a blacksmith's hammer echoes between timber walls, and the scent of herbs drifts from a crooked shop front. Above a heavy oak door hangs a crest of crossed swords: the Adventurers Guild.",
+        background: ASSETS.backgrounds.town,
+        portraits: { left: null, right: null },
+        npcs: []
+      },
+      {
+        id: "guild-enter",
+        speaker: "Narrator",
+        text: "{playerName} pushes open the guild door. Inside, firelight flickers across a quest board thick with pinned notices. A broad-shouldered man looks up from behind a scarred desk.",
+        background: ASSETS.backgrounds.guildHall,
+        portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
         npcs: []
       },
       {
         id: "guild-intro",
         speaker: "Guildmaster Rowan",
-        text: "Another wanderer with more grit than coin. Good. Elderbrook needs both. Welcome, {playerName}. Earn gold, gear up, and prove you can clear the goblin cave.",
+        text: "Another wanderer with more grit than coin. Good. Elderbrook needs both.\n\nI am Rowan, master of this guild. We register adventurers, post bounties, and try to keep the wilds from swallowing this town whole.",
+        background: ASSETS.backgrounds.guildHall,
+        portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
+        npcs: []
+      },
+      {
+        id: "guild-task",
+        speaker: "Guildmaster Rowan",
+        text: "Here is how it works. You take jobs from the quest board, earn gold, and gear up at the shops in the square. Weapon Shop, Armor Shop, Potions. You will want all three before heading into anything dangerous.\n\nYou have a little coin on you already. Spend it wisely. When you are ready, check the board for your first contract.",
         background: ASSETS.backgrounds.guildHall,
         portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
         npcs: []
@@ -25,13 +49,13 @@ export const SCENES = {
       {
         id: "first-choice",
         speaker: "Guildmaster Rowan",
-        text: "The square is open to you now. Talk to a shopkeeper to buy gear, then meet me in town when you are ready to fight goblins.",
+        text: "The town square is through that door. Spend your gold wisely, {playerName}. Dead adventurers do not earn a second purse.",
         background: ASSETS.backgrounds.guildHall,
         portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
         npcs: [],
         choices: [
           {
-            text: "Go to the town square",
+            text: "Head to the town square",
             nextScene: "townHub"
           }
         ]
@@ -119,11 +143,82 @@ export const SCENES = {
             label: "Goblin Cave",
             x: 65,
             y: 42,
-            action: { type: "startCombat", payload: { enemyId: "goblinScout" } },
+            action: { type: "goScene", payload: { sceneId: "goblinCaveApproach" } },
             requireFlag: "quest:goblinCave"
           }
         ],
         choices: []
+      }
+    ]
+  },
+  goblinCaveApproach: {
+    id: "goblinCaveApproach",
+    chapterLabel: "Chapter 1",
+    locationLabel: "Goblin Cave",
+    steps: [
+      {
+        id: "approach-1",
+        speaker: "Narrator",
+        text: "The cave mouth gapes like a wound in the hillside. Broken cart wheels and torn sacks litter the ground outside. Something scraped these marks into the stone.",
+        background: ASSETS.backgrounds.goblinCave,
+        portraits: { left: null, right: null },
+        npcs: []
+      },
+      {
+        id: "approach-2",
+        speaker: "Narrator",
+        text: "{playerName} draws a weapon and steps into the darkness. The stench of damp fur and rotting food hits immediately. Somewhere ahead, something shifts in the shadows.",
+        background: ASSETS.backgrounds.goblinCave,
+        portraits: { left: null, right: "__PLAYER__" },
+        npcs: []
+      },
+      {
+        id: "approach-fight",
+        speaker: "Narrator",
+        text: "A pair of yellow eyes catches the dim light. Then a snarl.",
+        background: ASSETS.backgrounds.goblinCave,
+        portraits: { left: ASSETS.portraits.goblin, right: "__PLAYER__" },
+        npcs: [],
+        choices: [
+          {
+            text: "Ready your weapon",
+            type: "startCombat",
+            payload: { enemyId: "goblinScout" }
+          },
+          {
+            text: "Fall back to the road",
+            type: "goWorldMap"
+          }
+        ]
+      }
+    ]
+  },
+  goblinVictory: {
+    id: "goblinVictory",
+    chapterLabel: "Chapter 1",
+    locationLabel: "Goblin Cave",
+    steps: [
+      {
+        id: "victory-1",
+        speaker: "Narrator",
+        text: "The goblin crumples. Silence reclaims the cave as {playerName} catches a ragged breath. Among the debris, a small pouch of stolen coin glints in the torchlight.",
+        background: ASSETS.backgrounds.goblinCave,
+        portraits: { left: null, right: "__PLAYER__" },
+        npcs: []
+      },
+      {
+        id: "victory-2",
+        speaker: "Narrator",
+        text: "The cave is clear for now. Best to report back to Guildmaster Rowan. There may be more work, and there will certainly be more goblins.",
+        background: ASSETS.backgrounds.goblinCave,
+        portraits: { left: null, right: null },
+        npcs: [],
+        choices: [
+          {
+            text: "Return to the world map",
+            type: "goWorldMap"
+          }
+        ]
       }
     ]
   },
@@ -135,7 +230,7 @@ export const SCENES = {
       {
         id: "guild-main",
         speaker: "Guildmaster Rowan",
-        text: "Welcome back, {playerName}. Check the quest board if you are looking for work, or speak up if you need guidance.",
+        text: "Back again, {playerName}. The quest board has work if you are looking. I will be here if you need direction.",
         background: ASSETS.backgrounds.guildHall,
         portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
         npcs: [
@@ -164,22 +259,43 @@ export const SCENES = {
       {
         id: "board-view",
         speaker: "Quest Board",
-        text: "Pinned notices flutter in the draught. One job catches your eye.",
+        text: "Pinned notices cover the board, most faded or already claimed. One stands out, written in fresh ink with an urgent hand:",
         background: ASSETS.backgrounds.guildHall,
         portraits: { left: null, right: null },
         npcs: [],
         choices: [
           {
-            text: "Clear the Goblin Cave (Combat)",
+            text: "\"BOUNTY: Clear the Goblin Cave - Scouts raiding supply carts on the eastern road. Reward upon proof of clearing.\"",
             type: "acceptQuest",
-            payload: { flag: "quest:goblinCave", nextScene: "worldMap" }
+            payload: { flag: "quest:goblinCave", nextScene: "questBoardAccepted" }
           },
           {
-            text: "Back to Guild Hall",
+            text: "Step away from the board",
             type: "goGuildHall"
           }
         ]
       }
     ]
-  }
+  },
+  questBoardAccepted: {
+    id: "questBoardAccepted",
+    chapterLabel: "Chapter 1",
+    locationLabel: "Adventurers Guild",
+    steps: [
+      {
+        id: "quest-accepted",
+        speaker: "Guildmaster Rowan",
+        text: "The goblin cave. Good choice. Their scouts have been hitting supply carts on the eastern road for weeks now. Follow the path past the town gate and you will find it marked on the map.\n\nA word of advice: make sure you are armed and stocked before heading out. Goblins fight dirty.",
+        background: ASSETS.backgrounds.guildHall,
+        portraits: { left: ASSETS.portraits.guildMaster, right: "__PLAYER__" },
+        npcs: [],
+        choices: [
+          {
+            text: "Head to the town square",
+            nextScene: "townHub"
+          }
+        ]
+      }
+    ]
+  },
 };

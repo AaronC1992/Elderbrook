@@ -19,5 +19,9 @@ export const dom = {
   goldLabel: document.getElementById("gold-label"),
   hpLabel: document.getElementById("hp-label"),
   inventoryButton: document.getElementById("inventory-button"),
-  dialoguePanel: document.getElementById("dialogue-panel")
+  dialoguePanel: document.getElementById("dialogue-panel"),
+  archetypeSelect: document.getElementById("player-archetype"),
+  archetypeDesc: document.getElementById("archetype-desc"),
+  originSelect: document.getElementById("player-origin"),
+  originDesc: document.getElementById("origin-desc")
 };

@@ -39,6 +39,9 @@ export function handleActionChoice(choice) {
     case "goQuestBoard":
       loadScene("questBoard", 0);
       break;
+    case "goScene":
+      loadScene(choice.payload.sceneId, 0);
+      break;
     case "acceptQuest": {
       const flag = choice.payload?.flag;
       if (flag) {

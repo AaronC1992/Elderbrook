@@ -8,6 +8,18 @@ const ARCHETYPE_STARTERS = {
   arcanist: "basic-staff.png"
 };
 
+const ARCHETYPE_DESCS = {
+  sellsword: "Tough melee fighter. Highest HP and bonus melee damage.",
+  ranger: "Swift and precise. Balanced HP with steady ranged attacks.",
+  arcanist: "Wielder of arcane force. Lower HP but starts with a mana potion for burst damage."
+};
+
+const ORIGIN_DESCS = {
+  brookfield: "A quiet farming village at the edge of Elderbrook's reach.",
+  ironvale: "A fortified mining outpost known for its iron trade and hard people.",
+  northwatch: "A frozen border garrison where survival is the first lesson."
+};
+
 function normalizeName(rawValue) {
   const trimmed = rawValue.trim();
   if (!trimmed) {
@@ -86,14 +98,27 @@ function updateSetupPortrait() {
   dom.setupPortrait.src = gender === "female" ? ASSETS.portraits.playerFemale : ASSETS.portraits.playerMale;
 }
 
+function updateArchetypeDesc() {
+  dom.archetypeDesc.textContent = ARCHETYPE_DESCS[dom.archetypeSelect.value] ?? "";
+}
+
+function updateOriginDesc() {
+  dom.originDesc.textContent = ORIGIN_DESCS[dom.originSelect.value] ?? "";
+}
+
 export function initPlayerSetup(onStartGame) {
   dom.playerNameInput.value = "";
   dom.setupError.textContent = "";
   updateSetupPortrait();
+  updateArchetypeDesc();
+  updateOriginDesc();
 
   dom.playerSetupForm.querySelectorAll('input[name="gender"]').forEach((radio) => {
     radio.addEventListener("change", updateSetupPortrait);
   });
+
+  dom.archetypeSelect.addEventListener("change", updateArchetypeDesc);
+  dom.originSelect.addEventListener("change", updateOriginDesc);
 
   dom.playerSetupForm.addEventListener("submit", (event) => {
     event.preventDefault();

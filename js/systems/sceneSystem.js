@@ -28,10 +28,17 @@ function resolvePortrait(portraitRef, player) {
   return portraitRef ?? null;
 }
 
+const ORIGIN_NAMES = {
+  brookfield: "Brookfield Hamlet",
+  ironvale: "Ironvale Outpost",
+  northwatch: "Northwatch Border"
+};
+
 function fillTemplate(template, player) {
+  const originLabel = ORIGIN_NAMES[player.origin] ?? player.origin;
   return template
     .replaceAll("{playerName}", player.name)
-    .replaceAll("{playerOrigin}", player.origin)
+    .replaceAll("{playerOrigin}", originLabel)
     .replaceAll("{playerArchetype}", player.archetype);
 }
 

@@ -57,7 +57,7 @@ export function startCombat(enemyId = "goblinScout") {
     draftState.combat.enemyMaxHp = enemy.maxHp;
   });
 
-  refreshCombatUi(enemy, "A goblin scout lunges from the shadows.");
+  refreshCombatUi(enemy, `The ${enemy.name} snarls and raises a jagged blade. Fight or fall.`);
 }
 
 export function combatAttack() {
@@ -85,7 +85,7 @@ export function combatAttack() {
       draftState.mode = "dialogue";
     });
 
-    loadScene("worldMap", 0, `You defeated the ${enemy.name} and earned ${reward} gold.`);
+    loadScene("goblinVictory", 0, `You defeated the ${enemy.name} and earned ${reward} gold.`);
     return;
   }
 
@@ -111,7 +111,12 @@ export function combatAttack() {
     return;
   }
 
-  refreshCombatUi(enemy, `You strike for ${dealt} damage. The goblin hits back for ${taken}.`);
+  const attackLines = [
+    `You strike for ${dealt} damage. The ${enemy.name} retaliates for ${taken}.`,
+    `Your weapon connects for ${dealt}. The ${enemy.name} counters, dealing ${taken}.`,
+    `A solid hit for ${dealt} damage. The ${enemy.name} slashes back for ${taken}.`
+  ];
+  refreshCombatUi(enemy, attackLines[Math.floor(Math.random() * attackLines.length)]);
 }
 
 export function combatUsePotion() {
@@ -192,7 +197,7 @@ export function combatUseManaPotion() {
       draftState.mode = "dialogue";
     });
 
-    loadScene("worldMap", 0, `Arcane force shatters the ${enemy.name}. You earn ${reward} gold.`);
+    loadScene("goblinVictory", 0, `Arcane force shatters the ${enemy.name}. You earn ${reward} gold.`);
     return;
   }
 

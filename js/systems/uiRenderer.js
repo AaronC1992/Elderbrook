@@ -51,14 +51,20 @@ function renderNpcs(npcs, onSelectNpc) {
 export function renderUI(state, onSelectChoice, onSelectNpc) {
   dom.background.style.backgroundImage = `url("${state.ui.background}")`;
 
-  const isConversation = state.mode === "combat" || Boolean(state.ui.portraits.left);
+  const isConversation = state.mode === "combat" || state.mode === "inventory" || Boolean(state.ui.portraits.left);
+  const hasChoices = state.ui.choices.length > 0;
+  const showDialogue = isConversation || hasChoices;
+
+  if (showDialogue) {
+    dom.dialoguePanel.classList.remove("is-hidden");
+  } else {
+    dom.dialoguePanel.classList.add("is-hidden");
+  }
 
   if (isConversation) {
-    dom.dialoguePanel.classList.remove("is-hidden");
     setPortrait(dom.portraitLeft, state.ui.portraits.left, "Left");
     setPortrait(dom.portraitRight, state.ui.portraits.right, "Right");
   } else {
-    dom.dialoguePanel.classList.add("is-hidden");
     setPortrait(dom.portraitLeft, null, "Left");
     setPortrait(dom.portraitRight, null, "Right");
   }
@@ -74,7 +80,6 @@ export function renderUI(state, onSelectChoice, onSelectNpc) {
   renderChoices(state.ui.choices, onSelectChoice);
   renderNpcs(state.ui.npcs, onSelectNpc);
 
-  const hasChoices = state.ui.choices.length > 0;
   const interactionsAvailable = hasChoices || state.ui.npcs.length > 0;
   dom.continueButton.disabled = interactionsAvailable;
   dom.skipButton.disabled = interactionsAvailable;
