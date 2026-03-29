@@ -127,29 +127,26 @@
 
       <!-- Battle -->
       <section id="screen-battle" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
-        <div class="panel battle-panel">
-          <h2>Battle</h2>
-          <div class="battle-display">
-            <div class="battle-player">
-              <img class="battle-portrait" id="player-portrait" src="assets/portraits/male-player.png" alt="Player" />
-              <h3 id="battle-player-name">Player</h3>
-              <div class="bar-wrap"><div class="bar bar-hp" id="player-hp-bar"></div></div>
-              <p id="player-hp-text">HP 50/50</p>
-            </div>
-            <div class="battle-enemy">
-              <img class="battle-portrait" id="enemy-portrait" src="assets/portraits/goblin-enemy.png" alt="Enemy" />
-              <h3 id="enemy-name">Enemy</h3>
-              <div class="bar-wrap"><div class="bar bar-enemy" id="enemy-hp-bar"></div></div>
-              <p id="enemy-hp-text">HP ?/?</p>
+        <div class="battle-field">
+          <div class="battle-combatant battle-player">
+            <img class="battle-portrait" id="player-portrait" src="assets/portraits/male-player.png" alt="Player" />
+            <h3 id="battle-player-name">Player</h3>
+            <div class="bar-wrap"><div class="bar bar-hp" id="player-hp-bar"></div></div>
+            <p id="player-hp-text">HP 50/50</p>
+            <div id="battle-actions" class="battle-actions">
+              <button class="btn-primary" id="btn-attack">Attack</button>
+              <button class="btn-primary" id="btn-potion">Potion</button>
+              <button class="btn-secondary" id="btn-run">Run</button>
             </div>
           </div>
-          <div id="battle-log" class="battle-log"></div>
-          <div id="battle-actions" class="battle-actions">
-            <button class="btn-primary" id="btn-attack">Attack</button>
-            <button class="btn-primary" id="btn-potion">Use Health Potion</button>
-            <button class="btn-secondary" id="btn-run">Run</button>
+          <div class="battle-combatant battle-enemy">
+            <img class="battle-portrait" id="enemy-portrait" src="assets/portraits/goblin-enemy.png" alt="Enemy" />
+            <h3 id="enemy-name">Enemy</h3>
+            <div class="bar-wrap"><div class="bar bar-enemy" id="enemy-hp-bar"></div></div>
+            <p id="enemy-hp-text">HP ?/?</p>
           </div>
         </div>
+        <div id="battle-log" class="battle-log"></div>
       </section>
 
       <!-- Character Screen -->
