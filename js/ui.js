@@ -25,6 +25,8 @@ var UI = (function () {
       Inventory.render();
     } else if (id === "character") {
       renderCharacter();
+    } else if (id === "dungeon") {
+      Dungeon.render();
     }
   }
 

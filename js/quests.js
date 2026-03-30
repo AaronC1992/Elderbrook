@@ -6,7 +6,7 @@ var Quests = (function () {
       name: "The Goblin Menace",
       description: "The village elder asks you to slay goblins threatening the outskirts.",
       type: "kill",
-      target: "goblin",     // matches enemy id prefix
+      target: "goblin",
       required: 10,
       rewards: {
         xp: 80,
@@ -25,6 +25,58 @@ var Quests = (function () {
         xp: 120,
         gold: 80,
         item: null
+      }
+    },
+    "goblin-assassin-hunt": {
+      id: "goblin-assassin-hunt",
+      name: "Shadow Stalkers",
+      description: "Goblin assassins have been ambushing travelers on the roads. Eliminate them.",
+      type: "kill",
+      target: "goblin-assassin",
+      required: 3,
+      rewards: {
+        xp: 100,
+        gold: 60,
+        item: "leather-armor"
+      }
+    },
+    "goblin-king-slayer": {
+      id: "goblin-king-slayer",
+      name: "Dethrone the King",
+      description: "The Goblin King must be stopped. Enter the depths of the cave and defeat him.",
+      type: "kill",
+      target: "goblin-king",
+      required: 1,
+      rewards: {
+        xp: 250,
+        gold: 150,
+        item: "steel-sword"
+      }
+    },
+    "bandit-problem": {
+      id: "bandit-problem",
+      name: "Highway Robbery",
+      description: "Bandits are raiding merchant caravans. Clear them out.",
+      type: "kill",
+      target: "bandit",
+      required: 8,
+      rewards: {
+        xp: 150,
+        gold: 100,
+        item: "iron-helm"
+      }
+    },
+    "bandit-leader-bounty": {
+      id: "bandit-leader-bounty",
+      name: "Head of the Snake",
+      description: "Take down the Bandit Leader to scatter their forces for good.",
+      type: "kill",
+      target: "bandit-leader",
+      required: 1,
+      rewards: {
+        xp: 350,
+        gold: 200,
+        item: "iron-chestplate"
       }
     }
   };
@@ -104,6 +156,7 @@ var Quests = (function () {
     var leveled = Player.addXp(def.rewards.xp);
     Player.addGold(def.rewards.gold);
     MessageLog.add("Quest complete: " + def.name + "! +" + def.rewards.xp + " XP, +" + def.rewards.gold + " gold.", "gold");
+    Audio.questComplete();
 
     if (def.rewards.item) {
       if (!Player.inventoryFull()) {

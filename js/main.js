@@ -13,6 +13,7 @@
       Player.create(name, gender);
       UI.updateHeader();
       MessageLog.add("Welcome to Elderbrook, " + name + "!", "info");
+      Audio.buttonClick();
       UI.showScreen("town");
     });
   }
@@ -29,7 +30,16 @@
     });
   }
 
-  // --- Nav buttons (header) ---
+  // --- Sound Toggle ---
+  var soundBtn = document.getElementById("btn-sound");
+  if (soundBtn) {
+    soundBtn.addEventListener("click", function () {
+      var on = Audio.toggle();
+      soundBtn.textContent = on ? "Sound: ON" : "Sound: OFF";
+    });
+  }
+
+  // --- Main delegated click handler ---
   document.addEventListener("click", function (e) {
     var target = e.target;
 
@@ -43,20 +53,43 @@
     // --- Inn ---
     if (target.id === "btn-rest") { World.restAtInn(); return; }
 
-    // --- Wilderness ---
-    if (target.id === "btn-explore") { World.startEncounter(); return; }
+    // --- Wilderness explore ---
+    if (target.id === "btn-explore") { World.startEncounter("goblin-cave"); return; }
+    if (target.id === "btn-explore-bandit") { World.startEncounter("bandit-camp"); return; }
+
+    // --- Dungeon enter ---
+    if (target.id === "btn-enter-dungeon-goblin") { World.enterDungeon("goblin-cave"); return; }
+    if (target.id === "btn-enter-dungeon-bandit") { World.enterDungeon("bandit-camp"); return; }
 
     // --- Battle ---
     if (target.id === "btn-attack") { Battle.playerAttack(); return; }
     if (target.id === "btn-potion") { Battle.playerUsePotion(); return; }
+    if (target.id === "btn-mana-potion") { Battle.playerUseManaPotion(); return; }
     if (target.id === "btn-run") { Battle.playerRun(); return; }
+
+    // --- Skills in battle ---
+    var skillId = target.getAttribute("data-skill");
+    if (skillId) { Battle.playerUseSkill(skillId); return; }
+
+    // --- Game Over ---
+    if (target.id === "btn-revive") { World.reviveAtTown(); return; }
+    if (target.id === "btn-load-save") {
+      if (SaveSystem.load()) {
+        UI.updateHeader();
+        MessageLog.add("Save loaded.", "info");
+        UI.showScreen("town");
+      } else {
+        MessageLog.add("No save found!", "damage");
+      }
+      return;
+    }
 
     // --- Save ---
     if (target.id === "btn-save") { SaveSystem.save(); return; }
 
     // --- Back to town buttons ---
     if (target.classList.contains("btn-back")) {
-      World.navigate("town");
+      // Let dungeon handle its own back button
       return;
     }
 

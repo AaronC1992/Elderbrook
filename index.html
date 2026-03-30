@@ -22,6 +22,7 @@
         <button class="nav-btn" data-screen="character">Character</button>
         <button class="nav-btn" data-screen="inventory">Inventory</button>
         <button class="nav-btn" id="btn-save">Save</button>
+        <button class="nav-btn" id="btn-sound">Sound: ON</button>
       </nav>
     </header>
 
@@ -66,6 +67,7 @@
           <img class="npc-fullbody" src="assets/portraits/main-town-weapon-shopkeep.png" alt="Weapon Shopkeeper" />
           <div class="panel shop-panel">
             <h2>Weapon Shop</h2>
+            <p id="weapon-shop-dialogue" class="npc-dialogue"></p>
             <p class="flavor">Racks of blades and bows line the walls.</p>
             <div id="weapon-shop-list" class="shop-grid"></div>
             <button class="btn-back" data-screen="town">Back to Town</button>
@@ -79,6 +81,7 @@
           <img class="npc-fullbody" src="assets/portraits/main-town-armor-shopkeep.png" alt="Armor Shopkeeper" />
           <div class="panel shop-panel">
             <h2>Armor Shop</h2>
+            <p id="armor-shop-dialogue" class="npc-dialogue"></p>
             <p class="flavor">Sturdy leather and polished iron on display.</p>
             <div id="armor-shop-list" class="shop-grid"></div>
             <button class="btn-back" data-screen="town">Back to Town</button>
@@ -92,6 +95,7 @@
           <img class="npc-fullbody" src="assets/portraits/main-town-potions-shopkeep.png" alt="Potion Shopkeeper" />
           <div class="panel shop-panel">
             <h2>Potion Shop</h2>
+            <p id="potion-shop-dialogue" class="npc-dialogue"></p>
             <p class="flavor">Bottles bubble and glow on crooked shelves.</p>
             <div id="potion-shop-list" class="shop-grid"></div>
             <button class="btn-back" data-screen="town">Back to Town</button>
@@ -105,6 +109,7 @@
           <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
           <div class="panel">
             <h2>Adventurers Guild</h2>
+            <p id="guild-dialogue" class="npc-dialogue"></p>
             <p class="flavor">A warm fire crackles. Rest here to restore HP and Mana.</p>
             <p id="inn-cost">Cost: 10 gold</p>
             <button class="btn-primary" id="btn-rest">Rest (10g)</button>
@@ -119,6 +124,7 @@
           <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
           <div class="panel">
             <h2>Quest Board</h2>
+            <p id="quest-dialogue" class="npc-dialogue"></p>
             <div id="quest-list"></div>
             <h3>Active Quests</h3>
             <div id="active-quests"></div>
@@ -130,7 +136,8 @@
       <!-- World Map -->
       <section id="screen-world-map" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
         <div class="town-title">World Map</div>
-        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:50%; top:40%;">Goblin Cave</button>
+        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:35%; top:40%;">Goblin Cave</button>
+        <button class="town-poi town-poi-center" data-screen="bandit-camp" style="left:65%; top:40%;">Bandit Camp</button>
         <button class="town-poi town-poi-center" data-screen="town" style="left:50%; bottom:8%;">Back to Elderbrook</button>
       </section>
 
@@ -140,6 +147,18 @@
           <h2>Goblin Cave</h2>
           <p class="flavor">A dank cave echoes with guttural snarls. Goblins lurk in the shadows.</p>
           <button class="btn-primary" id="btn-explore">Hunt Goblins</button>
+          <button class="btn-primary" id="btn-enter-dungeon-goblin">Enter Dungeon</button>
+          <button class="btn-back" data-screen="world-map">Back to World Map</button>
+        </div>
+      </section>
+
+      <!-- Bandit Camp -->
+      <section id="screen-bandit-camp" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
+        <div class="panel">
+          <h2>Bandit Camp</h2>
+          <p class="flavor">Campfires glow through the trees. Armed outlaws patrol the perimeter.</p>
+          <button class="btn-primary" id="btn-explore-bandit">Hunt Bandits</button>
+          <button class="btn-primary" id="btn-enter-dungeon-bandit">Enter Dungeon</button>
           <button class="btn-back" data-screen="world-map">Back to World Map</button>
         </div>
       </section>
@@ -152,6 +171,9 @@
             <h3 id="battle-player-name">Player</h3>
             <div class="bar-wrap"><div class="bar bar-hp" id="player-hp-bar"></div></div>
             <p id="player-hp-text">HP 50/50</p>
+            <div class="bar-wrap"><div class="bar bar-mana" id="player-mana-bar"></div></div>
+            <p id="player-mana-text">MP 20/20</p>
+            <div id="player-status" class="status-container"></div>
             <div id="battle-actions" class="battle-actions">
               <button class="btn-primary" id="btn-attack">Attack</button>
               <button class="btn-primary" id="btn-potion">Potion</button>
@@ -159,13 +181,38 @@
             </div>
           </div>
           <div class="battle-combatant battle-enemy">
+            <span id="boss-label" class="boss-label" style="display:none;">BOSS</span>
             <img class="battle-portrait" id="enemy-portrait" src="assets/portraits/goblin-enemy.png" alt="Enemy" />
             <h3 id="enemy-name">Enemy</h3>
             <div class="bar-wrap"><div class="bar bar-enemy" id="enemy-hp-bar"></div></div>
             <p id="enemy-hp-text">HP ?/?</p>
+            <div id="enemy-status" class="status-container"></div>
           </div>
         </div>
         <div id="battle-log" class="battle-log"></div>
+      </section>
+
+      <!-- Dungeon -->
+      <section id="screen-dungeon" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
+        <div class="panel dungeon-panel">
+          <h2 id="dungeon-room-name">Room</h2>
+          <p class="flavor" id="dungeon-room-desc">Description</p>
+          <div id="dungeon-actions"></div>
+          <div id="dungeon-map" class="dungeon-map"></div>
+        </div>
+      </section>
+
+      <!-- Game Over -->
+      <section id="screen-gameover" class="screen">
+        <div class="panel gameover-panel">
+          <h2 class="gameover-title">You Died</h2>
+          <p class="gameover-text">Slain by <span id="gameover-enemy">an enemy</span>.</p>
+          <p class="gameover-text">Lost <span id="gameover-gold-lost" class="text-danger">0</span> gold.</p>
+          <div class="gameover-actions">
+            <button class="btn-primary" id="btn-revive">Return to Town</button>
+            <button class="btn-secondary" id="btn-load-save">Load Save</button>
+          </div>
+        </div>
       </section>
 
       <!-- Character Screen -->
@@ -220,10 +267,14 @@
   <script src="js/items.js"></script>
   <script src="js/enemies.js"></script>
   <script src="js/player.js"></script>
+  <script src="js/skills.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/shops.js"></script>
   <script src="js/quests.js"></script>
+  <script src="js/dialogue.js"></script>
+  <script src="js/audio.js"></script>
   <script src="js/battle.js"></script>
+  <script src="js/dungeon.js"></script>
   <script src="js/save.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/world.js"></script>

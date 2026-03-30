@@ -100,6 +100,7 @@ var Shops = (function () {
     }
     Player.addItem(itemId);
     MessageLog.add("Bought " + item.name + " for " + item.price + " gold.", "gold");
+    Audio.shopBuy();
     UI.updateHeader();
   }
 
