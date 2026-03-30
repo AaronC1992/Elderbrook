@@ -42,6 +42,9 @@ var World = (function () {
   }
 
   function reviveAtTown() {
+    if (Dungeon.isInDungeon()) {
+      Dungeon.resetState();
+    }
     var data = Player.getData();
     data.hp = Math.floor(data.maxHp * 0.5);
     data.mana = Math.floor(data.maxMana * 0.5);

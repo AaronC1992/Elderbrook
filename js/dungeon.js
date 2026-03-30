@@ -23,7 +23,7 @@ var Dungeon = (function () {
     "bandit-camp": {
       name: "Bandit Camp",
       area: "bandit-camp",
-      background: "assets/backgrounds/goblin-cave-1.png",
+      background: "assets/backgrounds/bandit-camp-1.png",
       rooms: [
         { id: 0, name: "Camp Outskirts", description: "Firelight flickers through the trees. The bandits' camp lies ahead.", type: "start", exits: [1, 2] },
         { id: 1, name: "Guard Post", description: "A bandit stands watch by a crude barricade.", type: "enemy", exits: [3], enemyCount: 1 },
@@ -85,7 +85,6 @@ var Dungeon = (function () {
         bossBtn.className = "btn-danger";
         bossBtn.textContent = "Challenge Boss!";
         bossBtn.addEventListener("click", function () {
-          clearedRooms[room.id] = true;
           Battle.startBoss(currentDungeon.area);
         });
         actionsEl.appendChild(bossBtn);
@@ -246,6 +245,13 @@ var Dungeon = (function () {
     UI.showScreen("world-map");
   }
 
+  function resetState() {
+    inDungeon = false;
+    currentDungeon = null;
+    currentRoom = 0;
+    clearedRooms = {};
+  }
+
   function isInDungeon() {
     return inDungeon;
   }
@@ -255,6 +261,7 @@ var Dungeon = (function () {
     render: render,
     isInDungeon: isInDungeon,
     onBattleVictory: onBattleVictory,
-    leaveDungeon: leaveDungeon
+    leaveDungeon: leaveDungeon,
+    resetState: resetState
   };
 })();

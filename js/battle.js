@@ -38,6 +38,16 @@ var Battle = (function () {
     var bossLabel = document.getElementById("boss-label");
     if (bossLabel) bossLabel.style.display = currentEnemy.isBoss ? "block" : "none";
 
+    // Update battle background for current area
+    var battleScreen = document.getElementById("screen-battle");
+    if (battleScreen) {
+      if (currentArea === "bandit-camp") {
+        battleScreen.style.backgroundImage = "url('assets/backgrounds/bandit-camp-1.png')";
+      } else {
+        battleScreen.style.backgroundImage = "url('assets/backgrounds/goblin-cave-1.png')";
+      }
+    }
+
     buildActions();
     renderBattle();
     UI.showScreen("battle");
@@ -70,6 +80,15 @@ var Battle = (function () {
 
     var bossLabel = document.getElementById("boss-label");
     if (bossLabel) bossLabel.style.display = "block";
+
+    var battleScreen = document.getElementById("screen-battle");
+    if (battleScreen) {
+      if (currentArea === "bandit-camp") {
+        battleScreen.style.backgroundImage = "url('assets/backgrounds/bandit-camp-1.png')";
+      } else {
+        battleScreen.style.backgroundImage = "url('assets/backgrounds/goblin-cave-1.png')";
+      }
+    }
 
     buildActions();
     renderBattle();
@@ -225,7 +244,7 @@ var Battle = (function () {
         totalDamage += eff.damage;
         var label = eff.type === "poison" ? "Poison" : "Bleed";
         logBattle(label + " deals " + eff.damage + " damage to you!", "damage");
-        if (eff.type === "poison") Audio.statusPoison();
+        Audio.statusPoison();
       }
       eff.turnsLeft--;
       if (eff.turnsLeft <= 0) {
@@ -405,6 +424,7 @@ var Battle = (function () {
     }
 
     playerTurn = false;
+    isDefending = false;
     setCooldown();
     Player.removeItem("mana-potion");
     Player.restoreMana(15);

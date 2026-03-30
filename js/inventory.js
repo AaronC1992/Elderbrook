@@ -170,6 +170,11 @@ var Inventory = (function () {
     var filter = target.getAttribute("data-filter");
     if (filter) {
       currentFilter = filter;
+      var filterBtns = document.querySelectorAll(".filter-btn");
+      for (var i = 0; i < filterBtns.length; i++) {
+        filterBtns[i].classList.remove("active");
+      }
+      target.classList.add("active");
       render();
       return;
     }
