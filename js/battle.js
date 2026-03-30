@@ -1,808 +1,549 @@
-/* battle.js - Turn-based combat with skills, status effects, game over */
+/* battle.js - Turn-based combat system for Chapter 1 */
 var Battle = (function () {
-  var currentEnemy = null;
-  var inBattle = false;
-  var playerTurn = true;
-  var currentArea = "goblin-cave";
-  var playerEffects = [];   // { type, damage, duration, turnsLeft }
-  var isDefending = false;
 
-  function start(area) {
-    currentArea = area || "goblin-cave";
-    currentEnemy = Enemies.getRandomForArea(currentArea);
-    if (!currentEnemy) return;
-    inBattle = true;
-    playerTurn = true;
-    playerEffects = [];
-    isDefending = false;
+  var enemy = null;
+  var battleLog = [];
+  var playerBuffs = [];   // { stat, amount, turns }
+  var enemyBuffs = [];
+  var playerEffects = []; // { type, damage, turns }
+  var enemyEffects = [];
+  var isBossFight = false;
+  var isDungeonBattle = false;
+  var onVictoryCallback = null;
+  var turnCount = 0;
 
-    MessageLog.add("A " + currentEnemy.name + " appears!", "damage");
-
-    var log = document.getElementById("battle-log");
-    if (log) log.innerHTML = "";
-
-    // Update player name
-    var pName = document.getElementById("battle-player-name");
-    if (pName) pName.textContent = Player.getData().name;
-
-    // Update portraits
-    var pPortrait = document.getElementById("player-portrait");
-    if (pPortrait) {
-      var g = Player.getData().gender || "male";
-      pPortrait.src = "assets/portraits/" + g + "-player.png";
-    }
-    var ePortrait = document.getElementById("enemy-portrait");
-    if (ePortrait && currentEnemy.portrait) ePortrait.src = currentEnemy.portrait;
-
-    // Show boss label
-    var bossLabel = document.getElementById("boss-label");
-    if (bossLabel) bossLabel.style.display = currentEnemy.isBoss ? "block" : "none";
-
-    // Update battle background for current area
-    var battleScreen = document.getElementById("screen-battle");
-    if (battleScreen) {
-      var bgMap = {
-        "goblin-cave": "assets/backgrounds/goblin-cave-1.png",
-        "bandit-camp": "assets/backgrounds/bandit-camp-1.png",
-        "dark-forest": "assets/backgrounds/dark-forest-1.png",
-        "haunted-ruins": "assets/backgrounds/haunted-ruins-1.png",
-        "dragons-lair": "assets/backgrounds/dragons-lair-1.png"
-      };
-      battleScreen.style.backgroundImage = "url('" + (bgMap[currentArea] || bgMap["goblin-cave"]) + "')";
-    }
-
-    buildActions();
+  function start(areaId, callback) {
+    var e = Enemies.getRandomForArea(areaId);
+    if (!e) return false;
+    enemy = e;
+    isBossFight = !!e.isBoss;
+    isDungeonBattle = false;
+    onVictoryCallback = callback || null;
+    resetState();
     renderBattle();
     UI.showScreen("battle");
+    addLog("A " + enemy.name + " appears!");
+    return true;
   }
 
-  function startBoss(area) {
-    currentArea = area || "goblin-cave";
-    currentEnemy = Enemies.getBoss(currentArea);
-    if (!currentEnemy) return;
-    inBattle = true;
-    playerTurn = true;
-    playerEffects = [];
-    isDefending = false;
-
-    MessageLog.add("BOSS: " + currentEnemy.name + " appears!", "damage");
-
-    var log = document.getElementById("battle-log");
-    if (log) log.innerHTML = "";
-
-    var pName = document.getElementById("battle-player-name");
-    if (pName) pName.textContent = Player.getData().name;
-
-    var pPortrait = document.getElementById("player-portrait");
-    if (pPortrait) {
-      var g = Player.getData().gender || "male";
-      pPortrait.src = "assets/portraits/" + g + "-player.png";
-    }
-    var ePortrait = document.getElementById("enemy-portrait");
-    if (ePortrait && currentEnemy.portrait) ePortrait.src = currentEnemy.portrait;
-
-    var bossLabel = document.getElementById("boss-label");
-    if (bossLabel) bossLabel.style.display = "block";
-
-    var battleScreen = document.getElementById("screen-battle");
-    if (battleScreen) {
-      var bgMap = {
-        "goblin-cave": "assets/backgrounds/goblin-cave-1.png",
-        "bandit-camp": "assets/backgrounds/bandit-camp-1.png",
-        "dark-forest": "assets/backgrounds/dark-forest-1.png",
-        "haunted-ruins": "assets/backgrounds/haunted-ruins-1.png",
-        "dragons-lair": "assets/backgrounds/dragons-lair-1.png"
-      };
-      battleScreen.style.backgroundImage = "url('" + (bgMap[currentArea] || bgMap["goblin-cave"]) + "')";
-    }
-
-    buildActions();
+  function startBoss(enemyId, callback) {
+    var e = Enemies.getBoss(enemyId);
+    if (!e) return false;
+    enemy = e;
+    isBossFight = true;
+    isDungeonBattle = true;
+    onVictoryCallback = callback || null;
+    resetState();
     renderBattle();
     UI.showScreen("battle");
+    addLog(enemy.name + " stands before you!");
+    return true;
   }
 
-  function buildActions() {
-    var actions = document.getElementById("battle-actions");
-    if (!actions) return;
-    actions.innerHTML = "";
-
-    // Basic attack
-    var atkBtn = document.createElement("button");
-    atkBtn.className = "btn-primary";
-    atkBtn.id = "btn-attack";
-    atkBtn.textContent = "Attack";
-    actions.appendChild(atkBtn);
-
-    // Skills
-    var availableSkills = Skills.getAvailable(Player.getData().level);
-    for (var i = 0; i < availableSkills.length; i++) {
-      var skill = availableSkills[i];
-      var sBtn = document.createElement("button");
-      sBtn.className = "btn-primary btn-skill";
-      sBtn.setAttribute("data-skill", skill.id);
-      sBtn.textContent = skill.name + " (" + skill.manaCost + " MP)";
-      sBtn.title = skill.description;
-      actions.appendChild(sBtn);
-    }
-
-    // Potion
-    var potBtn = document.createElement("button");
-    potBtn.className = "btn-primary";
-    potBtn.id = "btn-potion";
-    potBtn.textContent = "Use Health Potion";
-    actions.appendChild(potBtn);
-
-    // Mana Potion
-    var manaBtn = document.createElement("button");
-    manaBtn.className = "btn-secondary";
-    manaBtn.id = "btn-mana-potion";
-    manaBtn.textContent = "Use Mana Potion";
-    actions.appendChild(manaBtn);
-
-    // Run
-    var runBtn = document.createElement("button");
-    runBtn.className = "btn-secondary";
-    runBtn.id = "btn-run";
-    runBtn.textContent = "Run";
-    actions.appendChild(runBtn);
+  function startDungeonEnemy(enemyId, callback) {
+    var template = Enemies.get(enemyId);
+    if (!template) return false;
+    enemy = JSON.parse(JSON.stringify(template));
+    isBossFight = !!enemy.isBoss;
+    isDungeonBattle = true;
+    onVictoryCallback = callback || null;
+    resetState();
+    renderBattle();
+    UI.showScreen("battle");
+    addLog("A " + enemy.name + " blocks your path!");
+    return true;
   }
 
-  function renderBattle() {
-    if (!currentEnemy) return;
-
-    var eName = document.getElementById("enemy-name");
-    var eBar = document.getElementById("enemy-hp-bar");
-    var eHpText = document.getElementById("enemy-hp-text");
-
-    if (eName) eName.textContent = currentEnemy.name;
-    if (eBar) eBar.style.width = Math.max(0, (currentEnemy.hp / currentEnemy.maxHp) * 100) + "%";
-    if (eHpText) eHpText.textContent = currentEnemy.hp + " / " + currentEnemy.maxHp;
-
-    var pBar = document.getElementById("player-hp-bar");
-    var pHpText = document.getElementById("player-hp-text");
-    var pManaBar = document.getElementById("player-mana-bar");
-    var pManaText = document.getElementById("player-mana-text");
-    var data = Player.getData();
-
-    if (pBar) pBar.style.width = Math.max(0, (data.hp / data.maxHp) * 100) + "%";
-    if (pHpText) pHpText.textContent = data.hp + " / " + data.maxHp;
-    if (pManaBar) pManaBar.style.width = Math.max(0, (data.mana / data.maxMana) * 100) + "%";
-    if (pManaText) pManaText.textContent = data.mana + " / " + data.maxMana;
-
-    // Render status effects on enemy
-    var eStatusEl = document.getElementById("enemy-status");
-    if (eStatusEl) {
-      eStatusEl.innerHTML = "";
-      if (currentEnemy.statusEffects) {
-        for (var i = 0; i < currentEnemy.statusEffects.length; i++) {
-          var eff = currentEnemy.statusEffects[i];
-          var badge = document.createElement("span");
-          badge.className = "status-badge status-" + eff.type;
-          badge.textContent = eff.type.charAt(0).toUpperCase() + eff.type.slice(1) + " (" + eff.turnsLeft + ")";
-          eStatusEl.appendChild(badge);
-        }
-      }
-    }
-
-    // Render status effects on player
-    var pStatusEl = document.getElementById("player-status");
-    if (pStatusEl) {
-      pStatusEl.innerHTML = "";
-      for (var j = 0; j < playerEffects.length; j++) {
-        var pEff = playerEffects[j];
-        var pBadge = document.createElement("span");
-        pBadge.className = "status-badge status-" + pEff.type;
-        pBadge.textContent = pEff.type.charAt(0).toUpperCase() + pEff.type.slice(1) + " (" + pEff.turnsLeft + ")";
-        pStatusEl.appendChild(pBadge);
-      }
-      if (isDefending) {
-        var defBadge = document.createElement("span");
-        defBadge.className = "status-badge status-defend";
-        defBadge.textContent = "Defending";
-        pStatusEl.appendChild(defBadge);
-      }
-    }
-
-    // Enable/disable buttons
-    var btns = document.querySelectorAll("#battle-actions button");
-    for (var k = 0; k < btns.length; k++) {
-      btns[k].disabled = !playerTurn;
-      if (playerTurn) btns[k].classList.remove("on-cooldown");
-    }
+  function resetState() {
+    battleLog = [];
+    playerBuffs = [];
+    enemyBuffs = [];
+    playerEffects = [];
+    enemyEffects = [];
+    turnCount = 0;
   }
 
-  function setCooldown() {
-    var btns = document.querySelectorAll("#battle-actions button");
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.add("on-cooldown");
-    }
-  }
+  /* ── Player Actions ── */
 
-  // --- Status Effects ---
-  function applyStatusToPlayer(effect) {
-    // Check if already has this type
-    for (var i = 0; i < playerEffects.length; i++) {
-      if (playerEffects[i].type === effect.type) {
-        playerEffects[i].turnsLeft = effect.duration;
-        return;
-      }
-    }
-    playerEffects.push({ type: effect.type, damage: effect.damage || 0, turnsLeft: effect.duration });
-  }
-
-  function applyStatusToEnemy(effect) {
-    if (!currentEnemy.statusEffects) currentEnemy.statusEffects = [];
-    for (var i = 0; i < currentEnemy.statusEffects.length; i++) {
-      if (currentEnemy.statusEffects[i].type === effect.type) {
-        currentEnemy.statusEffects[i].turnsLeft = effect.duration;
-        return;
-      }
-    }
-    currentEnemy.statusEffects.push({ type: effect.type, damage: effect.damage || 0, turnsLeft: effect.duration });
-  }
-
-  function processPlayerEffects() {
-    var totalDamage = 0;
-    for (var i = playerEffects.length - 1; i >= 0; i--) {
-      var eff = playerEffects[i];
-      if (eff.type === "poison" || eff.type === "bleed") {
-        Player.takeDamage(eff.damage);
-        totalDamage += eff.damage;
-        var label = eff.type === "poison" ? "Poison" : "Bleed";
-        logBattle(label + " deals " + eff.damage + " damage to you!", "damage");
-        Audio.statusPoison();
-      }
-      eff.turnsLeft--;
-      if (eff.turnsLeft <= 0) {
-        playerEffects.splice(i, 1);
-      }
-    }
-    return totalDamage;
-  }
-
-  function processEnemyEffects() {
-    if (!currentEnemy.statusEffects) return false;
-    var stunned = false;
-    for (var i = currentEnemy.statusEffects.length - 1; i >= 0; i--) {
-      var eff = currentEnemy.statusEffects[i];
-      if (eff.type === "poison" || eff.type === "bleed") {
-        currentEnemy.hp -= eff.damage;
-        var label = eff.type === "poison" ? "Poison" : "Bleed";
-        logBattle(label + " deals " + eff.damage + " to " + currentEnemy.name + "!", "heal");
-        Audio.statusPoison();
-      }
-      if (eff.type === "stun") {
-        stunned = true;
-        logBattle(currentEnemy.name + " is stunned!", "info");
-        Audio.statusStun();
-      }
-      eff.turnsLeft--;
-      if (eff.turnsLeft <= 0) {
-        currentEnemy.statusEffects.splice(i, 1);
-      }
-    }
-    return stunned;
-  }
-
-  function isPlayerStunned() {
-    for (var i = 0; i < playerEffects.length; i++) {
-      if (playerEffects[i].type === "stun") return true;
-    }
-    return false;
-  }
-
-  // --- Player Actions ---
   function playerAttack() {
-    if (!inBattle || !playerTurn) return;
-    if (isPlayerStunned()) {
-      logBattle("You are stunned and can't act!", "damage");
-      Audio.statusStun();
-      playerTurn = false;
-      setCooldown();
-      processPlayerEffects();
-      renderBattle();
-      UI.updateHeader();
-      if (!Player.isAlive()) { defeat(); return; }
-      setTimeout(function () { enemyTurn(); }, 600);
-      return;
+    if (!enemy) return;
+    var p = Player.get();
+    var atk = Player.getTotalAttack() + getBuffTotal(playerBuffs, "attack");
+    var def = enemy.defense + getBuffTotal(enemyBuffs, "defense");
+    var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 3));
+
+    // Dexterity-based dodge chance for enemy
+    var dodgeChance = 0.05;
+    if (Math.random() < dodgeChance) {
+      addLog("The " + enemy.name + " dodges your attack!");
+      Audio.play("miss");
+    } else {
+      enemy.hp -= dmg;
+      addLog("You hit " + enemy.name + " for " + dmg + " damage.");
+      Audio.play("swordHit");
     }
 
-    playerTurn = false;
-    isDefending = false;
-    setCooldown();
-
-    var atk = Player.getTotalAttack();
-    var variance = Math.floor(Math.random() * 3) - 1;
-    var damage = Math.max(1, atk - currentEnemy.defense + variance);
-
-    currentEnemy.hp -= damage;
-    logBattle("You strike the " + currentEnemy.name + " for " + damage + " damage!", "damage");
-    Audio.swordHit();
-
-    if (currentEnemy.hp <= 0) {
-      currentEnemy.hp = 0;
-      renderBattle();
-      victory();
-      return;
-    }
-
-    processPlayerEffects();
-    renderBattle();
-    UI.updateHeader();
-    if (!Player.isAlive()) { defeat(); return; }
-    setTimeout(function () { enemyTurn(); }, 600);
+    checkBattleEnd() || enemyTurn();
   }
 
   function playerUseSkill(skillId) {
-    if (!inBattle || !playerTurn) return;
-    if (isPlayerStunned()) {
-      logBattle("You are stunned and can't act!", "damage");
-      Audio.statusStun();
-      playerTurn = false;
-      setCooldown();
-      processPlayerEffects();
-      renderBattle();
-      UI.updateHeader();
-      if (!Player.isAlive()) { defeat(); return; }
-      setTimeout(function () { enemyTurn(); }, 600);
-      return;
-    }
-
+    if (!enemy) return;
     var skill = Skills.get(skillId);
     if (!skill) return;
-
-    var data = Player.getData();
-    if (data.mana < skill.manaCost) {
-      logBattle("Not enough mana for " + skill.name + "!", "damage");
+    var p = Player.get();
+    if (p.mp < skill.mpCost) {
+      addLog("Not enough MP!");
       return;
     }
+    p.mp -= skill.mpCost;
 
-    playerTurn = false;
-    isDefending = false;
-    setCooldown();
-    data.mana -= skill.manaCost;
+    if (skill.type === "heal") {
+      Player.heal(skill.healAmount);
+      addLog("You use " + skill.name + " and restore " + skill.healAmount + " HP.");
+      Audio.play("heal");
+    } else if (skill.id === "meditate") {
+      Player.restoreMana(skill.manaRestore);
+      addLog("You meditate and restore " + skill.manaRestore + " MP.");
+      Audio.play("heal");
+    } else if (skill.type === "buff") {
+      if (skill.buffType === "evasion") {
+        playerBuffs.push({ stat: "evasion", amount: skill.buffAmount, turns: skill.buffDuration });
+        addLog("You use " + skill.name + "! Evasion increased.");
+      } else {
+        playerBuffs.push({ stat: skill.buffType, amount: skill.buffAmount, turns: skill.buffDuration });
+        addLog("You use " + skill.name + "! " + skill.buffType + " boosted.");
+      }
+      Audio.play("heal");
+    } else if (skill.type === "attack" || skill.type === "magic") {
+      var atk = Player.getTotalAttack() + getBuffTotal(playerBuffs, "attack");
+      if (skill.intScaling) {
+        atk = p.intelligence + getBuffTotal(playerBuffs, "attack");
+      }
+      var def = enemy.defense + getBuffTotal(enemyBuffs, "defense");
+      var hits = skill.hits || 1;
+      var totalDmg = 0;
 
-    if (skill.type === "attack") {
-      var atk = Player.getTotalAttack();
-      var variance = Math.floor(Math.random() * 3) - 1;
-      var damage = Math.max(1, Math.floor((atk - currentEnemy.defense + variance) * skill.damageMultiplier));
-      currentEnemy.hp -= damage;
-      logBattle(skill.name + "! " + damage + " damage to " + currentEnemy.name + "!", "damage");
-      Audio.swordHit();
+      for (var h = 0; h < hits; h++) {
+        var dmg = Math.max(1, Math.floor((atk - def) * skill.damageMultiplier) + Math.floor(Math.random() * 3));
+        totalDmg += dmg;
+      }
 
+      enemy.hp -= totalDmg;
+      addLog("You use " + skill.name + " dealing " + totalDmg + " damage!");
+      Audio.play(skill.type === "magic" ? "magicCast" : "swordHit");
+
+      // Apply effect
       if (skill.appliesEffect) {
-        applyStatusToEnemy(skill.appliesEffect);
-        logBattle(currentEnemy.name + " is afflicted with " + skill.appliesEffect.type + "!", "info");
-      }
-
-      if (skill.recoilPercent) {
-        var recoil = Math.max(1, Math.floor(damage * skill.recoilPercent));
-        Player.takeDamage(recoil);
-        logBattle("Recoil! You take " + recoil + " damage!", "damage");
-      }
-
-      if (currentEnemy.hp <= 0) {
-        currentEnemy.hp = 0;
-        renderBattle();
-        victory();
-        return;
-      }
-    } else if (skill.type === "magic") {
-      var magicDmg = Math.max(1, skill.baseDamage + Math.floor(Player.getTotalIntelligence() * skill.intScaling) - currentEnemy.defense);
-      currentEnemy.hp -= magicDmg;
-      logBattle(skill.name + "! " + magicDmg + " magic damage to " + currentEnemy.name + "!", "damage");
-      Audio.magicCast();
-
-      if (skill.appliesEffect) {
-        var doApply = skill.stunChance ? (Math.random() < skill.stunChance) : true;
-        if (doApply) {
-          applyStatusToEnemy(skill.appliesEffect);
-          logBattle(currentEnemy.name + " is afflicted with " + skill.appliesEffect.type + "!", "info");
+        var eff = skill.appliesEffect;
+        if (eff.type === "stun" && Math.random() < (eff.chance || 1)) {
+          enemyEffects.push({ type: "stun", turns: eff.turns });
+          addLog(enemy.name + " is stunned!");
+          Audio.play("statusStun");
+        } else if (eff.type === "poison") {
+          enemyEffects.push({ type: "poison", damage: eff.damage, turns: eff.turns });
+          addLog(enemy.name + " is poisoned!");
+          Audio.play("statusPoison");
         }
       }
-
-      if (currentEnemy.hp <= 0) {
-        currentEnemy.hp = 0;
-        renderBattle();
-        victory();
-        return;
-      }
-    } else if (skill.type === "buff" && skill.effect === "defending") {
-      isDefending = true;
-      logBattle("You brace yourself, reducing incoming damage!", "info");
-      Audio.buttonClick();
-    } else if (skill.type === "heal") {
-      Player.heal(skill.healAmount);
-      logBattle(skill.name + "! Restored " + skill.healAmount + " HP!", "heal");
-      Audio.heal();
     }
 
-    processPlayerEffects();
-    renderBattle();
-    UI.updateHeader();
-    if (!Player.isAlive()) { defeat(); return; }
-    setTimeout(function () { enemyTurn(); }, 600);
+    checkBattleEnd() || enemyTurn();
   }
 
-  function playerUsePotion() {
-    if (!inBattle || !playerTurn) return;
+  function playerUsePotion(itemId) {
+    if (!enemy) return;
+    var item = Items.get(itemId);
+    if (!item || item.type !== "potion") return;
+    if (!Player.hasItem(itemId)) { addLog("You don't have that!"); return; }
 
-    // Try greater health potion first, then regular
-    var potionId = null;
-    var healAmt = 0;
-    if (Player.hasItem("greater-health-potion")) {
-      potionId = "greater-health-potion";
-      healAmt = 75;
-    } else if (Player.hasItem("health-potion")) {
-      potionId = "health-potion";
-      healAmt = 30;
+    Player.removeItem(itemId);
+
+    if (item.subtype === "health") {
+      Player.heal(item.healAmount);
+      addLog("You drink " + item.name + " and restore " + item.healAmount + " HP.");
+    } else if (item.subtype === "mana") {
+      Player.restoreMana(item.manaAmount);
+      addLog("You drink " + item.name + " and restore " + item.manaAmount + " MP.");
     }
-
-    if (!potionId) {
-      logBattle("No health potions left!", "damage");
-      return;
-    }
-
-    playerTurn = false;
-    isDefending = false;
-    setCooldown();
-    Player.removeItem(potionId);
-    Player.heal(healAmt);
-    var name = Items.get(potionId) ? Items.get(potionId).name : potionId;
-    logBattle("You drink a " + name + ". +" + healAmt + " HP!", "heal");
-    Audio.potionDrink();
-
-    processPlayerEffects();
-    renderBattle();
-    UI.updateHeader();
-    if (!Player.isAlive()) { defeat(); return; }
-    setTimeout(function () { enemyTurn(); }, 600);
-  }
-
-  function playerUseManaPotion() {
-    if (!inBattle || !playerTurn) return;
-
-    var potionId = null;
-    var manaAmt = 0;
-    if (Player.hasItem("greater-mana-potion")) {
-      potionId = "greater-mana-potion";
-      manaAmt = 40;
-    } else if (Player.hasItem("mana-potion")) {
-      potionId = "mana-potion";
-      manaAmt = 15;
-    }
-
-    if (!potionId) {
-      logBattle("No mana potions left!", "damage");
-      return;
-    }
-
-    playerTurn = false;
-    isDefending = false;
-    setCooldown();
-    Player.removeItem(potionId);
-    Player.restoreMana(manaAmt);
-    var name = Items.get(potionId) ? Items.get(potionId).name : potionId;
-    logBattle("You drink a " + name + ". +" + manaAmt + " MP!", "info");
-    Audio.potionDrink();
-
-    processPlayerEffects();
-    renderBattle();
-    UI.updateHeader();
-    if (!Player.isAlive()) { defeat(); return; }
-    setTimeout(function () { enemyTurn(); }, 600);
+    Audio.play("potionDrink");
+    enemyTurn();
   }
 
   function playerRun() {
-    if (!inBattle || !playerTurn) return;
-
-    if (currentEnemy.isBoss) {
-      logBattle("You can't run from a boss!", "damage");
+    if (isBossFight) {
+      addLog("You can't run from a boss fight!");
       return;
     }
-
-    var dex = Player.getTotalDexterity();
-    var chance = 0.4 + (dex * 0.03);
+    var chance = 0.55 + (Player.get().dexterity * 0.03);
     if (Math.random() < chance) {
-      logBattle("You fled from the " + currentEnemy.name + "!", "info");
-      Audio.runAway();
-      endBattle();
-      if (Dungeon.isInDungeon()) {
-        UI.showScreen("dungeon");
-        Dungeon.render();
-      } else {
-        var areaScreenMap = {
-          "goblin-cave": "wilderness",
-          "bandit-camp": "bandit-camp",
-          "dark-forest": "dark-forest",
-          "haunted-ruins": "haunted-ruins",
-          "dragons-lair": "dragons-lair"
-        };
-        UI.showScreen(areaScreenMap[currentArea] || "wilderness");
-      }
+      addLog("You escaped!");
+      Audio.play("runAway");
+      endBattle(false);
     } else {
-      playerTurn = false;
-      setCooldown();
-      logBattle("Failed to escape!", "damage");
-      Audio.miss();
-      setTimeout(function () { enemyTurn(); }, 600);
+      addLog("Failed to escape!");
+      Audio.play("miss");
+      enemyTurn();
     }
   }
 
-  // --- Enemy Turn ---
+  /* ── Enemy Turn ── */
+
   function enemyTurn() {
-    if (!inBattle || !currentEnemy || currentEnemy.hp <= 0) return;
+    if (!enemy || enemy.hp <= 0) return;
+    turnCount++;
 
-    // Process enemy effects first
-    var stunned = processEnemyEffects();
-    if (currentEnemy.hp <= 0) {
-      currentEnemy.hp = 0;
+    // Tick enemy status effects first
+    tickEffects(enemyEffects, enemy, true);
+
+    // Check stun
+    var stunIdx = findEffect(enemyEffects, "stun");
+    if (stunIdx !== -1) {
+      addLog(enemy.name + " is stunned and can't act!");
+      tickBuffs(enemyBuffs);
+      tickBuffs(playerBuffs);
+      tickPlayerEffects();
       renderBattle();
-      victory();
       return;
     }
-    if (stunned) {
-      playerTurn = true;
-      renderBattle();
-      return;
-    }
 
-    // Check for special abilities
+    // Check for special ability
     var usedAbility = false;
-    if (currentEnemy.abilities && currentEnemy.abilities.length > 0) {
-      for (var i = 0; i < currentEnemy.abilities.length; i++) {
-        var ability = currentEnemy.abilities[i];
-        if (Math.random() < ability.chance) {
-          // Self buff
-          if (ability.selfBuff) {
-            if (ability.selfBuff.attack) currentEnemy.attack += ability.selfBuff.attack;
-            logBattle(ability.message, "damage");
-            Audio.enemyHit();
-            usedAbility = true;
-            break;
-          }
+    if (enemy.abilities && enemy.abilities.length > 0) {
+      for (var a = 0; a < enemy.abilities.length; a++) {
+        var ab = enemy.abilities[a];
+        if (Math.random() < ab.chance) {
+          if (ab.multiplier) {
+            var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
+            var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
+            var dmg = Math.max(1, Math.floor((atk - def) * ab.multiplier) + Math.floor(Math.random() * 2));
 
-          // Attack with multiplier
-          if (ability.multiplier) {
-            var atkDmg = currentEnemy.attack;
-            var playerDef = Player.getTotalDefense();
-            if (isDefending) playerDef = Math.floor(playerDef * 1.5);
-            var variance2 = Math.floor(Math.random() * 3) - 1;
-            var damage2 = Math.max(1, Math.floor((atkDmg - playerDef + variance2) * ability.multiplier));
-            if (isDefending) damage2 = Math.max(1, Math.floor(damage2 * 0.5));
-            Player.takeDamage(damage2);
-            logBattle(ability.message + " " + damage2 + " damage!", "damage");
-            Audio.enemyHit();
-            usedAbility = true;
-            break;
+            // Check evasion
+            var evasion = getBuffTotal(playerBuffs, "evasion");
+            if (evasion > 0 && Math.random() * 100 < evasion) {
+              addLog("You dodge " + enemy.name + "'s " + ab.name + "!");
+              Audio.play("miss");
+            } else {
+              Player.takeDamage(dmg);
+              addLog(enemy.name + " uses " + ab.name + " for " + dmg + " damage!");
+              Audio.play("enemyHit");
+            }
           }
-
-          // Status effect application
-          if (ability.appliesEffect) {
-            var normalDmg = doEnemyBasicDamage();
-            applyStatusToPlayer(ability.appliesEffect);
-            logBattle(ability.message, "damage");
-            usedAbility = true;
-            break;
+          if (ab.buff) {
+            enemyBuffs.push({ stat: ab.buff.stat, amount: ab.buff.amount, turns: ab.buff.turns });
+            addLog(enemy.name + " uses " + ab.name + "!");
           }
+          if (ab.effect) {
+            if (ab.effect.type === "poison") {
+              playerEffects.push({ type: "poison", damage: ab.effect.damage, turns: ab.effect.turns });
+              addLog(enemy.name + " poisons you!");
+              Audio.play("statusPoison");
+            }
+          }
+          usedAbility = true;
+          break;
         }
       }
     }
 
     if (!usedAbility) {
-      doEnemyBasicDamage();
+      // Normal attack
+      var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
+      var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
+      var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 2));
+
+      var evasion = getBuffTotal(playerBuffs, "evasion");
+      if (evasion > 0 && Math.random() * 100 < evasion) {
+        addLog("You dodge " + enemy.name + "'s attack!");
+        Audio.play("miss");
+      } else {
+        Player.takeDamage(dmg);
+        addLog(enemy.name + " attacks for " + dmg + " damage.");
+        Audio.play("enemyHit");
+      }
     }
 
-    isDefending = false;
-    renderBattle();
-    UI.updateHeader();
+    // Tick player effects (poison etc)
+    tickPlayerEffects();
+    tickBuffs(playerBuffs);
+    tickBuffs(enemyBuffs);
 
-    if (!Player.isAlive()) {
+    checkBattleEnd();
+    renderBattle();
+  }
+
+  /* ── Status Effect Helpers ── */
+
+  function tickEffects(effects, target, isEnemy) {
+    for (var i = effects.length - 1; i >= 0; i--) {
+      var e = effects[i];
+      if (e.type === "poison" && e.damage) {
+        target.hp -= e.damage;
+        if (isEnemy) {
+          addLog(target.name + " takes " + e.damage + " poison damage.");
+        }
+      }
+      e.turns--;
+      if (e.turns <= 0) effects.splice(i, 1);
+    }
+  }
+
+  function tickPlayerEffects() {
+    for (var i = playerEffects.length - 1; i >= 0; i--) {
+      var e = playerEffects[i];
+      if (e.type === "poison" && e.damage) {
+        Player.takeDamage(e.damage);
+        addLog("You take " + e.damage + " poison damage.");
+      }
+      e.turns--;
+      if (e.turns <= 0) playerEffects.splice(i, 1);
+    }
+  }
+
+  function tickBuffs(buffs) {
+    for (var i = buffs.length - 1; i >= 0; i--) {
+      buffs[i].turns--;
+      if (buffs[i].turns <= 0) buffs.splice(i, 1);
+    }
+  }
+
+  function getBuffTotal(buffs, stat) {
+    var total = 0;
+    for (var i = 0; i < buffs.length; i++) {
+      if (buffs[i].stat === stat) total += buffs[i].amount;
+    }
+    return total;
+  }
+
+  function findEffect(effects, type) {
+    for (var i = 0; i < effects.length; i++) {
+      if (effects[i].type === type) return i;
+    }
+    return -1;
+  }
+
+  /* ── Battle End ── */
+
+  function checkBattleEnd() {
+    if (!enemy) return true;
+    if (enemy.hp <= 0) {
+      victory();
+      return true;
+    }
+    if (Player.get().hp <= 0) {
       defeat();
-      return;
+      return true;
     }
-
-    playerTurn = true;
-    renderBattle();
+    return false;
   }
 
-  function doEnemyBasicDamage() {
-    var enemyAtk = currentEnemy.attack;
-    var playerDef = Player.getTotalDefense();
-    if (isDefending) playerDef = Math.floor(playerDef * 1.5);
-    var variance = Math.floor(Math.random() * 3) - 1;
-    var damage = Math.max(1, enemyAtk - playerDef + variance);
-    if (isDefending) damage = Math.max(1, Math.floor(damage * 0.5));
-    Player.takeDamage(damage);
-    logBattle("The " + currentEnemy.name + " hits you for " + damage + " damage!", "damage");
-    Audio.enemyHit();
-    return damage;
-  }
-
-  // --- Victory ---
   function victory() {
-    inBattle = false;
-    Audio.victory();
+    var p = Player.get();
+    var goldDrop = 0;
+    if (enemy.gold) {
+      goldDrop = enemy.gold[0] + Math.floor(Math.random() * (enemy.gold[1] - enemy.gold[0] + 1));
+    }
+    p.gold += goldDrop;
+    var leveled = Player.addXp(enemy.xp);
+    Player.recordKill(enemy.id);
 
-    var goldMin = currentEnemy.goldReward[0];
-    var goldMax = currentEnemy.goldReward[1];
-    var gold = goldMin + Math.floor(Math.random() * (goldMax - goldMin + 1));
-    Player.addGold(gold);
-    logBattle("Victory! +" + gold + " gold.", "gold");
+    // Quest progress
+    Quests.progressKill(enemy.id);
 
-    var leveled = Player.addXp(currentEnemy.xpReward);
-    logBattle("+" + currentEnemy.xpReward + " XP.", "xp");
+    addLog("You defeated " + enemy.name + "!");
+    addLog("Gained " + enemy.xp + " XP and " + goldDrop + " gold.");
     if (leveled) {
-      logBattle("LEVEL UP! You are now level " + Player.getData().level + "! You have stat points to allocate!", "xp");
-      Audio.levelUp();
+      addLog("LEVEL UP! You are now level " + p.level + "!");
+      Audio.play("levelUp");
+    } else {
+      Audio.play("victory");
     }
 
-    Player.recordKill(currentEnemy.id);
-    Quests.progress(currentEnemy.id);
-    checkAreaUnlocks();
-
-    // Loot drops - allow multiple
-    if (currentEnemy.loot) {
-      for (var i = 0; i < currentEnemy.loot.length; i++) {
-        var drop = currentEnemy.loot[i];
-        if (Math.random() < drop.chance) {
-          if (!Player.inventoryFull()) {
-            Player.addItem(drop.itemId);
-            var item = Items.get(drop.itemId);
-            logBattle("Looted: " + (item ? item.name : drop.itemId), "gold");
-          } else {
-            logBattle("Inventory full! Loot lost.", "damage");
+    // Loot drops
+    var drops = [];
+    if (enemy.loot) {
+      for (var i = 0; i < enemy.loot.length; i++) {
+        var l = enemy.loot[i];
+        if (Math.random() < l.chance) {
+          if (Player.addItem(l.id)) {
+            var item = Items.get(l.id);
+            drops.push(item ? item.name : l.id);
           }
         }
       }
     }
-
-    UI.updateHeader();
-
-    // Final boss check
-    if (currentEnemy.isFinalBoss) {
-      Audio.finalVictory();
-      var actions = document.getElementById("battle-actions");
-      if (actions) {
-        actions.innerHTML = "";
-        var btn = document.createElement("button");
-        btn.className = "btn-primary";
-        btn.textContent = "You have saved Elderbrook!";
-        btn.addEventListener("click", function () {
-          UI.showScreen("victory");
-        });
-        actions.appendChild(btn);
-      }
-      return;
+    if (drops.length > 0) {
+      addLog("Loot: " + drops.join(", "));
     }
 
-    // If in dungeon, handle multi-fight rooms
-    if (Dungeon.isInDungeon()) {
-      var moreFights = Dungeon.onBattleVictory();
-      if (moreFights) return;
-    }
-
-    var actions = document.getElementById("battle-actions");
-    if (actions) {
-      actions.innerHTML = "";
-      var btn = document.createElement("button");
-      btn.className = "btn-primary";
-      btn.textContent = "Continue";
-      btn.addEventListener("click", function () {
-        if (Dungeon.isInDungeon()) {
-          UI.showScreen("dungeon");
-          Dungeon.render();
-        } else {
-          var areaScreenMap = {
-            "goblin-cave": "wilderness",
-            "bandit-camp": "bandit-camp",
-            "dark-forest": "dark-forest",
-            "haunted-ruins": "haunted-ruins",
-            "dragons-lair": "dragons-lair"
-          };
-          UI.showScreen(areaScreenMap[currentArea] || "wilderness");
-        }
-      });
-      actions.appendChild(btn);
-    }
+    renderBattle();
+    showVictoryButtons();
   }
 
-  function checkAreaUnlocks() {
-    var data = Player.getData();
-    var unlocks = [
-      { area: "bandit-camp", level: 3, quest: "goblin-king-slayer" },
-      { area: "dark-forest", level: 6, quest: "bandit-leader-bounty" },
-      { area: "haunted-ruins", level: 10, quest: "forest-guardian-quest" },
-      { area: "dragons-lair", level: 14, quest: "lich-lord-quest", requireBoth: true }
-    ];
-    for (var i = 0; i < unlocks.length; i++) {
-      var u = unlocks[i];
-      if (Player.isAreaUnlocked(u.area)) continue;
-      var levelMet = data.level >= u.level;
-      var questMet = u.quest ? Quests.isCompleted(u.quest) : false;
-      var shouldUnlock = u.requireBoth ? (levelMet && questMet) : (levelMet || questMet);
-      if (shouldUnlock) {
-        Player.unlockArea(u.area);
-        Audio.areaUnlock();
-        var areaNames = { "bandit-camp": "Bandit Camp", "dark-forest": "Dark Forest", "haunted-ruins": "Haunted Ruins", "dragons-lair": "Dragon's Lair" };
-        MessageLog.add("NEW AREA UNLOCKED: " + (areaNames[u.area] || u.area) + "!", "xp");
-      }
-    }
-  }
-
-  // --- Defeat ---
   function defeat() {
-    inBattle = false;
-    Audio.defeat();
+    addLog("You have been defeated...");
+    Audio.play("defeat");
+    renderBattle();
+    showDefeatButtons();
+  }
 
-    var data = Player.getData();
-    var goldLost = Math.floor(data.gold * 0.1);
-    data.gold -= goldLost;
-    if (data.gold < 0) data.gold = 0;
-
-    logBattle("You were defeated...", "damage");
-    MessageLog.add("Defeated by " + currentEnemy.name + ". Lost " + goldLost + " gold.", "damage");
-
-    UI.updateHeader();
-
-    // Show game over screen
-    var goScreen = document.getElementById("screen-gameover");
-    if (goScreen) {
-      var goldText = document.getElementById("gameover-gold-lost");
-      if (goldText) goldText.textContent = goldLost;
-      var enemyText = document.getElementById("gameover-enemy");
-      if (enemyText) enemyText.textContent = currentEnemy.name;
-    }
-
-    var actions = document.getElementById("battle-actions");
-    if (actions) {
-      actions.innerHTML = "";
-      var btn = document.createElement("button");
-      btn.className = "btn-danger";
-      btn.textContent = "You Died...";
-      btn.addEventListener("click", function () {
-        UI.showScreen("gameover");
-      });
-      actions.appendChild(btn);
+  function endBattle(won) {
+    var cb = onVictoryCallback;
+    enemy = null;
+    onVictoryCallback = null;
+    if (cb && won) {
+      cb();
+    } else if (!won && !isDungeonBattle) {
+      World.navigate("elderbrook");
     }
   }
 
-  function endBattle() {
-    inBattle = false;
-    currentEnemy = null;
-    playerEffects = [];
-    isDefending = false;
+  /* ── Rendering ── */
+
+  function renderBattle() {
+    var p = Player.get();
+    var container = document.getElementById("battle-content");
+    if (!container || !enemy) return;
+
+    var html = '';
+
+    // Enemy info
+    html += '<div class="battle-enemy">';
+    html += '<img class="battle-portrait" src="' + (enemy.portrait || '') + '" alt="' + enemy.name + '" onerror="this.style.display=\'none\'">';
+    html += '<div class="battle-enemy-info">';
+    html += '<div class="battle-name">' + enemy.name + (enemy.isBoss ? ' (BOSS)' : '') + '</div>';
+    html += '<div class="battle-hp-bar"><div class="hp-fill enemy-hp" style="width:' + Math.max(0, (enemy.hp / (Enemies.get(enemy.id) ? Enemies.get(enemy.id).hp : enemy.hp)) * 100) + '%"></div></div>';
+    html += '<div class="battle-hp-text">' + Math.max(0, enemy.hp) + ' HP</div>';
+    // Enemy effects
+    if (enemyEffects.length > 0) {
+      html += '<div class="battle-effects">';
+      for (var e = 0; e < enemyEffects.length; e++) {
+        html += '<span class="effect-tag effect-' + enemyEffects[e].type + '">' + enemyEffects[e].type + ' (' + enemyEffects[e].turns + ')</span>';
+      }
+      html += '</div>';
+    }
+    html += '</div></div>';
+
+    // Player info in battle
+    html += '<div class="battle-player">';
+    html += '<div class="battle-player-info">';
+    html += '<div class="battle-name">' + p.name + ' (Lv.' + p.level + ')</div>';
+    html += '<div class="battle-hp-bar"><div class="hp-fill player-hp" style="width:' + (p.hp / p.maxHp * 100) + '%"></div></div>';
+    html += '<div class="battle-hp-text">HP: ' + p.hp + '/' + p.maxHp + '</div>';
+    html += '<div class="battle-mp-bar"><div class="mp-fill" style="width:' + (p.mp / p.maxMp * 100) + '%"></div></div>';
+    html += '<div class="battle-mp-text">MP: ' + p.mp + '/' + p.maxMp + '</div>';
+    // Player effects
+    if (playerEffects.length > 0) {
+      html += '<div class="battle-effects">';
+      for (var pe = 0; pe < playerEffects.length; pe++) {
+        html += '<span class="effect-tag effect-' + playerEffects[pe].type + '">' + playerEffects[pe].type + ' (' + playerEffects[pe].turns + ')</span>';
+      }
+      html += '</div>';
+    }
+    html += '</div></div>';
+
+    // Battle log
+    html += '<div class="battle-log">';
+    var logStart = Math.max(0, battleLog.length - 6);
+    for (var b = logStart; b < battleLog.length; b++) {
+      html += '<div class="log-entry">' + battleLog[b] + '</div>';
+    }
+    html += '</div>';
+
+    // Action buttons (only if battle still active)
+    if (enemy.hp > 0 && p.hp > 0) {
+      html += '<div class="battle-actions">';
+      html += '<button class="btn" data-action="battle-attack">Attack</button>';
+      html += '<button class="btn" data-action="battle-run"' + (isBossFight ? ' disabled' : '') + '>Run</button>';
+
+      // Skills
+      var availSkills = Skills.getAvailable(p.level);
+      if (availSkills.length > 0) {
+        html += '<div class="battle-skills">';
+        for (var s = 0; s < availSkills.length; s++) {
+          var sk = availSkills[s];
+          var canUse = p.mp >= sk.mpCost;
+          html += '<button class="btn btn-small battle-skill-btn" data-action="battle-skill" data-skill="' + sk.id + '"' + (canUse ? '' : ' disabled') + ' title="' + sk.description + ' (MP: ' + sk.mpCost + ')">' + sk.name + '</button>';
+        }
+        html += '</div>';
+      }
+
+      // Potions in inventory
+      var potions = [];
+      for (var pi = 0; pi < p.inventory.length; pi++) {
+        var pItem = Items.get(p.inventory[pi]);
+        if (pItem && pItem.type === "potion") {
+          var exists = false;
+          for (var cp = 0; cp < potions.length; cp++) {
+            if (potions[cp].id === pItem.id) { potions[cp].count++; exists = true; break; }
+          }
+          if (!exists) potions.push({ id: pItem.id, name: pItem.name, count: 1 });
+        }
+      }
+      if (potions.length > 0) {
+        html += '<div class="battle-potions">';
+        for (var pp = 0; pp < potions.length; pp++) {
+          html += '<button class="btn btn-small" data-action="battle-potion" data-item="' + potions[pp].id + '">' + potions[pp].name + ' x' + potions[pp].count + '</button>';
+        }
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    container.innerHTML = html;
   }
 
-  function logBattle(text, type) {
-    var log = document.getElementById("battle-log");
-    if (!log) return;
-    var p = document.createElement("p");
-    p.className = "log-" + (type || "info");
-    p.textContent = text;
-    log.appendChild(p);
-    log.scrollTop = log.scrollHeight;
-    MessageLog.add(text, type);
+  function showVictoryButtons() {
+    var container = document.getElementById("battle-content");
+    if (!container) return;
+    var html = container.innerHTML;
+    html += '<div class="battle-result"><button class="btn" data-action="battle-continue">Continue</button></div>';
+    container.innerHTML = html;
   }
 
-  function isInBattle() {
-    return inBattle;
+  function showDefeatButtons() {
+    var container = document.getElementById("battle-content");
+    if (!container) return;
+    var html = container.innerHTML;
+    html += '<div class="battle-result">';
+    html += '<div class="defeat-text">You have fallen in battle.</div>';
+    html += '<button class="btn" data-action="battle-revive">Return to Town</button>';
+    html += '</div>';
+    container.innerHTML = html;
   }
 
-  function getCurrentArea() {
-    return currentArea;
+  function addLog(msg) {
+    battleLog.push(msg);
   }
+
+  function continueAfterVictory() {
+    endBattle(true);
+  }
+
+  function reviveAtTown() {
+    var p = Player.get();
+    p.hp = Math.floor(p.maxHp * 0.3);
+    p.mp = Math.floor(p.maxMp * 0.3);
+    var goldLoss = Math.floor(p.gold * 0.1);
+    p.gold = Math.max(0, p.gold - goldLoss);
+    enemy = null;
+    onVictoryCallback = null;
+    World.navigate("elderbrook");
+  }
+
+  function getEnemy() { return enemy; }
 
   return {
     start: start,
     startBoss: startBoss,
+    startDungeonEnemy: startDungeonEnemy,
     playerAttack: playerAttack,
-    playerUsePotion: playerUsePotion,
-    playerUseManaPotion: playerUseManaPotion,
     playerUseSkill: playerUseSkill,
+    playerUsePotion: playerUsePotion,
     playerRun: playerRun,
-    isInBattle: isInBattle,
+    continueAfterVictory: continueAfterVictory,
+    reviveAtTown: reviveAtTown,
     renderBattle: renderBattle,
-    getCurrentArea: getCurrentArea
+    getEnemy: getEnemy
   };
 })();

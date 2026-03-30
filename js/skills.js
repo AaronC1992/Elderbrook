@@ -1,104 +1,72 @@
-/* skills.js - Player abilities that unlock with level */
+/* skills.js - Player skills for Chapter 1 (levels 1-8) */
 var Skills = (function () {
-  var catalog = {
-    "power-strike": {
-      id: "power-strike", name: "Power Strike",
-      description: "A mighty blow dealing 150% damage.",
-      manaCost: 5, unlockLevel: 2, type: "attack",
-      damageMultiplier: 1.5, cooldown: 0
+
+  var skills = [
+    {
+      id: "power-strike", name: "Power Strike", type: "attack",
+      description: "A heavy blow dealing 1.5x damage.", unlockLevel: 2,
+      mpCost: 4, damageMultiplier: 1.5, cooldown: 0
     },
-    "defend": {
-      id: "defend", name: "Defend",
-      description: "Brace yourself, reducing incoming damage by 50% for one turn.",
-      manaCost: 3, unlockLevel: 3, type: "buff",
-      effect: "defending", duration: 1, cooldown: 0
+    {
+      id: "quick-dodge", name: "Quick Dodge", type: "buff",
+      description: "Increases evasion for 2 turns.", unlockLevel: 3,
+      mpCost: 3, buffType: "evasion", buffAmount: 20, buffDuration: 2
     },
-    "first-aid": {
-      id: "first-aid", name: "First Aid",
-      description: "Bandage your wounds to restore 20 HP.",
-      manaCost: 8, unlockLevel: 4, type: "heal",
-      healAmount: 20, cooldown: 0
+    {
+      id: "first-aid", name: "First Aid", type: "heal",
+      description: "Restore 12 HP.", unlockLevel: 3,
+      mpCost: 5, healAmount: 12
     },
-    "venom-slash": {
-      id: "venom-slash", name: "Venom Slash",
-      description: "A poisoned strike that deals damage and poisons the enemy for 3 turns.",
-      manaCost: 7, unlockLevel: 5, type: "attack",
-      damageMultiplier: 1.0,
-      appliesEffect: { type: "poison", damage: 3, duration: 3 },
-      cooldown: 0
+    {
+      id: "venom-slash", name: "Venom Slash", type: "attack",
+      description: "Deals 1.2x damage and poisons the target for 2 turns.", unlockLevel: 4,
+      mpCost: 6, damageMultiplier: 1.2, appliesEffect: { type: "poison", damage: 3, turns: 2 }
     },
-    "whirlwind": {
-      id: "whirlwind", name: "Whirlwind",
-      description: "Spin and strike with devastating force. 170% damage.",
-      manaCost: 10, unlockLevel: 6, type: "attack",
-      damageMultiplier: 1.7, cooldown: 0
+    {
+      id: "war-shout", name: "War Shout", type: "buff",
+      description: "Boosts attack by 2 for 3 turns.", unlockLevel: 5,
+      mpCost: 5, buffType: "attack", buffAmount: 2, buffDuration: 3
     },
-    "shield-bash": {
-      id: "shield-bash", name: "Shield Bash",
-      description: "Bash the enemy, dealing damage and stunning them for 1 turn.",
-      manaCost: 10, unlockLevel: 7, type: "attack",
-      damageMultiplier: 0.8,
-      appliesEffect: { type: "stun", duration: 1 },
-      cooldown: 0
+    {
+      id: "arcane-bolt", name: "Arcane Bolt", type: "magic",
+      description: "Deals magic damage scaling with Intelligence. 1.4x multiplier.", unlockLevel: 4,
+      mpCost: 7, damageMultiplier: 1.4, intScaling: true
     },
-    "ice-shard": {
-      id: "ice-shard", name: "Ice Shard",
-      description: "Hurl a shard of ice using INT. Deals magic damage.",
-      manaCost: 12, unlockLevel: 8, type: "magic",
-      baseDamage: 15, intScaling: 2.5, cooldown: 0
+    {
+      id: "shield-bash", name: "Shield Bash", type: "attack",
+      description: "Deals 1.3x damage and has 30% chance to stun.", unlockLevel: 6,
+      mpCost: 6, damageMultiplier: 1.3, appliesEffect: { type: "stun", chance: 0.30, turns: 1 }
     },
-    "greater-heal": {
-      id: "greater-heal", name: "Greater Heal",
-      description: "A powerful healing spell. Restores 50 HP.",
-      manaCost: 16, unlockLevel: 10, type: "heal",
-      healAmount: 50, cooldown: 0
+    {
+      id: "meditate", name: "Meditate", type: "heal",
+      description: "Restore 15 MP.", unlockLevel: 7,
+      mpCost: 0, manaRestore: 15
     },
-    "berserk": {
-      id: "berserk", name: "Berserk",
-      description: "Reckless fury! 220% damage but take 15% recoil.",
-      manaCost: 14, unlockLevel: 12, type: "attack",
-      damageMultiplier: 2.2, recoilPercent: 0.15, cooldown: 0
-    },
-    "holy-smite": {
-      id: "holy-smite", name: "Holy Smite",
-      description: "Call down holy light. Heavy magic damage with a chance to stun.",
-      manaCost: 20, unlockLevel: 14, type: "magic",
-      baseDamage: 30, intScaling: 3.0,
-      appliesEffect: { type: "stun", duration: 1 },
-      stunChance: 0.4, cooldown: 0
-    },
-    "dragons-fury": {
-      id: "dragons-fury", name: "Dragon's Fury",
-      description: "Channel draconic power. 250% damage and applies bleed.",
-      manaCost: 25, unlockLevel: 16, type: "attack",
-      damageMultiplier: 2.5,
-      appliesEffect: { type: "bleed", damage: 5, duration: 3 },
-      cooldown: 0
+    {
+      id: "double-strike", name: "Double Strike", type: "attack",
+      description: "Hits twice at 0.8x damage each.", unlockLevel: 8,
+      mpCost: 8, hits: 2, damageMultiplier: 0.8
     }
-  };
+  ];
 
   function getAvailable(playerLevel) {
     var available = [];
-    var keys = Object.keys(catalog);
-    for (var i = 0; i < keys.length; i++) {
-      if (catalog[keys[i]].unlockLevel <= playerLevel) {
-        available.push(catalog[keys[i]]);
+    for (var i = 0; i < skills.length; i++) {
+      if (skills[i].unlockLevel <= playerLevel) {
+        available.push(skills[i]);
       }
     }
     return available;
   }
 
-  function get(id) {
-    return catalog[id] || null;
+  function get(skillId) {
+    for (var i = 0; i < skills.length; i++) {
+      if (skills[i].id === skillId) return skills[i];
+    }
+    return null;
   }
 
-  function getAll() {
-    return catalog;
-  }
+  function getAll() { return skills; }
 
-  return {
-    get: get,
-    getAll: getAll,
-    getAvailable: getAvailable
-  };
+  return { getAvailable: getAvailable, get: get, getAll: getAll };
 })();

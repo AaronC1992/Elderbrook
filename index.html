@@ -3,326 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elderbrook</title>
+  <title>Elderbrook - Chapter 1</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div id="game-container">
-    <header id="game-header">
-      <h1>Elderbrook</h1>
-      <div id="header-stats">
-        <span id="header-name">Adventurer</span>
-        <span id="header-level">Lv 1</span>
-        <span id="header-hp">HP: 50/50</span>
-        <span id="header-mana">MP: 20/20</span>
-        <span id="header-gold">Gold: 50</span>
-      </div>
-      <nav id="header-nav">
-        <button class="nav-btn" data-screen="town">Town</button>
-        <button class="nav-btn" data-screen="character">Character</button>
-        <button class="nav-btn" data-screen="inventory">Inventory</button>
-        <button class="nav-btn" id="btn-save">Save</button>
-        <button class="nav-btn" id="btn-sound">Sound: ON</button>
-      </nav>
-    </header>
 
-    <main id="screen-area">
+    <!-- Header (populated by ui.js updateHeader) -->
+    <header id="game-header"></header>
+
+    <main id="screen-container">
+
+      <!-- Title Screen -->
+      <section id="screen-title" class="screen active">
+        <div class="panel create-panel" style="text-align:center;">
+          <h2 style="font-size:2.2rem; margin-bottom:0.3rem;">Elderbrook</h2>
+          <p class="flavor" style="margin-bottom:2rem;">Chapter 1 &mdash; The Goblin Threat</p>
+          <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:center;">
+            <button class="btn-primary" data-action="new-game" style="width:220px; font-size:1.1rem;">New Game</button>
+            <button class="btn-secondary" data-action="continue-game" id="btn-continue" style="width:220px; font-size:1.1rem;">Continue</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Character Creation -->
-      <section id="screen-create" class="screen active">
+      <section id="screen-create" class="screen">
         <div class="panel create-panel">
-          <h2>Create Your Adventurer</h2>
+          <h2>Create Your Hero</h2>
+
+          <p style="color:var(--text-muted); margin-bottom:0.5rem;">Choose your appearance</p>
+          <div class="gender-picker">
+            <button class="gender-btn selected" data-gender="male">
+              <img class="gender-portrait" src="assets/portraits/male-player.png" alt="Male" />
+              <span>Male</span>
+            </button>
+            <button class="gender-btn" data-gender="female">
+              <img class="gender-portrait" src="assets/portraits/female-player.png" alt="Female" />
+              <span>Female</span>
+            </button>
+          </div>
+
+          <img id="create-portrait" class="gender-portrait" src="assets/portraits/male-player.png" alt="Preview" style="display:none;" />
+
+          <p style="color:var(--text-muted); margin:1rem 0 0.5rem;">Choose your starting weapon</p>
+          <div class="weapon-picker">
+            <button class="weapon-btn selected" data-weapon="basic-sword">Sword<br><span class="weapon-stat">+3 ATK</span></button>
+            <button class="weapon-btn" data-weapon="basic-dagger">Dagger<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
+            <button class="weapon-btn" data-weapon="basic-bow">Bow<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
+            <button class="weapon-btn" data-weapon="basic-staff">Staff<br><span class="weapon-stat">+1 ATK, +3 INT</span></button>
+          </div>
+
           <form id="create-form">
-            <div class="gender-picker">
-              <label class="gender-option selected" data-gender="male">
-                <input type="radio" name="gender" value="male" checked hidden />
-                <img src="assets/portraits/male-player.png" alt="Male" class="gender-portrait" />
-                <span>Male</span>
-              </label>
-              <label class="gender-option" data-gender="female">
-                <input type="radio" name="gender" value="female" hidden />
-                <img src="assets/portraits/female-player.png" alt="Female" class="gender-portrait" />
-                <span>Female</span>
-              </label>
-            </div>
-            <label>Name <input type="text" id="player-name" maxlength="20" value="Hero" /></label>
-            <button type="submit" class="btn-primary">Begin Journey</button>
+            <label for="char-name">Your Name</label>
+            <input type="text" id="char-name" maxlength="20" required placeholder="Enter name" autocomplete="off" />
+            <button class="btn-primary" type="submit">Begin Adventure</button>
           </form>
         </div>
       </section>
 
-      <!-- Town Hub -->
+      <!-- Dialogue (populated by dialogue.js) -->
+      <section id="screen-dialogue" class="screen">
+        <div id="dialogue-content" class="panel" style="max-width:700px;"></div>
+      </section>
+
+      <!-- Town Hub (populated by ui.js renderTown) -->
       <section id="screen-town" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
-        <button class="town-poi" data-screen="weapon-shop" style="left:5%; top:28%;">Weapon Shop</button>
-        <button class="town-poi" data-screen="armor-shop" style="left:5%; top:48%;">Armor Shop</button>
-        <button class="town-poi" data-screen="potion-shop" style="right:5%; top:28%;">Potion Shop</button>
-        <button class="town-poi" data-screen="inn" style="right:5%; top:48%;">Adventurers Guild</button>
-        <button class="town-poi town-poi-center" data-screen="quest-board" style="left:50%; top:18%;">Quest Board</button>
-        <button class="town-poi town-poi-center" data-screen="world-map" style="left:50%; bottom:8%;">Town Gates</button>
-        <div class="town-title">Town of Elderbrook</div>
+        <div id="town-content"></div>
       </section>
 
-      <!-- Weapon Shop -->
-      <section id="screen-weapon-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-weapons-shop.png');">
-        <div class="shop-layout">
-          <img class="npc-fullbody" src="assets/portraits/main-town-weapon-shopkeep.png" alt="Weapon Shopkeeper" />
-          <div class="panel shop-panel">
-            <h2>Weapon Shop</h2>
-            <p id="weapon-shop-dialogue" class="npc-dialogue"></p>
-            <p class="flavor">Racks of blades and bows line the walls.</p>
-            <div id="weapon-shop-list" class="shop-grid"></div>
-            <button class="btn-back" data-screen="town">Back to Town</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Armor Shop -->
-      <section id="screen-armor-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-armor-shop.png');">
-        <div class="shop-layout">
-          <img class="npc-fullbody" src="assets/portraits/main-town-armor-shopkeep.png" alt="Armor Shopkeeper" />
-          <div class="panel shop-panel">
-            <h2>Armor Shop</h2>
-            <p id="armor-shop-dialogue" class="npc-dialogue"></p>
-            <p class="flavor">Sturdy leather and polished iron on display.</p>
-            <div id="armor-shop-list" class="shop-grid"></div>
-            <button class="btn-back" data-screen="town">Back to Town</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Potion Shop -->
-      <section id="screen-potion-shop" class="screen" style="background-image:url('assets/backgrounds/main-town-potions-shop.png');">
-        <div class="shop-layout">
-          <img class="npc-fullbody" src="assets/portraits/main-town-potions-shopkeep.png" alt="Potion Shopkeeper" />
-          <div class="panel shop-panel">
-            <h2>Potion Shop</h2>
-            <p id="potion-shop-dialogue" class="npc-dialogue"></p>
-            <p class="flavor">Bottles bubble and glow on crooked shelves.</p>
-            <div id="potion-shop-list" class="shop-grid"></div>
-            <button class="btn-back" data-screen="town">Back to Town</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Adventurers Guild -->
-      <section id="screen-inn" class="screen" style="background-image:url('assets/backgrounds/main-town-adventurers-guild.png');">
-        <div class="shop-layout">
-          <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
-          <div class="panel">
-            <h2>Adventurers Guild</h2>
-            <p id="guild-dialogue" class="npc-dialogue"></p>
-            <p class="flavor">A warm fire crackles. Rest here to restore HP and Mana.</p>
-            <p id="inn-cost">Cost: 10 gold</p>
-            <button class="btn-primary" id="btn-rest">Rest (10g)</button>
-            <button class="btn-back" data-screen="town">Back to Town</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Quest Board -->
-      <section id="screen-quest-board" class="screen" style="background-image:url('assets/ui/main-town-questboard.png');">
-        <div class="shop-layout">
-          <img class="npc-fullbody" src="assets/portraits/main-town-guildmaster-npc.png" alt="Guildmaster" />
-          <div class="panel">
-            <h2>Quest Board</h2>
-            <p id="quest-dialogue" class="npc-dialogue"></p>
-            <div id="quest-list"></div>
-            <h3>Active Quests</h3>
-            <div id="active-quests"></div>
-            <button class="btn-back" data-screen="town">Back to Town</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- World Map -->
-      <section id="screen-world-map" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
-        <div class="town-title">World Map</div>
-        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:20%; top:30%;">Goblin Cave</button>
-        <button class="town-poi town-poi-center area-btn" id="area-btn-bandit-camp" data-screen="bandit-camp" style="left:50%; top:25%;">Bandit Camp</button>
-        <button class="town-poi town-poi-center area-btn" id="area-btn-dark-forest" data-screen="dark-forest" style="left:80%; top:30%;">Dark Forest</button>
-        <button class="town-poi town-poi-center area-btn" id="area-btn-haunted-ruins" data-screen="haunted-ruins" style="left:35%; top:55%;">Haunted Ruins</button>
-        <button class="town-poi town-poi-center area-btn" id="area-btn-dragons-lair" data-screen="dragons-lair" style="left:65%; top:55%;">Dragon's Lair</button>
-        <button class="town-poi town-poi-center" data-screen="town" style="left:50%; bottom:8%;">Back to Elderbrook</button>
-      </section>
-
-      <!-- Goblin Cave -->
-      <section id="screen-wilderness" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
-        <div class="panel">
-          <h2>Goblin Cave</h2>
-          <p class="flavor">A dank cave echoes with guttural snarls. Goblins lurk in the shadows.</p>
-          <button class="btn-primary" id="btn-explore">Hunt Goblins</button>
-          <button class="btn-primary" id="btn-enter-dungeon-goblin">Enter Dungeon</button>
-          <button class="btn-back" data-screen="world-map">Back to World Map</button>
-        </div>
-      </section>
-
-      <!-- Bandit Camp -->
-      <section id="screen-bandit-camp" class="screen" style="background-image:url('assets/backgrounds/bandit-camp-1.png');">
-        <div class="panel">
-          <h2>Bandit Camp</h2>
-          <p class="flavor">Campfires glow through the trees. Armed outlaws patrol the perimeter.</p>
-          <button class="btn-primary" id="btn-explore-bandit">Hunt Bandits</button>
-          <button class="btn-primary" id="btn-enter-dungeon-bandit">Enter Dungeon</button>
-          <button class="btn-back" data-screen="world-map">Back to World Map</button>
-        </div>
-      </section>
-
-      <!-- Dark Forest -->
-      <section id="screen-dark-forest" class="screen" style="background-image:url('assets/backgrounds/dark-forest-1.png');">
-        <div class="panel">
-          <h2>Dark Forest</h2>
-          <p class="flavor">Ancient trees loom overhead, their twisted branches blocking the sky. Wolves howl in the distance.</p>
-          <button class="btn-primary" id="btn-explore-forest">Hunt Creatures</button>
-          <button class="btn-primary" id="btn-enter-dungeon-forest">Enter Dungeon</button>
-          <button class="btn-back" data-screen="world-map">Back to World Map</button>
-        </div>
-      </section>
-
-      <!-- Haunted Ruins -->
-      <section id="screen-haunted-ruins" class="screen" style="background-image:url('assets/backgrounds/haunted-ruins-1.png');">
-        <div class="panel">
-          <h2>Haunted Ruins</h2>
-          <p class="flavor">Crumbling stone walls glow with an eerie light. The dead do not rest peacefully here.</p>
-          <button class="btn-primary" id="btn-explore-ruins">Hunt Undead</button>
-          <button class="btn-primary" id="btn-enter-dungeon-ruins">Enter Dungeon</button>
-          <button class="btn-back" data-screen="world-map">Back to World Map</button>
-        </div>
-      </section>
-
-      <!-- Dragon's Lair -->
-      <section id="screen-dragons-lair" class="screen" style="background-image:url('assets/backgrounds/dragons-lair-1.png');">
-        <div class="panel">
-          <h2>Dragon's Lair</h2>
-          <p class="flavor">Scorched earth and molten rock surround the entrance. Immense heat radiates from within.</p>
-          <button class="btn-primary" id="btn-explore-dragon">Hunt Drakes</button>
-          <button class="btn-primary" id="btn-enter-dungeon-dragon">Enter Dungeon</button>
-          <button class="btn-back" data-screen="world-map">Back to World Map</button>
-        </div>
-      </section>
-
-      <!-- Battle -->
-      <section id="screen-battle" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
-        <div class="battle-field">
-          <div class="battle-combatant battle-player">
-            <img class="battle-portrait" id="player-portrait" src="assets/portraits/male-player.png" alt="Player" />
-            <h3 id="battle-player-name">Player</h3>
-            <div class="bar-wrap"><div class="bar bar-hp" id="player-hp-bar"></div></div>
-            <p id="player-hp-text">HP 50/50</p>
-            <div class="bar-wrap"><div class="bar bar-mana" id="player-mana-bar"></div></div>
-            <p id="player-mana-text">MP 20/20</p>
-            <div id="player-status" class="status-container"></div>
-            <div id="battle-actions" class="battle-actions">
-              <button class="btn-primary" id="btn-attack">Attack</button>
-              <button class="btn-primary" id="btn-potion">Potion</button>
-              <button class="btn-secondary" id="btn-run">Run</button>
+      <!-- Shop (populated by shops.js renderShop) -->
+      <section id="screen-shop" class="screen">
+        <div class="panel shop-panel" style="max-width:800px;">
+          <div class="shop-header">
+            <img id="shop-npc-portrait" class="npc-portrait" src="" alt="Shopkeep" />
+            <div>
+              <h2 id="shop-title">Shop</h2>
+              <p id="shop-npc-name" class="npc-dialogue"></p>
             </div>
           </div>
-          <div class="battle-combatant battle-enemy">
-            <span id="boss-label" class="boss-label" style="display:none;">BOSS</span>
-            <img class="battle-portrait" id="enemy-portrait" src="assets/portraits/goblin-enemy.png" alt="Enemy" />
-            <h3 id="enemy-name">Enemy</h3>
-            <div class="bar-wrap"><div class="bar bar-enemy" id="enemy-hp-bar"></div></div>
-            <p id="enemy-hp-text">HP ?/?</p>
-            <div id="enemy-status" class="status-container"></div>
-          </div>
+          <div id="shop-inventory" class="shop-grid"></div>
+          <button class="btn-back" data-action="go-town">Back to Town</button>
         </div>
-        <div id="battle-log" class="battle-log"></div>
       </section>
 
-      <!-- Dungeon -->
+      <!-- Quest Board (populated by ui.js renderQuestBoard) -->
+      <section id="screen-questboard" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="questboard-content"></div>
+          <button class="btn-back" data-action="go-town" style="margin-top:1rem;">Back to Town</button>
+        </div>
+      </section>
+
+      <!-- World Map (populated by ui.js renderWorldMap) -->
+      <section id="screen-worldmap" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
+        <div id="worldmap-content"></div>
+      </section>
+
+      <!-- Area / Exploration (populated by world.js navigate) -->
+      <section id="screen-area" class="screen">
+        <div id="area-content" class="panel" style="max-width:600px;"></div>
+      </section>
+
+      <!-- Battle (populated by battle.js) -->
+      <section id="screen-battle" class="screen">
+        <div id="battle-content"></div>
+      </section>
+
+      <!-- Dungeon (populated by dungeon.js) -->
       <section id="screen-dungeon" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
-        <div class="panel dungeon-panel">
-          <h2 id="dungeon-room-name">Room</h2>
-          <p class="flavor" id="dungeon-room-desc">Description</p>
-          <div id="dungeon-actions"></div>
-          <div id="dungeon-map" class="dungeon-map"></div>
-        </div>
+        <div id="dungeon-content" class="panel dungeon-panel"></div>
       </section>
 
-      <!-- Game Over -->
-      <section id="screen-gameover" class="screen">
-        <div class="panel gameover-panel">
-          <h2 class="gameover-title">You Died</h2>
-          <p class="gameover-text">Slain by <span id="gameover-enemy">an enemy</span>.</p>
-          <p class="gameover-text">Lost <span id="gameover-gold-lost" class="text-danger">0</span> gold.</p>
-          <div class="gameover-actions">
-            <button class="btn-primary" id="btn-revive">Return to Town</button>
-            <button class="btn-secondary" id="btn-load-save">Load Save</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Victory -->
-      <section id="screen-victory" class="screen">
-        <div class="panel victory-panel">
-          <h2 class="victory-title">Victory!</h2>
-          <p class="victory-subtitle">You have defeated the Elder Wyrm and saved the realm of Elderbrook!</p>
-          <div id="victory-stats"></div>
-          <div class="victory-actions">
-            <button class="btn-primary" id="btn-continue-playing">Continue Playing</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Character Screen -->
-      <section id="screen-character" class="screen">
-        <div class="panel">
-          <h2>Character</h2>
-          <div id="stat-alloc-panel" class="stat-alloc-panel hidden">
-            <h3>Allocate Stat Points (<span id="unspent-points">0</span> available)</h3>
-            <div class="alloc-grid">
-              <div class="alloc-row"><span>Strength</span><button class="btn-small btn-primary" data-allocate="strength">+1</button></div>
-              <div class="alloc-row"><span>Defense</span><button class="btn-small btn-primary" data-allocate="defense">+1</button></div>
-              <div class="alloc-row"><span>Dexterity</span><button class="btn-small btn-primary" data-allocate="dexterity">+1</button></div>
-              <div class="alloc-row"><span>Intelligence</span><button class="btn-small btn-primary" data-allocate="intelligence">+1</button></div>
-            </div>
-          </div>
-          <div id="char-stats">
-            <div class="stat-row"><span class="stat-label">Name</span><span class="stat-value" id="char-name">-</span></div>
-            <div class="stat-row"><span class="stat-label">Level</span><span class="stat-value" id="char-level">-</span></div>
-            <div class="stat-row"><span class="stat-label">XP</span><span class="stat-value" id="char-xp">-</span></div>
-            <div class="stat-row"><span class="stat-label">HP</span><span class="stat-value" id="char-hp">-</span></div>
-            <div class="stat-row"><span class="stat-label">Mana</span><span class="stat-value" id="char-mana">-</span></div>
-            <div class="stat-row"><span class="stat-label">Strength</span><span class="stat-value" id="char-strength">-</span></div>
-            <div class="stat-row"><span class="stat-label">Defense</span><span class="stat-value" id="char-defense">-</span></div>
-            <div class="stat-row"><span class="stat-label">Dexterity</span><span class="stat-value" id="char-dexterity">-</span></div>
-            <div class="stat-row"><span class="stat-label">Intelligence</span><span class="stat-value" id="char-intelligence">-</span></div>
-            <div class="stat-row"><span class="stat-label">Gold</span><span class="stat-value" id="char-gold">-</span></div>
-          </div>
-          <h3>Equipment</h3>
-          <div id="char-equipment">
-            <div class="equip-slot"><span class="equip-slot-label">Weapon</span><span class="equip-slot-item" id="char-weapon">(none)</span></div>
-            <div class="equip-slot"><span class="equip-slot-label">Helmet</span><span class="equip-slot-item" id="char-helmet">(none)</span></div>
-            <div class="equip-slot"><span class="equip-slot-label">Chest</span><span class="equip-slot-item" id="char-chest">(none)</span></div>
-            <div class="equip-slot"><span class="equip-slot-label">Legs</span><span class="equip-slot-item" id="char-legs">(none)</span></div>
-            <div class="equip-slot"><span class="equip-slot-label">Accessory</span><span class="equip-slot-item" id="char-accessory">(none)</span></div>
-          </div>
-          <h3>Bestiary</h3>
-          <div id="bestiary-list" class="bestiary-grid"></div>
-        </div>
-      </section>
-
-      <!-- Inventory Screen -->
+      <!-- Inventory (populated by inventory.js render) -->
       <section id="screen-inventory" class="screen">
-        <div class="panel">
-          <h2>Inventory <span id="inv-count" style="font-size:0.8em;color:#9e9585;">0 / 20</span></h2>
-          <h3>Equipped</h3>
-          <div id="equipped-list"></div>
+        <div class="panel" style="max-width:700px;">
+          <h2>Inventory</h2>
+          <h3>Equipment</h3>
+          <div id="equipment-slots"></div>
           <h3>Items</h3>
-          <div id="inv-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="weapon">Weapons</button>
-            <button class="filter-btn" data-filter="armor">Armor</button>
-            <button class="filter-btn" data-filter="potion">Potions</button>
-            <button class="filter-btn" data-filter="misc">Misc</button>
-          </div>
-          <div id="inventory-grid" class="inv-grid"></div>
+          <div id="inventory-items"></div>
+          <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
         </div>
       </section>
+
+      <!-- Character Screen (populated by ui.js renderCharacter) -->
+      <section id="screen-character" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="character-content"></div>
+          <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+        </div>
+      </section>
+
+      <!-- Quest Log (populated by ui.js renderQuestLog) -->
+      <section id="screen-quests" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="quests-content"></div>
+          <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+        </div>
+      </section>
+
+      <!-- Chapter End (populated by ui.js renderChapterEnd) -->
+      <section id="screen-chapter-end" class="screen">
+        <div id="chapter-end-content" class="panel" style="max-width:600px; text-align:center;"></div>
+      </section>
+
     </main>
 
-    <footer id="message-log"></footer>
+    <!-- Toast Message -->
+    <div id="game-message" class="game-message"></div>
   </div>
 
+  <!-- Scripts (load order matters) -->
+  <script src="js/chapter1.js"></script>
   <script src="js/items.js"></script>
   <script src="js/enemies.js"></script>
   <script src="js/player.js"></script>

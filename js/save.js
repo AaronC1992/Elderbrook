@@ -1,27 +1,49 @@
-/* save.js - localStorage save/load system */
-var SaveSystem = (function () {
+/* save.js - Save/Load system using localStorage */
+var Save = (function () {
+
   var SAVE_KEY = "elderbrook_save";
 
   function save() {
-    var data = Player.getData();
-    var json = JSON.stringify(data);
+    var p = Player.get();
+    if (!p) return false;
     try {
-      localStorage.setItem(SAVE_KEY, json);
-      MessageLog.add("Game saved.", "info");
+      var data = JSON.stringify(p);
+      localStorage.setItem(SAVE_KEY, data);
+      return true;
     } catch (e) {
-      MessageLog.add("Save failed!", "damage");
+      return false;
     }
   }
 
   function load() {
-    var json = localStorage.getItem(SAVE_KEY);
-    if (!json) return false;
     try {
-      var data = JSON.parse(json);
-      if (!data.unspentPoints) data.unspentPoints = 0;
-      if (!data.areasUnlocked) data.areasUnlocked = ["goblin-cave"];
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return false;
+      var data = JSON.parse(raw);
+      if (!data || !data.name) return false;
+
+      // Ensure all expected fields exist (migration safety)
+      if (!data.storyFlags) data.storyFlags = Chapter1.getDefaultFlags();
+      if (!data.questProgress) data.questProgress = {};
+      if (!data.activeQuests) data.activeQuests = [];
+      if (!data.completedQuests) data.completedQuests = [];
       if (!data.bestiary) data.bestiary = {};
-      Player.setData(data);
+      if (data.unspentPoints === undefined) data.unspentPoints = 0;
+      if (!data.equipped.gloves) data.equipped.gloves = null;
+      if (!data.equipped.bracers) data.equipped.bracers = null;
+      if (data.hasEnteredTown === undefined) data.hasEnteredTown = false;
+      if (!data.currentArea) data.currentArea = "elderbrook";
+
+      // Merge any new default flags that don't exist yet
+      var defaults = Chapter1.getDefaultFlags();
+      for (var key in defaults) {
+        if (data.storyFlags[key] === undefined) {
+          data.storyFlags[key] = defaults[key];
+        }
+      }
+
+      Player.set(data);
+      Player.recalcStats();
       return true;
     } catch (e) {
       return false;
@@ -29,12 +51,20 @@ var SaveSystem = (function () {
   }
 
   function hasSave() {
-    return localStorage.getItem(SAVE_KEY) !== null;
+    try {
+      return !!localStorage.getItem(SAVE_KEY);
+    } catch (e) {
+      return false;
+    }
   }
 
   function deleteSave() {
-    localStorage.removeItem(SAVE_KEY);
-    MessageLog.add("Save deleted.", "info");
+    try {
+      localStorage.removeItem(SAVE_KEY);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   return {

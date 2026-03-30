@@ -1,310 +1,306 @@
-/* dungeon.js - Multi-room dungeon exploration */
+/* dungeon.js - Goblin Cave dungeon (8 rooms) for Chapter 1 */
 var Dungeon = (function () {
-  var currentDungeon = null;
-  var currentRoom = 0;
-  var inDungeon = false;
 
-  // Dungeon definitions: arrays of room objects
   var dungeons = {
     "goblin-cave": {
+      id: "goblin-cave",
       name: "Goblin Cave",
-      area: "goblin-cave",
       background: "assets/backgrounds/goblin-cave-1.png",
       rooms: [
-        { id: 0, name: "Cave Entrance", description: "The mouth of the cave yawns before you. Damp air carries the stench of goblins.", type: "start", exits: [1, 2] },
-        { id: 1, name: "Narrow Tunnel", description: "A tight passage winds deeper. You hear shuffling ahead.", type: "enemy", exits: [3], enemyCount: 1 },
-        { id: 2, name: "Side Chamber", description: "A small alcove. Something glints among the bones.", type: "treasure", exits: [3], loot: [{ itemId: "health-potion", chance: 0.8 }, { itemId: "mana-potion", chance: 0.5 }] },
-        { id: 3, name: "Goblin Den", description: "A larger cavern littered with crude bedding and stolen goods.", type: "enemy", exits: [4, 5], enemyCount: 2 },
-        { id: 4, name: "Mushroom Grotto", description: "Bioluminescent mushrooms cast an eerie glow. The air feels restorative.", type: "rest", exits: [6], healAmount: 15 },
-        { id: 5, name: "Armory Alcove", description: "Crude weapons and some stolen equipment are stashed here.", type: "treasure", exits: [6], loot: [{ itemId: "iron-sword", chance: 0.3 }, { itemId: "leather-armor", chance: 0.2 }, { itemId: "health-potion", chance: 0.6 }] },
-        { id: 6, name: "The Throne Room", description: "A crude throne of bones sits at the far end. The Goblin King awaits!", type: "boss", exits: [] }
-      ]
-    },
-    "bandit-camp": {
-      name: "Bandit Camp",
-      area: "bandit-camp",
-      background: "assets/backgrounds/bandit-camp-1.png",
-      rooms: [
-        { id: 0, name: "Camp Outskirts", description: "Firelight flickers through the trees. The bandits' camp lies ahead.", type: "start", exits: [1, 2] },
-        { id: 1, name: "Guard Post", description: "A bandit stands watch by a crude barricade.", type: "enemy", exits: [3], enemyCount: 1 },
-        { id: 2, name: "Supply Tent", description: "Crates and barrels are stacked haphazardly. Some look valuable.", type: "treasure", exits: [3], loot: [{ itemId: "health-potion", chance: 0.7 }, { itemId: "mana-potion", chance: 0.6 }, { itemId: "iron-helm", chance: 0.15 }] },
-        { id: 3, name: "Training Grounds", description: "Straw dummies and weapon racks. Several bandits spar here.", type: "enemy", exits: [4, 5], enemyCount: 2 },
-        { id: 4, name: "Campfire", description: "A crackling fire with a pot of stew. You could rest here.", type: "rest", exits: [6], healAmount: 20 },
-        { id: 5, name: "Lockbox Stash", description: "A hidden stash behind some crates holds valuable loot.", type: "treasure", exits: [6], loot: [{ itemId: "steel-sword", chance: 0.2 }, { itemId: "iron-chestplate", chance: 0.15 }, { itemId: "health-potion", chance: 0.8 }] },
-        { id: 6, name: "Leader's Tent", description: "The largest tent bears a crimson banner. The Bandit Leader awaits inside.", type: "boss", exits: [] }
-      ]
-    },
-    "dark-forest": {
-      name: "Dark Forest",
-      area: "dark-forest",
-      background: "assets/backgrounds/dark-forest-1.png",
-      rooms: [
-        { id: 0, name: "Forest Edge", description: "Ancient trees block out the sun. Strange sounds echo from within.", type: "start", exits: [1, 2] },
-        { id: 1, name: "Wolf Den", description: "Bones litter the ground near a shallow cave. Wolves guard the path.", type: "enemy", exits: [3], enemyCount: 2 },
-        { id: 2, name: "Witch's Clearing", description: "Mushroom circles and strange totems mark this clearing. Dark magic lingers.", type: "enemy", exits: [3], enemyCount: 1 },
-        { id: 3, name: "Tangled Path", description: "Roots twist across the ground. Something moves in the canopy above.", type: "enemy", exits: [4, 5], enemyCount: 2 },
-        { id: 4, name: "Moonlit Spring", description: "A gentle spring reflects the moonlight. Its waters shimmer with healing energy.", type: "rest", exits: [6], healAmount: 30 },
-        { id: 5, name: "Hollow Tree", description: "A massive hollow tree hides a cache. Nature's offerings lie within.", type: "treasure", exits: [6], loot: [{ itemId: "forest-blade", chance: 0.15 }, { itemId: "woodland-helm", chance: 0.2 }, { itemId: "greater-health-potion", chance: 0.5 }, { itemId: "witch-charm", chance: 0.1 }] },
-        { id: 6, name: "Guardian's Grove", description: "An enormous tree pulses with corrupted energy. The Forest Guardian awaits.", type: "boss", exits: [] }
-      ]
-    },
-    "haunted-ruins": {
-      name: "Haunted Ruins",
-      area: "haunted-ruins",
-      background: "assets/backgrounds/haunted-ruins-1.png",
-      rooms: [
-        { id: 0, name: "Crumbling Gate", description: "The ruins loom above, draped in mist. An unearthly chill grips you.", type: "start", exits: [1, 2] },
-        { id: 1, name: "Bone Chamber", description: "Skeletons rattle to life as you enter this dust-choked hall.", type: "enemy", exits: [3], enemyCount: 2 },
-        { id: 2, name: "Crypt Alcove", description: "Old coffins line the walls. Some contain more than dust.", type: "treasure", exits: [3], loot: [{ itemId: "bone-fragment", chance: 0.7 }, { itemId: "greater-health-potion", chance: 0.4 }, { itemId: "shadow-leggings", chance: 0.1 }] },
-        { id: 3, name: "Haunted Gallery", description: "Ethereal figures drift through the broken halls. Their wails chill your blood.", type: "enemy", exits: [4, 5], enemyCount: 2 },
-        { id: 4, name: "Sanctuary Remnant", description: "A shattered altar still radiates faint holy light. You feel restored.", type: "rest", exits: [6], healAmount: 40 },
-        { id: 5, name: "Necromancer's Study", description: "Dark tomes and ritual components litter this chamber.", type: "treasure", exits: [6], loot: [{ itemId: "spectral-staff", chance: 0.12 }, { itemId: "wraith-helm", chance: 0.15 }, { itemId: "spirit-amulet", chance: 0.08 }, { itemId: "greater-mana-potion", chance: 0.5 }] },
-        { id: 6, name: "Throne of Bones", description: "A throne of fused bones dominates the chamber. The Lich Lord sits upon it.", type: "boss", exits: [] }
-      ]
-    },
-    "dragons-lair": {
-      name: "Dragon's Lair",
-      area: "dragons-lair",
-      background: "assets/backgrounds/dragons-lair-1.png",
-      rooms: [
-        { id: 0, name: "Volcanic Approach", description: "Heat washes over you as you enter the volcanic cavern. The air shimmers.", type: "start", exits: [1, 2] },
-        { id: 1, name: "Cultist Outpost", description: "Dragon cultists perform dark rites around a burning brazier.", type: "enemy", exits: [3], enemyCount: 2 },
-        { id: 2, name: "Scorched Cache", description: "Melted gold and charred treasures lie among the rocks.", type: "treasure", exits: [3], loot: [{ itemId: "dragon-scale", chance: 0.5 }, { itemId: "greater-health-potion", chance: 0.6 }, { itemId: "greater-mana-potion", chance: 0.4 }] },
-        { id: 3, name: "Drake Nesting Ground", description: "Young drakes snarl and snap. Their scales gleam with heat.", type: "enemy", exits: [4, 5], enemyCount: 2 },
-        { id: 4, name: "Thermal Vent", description: "Warm mineral waters bubble here. The heat eases your wounds.", type: "rest", exits: [6], healAmount: 50 },
-        { id: 5, name: "Hoard Antechamber", description: "Mountains of gold and relics fill this chamber. Take what you can carry.", type: "treasure", exits: [6], loot: [{ itemId: "dragon-slayer", chance: 0.08 }, { itemId: "dragonscale-armor", chance: 0.08 }, { itemId: "dragonscale-helm", chance: 0.1 }, { itemId: "dragon-fang-necklace", chance: 0.12 }, { itemId: "greater-health-potion", chance: 0.7 }] },
-        { id: 6, name: "Caldera Throne", description: "Lava flows beneath a platform of obsidian. Above it, the Elder Wyrm waits.", type: "boss", exits: [7] },
-        { id: 7, name: "Inner Sanctum", description: "A hidden passage behind the throne reveals the dragon's true hoard.", type: "treasure", exits: [] }
+        {
+          id: 0, name: "Cave Entrance", type: "start",
+          description: "The mouth of the goblin cave. A foul stench drifts from the darkness ahead.",
+          exits: [1]
+        },
+        {
+          id: 1, name: "Outer Tunnels", type: "enemy",
+          description: "Narrow tunnels dimly lit by fungal growth. Goblins patrol here.",
+          enemies: ["goblin-guard", "goblin-scout"],
+          enemyCount: 2,
+          exits: [2]
+        },
+        {
+          id: 2, name: "Supply Cache", type: "treasure",
+          description: "A small chamber stacked with stolen goods and supplies.",
+          loot: [
+            { id: "health-potion", chance: 1.0 },
+            { id: "goblin-scrap", chance: 0.6 },
+            { id: "goblin-scrap", chance: 0.4 }
+          ],
+          exits: [3]
+        },
+        {
+          id: 3, name: "Guard Room", type: "enemy",
+          description: "A wider cave room. Goblin guards stand watch over the deeper passages.",
+          enemies: ["goblin-guard", "goblin-guard", "goblin-brute"],
+          enemyCount: 2,
+          exits: [4]
+        },
+        {
+          id: 4, name: "Underground Spring", type: "rest",
+          description: "A natural spring trickles into a shallow pool. The air is cool and damp.",
+          restHealPercent: 0.5,
+          exits: [5]
+        },
+        {
+          id: 5, name: "Shaman's Chamber", type: "enemy",
+          description: "Strange totems line the walls. A goblin shaman chants in the shadows.",
+          enemies: ["goblin-shaman", "goblin-guard"],
+          enemyCount: 2,
+          specialLoot: [{ id: "strange-sigil", chance: 1.0, requireQuest: "mq6" }],
+          exits: [6]
+        },
+        {
+          id: 6, name: "War Room", type: "enemy",
+          description: "Maps and crude battle plans cover a stone table. The goblins were planning something big.",
+          enemies: ["goblin-brute", "goblin-guard", "goblin-archer"],
+          enemyCount: 2,
+          exits: [7]
+        },
+        {
+          id: 7, name: "Chief's Throne", type: "boss",
+          description: "The deepest chamber. A crude throne sits atop a pile of stolen goods. Goblin Chief Grisk awaits.",
+          boss: "goblin-chief-grisk",
+          exits: []
+        }
       ]
     }
   };
 
-  // Track which rooms have been cleared this run
+  var currentDungeon = null;
+  var currentRoomIndex = 0;
   var clearedRooms = {};
+  var dungeonLoot = {};
 
   function enter(dungeonId) {
-    currentDungeon = dungeons[dungeonId];
-    if (!currentDungeon) return;
-    currentRoom = 0;
-    inDungeon = true;
+    var d = dungeons[dungeonId];
+    if (!d) return false;
+    currentDungeon = d;
+    currentRoomIndex = 0;
     clearedRooms = {};
-    render();
+    dungeonLoot = {};
+    renderRoom();
     UI.showScreen("dungeon");
+    return true;
   }
 
-  function render() {
+  function renderRoom() {
     if (!currentDungeon) return;
-    var room = currentDungeon.rooms[currentRoom];
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room) return;
 
-    var nameEl = document.getElementById("dungeon-room-name");
-    var descEl = document.getElementById("dungeon-room-desc");
-    var actionsEl = document.getElementById("dungeon-actions");
-    var mapEl = document.getElementById("dungeon-map");
+    var container = document.getElementById("dungeon-content");
+    if (!container) return;
 
-    if (nameEl) nameEl.textContent = room.name;
-    if (descEl) descEl.textContent = room.description;
+    var isCleared = clearedRooms[room.id];
+    var html = '';
 
-    // Update background
-    var screen = document.getElementById("screen-dungeon");
-    if (screen && currentDungeon.background) {
-      screen.style.backgroundImage = "url('" + currentDungeon.background + "')";
+    // Dungeon name and mini-map
+    html += '<div class="dungeon-header">';
+    html += '<h2>' + currentDungeon.name + '</h2>';
+    html += renderMiniMap();
+    html += '</div>';
+
+    // Room info
+    html += '<div class="dungeon-room">';
+    html += '<h3>' + room.name + '</h3>';
+    html += '<p>' + room.description + '</p>';
+
+    // Room-type specific content
+    if (room.type === "start") {
+      html += '<p>You stand at the entrance. Steel yourself and proceed.</p>';
+    } else if (room.type === "enemy" && !isCleared) {
+      html += '<p class="room-warning">Enemies lurk ahead!</p>';
+      html += '<button class="btn" data-action="dungeon-fight">Fight</button>';
+    } else if (room.type === "enemy" && isCleared) {
+      html += '<p class="room-cleared">The room is cleared.</p>';
+    } else if (room.type === "treasure") {
+      if (!dungeonLoot[room.id]) {
+        html += '<button class="btn" data-action="dungeon-loot">Search</button>';
+      } else {
+        html += '<p class="room-cleared">Already searched.</p>';
+      }
+    } else if (room.type === "rest") {
+      if (!isCleared) {
+        html += '<p>A place to rest and recover.</p>';
+        html += '<button class="btn" data-action="dungeon-rest">Rest</button>';
+      } else {
+        html += '<p class="room-cleared">You already rested here.</p>';
+      }
+    } else if (room.type === "boss") {
+      if (!isCleared) {
+        html += '<p class="room-warning">The boss awaits!</p>';
+        html += '<button class="btn btn-danger" data-action="dungeon-boss">Challenge Boss</button>';
+      } else {
+        html += '<p class="room-cleared">The boss has been defeated.</p>';
+      }
     }
 
-    // Render actions
-    if (actionsEl) {
-      actionsEl.innerHTML = "";
-      var isCleared = clearedRooms[room.id];
-
-      if (room.type === "enemy" && !isCleared) {
-        var fightBtn = document.createElement("button");
-        fightBtn.className = "btn-primary";
-        fightBtn.textContent = "Fight! (" + (room.enemyCount || 1) + " enemies)";
-        fightBtn.addEventListener("click", function () {
-          startRoomEncounter(room);
-        });
-        actionsEl.appendChild(fightBtn);
-      } else if (room.type === "boss" && !isCleared) {
-        var bossBtn = document.createElement("button");
-        bossBtn.className = "btn-danger";
-        bossBtn.textContent = "Challenge Boss!";
-        bossBtn.addEventListener("click", function () {
-          Battle.startBoss(currentDungeon.area);
-        });
-        actionsEl.appendChild(bossBtn);
-      } else if (room.type === "treasure" && !isCleared) {
-        var lootBtn = document.createElement("button");
-        lootBtn.className = "btn-primary";
-        lootBtn.textContent = "Search for Loot";
-        lootBtn.addEventListener("click", function () {
-          collectLoot(room);
-        });
-        actionsEl.appendChild(lootBtn);
-      } else if (room.type === "rest" && !isCleared) {
-        var restBtn = document.createElement("button");
-        restBtn.className = "btn-primary";
-        restBtn.textContent = "Rest Here (+" + room.healAmount + " HP)";
-        restBtn.addEventListener("click", function () {
-          restInRoom(room);
-        });
-        actionsEl.appendChild(restBtn);
-      }
-
-      if (isCleared && room.type !== "start") {
-        var clearedMsg = document.createElement("p");
-        clearedMsg.className = "flavor";
-        clearedMsg.textContent = room.type === "boss" ? "The boss has been defeated!" : "This area has been cleared.";
-        actionsEl.appendChild(clearedMsg);
-      }
-
-      // Navigation buttons for exits
-      if (room.exits.length > 0 && (room.type === "start" || isCleared)) {
-        var navLabel = document.createElement("p");
-        navLabel.style.marginTop = "0.8rem";
-        navLabel.style.color = "#9e9585";
-        navLabel.textContent = "Choose a path:";
-        actionsEl.appendChild(navLabel);
-
-        for (var i = 0; i < room.exits.length; i++) {
-          var exitRoom = currentDungeon.rooms[room.exits[i]];
-          if (!exitRoom) continue;
-          (function (targetRoom) {
-            var navBtn = document.createElement("button");
-            var cleared = clearedRooms[targetRoom.id];
-            navBtn.className = cleared ? "btn-secondary" : "btn-primary";
-            navBtn.textContent = targetRoom.name + (cleared ? " (cleared)" : "");
-            navBtn.style.marginRight = "0.5rem";
-            navBtn.style.marginTop = "0.4rem";
-            navBtn.addEventListener("click", function () {
-              currentRoom = targetRoom.id;
-              Audio.buttonClick();
-              render();
-            });
-            actionsEl.appendChild(navBtn);
-          })(exitRoom);
-        }
-      }
-
-      // Leave dungeon
-      var leaveBtn = document.createElement("button");
-      leaveBtn.className = "btn-back";
-      leaveBtn.textContent = "Leave Dungeon";
-      leaveBtn.style.marginTop = "1rem";
-      leaveBtn.style.display = "block";
-      leaveBtn.addEventListener("click", function () {
-        leaveDungeon();
-      });
-      actionsEl.appendChild(leaveBtn);
+    // Navigation
+    html += '<div class="dungeon-nav">';
+    if (currentRoomIndex > 0) {
+      html += '<button class="btn" data-action="dungeon-back">Back</button>';
     }
-
-    // Render mini-map
-    if (mapEl) {
-      renderMiniMap(mapEl);
+    if (room.exits.length > 0 && (isCleared || room.type === "start" || room.type === "treasure" || room.type === "rest")) {
+      for (var i = 0; i < room.exits.length; i++) {
+        var nextRoom = currentDungeon.rooms[room.exits[i]];
+        html += '<button class="btn" data-action="dungeon-move" data-room="' + room.exits[i] + '">Proceed to ' + nextRoom.name + '</button>';
+      }
     }
+    html += '<button class="btn" data-action="dungeon-exit">Leave Dungeon</button>';
+    html += '</div>';
+
+    html += '</div>';
+
+    // Player status
+    var p = Player.get();
+    html += '<div class="dungeon-player-status">';
+    html += 'HP: ' + p.hp + '/' + p.maxHp + ' | MP: ' + p.mp + '/' + p.maxMp;
+    html += '</div>';
+
+    container.innerHTML = html;
   }
 
-  function renderMiniMap(container) {
-    container.innerHTML = "";
-    if (!currentDungeon) return;
-
+  function renderMiniMap() {
+    var html = '<div class="dungeon-minimap">';
     for (var i = 0; i < currentDungeon.rooms.length; i++) {
-      var room = currentDungeon.rooms[i];
-      var node = document.createElement("div");
-      node.className = "map-node";
-      if (i === currentRoom) node.classList.add("map-current");
-      if (clearedRooms[room.id]) node.classList.add("map-cleared");
+      var r = currentDungeon.rooms[i];
+      var cls = "minimap-room";
+      if (i === currentRoomIndex) cls += " minimap-current";
+      else if (clearedRooms[r.id]) cls += " minimap-cleared";
+      html += '<div class="' + cls + '" title="' + r.name + '">' + (i + 1) + '</div>';
+      if (i < currentDungeon.rooms.length - 1) {
+        html += '<div class="minimap-connector"></div>';
+      }
+    }
+    html += '</div>';
+    return html;
+  }
 
-      var typeIcon = "";
-      if (room.type === "start") typeIcon = "S";
-      else if (room.type === "enemy") typeIcon = "!";
-      else if (room.type === "treasure") typeIcon = "?";
-      else if (room.type === "rest") typeIcon = "+";
-      else if (room.type === "boss") typeIcon = "B";
+  function moveToRoom(roomIndex) {
+    if (!currentDungeon) return;
+    if (roomIndex < 0 || roomIndex >= currentDungeon.rooms.length) return;
+    currentRoomIndex = roomIndex;
+    renderRoom();
+  }
 
-      node.textContent = typeIcon;
-      node.title = room.name;
-      container.appendChild(node);
+  function goBack() {
+    if (currentRoomIndex > 0) {
+      currentRoomIndex--;
+      renderRoom();
     }
   }
 
-  var roomFightsRemaining = 0;
+  function fightRoom() {
+    if (!currentDungeon) return;
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room || room.type !== "enemy" || clearedRooms[room.id]) return;
 
-  function startRoomEncounter(room) {
-    roomFightsRemaining = (room.enemyCount || 1) - 1;
-    Battle.start(currentDungeon.area);
+    // Pick a random enemy from room's pool
+    var pool = room.enemies;
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+
+    Battle.startDungeonEnemy(pick, function () {
+      onRoomCleared();
+    });
   }
 
-  // Called from battle victory when in dungeon
-  function onBattleVictory() {
-    if (roomFightsRemaining > 0) {
-      roomFightsRemaining--;
-      setTimeout(function () {
-        Battle.start(currentDungeon.area);
-      }, 500);
-      return true;
-    }
-    var room = currentDungeon.rooms[currentRoom];
-    clearedRooms[room.id] = true;
-    return false;
+  function fightBoss() {
+    if (!currentDungeon) return;
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room || room.type !== "boss" || clearedRooms[room.id]) return;
+
+    Battle.startBoss(room.boss, function () {
+      clearedRooms[room.id] = true;
+      UI.showScreen("dungeon");
+      renderRoom();
+    });
   }
 
-  function collectLoot(room) {
-    if (!room.loot) return;
-    clearedRooms[room.id] = true;
-    var found = false;
-    for (var i = 0; i < room.loot.length; i++) {
-      var drop = room.loot[i];
-      if (Math.random() < drop.chance) {
-        if (!Player.inventoryFull()) {
-          Player.addItem(drop.itemId);
-          var item = Items.get(drop.itemId);
-          MessageLog.add("Found: " + (item ? item.name : drop.itemId) + "!", "gold");
-          Audio.shopBuy();
-          found = true;
-        } else {
-          MessageLog.add("Inventory full! Can't carry any more.", "damage");
+  function onRoomCleared() {
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room) return;
+
+    // Track how many fights completed in this room
+    if (!clearedRooms[room.id + "_fights"]) clearedRooms[room.id + "_fights"] = 0;
+    clearedRooms[room.id + "_fights"]++;
+
+    // Check if room fully cleared
+    if (clearedRooms[room.id + "_fights"] >= (room.enemyCount || 1)) {
+      clearedRooms[room.id] = true;
+
+      // Drop special loot
+      if (room.specialLoot) {
+        for (var i = 0; i < room.specialLoot.length; i++) {
+          var sl = room.specialLoot[i];
+          if (sl.requireQuest && !Quests.isActive(sl.requireQuest)) continue;
+          if (Math.random() < sl.chance) {
+            Player.addItem(sl.id);
+            var it = Items.get(sl.id);
+          }
         }
       }
     }
-    if (!found) {
-      MessageLog.add("You search the area but find nothing useful.", "info");
+
+    UI.showScreen("dungeon");
+    renderRoom();
+  }
+
+  function collectLoot() {
+    if (!currentDungeon) return;
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room || room.type !== "treasure" || dungeonLoot[room.id]) return;
+
+    dungeonLoot[room.id] = true;
+    var found = [];
+    if (room.loot) {
+      for (var i = 0; i < room.loot.length; i++) {
+        if (Math.random() < room.loot[i].chance) {
+          Player.addItem(room.loot[i].id);
+          var item = Items.get(room.loot[i].id);
+          found.push(item ? item.name : room.loot[i].id);
+        }
+      }
     }
-    render();
+    renderRoom();
+    if (found.length > 0) {
+      UI.showMessage("Found: " + found.join(", "));
+    } else {
+      UI.showMessage("Nothing useful here.");
+    }
   }
 
-  function restInRoom(room) {
+  function restInRoom() {
+    if (!currentDungeon) return;
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room || room.type !== "rest" || clearedRooms[room.id]) return;
+
     clearedRooms[room.id] = true;
-    Player.heal(room.healAmount);
-    MessageLog.add("You rest and recover " + room.healAmount + " HP.", "heal");
-    Audio.heal();
-    UI.updateHeader();
-    render();
+    var p = Player.get();
+    var healAmount = Math.floor(p.maxHp * (room.restHealPercent || 0.5));
+    var manaAmount = Math.floor(p.maxMp * 0.3);
+    Player.heal(healAmount);
+    Player.restoreMana(manaAmount);
+    Audio.play("heal");
+    renderRoom();
+    UI.showMessage("Rested. Restored " + healAmount + " HP and " + manaAmount + " MP.");
   }
 
-  function leaveDungeon() {
-    inDungeon = false;
+  function exitDungeon() {
     currentDungeon = null;
-    currentRoom = 0;
-    clearedRooms = {};
-    UI.showScreen("world-map");
-  }
-
-  function resetState() {
-    inDungeon = false;
-    currentDungeon = null;
-    currentRoom = 0;
-    clearedRooms = {};
-  }
-
-  function isInDungeon() {
-    return inDungeon;
+    currentRoomIndex = 0;
+    World.navigate("elderbrook");
   }
 
   return {
     enter: enter,
-    render: render,
-    isInDungeon: isInDungeon,
-    onBattleVictory: onBattleVictory,
-    leaveDungeon: leaveDungeon,
-    resetState: resetState
+    renderRoom: renderRoom,
+    moveToRoom: moveToRoom,
+    goBack: goBack,
+    fightRoom: fightRoom,
+    fightBoss: fightBoss,
+    collectLoot: collectLoot,
+    restInRoom: restInRoom,
+    exitDungeon: exitDungeon
   };
 })();

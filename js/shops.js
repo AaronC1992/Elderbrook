@@ -1,131 +1,120 @@
-/* shops.js - Shop rendering and buy/sell logic */
+/* shops.js - Chapter 1 shop definitions and buy/sell */
 var Shops = (function () {
-  var shopStock = {
-    "weapon-shop": ["rusty-dagger", "iron-sword", "wooden-staff", "short-bow", "steel-sword", "forest-blade", "hunter-bow", "enchanted-staff", "shadow-blade", "spectral-staff", "bone-bow"],
-    "armor-shop": ["leather-cap", "iron-helm", "cloth-tunic", "leather-armor", "iron-chestplate", "cloth-pants", "leather-leggings", "lucky-charm", "woodland-helm", "druid-robes", "forest-greaves", "witch-charm", "wraith-helm", "runed-armor", "shadow-leggings", "spirit-amulet"],
-    "potion-shop": ["health-potion", "mana-potion", "greater-health-potion", "greater-mana-potion", "antidote"]
+
+  var shops = {
+    "weapon-shop": {
+      id: "weapon-shop",
+      name: "Bram's Weapon Shop",
+      npc: "bram",
+      background: "assets/backgrounds/main-town-weapons-shop.png",
+      stock: [
+        "basic-sword", "basic-dagger", "basic-bow", "basic-staff",
+        "reinforced-sword", "sharpened-dagger", "hunters-bow", "apprentice-staff"
+      ]
+    },
+    "armor-shop": {
+      id: "armor-shop",
+      name: "Harlan's Armory",
+      npc: "harlan",
+      background: "assets/backgrounds/main-town-armor-shop.png",
+      stock: [
+        "leather-helm", "leather-chest", "leather-leggings", "leather-gloves", "leather-bracers",
+        "iron-helm", "iron-chestplate", "iron-leggings", "iron-gloves", "iron-bracers"
+      ]
+    },
+    "potion-shop": {
+      id: "potion-shop",
+      name: "Mira's Potion Shop",
+      npc: "mira",
+      background: "assets/backgrounds/main-town-potions-shop.png",
+      stock: [
+        "lesser-health-potion", "health-potion", "greater-health-potion", "mana-potion"
+      ]
+    }
   };
 
+  function getShop(id) { return shops[id] || null; }
+
   function renderShop(shopId) {
-    var listEl = document.getElementById(shopId + "-list");
-    if (!listEl) return;
-    listEl.innerHTML = "";
+    var shop = shops[shopId];
+    if (!shop) return;
 
-    var stock = shopStock[shopId];
-    if (!stock) return;
+    var npc = Chapter1.getNPC(shop.npc);
+    var container = document.getElementById("shop-inventory");
+    var npcPortrait = document.getElementById("shop-npc-portrait");
+    var npcName = document.getElementById("shop-npc-name");
+    var shopTitle = document.getElementById("shop-title");
 
-    for (var i = 0; i < stock.length; i++) {
-      var item = Items.get(stock[i]);
+    if (shopTitle) shopTitle.textContent = shop.name;
+    if (npcPortrait) {
+      npcPortrait.src = npc ? npc.portrait : "";
+      npcPortrait.onerror = function () { this.style.display = "none"; };
+      npcPortrait.style.display = "";
+    }
+    if (npcName) npcName.textContent = npc ? npc.name : "";
+
+    var p = Player.get();
+    var html = '<div class="shop-gold">Your Gold: ' + p.gold + '</div>';
+    html += '<div class="shop-items">';
+
+    for (var i = 0; i < shop.stock.length; i++) {
+      var item = Items.get(shop.stock[i]);
       if (!item) continue;
-
-      var div = document.createElement("div");
-      div.className = "shop-item";
-
-      if (item.img) {
-        var thumb = document.createElement("img");
-        thumb.className = "item-thumb";
-        thumb.src = item.img;
-        thumb.alt = item.name;
-        div.appendChild(thumb);
-      }
-
-      var info = document.createElement("div");
-      info.className = "shop-item-info";
-
-      var name = document.createElement("strong");
-      name.textContent = item.name;
-      info.appendChild(name);
-
-      var desc = document.createElement("p");
-      desc.textContent = item.description;
-      desc.style.fontSize = "0.85em";
-      desc.style.margin = "2px 0";
-      info.appendChild(desc);
-
-      if (item.power) {
-        var stat = document.createElement("span");
-        stat.className = "item-stat";
-        stat.textContent = "ATK +" + item.power;
-        info.appendChild(stat);
-      }
-      if (item.defense) {
-        var stat2 = document.createElement("span");
-        stat2.className = "item-stat";
-        stat2.textContent = "DEF +" + item.defense;
-        info.appendChild(stat2);
-      }
-      if (item.dexterity) {
-        var stat3 = document.createElement("span");
-        stat3.className = "item-stat";
-        stat3.textContent = "DEX +" + item.dexterity;
-        info.appendChild(stat3);
-      }
-      if (item.intelligence) {
-        var stat3b = document.createElement("span");
-        stat3b.className = "item-stat";
-        stat3b.textContent = "INT +" + item.intelligence;
-        info.appendChild(stat3b);
-      }
-      if (item.healAmount) {
-        var stat4 = document.createElement("span");
-        stat4.className = "item-stat";
-        stat4.textContent = "Heals " + item.healAmount + " HP";
-        info.appendChild(stat4);
-      }
-      if (item.manaAmount) {
-        var stat5 = document.createElement("span");
-        stat5.className = "item-stat";
-        stat5.textContent = "Restores " + item.manaAmount + " MP";
-        info.appendChild(stat5);
-      }
-      if (item.curesStatus) {
-        var stat6 = document.createElement("span");
-        stat6.className = "item-stat";
-        stat6.textContent = "Cures poison & bleed";
-        info.appendChild(stat6);
-      }
-
-      div.appendChild(info);
-
-      var buyBtn = document.createElement("button");
-      buyBtn.className = "btn-primary";
-      buyBtn.textContent = "Buy (" + item.price + "g)";
-      buyBtn.setAttribute("data-buy", item.id);
-      buyBtn.setAttribute("data-shop", shopId);
-      div.appendChild(buyBtn);
-
-      listEl.appendChild(div);
+      var canBuy = (item.price && p.gold >= item.price);
+      html += '<div class="shop-item">';
+      html += '<div class="shop-item-name">' + item.name + '</div>';
+      html += '<div class="shop-item-desc">' + item.description + '</div>';
+      html += '<div class="shop-item-stats">';
+      if (item.attack) html += 'ATK +' + item.attack + ' ';
+      if (item.defense) html += 'DEF +' + item.defense + ' ';
+      if (item.dexterity) html += 'DEX +' + item.dexterity + ' ';
+      if (item.intelligence) html += 'INT +' + item.intelligence + ' ';
+      if (item.healAmount) html += 'Heal ' + item.healAmount + ' ';
+      if (item.manaAmount) html += 'Mana ' + item.manaAmount + ' ';
+      html += '</div>';
+      html += '<div class="shop-item-price">' + (item.price || 0) + ' gold</div>';
+      html += '<button class="btn shop-buy-btn" data-action="buy" data-item="' + item.id + '" data-shop="' + shopId + '"' + (canBuy ? '' : ' disabled') + '>Buy</button>';
+      html += '</div>';
     }
+
+    html += '</div>';
+    if (container) container.innerHTML = html;
   }
 
-  function buyItem(itemId) {
+  function buy(shopId, itemId) {
+    var shop = shops[shopId];
+    if (!shop) return { success: false, message: "Shop not found." };
+    if (shop.stock.indexOf(itemId) === -1) return { success: false, message: "Item not in stock." };
+
     var item = Items.get(itemId);
-    if (!item) return;
+    if (!item || !item.price) return { success: false, message: "Invalid item." };
 
-    if (Player.inventoryFull()) {
-      MessageLog.add("Inventory full!", "damage");
-      return;
-    }
-    if (!Player.spendGold(item.price)) {
-      MessageLog.add("Not enough gold!", "damage");
-      return;
-    }
+    var p = Player.get();
+    if (p.gold < item.price) return { success: false, message: "Not enough gold." };
+    if (p.inventory.length >= Player.MAX_INVENTORY) return { success: false, message: "Inventory full." };
+
+    p.gold -= item.price;
     Player.addItem(itemId);
-    MessageLog.add("Bought " + item.name + " for " + item.price + " gold.", "gold");
-    Audio.shopBuy();
-    UI.updateHeader();
+    Audio.play("shopBuy");
+    return { success: true, message: "Bought " + item.name + "!" };
   }
 
-  function handleClick(e) {
-    var target = e.target;
-    var buyId = target.getAttribute("data-buy");
-    if (buyId) {
-      buyItem(buyId);
-    }
+  function sell(itemId) {
+    var item = Items.get(itemId);
+    if (!item) return { success: false, message: "Invalid item." };
+    if (item.type === "quest") return { success: false, message: "You can't sell quest items." };
+    if (!Player.removeItem(itemId)) return { success: false, message: "Item not found." };
+
+    var p = Player.get();
+    var sellPrice = item.sellPrice || 1;
+    p.gold += sellPrice;
+    return { success: true, message: "Sold " + item.name + " for " + sellPrice + " gold." };
   }
 
   return {
+    getShop: getShop,
     renderShop: renderShop,
-    handleClick: handleClick
+    buy: buy,
+    sell: sell
   };
 })();

@@ -1,324 +1,75 @@
-/* items.js - All item definitions */
+/* items.js - Chapter 1 item definitions */
 var Items = (function () {
-  var catalog = {
-    // ==============================
-    // --- TIER 1 WEAPONS (Goblin Cave / Starter) ---
-    // ==============================
-    "rusty-dagger": {
-      id: "rusty-dagger", name: "Rusty Dagger", type: "weapon", slot: "weapon",
-      price: 15, sellPrice: 7, power: 2,
-      img: "assets/items/basic-iron-dagger.png",
-      description: "A dull blade. Better than bare fists."
-    },
-    "iron-sword": {
-      id: "iron-sword", name: "Iron Sword", type: "weapon", slot: "weapon",
-      price: 40, sellPrice: 20, power: 5,
-      img: "assets/items/basic-iron-sword.png",
-      description: "A reliable sword forged from solid iron."
-    },
-    "wooden-staff": {
-      id: "wooden-staff", name: "Wooden Staff", type: "weapon", slot: "weapon",
-      price: 35, sellPrice: 17, power: 4,
-      img: "assets/items/basic-staff.png",
-      description: "A sturdy staff favored by traveling mages."
-    },
-    "short-bow": {
-      id: "short-bow", name: "Short Bow", type: "weapon", slot: "weapon",
-      price: 38, sellPrice: 19, power: 4,
-      img: "assets/items/basic-short-bow.png",
-      description: "A compact bow for quick shots."
-    },
-    "steel-sword": {
-      id: "steel-sword", name: "Steel Sword", type: "weapon", slot: "weapon",
-      price: 90, sellPrice: 45, power: 9,
-      img: "assets/items/basic-iron-sword.png",
-      description: "A well-crafted blade of tempered steel."
-    },
 
-    // ==============================
-    // --- TIER 2 WEAPONS (Dark Forest) ---
-    // ==============================
-    "forest-blade": {
-      id: "forest-blade", name: "Forest Blade", type: "weapon", slot: "weapon",
-      price: 160, sellPrice: 80, power: 13,
-      img: "assets/items/forest-blade.png",
-      description: "A vine-wrapped sword imbued with nature's edge."
-    },
-    "hunter-bow": {
-      id: "hunter-bow", name: "Hunter's Bow", type: "weapon", slot: "weapon",
-      price: 140, sellPrice: 70, power: 11,
-      img: "assets/items/hunter-bow.png",
-      description: "A finely crafted longbow used by forest rangers."
-    },
-    "enchanted-staff": {
-      id: "enchanted-staff", name: "Enchanted Staff", type: "weapon", slot: "weapon",
-      price: 150, sellPrice: 75, power: 12, intelligence: 2,
-      img: "assets/items/enchanted-staff.png",
-      description: "A staff humming with arcane energy. +2 INT."
-    },
+  var items = {
+    /* ── Starter Weapons (given at character creation) ── */
+    "basic-sword":   { id: "basic-sword",   name: "Basic Sword",   type: "weapon", slot: "weapon", icon: "", attack: 3, price: 30, sellPrice: 10, description: "A standard-issue iron sword." },
+    "basic-dagger":  { id: "basic-dagger",  name: "Basic Dagger",  type: "weapon", slot: "weapon", icon: "", attack: 2, dexterity: 1, price: 25, sellPrice: 8, description: "A light dagger, quick in the hand." },
+    "basic-bow":     { id: "basic-bow",     name: "Basic Bow",     type: "weapon", slot: "weapon", icon: "", attack: 3, price: 30, sellPrice: 10, description: "A simple wooden shortbow." },
+    "basic-staff":   { id: "basic-staff",   name: "Basic Staff",   type: "weapon", slot: "weapon", icon: "", attack: 2, intelligence: 1, price: 25, sellPrice: 8, description: "A gnarled wooden staff humming with faint energy." },
 
-    // ==============================
-    // --- TIER 3 WEAPONS (Haunted Ruins) ---
-    // ==============================
-    "shadow-blade": {
-      id: "shadow-blade", name: "Shadow Blade", type: "weapon", slot: "weapon",
-      price: 280, sellPrice: 140, power: 18,
-      img: "assets/items/shadow-blade.png",
-      description: "A dark blade that seems to drink in the light."
-    },
-    "spectral-staff": {
-      id: "spectral-staff", name: "Spectral Staff", type: "weapon", slot: "weapon",
-      price: 260, sellPrice: 130, power: 16, intelligence: 4,
-      img: "assets/items/spectral-staff.png",
-      description: "Ghosts whisper secrets through this ethereal focus. +4 INT."
-    },
-    "bone-bow": {
-      id: "bone-bow", name: "Bone Bow", type: "weapon", slot: "weapon",
-      price: 250, sellPrice: 125, power: 17,
-      img: "assets/items/bone-bow.png",
-      description: "Crafted from ancient remains. Unsettlingly accurate."
-    },
+    /* ── Upgrade Weapons (Bram's shop) ── */
+    "reinforced-sword":   { id: "reinforced-sword",   name: "Reinforced Sword",   type: "weapon", slot: "weapon", icon: "", attack: 6, price: 80, sellPrice: 28, description: "A blade tempered with iron bands. Hits hard." },
+    "sharpened-dagger":   { id: "sharpened-dagger",   name: "Sharpened Dagger",   type: "weapon", slot: "weapon", icon: "", attack: 5, dexterity: 2, price: 75, sellPrice: 25, description: "Honed to a wicked edge, fast and deadly." },
+    "hunters-bow":        { id: "hunters-bow",        name: "Hunter's Bow",        type: "weapon", slot: "weapon", icon: "", attack: 6, price: 80, sellPrice: 28, description: "A sturdy bow made for the wilderness." },
+    "apprentice-staff":   { id: "apprentice-staff",   name: "Apprentice Staff",   type: "weapon", slot: "weapon", icon: "", attack: 4, intelligence: 3, price: 75, sellPrice: 25, description: "Carved with minor focus runes. Amplifies magic." },
 
-    // ==============================
-    // --- TIER 4 WEAPONS (Dragon's Lair) ---
-    // ==============================
-    "dragon-slayer": {
-      id: "dragon-slayer", name: "Dragon Slayer", type: "weapon", slot: "weapon",
-      price: 500, sellPrice: 250, power: 24,
-      img: "assets/items/dragon-slayer.png",
-      description: "A legendary blade forged to slay dragons."
-    },
-    "wyrm-staff": {
-      id: "wyrm-staff", name: "Wyrm Staff", type: "weapon", slot: "weapon",
-      price: 480, sellPrice: 240, power: 22, intelligence: 6,
-      img: "assets/items/wyrm-staff.png",
-      description: "A staff carved from a wyrm's fang. Crackles with power. +6 INT."
-    },
+    /* ── Leather Armor Tier ── */
+    "leather-helm":     { id: "leather-helm",     name: "Leather Helm",     type: "armor", slot: "helmet",  icon: "", defense: 1, price: 20, sellPrice: 7, description: "A simple leather cap." },
+    "leather-chest":    { id: "leather-chest",    name: "Leather Chest",    type: "armor", slot: "chest",   icon: "", defense: 2, price: 35, sellPrice: 12, description: "Boiled leather cuirass." },
+    "leather-leggings": { id: "leather-leggings", name: "Leather Leggings", type: "armor", slot: "legs",    icon: "", defense: 1, price: 25, sellPrice: 8, description: "Worn but serviceable leather trousers." },
+    "leather-gloves":   { id: "leather-gloves",   name: "Leather Gloves",   type: "armor", slot: "gloves",  icon: "", defense: 1, price: 15, sellPrice: 5, description: "Light leather hand wraps." },
+    "leather-bracers":  { id: "leather-bracers",  name: "Leather Bracers",  type: "armor", slot: "bracers", icon: "", defense: 1, price: 15, sellPrice: 5, description: "Simple wrist guards." },
 
-    // ==============================
-    // --- TIER 1 HELMETS ---
-    // ==============================
-    "leather-cap": {
-      id: "leather-cap", name: "Leather Cap", type: "armor", slot: "helmet",
-      price: 20, sellPrice: 10, defense: 1,
-      description: "A simple cap of hardened leather."
-    },
-    "iron-helm": {
-      id: "iron-helm", name: "Iron Helm", type: "armor", slot: "helmet",
-      price: 45, sellPrice: 22, defense: 3,
-      img: "assets/items/basic-male-iron-helm.png",
-      description: "A sturdy iron helmet."
-    },
+    /* ── Iron Armor Tier ── */
+    "iron-helm":       { id: "iron-helm",       name: "Iron Helm",       type: "armor", slot: "helmet",  icon: "", defense: 3, price: 60, sellPrice: 20, description: "A solid iron half-helm." },
+    "iron-chestplate": { id: "iron-chestplate", name: "Iron Chestplate", type: "armor", slot: "chest",   icon: "", defense: 4, price: 90, sellPrice: 30, description: "Heavy iron breastplate. Reliable protection." },
+    "iron-leggings":   { id: "iron-leggings",   name: "Iron Leggings",   type: "armor", slot: "legs",    icon: "", defense: 2, price: 50, sellPrice: 17, description: "Iron-banded leg guards." },
+    "iron-gloves":     { id: "iron-gloves",     name: "Iron Gloves",     type: "armor", slot: "gloves",  icon: "", defense: 2, price: 35, sellPrice: 12, description: "Reinforced iron gauntlets." },
+    "iron-bracers":    { id: "iron-bracers",    name: "Iron Bracers",    type: "armor", slot: "bracers", icon: "", defense: 2, price: 40, sellPrice: 13, description: "Thick iron arm guards." },
 
-    // --- TIER 2 HELMETS ---
-    "woodland-helm": {
-      id: "woodland-helm", name: "Woodland Helm", type: "armor", slot: "helmet",
-      price: 90, sellPrice: 45, defense: 5,
-      img: "assets/items/woodland-helm.png",
-      description: "Woven bark and iron. Light yet resilient."
-    },
+    /* ── Potions ── */
+    "lesser-health-potion": { id: "lesser-health-potion", name: "Lesser Health Potion", type: "potion", subtype: "health", icon: "", healAmount: 15, price: 8,  sellPrice: 3, description: "Restores 15 HP." },
+    "health-potion":        { id: "health-potion",        name: "Health Potion",        type: "potion", subtype: "health", icon: "", healAmount: 30, price: 18, sellPrice: 6, description: "Restores 30 HP." },
+    "greater-health-potion":{ id: "greater-health-potion", name: "Greater Health Potion",type: "potion", subtype: "health", icon: "", healAmount: 60, price: 40, sellPrice: 14, description: "Restores 60 HP." },
+    "mana-potion":          { id: "mana-potion",          name: "Mana Potion",          type: "potion", subtype: "mana",   icon: "", manaAmount: 20, price: 15, sellPrice: 5, description: "Restores 20 MP." },
 
-    // --- TIER 3 HELMETS ---
-    "wraith-helm": {
-      id: "wraith-helm", name: "Wraith Helm", type: "armor", slot: "helmet",
-      price: 170, sellPrice: 85, defense: 8,
-      img: "assets/items/wraith-helm.png",
-      description: "A spectral helm that chills the air around it."
-    },
+    /* ── Loot / Materials ── */
+    "goblin-fang":   { id: "goblin-fang",   name: "Goblin Fang",   type: "loot", icon: "", sellPrice: 3, description: "A yellowed goblin fang." },
+    "goblin-scrap":  { id: "goblin-scrap",  name: "Goblin Scrap",  type: "loot", icon: "", sellPrice: 5, description: "Scrap metal scavenged from goblins." },
+    "wolf-pelt":     { id: "wolf-pelt",     name: "Wolf Pelt",     type: "loot", icon: "", sellPrice: 8, description: "A thick wolf hide. Mira can use these." },
+    "cave-herb":     { id: "cave-herb",     name: "Cave Herb",     type: "loot", icon: "", sellPrice: 4, description: "A resilient herb found near water." },
+    "torn-cloth":    { id: "torn-cloth",    name: "Torn Cloth",    type: "loot", icon: "", sellPrice: 2, description: "A strip of dirty fabric." },
+    "rusted-scrap":  { id: "rusted-scrap",  name: "Rusted Scrap",  type: "loot", icon: "", sellPrice: 3, description: "Badly rusted metal." },
 
-    // --- TIER 4 HELMETS ---
-    "dragonscale-helm": {
-      id: "dragonscale-helm", name: "Dragonscale Helm", type: "armor", slot: "helmet",
-      price: 380, sellPrice: 190, defense: 11,
-      img: "assets/items/dragonscale-helm.png",
-      description: "Forged from the scales of a fallen drake."
-    },
-
-    // ==============================
-    // --- TIER 1 CHEST ---
-    // ==============================
-    "cloth-tunic": {
-      id: "cloth-tunic", name: "Cloth Tunic", type: "armor", slot: "chest",
-      price: 15, sellPrice: 7, defense: 1,
-      description: "Simple cloth clothing. Barely counts as armor."
-    },
-    "leather-armor": {
-      id: "leather-armor", name: "Leather Armor", type: "armor", slot: "chest",
-      price: 50, sellPrice: 25, defense: 3,
-      description: "Tough leather that turns minor blows."
-    },
-    "iron-chestplate": {
-      id: "iron-chestplate", name: "Iron Chestplate", type: "armor", slot: "chest",
-      price: 100, sellPrice: 50, defense: 6,
-      img: "assets/items/basic-male-iron-chestplate.png",
-      description: "Heavy iron plate armor. Solid protection."
-    },
-
-    // --- TIER 2 CHEST ---
-    "druid-robes": {
-      id: "druid-robes", name: "Druid Robes", type: "armor", slot: "chest",
-      price: 150, sellPrice: 75, defense: 8, intelligence: 2,
-      img: "assets/items/druid-robes.png",
-      description: "Nature-blessed vestments. +2 INT."
-    },
-
-    // --- TIER 3 CHEST ---
-    "runed-armor": {
-      id: "runed-armor", name: "Runed Armor", type: "armor", slot: "chest",
-      price: 280, sellPrice: 140, defense: 12,
-      img: "assets/items/runed-armor.png",
-      description: "Ancient runes glow along the plates with warding magic."
-    },
-
-    // --- TIER 4 CHEST ---
-    "dragonscale-armor": {
-      id: "dragonscale-armor", name: "Dragonscale Armor", type: "armor", slot: "chest",
-      price: 520, sellPrice: 260, defense: 16,
-      img: "assets/items/dragonscale-armor.png",
-      description: "Legendary armor. Near-impervious to blade and flame."
-    },
-
-    // ==============================
-    // --- TIER 1 LEGS ---
-    // ==============================
-    "cloth-pants": {
-      id: "cloth-pants", name: "Cloth Pants", type: "armor", slot: "legs",
-      price: 12, sellPrice: 6, defense: 1,
-      description: "Basic cloth legwear."
-    },
-    "leather-leggings": {
-      id: "leather-leggings", name: "Leather Leggings", type: "armor", slot: "legs",
-      price: 40, sellPrice: 20, defense: 2,
-      description: "Reinforced leather leg protection."
-    },
-
-    // --- TIER 2 LEGS ---
-    "forest-greaves": {
-      id: "forest-greaves", name: "Forest Greaves", type: "armor", slot: "legs",
-      price: 100, sellPrice: 50, defense: 4,
-      img: "assets/items/forest-greaves.png",
-      description: "Bark-reinforced greaves. Light and sturdy."
-    },
-
-    // --- TIER 3 LEGS ---
-    "shadow-leggings": {
-      id: "shadow-leggings", name: "Shadow Leggings", type: "armor", slot: "legs",
-      price: 160, sellPrice: 80, defense: 7,
-      img: "assets/items/shadow-leggings.png",
-      description: "Woven with shadow threads that absorb impact."
-    },
-
-    // --- TIER 4 LEGS ---
-    "dragon-greaves": {
-      id: "dragon-greaves", name: "Dragon Greaves", type: "armor", slot: "legs",
-      price: 340, sellPrice: 170, defense: 10,
-      img: "assets/items/dragon-greaves.png",
-      description: "Dragonscale-plated leg armor. Heavy but mighty."
-    },
-
-    // ==============================
-    // --- ACCESSORIES ---
-    // ==============================
-    "lucky-charm": {
-      id: "lucky-charm", name: "Lucky Charm", type: "armor", slot: "accessory",
-      price: 60, sellPrice: 30, defense: 0, dexterity: 2,
-      description: "A small trinket said to bring good fortune. +2 Dexterity."
-    },
-    "witch-charm": {
-      id: "witch-charm", name: "Witch's Charm", type: "armor", slot: "accessory",
-      price: 120, sellPrice: 60, defense: 1, intelligence: 3,
-      img: "assets/items/witch-charm.png",
-      description: "Pulsing with dark forest magic. +3 INT."
-    },
-    "spirit-amulet": {
-      id: "spirit-amulet", name: "Spirit Amulet", type: "armor", slot: "accessory",
-      price: 200, sellPrice: 100, defense: 2, intelligence: 4,
-      img: "assets/items/spirit-amulet.png",
-      description: "Contains a trapped spirit that strengthens the wearer. +4 INT."
-    },
-    "dragon-fang-necklace": {
-      id: "dragon-fang-necklace", name: "Dragon Fang Necklace", type: "armor", slot: "accessory",
-      price: 350, sellPrice: 175, defense: 4, dexterity: 3,
-      img: "assets/items/dragon-fang-necklace.png",
-      description: "A trophy of dragonslayers. +4 DEF, +3 DEX."
-    },
-
-    // ==============================
-    // --- POTIONS ---
-    // ==============================
-    "health-potion": {
-      id: "health-potion", name: "Health Potion", type: "potion",
-      price: 15, sellPrice: 7, healAmount: 30,
-      img: "assets/items/health-potion.png",
-      description: "Restores 30 HP."
-    },
-    "mana-potion": {
-      id: "mana-potion", name: "Mana Potion", type: "potion",
-      price: 18, sellPrice: 9, manaAmount: 15,
-      img: "assets/items/mana-potion.png",
-      description: "Restores 15 Mana."
-    },
-    "greater-health-potion": {
-      id: "greater-health-potion", name: "Greater Health Potion", type: "potion",
-      price: 40, sellPrice: 20, healAmount: 75,
-      img: "assets/items/greater-health-potion.png",
-      description: "Restores 75 HP."
-    },
-    "greater-mana-potion": {
-      id: "greater-mana-potion", name: "Greater Mana Potion", type: "potion",
-      price: 45, sellPrice: 22, manaAmount: 40,
-      img: "assets/items/greater-mana-potion.png",
-      description: "Restores 40 Mana."
-    },
-    "antidote": {
-      id: "antidote", name: "Antidote", type: "potion",
-      price: 25, sellPrice: 12, curesStatus: true,
-      img: "assets/items/antidote.png",
-      description: "Cures poison and bleeding."
-    },
-
-    // ==============================
-    // --- MISC / LOOT ---
-    // ==============================
-    "goblin-ear": {
-      id: "goblin-ear", name: "Goblin Ear", type: "misc",
-      price: 0, sellPrice: 3,
-      description: "A severed goblin ear. Some collectors buy these."
-    },
-    "wolf-pelt": {
-      id: "wolf-pelt", name: "Wolf Pelt", type: "misc",
-      price: 0, sellPrice: 8,
-      description: "A thick wolf hide. Valued by tanners."
-    },
-    "witch-eye": {
-      id: "witch-eye", name: "Witch's Eye", type: "misc",
-      price: 0, sellPrice: 12,
-      description: "A glass eye pulsing with residual magic."
-    },
-    "bone-fragment": {
-      id: "bone-fragment", name: "Bone Fragment", type: "misc",
-      price: 0, sellPrice: 10,
-      description: "An ancient bone shard. Necromancers covet these."
-    },
-    "ectoplasm": {
-      id: "ectoplasm", name: "Ectoplasm", type: "misc",
-      price: 0, sellPrice: 15,
-      description: "Ghostly residue. Cold to the touch."
-    },
-    "dragon-scale": {
-      id: "dragon-scale", name: "Dragon Scale", type: "misc",
-      price: 0, sellPrice: 50,
-      description: "A shimmering scale from a dragon. Extremely valuable."
-    }
+    /* ── Quest Items ── */
+    "supply-note":          { id: "supply-note",          name: "Supply Note",          type: "quest", icon: "", sellPrice: 0, description: "A crumpled note listing stolen supplies." },
+    "stolen-supply-crate":  { id: "stolen-supply-crate",  name: "Stolen Supply Crate",  type: "quest", icon: "", sellPrice: 0, description: "A missing supply crate marked with Elderbrook seals." },
+    "guard-badge":          { id: "guard-badge",          name: "Guard Badge",          type: "quest", icon: "", sellPrice: 0, description: "A tarnished badge from a lost patrol." },
+    "strange-sigil":        { id: "strange-sigil",        name: "Strange Sigil",        type: "quest", icon: "", sellPrice: 0, description: "An unfamiliar symbol etched into dark stone." },
+    "chiefs-relic":         { id: "chiefs-relic",         name: "Chief's Relic",         type: "quest", icon: "", sellPrice: 0, description: "An ancient relic carried by the goblin chief." },
+    "goblin-orders":        { id: "goblin-orders",        name: "Goblin Orders",         type: "quest", icon: "", sellPrice: 0, description: "Written orders found on the goblin chief. Not in goblin tongue." }
   };
 
-  function get(id) {
-    return catalog[id] || null;
+  function get(id) { return items[id] || null; }
+
+  function getAll() { return items; }
+
+  function getBySlot(slot) {
+    var result = [];
+    for (var key in items) {
+      if (items[key].slot === slot) result.push(items[key]);
+    }
+    return result;
   }
 
-  function getAll() {
-    return catalog;
+  function getByType(type) {
+    var result = [];
+    for (var key in items) {
+      if (items[key].type === type) result.push(items[key]);
+    }
+    return result;
   }
 
-  return { get: get, getAll: getAll };
+  return { get: get, getAll: getAll, getBySlot: getBySlot, getByType: getByType };
 })();

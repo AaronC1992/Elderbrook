@@ -1,168 +1,106 @@
-/* player.js - Player state and leveling */
+/* player.js - Player state and management (Chapter 1, 6 equipment slots) */
 var Player = (function () {
+
   var MAX_INVENTORY = 20;
+  var EQUIP_SLOTS = ["weapon", "helmet", "chest", "legs", "gloves", "bracers"];
+  var BASE_STATS = { hp: 50, maxHp: 50, mp: 20, maxMp: 20, attack: 2, defense: 1, dexterity: 1, intelligence: 1 };
 
-  var defaultState = {
-    name: "",
-    gender: "male",
-    level: 1,
-    xp: 0,
-    xpToNext: 50,
-    gold: 50,
-    hp: 50,
-    maxHp: 50,
-    mana: 20,
-    maxMana: 20,
-    strength: 5,
-    defense: 3,
-    dexterity: 3,
-    intelligence: 2,
-    unspentPoints: 0,
-    areasUnlocked: ["goblin-cave"],
-    bestiary: {},
-    equipped: {
-      weapon: null,
-      helmet: null,
-      chest: null,
-      legs: null,
-      accessory: null
-    },
-    inventory: [],
-    questsActive: [],
-    questsCompleted: []
-  };
+  var state = null;
 
-  var state = {};
-
-  function create(name, gender) {
-    state = JSON.parse(JSON.stringify(defaultState));
-    state.name = name;
-    state.gender = gender || "male";
-    // Starting gear
-    state.equipped.weapon = "rusty-dagger";
-    state.equipped.chest = "cloth-tunic";
-    state.equipped.legs = "cloth-pants";
-    // Starting inventory
-    state.inventory.push("health-potion");
-    state.inventory.push("health-potion");
+  function defaultState() {
+    return {
+      name: "Hero",
+      gender: "male",
+      level: 1,
+      xp: 0,
+      xpToNext: 60,
+      gold: 30,
+      hp: BASE_STATS.hp,
+      maxHp: BASE_STATS.maxHp,
+      mp: BASE_STATS.mp,
+      maxMp: BASE_STATS.maxMp,
+      attack: BASE_STATS.attack,
+      defense: BASE_STATS.defense,
+      dexterity: BASE_STATS.dexterity,
+      intelligence: BASE_STATS.intelligence,
+      unspentPoints: 0,
+      equipped: {
+        weapon: null,
+        helmet: null,
+        chest: null,
+        legs: null,
+        gloves: null,
+        bracers: null
+      },
+      inventory: [],
+      bestiary: {},
+      storyFlags: Chapter1.getDefaultFlags(),
+      questProgress: {},
+      activeQuests: [],
+      completedQuests: [],
+      currentArea: "elderbrook",
+      hasEnteredTown: false
+    };
   }
 
-  function getData() {
+  function create(name, gender, startingWeapon) {
+    state = defaultState();
+    state.name = name;
+    state.gender = gender;
+    addItem(startingWeapon);
+    equip(startingWeapon);
     return state;
   }
 
-  function setData(data) {
-    state = data;
-  }
+  function get() { return state; }
+  function set(data) { state = data; }
 
-  // --- Stats with equipment ---
-  function getTotalAttack() {
-    var base = state.strength;
-    var wpn = state.equipped.weapon ? Items.get(state.equipped.weapon) : null;
-    if (wpn && wpn.power) base += wpn.power;
-    return base;
-  }
-
-  function getTotalDefense() {
-    var base = state.defense;
-    var slots = ["helmet", "chest", "legs", "accessory"];
-    for (var i = 0; i < slots.length; i++) {
-      var itemId = state.equipped[slots[i]];
-      if (itemId) {
-        var item = Items.get(itemId);
-        if (item && item.defense) base += item.defense;
-      }
+  /* ── Equipment ── */
+  function equip(itemId) {
+    var item = Items.get(itemId);
+    if (!item || !item.slot) return false;
+    var idx = state.inventory.indexOf(itemId);
+    if (idx === -1) return false;
+    if (state.equipped[item.slot]) {
+      state.inventory.push(state.equipped[item.slot]);
     }
-    return base;
-  }
-
-  function getTotalDexterity() {
-    var base = state.dexterity;
-    var slots = ["weapon", "helmet", "chest", "legs", "accessory"];
-    for (var i = 0; i < slots.length; i++) {
-      var itemId = state.equipped[slots[i]];
-      if (itemId) {
-        var item = Items.get(itemId);
-        if (item && item.dexterity) base += item.dexterity;
-      }
-    }
-    return base;
-  }
-
-  // --- Leveling ---
-  function addXp(amount) {
-    state.xp += amount;
-    var leveled = false;
-    while (state.xp >= state.xpToNext) {
-      state.xp -= state.xpToNext;
-      state.level++;
-      state.xpToNext = Math.floor(state.xpToNext * 1.4);
-      state.maxHp += 5;
-      state.hp = state.maxHp;
-      state.maxMana += 2;
-      state.mana = state.maxMana;
-      state.unspentPoints += 3;
-      leveled = true;
-    }
-    if (leveled && typeof Quests !== "undefined" && Quests.checkLevelQuests) {
-      Quests.checkLevelQuests();
-    }
-    return leveled;
-  }
-
-  function allocateStat(statName) {
-    if (state.unspentPoints <= 0) return false;
-    if (statName === "strength" || statName === "defense" || statName === "dexterity" || statName === "intelligence") {
-      state[statName] += 1;
-      state.unspentPoints -= 1;
-      return true;
-    }
-    return false;
-  }
-
-  function recordKill(enemyId) {
-    if (!state.bestiary) state.bestiary = {};
-    state.bestiary[enemyId] = (state.bestiary[enemyId] || 0) + 1;
-  }
-
-  function unlockArea(areaId) {
-    if (!state.areasUnlocked) state.areasUnlocked = ["goblin-cave"];
-    if (state.areasUnlocked.indexOf(areaId) === -1) {
-      state.areasUnlocked.push(areaId);
-      return true;
-    }
-    return false;
-  }
-
-  function isAreaUnlocked(areaId) {
-    if (!state.areasUnlocked) return areaId === "goblin-cave";
-    return state.areasUnlocked.indexOf(areaId) !== -1;
-  }
-
-  function getTotalIntelligence() {
-    var base = state.intelligence;
-    var slots = ["weapon", "helmet", "chest", "legs", "accessory"];
-    for (var i = 0; i < slots.length; i++) {
-      var itemId = state.equipped[slots[i]];
-      if (itemId) {
-        var item = Items.get(itemId);
-        if (item && item.intelligence) base += item.intelligence;
-      }
-    }
-    return base;
-  }
-
-  function addGold(amount) {
-    state.gold += amount;
-  }
-
-  function spendGold(amount) {
-    if (state.gold < amount) return false;
-    state.gold -= amount;
+    state.equipped[item.slot] = itemId;
+    state.inventory.splice(idx, 1);
+    recalcStats();
     return true;
   }
 
-  // --- Inventory helpers ---
+  function unequip(slot) {
+    if (!state.equipped[slot]) return false;
+    if (state.inventory.length >= MAX_INVENTORY) return false;
+    state.inventory.push(state.equipped[slot]);
+    state.equipped[slot] = null;
+    recalcStats();
+    return true;
+  }
+
+  function recalcStats() {
+    state.attack = BASE_STATS.attack;
+    state.defense = BASE_STATS.defense;
+    state.dexterity = BASE_STATS.dexterity;
+    state.intelligence = BASE_STATS.intelligence;
+    for (var i = 0; i < EQUIP_SLOTS.length; i++) {
+      var itemId = state.equipped[EQUIP_SLOTS[i]];
+      if (!itemId) continue;
+      var item = Items.get(itemId);
+      if (!item) continue;
+      if (item.attack) state.attack += item.attack;
+      if (item.defense) state.defense += item.defense;
+      if (item.dexterity) state.dexterity += item.dexterity;
+      if (item.intelligence) state.intelligence += item.intelligence;
+    }
+    // Add level-based stat bonus
+    var lvlBonus = state.level - 1;
+    state.attack += Math.floor(lvlBonus * 0.5);
+    state.defense += Math.floor(lvlBonus * 0.3);
+  }
+
+  /* ── Inventory ── */
   function addItem(itemId) {
     if (state.inventory.length >= MAX_INVENTORY) return false;
     state.inventory.push(itemId);
@@ -188,83 +126,115 @@ var Player = (function () {
     return c;
   }
 
-  function inventoryFull() {
-    return state.inventory.length >= MAX_INVENTORY;
-  }
-
-  // --- Equipment ---
-  function equip(itemId) {
-    var item = Items.get(itemId);
-    if (!item) return false;
-    var slot = item.slot;
-    if (!slot) return false;
-    // Remove item from inventory
-    if (!removeItem(itemId)) return false;
-    // Unequip current item in slot -> inventory
-    if (state.equipped[slot]) {
-      state.inventory.push(state.equipped[slot]);
+  /* ── XP & Leveling ── */
+  function addXp(amount) {
+    state.xp += amount;
+    var leveled = false;
+    while (state.xp >= state.xpToNext) {
+      state.xp -= state.xpToNext;
+      state.level++;
+      state.xpToNext = Math.floor(state.xpToNext * 1.4);
+      state.maxHp += 8;
+      state.hp = state.maxHp;
+      state.maxMp += 4;
+      state.mp = state.maxMp;
+      state.unspentPoints += 2;
+      leveled = true;
     }
-    state.equipped[slot] = itemId;
+    if (leveled) recalcStats();
+    return leveled;
+  }
+
+  function allocateStat(stat) {
+    if (state.unspentPoints <= 0) return false;
+    if (stat === "maxHp") { state.maxHp += 5; state.hp += 5; }
+    else if (stat === "maxMp") { state.maxMp += 3; state.mp += 3; }
+    else if (stat === "attack") { state.attack += 1; }
+    else if (stat === "defense") { state.defense += 1; }
+    else if (stat === "dexterity") { state.dexterity += 1; }
+    else if (stat === "intelligence") { state.intelligence += 1; }
+    else return false;
+    state.unspentPoints--;
     return true;
   }
 
-  function unequip(slot) {
-    if (!state.equipped[slot]) return false;
-    if (state.inventory.length >= MAX_INVENTORY) return false;
-    state.inventory.push(state.equipped[slot]);
-    state.equipped[slot] = null;
-    return true;
+  /* ── Story Flags ── */
+  function setFlag(flag) {
+    if (state.storyFlags.hasOwnProperty(flag)) {
+      state.storyFlags[flag] = true;
+    }
   }
 
-  // --- HP / Mana ---
+  function hasFlag(flag) {
+    return !!state.storyFlags[flag];
+  }
+
+  function setFlags(flags) {
+    if (!flags) return;
+    for (var i = 0; i < flags.length; i++) {
+      setFlag(flags[i]);
+    }
+  }
+
+  /* ── Bestiary ── */
+  function recordKill(enemyId) {
+    if (!state.bestiary[enemyId]) state.bestiary[enemyId] = 0;
+    state.bestiary[enemyId]++;
+  }
+
+  /* ── Healing ── */
   function heal(amount) {
     state.hp = Math.min(state.hp + amount, state.maxHp);
   }
 
   function restoreMana(amount) {
-    state.mana = Math.min(state.mana + amount, state.maxMana);
+    state.mp = Math.min(state.mp + amount, state.maxMp);
+  }
+
+  function fullRestore() {
+    state.hp = state.maxHp;
+    state.mp = state.maxMp;
   }
 
   function takeDamage(amount) {
-    state.hp = Math.max(state.hp - amount, 0);
+    state.hp = Math.max(0, state.hp - amount);
+    return state.hp <= 0;
   }
 
-  function isAlive() {
-    return state.hp > 0;
-  }
+  function getTotalAttack() { return state.attack; }
+  function getTotalDefense() { return state.defense; }
 
-  function fullRest() {
-    state.hp = state.maxHp;
-    state.mana = state.maxMana;
+  function getPortrait() {
+    return state.gender === "female"
+      ? "assets/portraits/female-player.png"
+      : "assets/portraits/male-player.png";
   }
 
   return {
+    MAX_INVENTORY: MAX_INVENTORY,
+    EQUIP_SLOTS: EQUIP_SLOTS,
     create: create,
-    getData: getData,
-    setData: setData,
-    getTotalAttack: getTotalAttack,
-    getTotalDefense: getTotalDefense,
-    getTotalDexterity: getTotalDexterity,
-    getTotalIntelligence: getTotalIntelligence,
-    addXp: addXp,
-    allocateStat: allocateStat,
-    recordKill: recordKill,
-    unlockArea: unlockArea,
-    isAreaUnlocked: isAreaUnlocked,
-    addGold: addGold,
-    spendGold: spendGold,
+    get: get,
+    set: set,
+    equip: equip,
+    unequip: unequip,
+    recalcStats: recalcStats,
     addItem: addItem,
     removeItem: removeItem,
     hasItem: hasItem,
     countItem: countItem,
-    inventoryFull: inventoryFull,
-    equip: equip,
-    unequip: unequip,
+    addXp: addXp,
+    allocateStat: allocateStat,
+    setFlag: setFlag,
+    hasFlag: hasFlag,
+    setFlags: setFlags,
+    recordKill: recordKill,
     heal: heal,
     restoreMana: restoreMana,
+    fullRestore: fullRestore,
     takeDamage: takeDamage,
-    isAlive: isAlive,
-    fullRest: fullRest,
-    MAX_INVENTORY: MAX_INVENTORY
+    getTotalAttack: getTotalAttack,
+    getTotalDefense: getTotalDefense,
+    getPortrait: getPortrait
   };
 })();

@@ -1,220 +1,118 @@
-/* inventory.js - Inventory UI rendering and actions */
+/* inventory.js - Inventory management and equipment UI (6 slots) */
 var Inventory = (function () {
-  var currentFilter = "all";
 
-  function open() {
-    currentFilter = "all";
-    render();
-    UI.showScreen("inventory");
-  }
+  var currentFilter = "all";
+  var currentShopId = null;
+
+  function setShopContext(shopId) { currentShopId = shopId; }
+  function clearShopContext() { currentShopId = null; }
 
   function render() {
-    var data = Player.getData();
-    var grid = document.getElementById("inventory-grid");
-    grid.innerHTML = "";
+    var p = Player.get();
+    var container = document.getElementById("inventory-items");
+    var equipContainer = document.getElementById("equipment-slots");
+    if (!container) return;
 
-    var items = data.inventory;
-    for (var i = 0; i < items.length; i++) {
-      var item = Items.get(items[i]);
+    // Equipment slots
+    if (equipContainer) {
+      var equipHtml = "";
+      var slots = Player.EQUIP_SLOTS;
+      var slotLabels = { weapon: "Weapon", helmet: "Helmet", chest: "Chest", legs: "Legs", gloves: "Gloves", bracers: "Bracers" };
+      for (var s = 0; s < slots.length; s++) {
+        var slotId = slots[s];
+        var eqItem = p.equipped[slotId] ? Items.get(p.equipped[slotId]) : null;
+        equipHtml += '<div class="equip-slot">';
+        equipHtml += '<div class="equip-slot-label">' + slotLabels[slotId] + '</div>';
+        if (eqItem) {
+          equipHtml += '<div class="equip-slot-item">' + eqItem.name;
+          equipHtml += ' <button class="btn btn-small" data-action="unequip" data-slot="' + slotId + '">Unequip</button>';
+          equipHtml += '</div>';
+        } else {
+          equipHtml += '<div class="equip-slot-empty">Empty</div>';
+        }
+        equipHtml += '</div>';
+      }
+      equipContainer.innerHTML = equipHtml;
+    }
+
+    // Inventory filter
+    var filterHtml = '<div class="inventory-filters">';
+    var filts = ["all", "weapon", "armor", "potion", "loot", "quest"];
+    for (var f = 0; f < filts.length; f++) {
+      filterHtml += '<button class="btn btn-small' + (currentFilter === filts[f] ? ' active' : '') + '" data-action="inv-filter" data-filter="' + filts[f] + '">' + filts[f].charAt(0).toUpperCase() + filts[f].slice(1) + '</button>';
+    }
+    filterHtml += '</div>';
+
+    // Inventory items
+    var html = filterHtml;
+    html += '<div class="inventory-count">' + p.inventory.length + '/' + Player.MAX_INVENTORY + '</div>';
+    html += '<div class="inventory-grid">';
+
+    for (var i = 0; i < p.inventory.length; i++) {
+      var item = Items.get(p.inventory[i]);
       if (!item) continue;
+
+      // Filter
       if (currentFilter !== "all" && item.type !== currentFilter) continue;
 
-      var div = document.createElement("div");
-      div.className = "inv-item";
-      div.setAttribute("data-item-id", item.id);
-
-      if (item.img) {
-        var thumb = document.createElement("img");
-        thumb.className = "item-thumb";
-        thumb.src = item.img;
-        thumb.alt = item.name;
-        div.appendChild(thumb);
-      }
-
-      var infoWrap = document.createElement("div");
-      infoWrap.className = "inv-item-info";
-
-      var nameSpan = document.createElement("strong");
-      nameSpan.textContent = item.name;
-      infoWrap.appendChild(nameSpan);
-
-      var desc = document.createElement("p");
-      desc.textContent = item.description;
-      desc.style.fontSize = "0.85em";
-      desc.style.margin = "4px 0";
-      infoWrap.appendChild(desc);
-
-      var actions = document.createElement("div");
-      actions.style.marginTop = "6px";
+      html += '<div class="inventory-item">';
+      html += '<div class="inv-item-name">' + item.name + '</div>';
+      html += '<div class="inv-item-desc">' + item.description + '</div>';
+      html += '<div class="inv-item-actions">';
 
       if (item.slot) {
-        var equipBtn = document.createElement("button");
-        equipBtn.className = "btn-small btn-primary";
-        equipBtn.textContent = "Equip";
-        equipBtn.setAttribute("data-equip", item.id);
-        actions.appendChild(equipBtn);
+        html += '<button class="btn btn-small" data-action="equip" data-item="' + item.id + '" data-index="' + i + '">Equip</button>';
       }
-
       if (item.type === "potion") {
-        var useBtn = document.createElement("button");
-        useBtn.className = "btn-small btn-primary";
-        useBtn.textContent = "Use";
-        useBtn.setAttribute("data-use", item.id);
-        actions.appendChild(useBtn);
+        html += '<button class="btn btn-small" data-action="use-item" data-item="' + item.id + '" data-index="' + i + '">Use</button>';
+      }
+      if (item.type !== "quest") {
+        html += '<button class="btn btn-small" data-action="sell-item" data-item="' + item.id + '">Sell (' + (item.sellPrice || 1) + 'g)</button>';
       }
 
-      var sellBtn = document.createElement("button");
-      sellBtn.className = "btn-small btn-danger";
-      sellBtn.textContent = "Sell (" + item.sellPrice + "g)";
-      sellBtn.setAttribute("data-sell", item.id);
-      actions.appendChild(sellBtn);
-
-      infoWrap.appendChild(actions);
-      div.appendChild(infoWrap);
-      grid.appendChild(div);
+      html += '</div></div>';
     }
 
-    if (grid.children.length === 0) {
-      grid.innerHTML = "<p style='grid-column:1/-1;text-align:center;color:#888;'>No items.</p>";
+    if (p.inventory.length === 0) {
+      html += '<div class="inventory-empty">Your inventory is empty.</div>';
     }
 
-    // Update count
-    var countEl = document.getElementById("inv-count");
-    if (countEl) {
-      countEl.textContent = data.inventory.length + " / " + Player.MAX_INVENTORY;
-    }
-
-    renderEquipped();
+    html += '</div>';
+    container.innerHTML = html;
   }
 
-  function renderEquipped() {
-    var data = Player.getData();
-    var container = document.getElementById("equipped-list");
-    if (!container) return;
-    container.innerHTML = "";
-
-    var slots = ["weapon", "helmet", "chest", "legs", "accessory"];
-    for (var i = 0; i < slots.length; i++) {
-      var slot = slots[i];
-      var itemId = data.equipped[slot];
-      var item = itemId ? Items.get(itemId) : null;
-
-      var div = document.createElement("div");
-      div.className = "equipped-slot";
-
-      var label = document.createElement("span");
-      label.className = "slot-label";
-      label.textContent = slot.charAt(0).toUpperCase() + slot.slice(1) + ": ";
-      div.appendChild(label);
-
-      if (item) {
-        var name = document.createElement("span");
-        name.textContent = item.name;
-        div.appendChild(name);
-
-        var unBtn = document.createElement("button");
-        unBtn.className = "btn-small btn-danger";
-        unBtn.textContent = "Unequip";
-        unBtn.setAttribute("data-unequip", slot);
-        unBtn.style.marginLeft = "8px";
-        div.appendChild(unBtn);
-      } else {
-        var empty = document.createElement("span");
-        empty.textContent = "(empty)";
-        empty.style.color = "#666";
-        div.appendChild(empty);
-      }
-
-      container.appendChild(div);
-    }
+  function setFilter(filter) {
+    currentFilter = filter;
+    render();
   }
 
-  function handleClick(e) {
-    var target = e.target;
+  function useItem(itemId) {
+    var item = Items.get(itemId);
+    if (!item || item.type !== "potion") return { success: false, message: "Can't use that." };
 
-    var equipId = target.getAttribute("data-equip");
-    if (equipId) {
-      Player.equip(equipId);
-      var eItem = Items.get(equipId);
-      if (eItem) MessageLog.add("Equipped " + eItem.name + ".", "info");
-      render();
-      UI.updateHeader();
-      return;
-    }
-
-    var unequipSlot = target.getAttribute("data-unequip");
-    if (unequipSlot) {
-      if (Player.inventoryFull()) {
-        MessageLog.add("Inventory full! Cannot unequip.", "damage");
-        return;
-      }
-      Player.unequip(unequipSlot);
-      MessageLog.add("Unequipped.", "info");
-      render();
-      UI.updateHeader();
-      return;
-    }
-
-    var useId = target.getAttribute("data-use");
-    if (useId) {
-      useItem(useId);
-      return;
-    }
-
-    var sellId = target.getAttribute("data-sell");
-    if (sellId) {
-      sellItem(sellId);
-      return;
-    }
-
-    var filter = target.getAttribute("data-filter");
-    if (filter) {
-      currentFilter = filter;
-      var filterBtns = document.querySelectorAll(".filter-btn");
-      for (var i = 0; i < filterBtns.length; i++) {
-        filterBtns[i].classList.remove("active");
-      }
-      target.classList.add("active");
-      render();
-      return;
-    }
-  }
-
-  function useItem(id) {
-    var item = Items.get(id);
-    if (!item || item.type !== "potion") return;
-    Player.removeItem(id);
-
-    if (item.healAmount) {
+    var p = Player.get();
+    if (item.subtype === "health") {
+      if (p.hp >= p.maxHp) return { success: false, message: "Already at full health." };
+      Player.removeItem(itemId);
       Player.heal(item.healAmount);
-      MessageLog.add("Used " + item.name + ". Restored " + item.healAmount + " HP.", "heal");
+      Audio.play("potionDrink");
+      return { success: true, message: "Restored " + item.healAmount + " HP." };
     }
-    if (item.manaAmount) {
+    if (item.subtype === "mana") {
+      if (p.mp >= p.maxMp) return { success: false, message: "Already at full mana." };
+      Player.removeItem(itemId);
       Player.restoreMana(item.manaAmount);
-      MessageLog.add("Used " + item.name + ". Restored " + item.manaAmount + " Mana.", "info");
+      Audio.play("potionDrink");
+      return { success: true, message: "Restored " + item.manaAmount + " MP." };
     }
-    if (item.curesStatus) {
-      MessageLog.add("Used " + item.name + ". Status effects cleared.", "heal");
-    }
-
-    render();
-    UI.updateHeader();
-  }
-
-  function sellItem(id) {
-    var item = Items.get(id);
-    if (!item) return;
-    Player.removeItem(id);
-    Player.addGold(item.sellPrice);
-    MessageLog.add("Sold " + item.name + " for " + item.sellPrice + " gold.", "gold");
-    render();
-    UI.updateHeader();
+    return { success: false, message: "Can't use that." };
   }
 
   return {
-    open: open,
     render: render,
-    handleClick: handleClick,
-    useItem: useItem
+    setFilter: setFilter,
+    useItem: useItem,
+    setShopContext: setShopContext,
+    clearShopContext: clearShopContext
   };
 })();
