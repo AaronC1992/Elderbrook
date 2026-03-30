@@ -27,6 +27,10 @@ var UI = (function () {
       renderCharacter();
     } else if (id === "dungeon") {
       Dungeon.render();
+    } else if (id === "world-map") {
+      updateWorldMap();
+    } else if (id === "victory") {
+      renderVictory();
     }
   }
 
@@ -61,8 +65,19 @@ var UI = (function () {
     setText("char-strength", data.strength + " (+" + (Player.getTotalAttack() - data.strength) + " from gear)");
     setText("char-defense", data.defense + " (+" + (Player.getTotalDefense() - data.defense) + " from gear)");
     setText("char-dexterity", data.dexterity + " (+" + (Player.getTotalDexterity() - data.dexterity) + " from gear)");
-    setText("char-intelligence", data.intelligence);
+    setText("char-intelligence", data.intelligence + " (+" + (Player.getTotalIntelligence() - data.intelligence) + " from gear)");
     setText("char-gold", data.gold);
+
+    // Stat allocation panel
+    var allocPanel = document.getElementById("stat-alloc-panel");
+    if (allocPanel) {
+      if (data.unspentPoints > 0) {
+        allocPanel.classList.remove("hidden");
+        setText("unspent-points", data.unspentPoints);
+      } else {
+        allocPanel.classList.add("hidden");
+      }
+    }
 
     // Equipped items
     var slots = ["weapon", "helmet", "chest", "legs", "accessory"];
@@ -78,6 +93,75 @@ var UI = (function () {
         }
       }
     }
+
+    // Bestiary
+    renderBestiary();
+  }
+
+  function renderBestiary() {
+    var list = document.getElementById("bestiary-list");
+    if (!list) return;
+    list.innerHTML = "";
+    var data = Player.getData();
+    var bestiary = data.bestiary || {};
+    var allIds = Enemies.getAllIds();
+    if (!allIds || allIds.length === 0) {
+      list.innerHTML = '<p class="flavor">No enemies encountered yet.</p>';
+      return;
+    }
+    for (var i = 0; i < allIds.length; i++) {
+      var id = allIds[i];
+      var kills = bestiary[id] || 0;
+      var enemy = Enemies.get(id);
+      var div = document.createElement("div");
+      div.className = "bestiary-entry";
+      if (kills > 0) {
+        div.innerHTML = '<span class="bestiary-name">' + (enemy ? enemy.name : id) + '</span>' +
+          '<span class="bestiary-kills">' + kills + ' killed</span>';
+      } else {
+        div.innerHTML = '<span class="bestiary-name bestiary-unknown">???</span>' +
+          '<span class="bestiary-kills">-</span>';
+      }
+      list.appendChild(div);
+    }
+  }
+
+  function updateWorldMap() {
+    var areaButtons = {
+      "bandit-camp": document.getElementById("area-btn-bandit-camp"),
+      "dark-forest": document.getElementById("area-btn-dark-forest"),
+      "haunted-ruins": document.getElementById("area-btn-haunted-ruins"),
+      "dragons-lair": document.getElementById("area-btn-dragons-lair")
+    };
+    for (var area in areaButtons) {
+      var btn = areaButtons[area];
+      if (!btn) continue;
+      if (Player.isAreaUnlocked(area)) {
+        btn.classList.remove("area-locked");
+        btn.disabled = false;
+      } else {
+        btn.classList.add("area-locked");
+        btn.disabled = true;
+      }
+    }
+  }
+
+  function renderVictory() {
+    var data = Player.getData();
+    var statsDiv = document.getElementById("victory-stats");
+    if (!statsDiv) return;
+    var totalKills = 0;
+    var bestiary = data.bestiary || {};
+    for (var id in bestiary) {
+      totalKills += bestiary[id];
+    }
+    statsDiv.innerHTML =
+      '<div class="victory-stat"><span>Final Level</span><span>' + data.level + '</span></div>' +
+      '<div class="victory-stat"><span>Total Kills</span><span>' + totalKills + '</span></div>' +
+      '<div class="victory-stat"><span>Gold Earned</span><span>' + data.gold + '</span></div>' +
+      '<div class="victory-stat"><span>Strength</span><span>' + Player.getTotalAttack() + '</span></div>' +
+      '<div class="victory-stat"><span>Defense</span><span>' + Player.getTotalDefense() + '</span></div>' +
+      '<div class="victory-stat"><span>Intelligence</span><span>' + Player.getTotalIntelligence() + '</span></div>';
   }
 
   function setText(id, text) {

@@ -748,6 +748,119 @@ button {
   margin-top: 1.5rem;
 }
 
+/* Victory Screen */
+#screen-victory.active {
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(212, 164, 56, 0.15) 0%, var(--bg-dark) 70%);
+}
+.victory-panel {
+  text-align: center;
+  max-width: 500px;
+}
+.victory-title {
+  font-size: 2.2rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 30px rgba(212, 164, 56, 0.5);
+}
+.victory-subtitle {
+  color: var(--text);
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+#victory-stats {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+.victory-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0.8rem;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+}
+.victory-stat span:first-child { color: var(--text-muted); }
+.victory-stat span:last-child { color: var(--accent); font-weight: 700; }
+.victory-actions {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+/* Stat Allocation */
+.stat-alloc-panel {
+  background: rgba(212, 164, 56, 0.08);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+}
+.stat-alloc-panel h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+.alloc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+.alloc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.88rem;
+}
+.alloc-row span { color: var(--text); }
+
+/* Bestiary */
+.bestiary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+.bestiary-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.85rem;
+}
+.bestiary-name { color: var(--text); font-weight: 700; }
+.bestiary-name.bestiary-unknown { color: var(--text-muted); }
+.bestiary-kills { color: var(--accent); font-size: 0.8rem; }
+
+/* Locked Areas */
+.area-locked {
+  opacity: 0.35;
+  pointer-events: none;
+  position: relative;
+}
+.area-locked::after {
+  content: 'LOCKED';
+  position: absolute;
+  bottom: -1.2em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: var(--danger);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
 @media (max-width: 600px) {
   #game-header { flex-direction: column; align-items: flex-start; }
   #header-nav { margin-left: 0; }

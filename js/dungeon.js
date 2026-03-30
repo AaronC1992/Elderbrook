@@ -33,6 +33,49 @@ var Dungeon = (function () {
         { id: 5, name: "Lockbox Stash", description: "A hidden stash behind some crates holds valuable loot.", type: "treasure", exits: [6], loot: [{ itemId: "steel-sword", chance: 0.2 }, { itemId: "iron-chestplate", chance: 0.15 }, { itemId: "health-potion", chance: 0.8 }] },
         { id: 6, name: "Leader's Tent", description: "The largest tent bears a crimson banner. The Bandit Leader awaits inside.", type: "boss", exits: [] }
       ]
+    },
+    "dark-forest": {
+      name: "Dark Forest",
+      area: "dark-forest",
+      background: "assets/backgrounds/dark-forest-1.png",
+      rooms: [
+        { id: 0, name: "Forest Edge", description: "Ancient trees block out the sun. Strange sounds echo from within.", type: "start", exits: [1, 2] },
+        { id: 1, name: "Wolf Den", description: "Bones litter the ground near a shallow cave. Wolves guard the path.", type: "enemy", exits: [3], enemyCount: 2 },
+        { id: 2, name: "Witch's Clearing", description: "Mushroom circles and strange totems mark this clearing. Dark magic lingers.", type: "enemy", exits: [3], enemyCount: 1 },
+        { id: 3, name: "Tangled Path", description: "Roots twist across the ground. Something moves in the canopy above.", type: "enemy", exits: [4, 5], enemyCount: 2 },
+        { id: 4, name: "Moonlit Spring", description: "A gentle spring reflects the moonlight. Its waters shimmer with healing energy.", type: "rest", exits: [6], healAmount: 30 },
+        { id: 5, name: "Hollow Tree", description: "A massive hollow tree hides a cache. Nature's offerings lie within.", type: "treasure", exits: [6], loot: [{ itemId: "forest-blade", chance: 0.15 }, { itemId: "woodland-helm", chance: 0.2 }, { itemId: "greater-health-potion", chance: 0.5 }, { itemId: "witch-charm", chance: 0.1 }] },
+        { id: 6, name: "Guardian's Grove", description: "An enormous tree pulses with corrupted energy. The Forest Guardian awaits.", type: "boss", exits: [] }
+      ]
+    },
+    "haunted-ruins": {
+      name: "Haunted Ruins",
+      area: "haunted-ruins",
+      background: "assets/backgrounds/haunted-ruins-1.png",
+      rooms: [
+        { id: 0, name: "Crumbling Gate", description: "The ruins loom above, draped in mist. An unearthly chill grips you.", type: "start", exits: [1, 2] },
+        { id: 1, name: "Bone Chamber", description: "Skeletons rattle to life as you enter this dust-choked hall.", type: "enemy", exits: [3], enemyCount: 2 },
+        { id: 2, name: "Crypt Alcove", description: "Old coffins line the walls. Some contain more than dust.", type: "treasure", exits: [3], loot: [{ itemId: "bone-fragment", chance: 0.7 }, { itemId: "greater-health-potion", chance: 0.4 }, { itemId: "shadow-leggings", chance: 0.1 }] },
+        { id: 3, name: "Haunted Gallery", description: "Ethereal figures drift through the broken halls. Their wails chill your blood.", type: "enemy", exits: [4, 5], enemyCount: 2 },
+        { id: 4, name: "Sanctuary Remnant", description: "A shattered altar still radiates faint holy light. You feel restored.", type: "rest", exits: [6], healAmount: 40 },
+        { id: 5, name: "Necromancer's Study", description: "Dark tomes and ritual components litter this chamber.", type: "treasure", exits: [6], loot: [{ itemId: "spectral-staff", chance: 0.12 }, { itemId: "wraith-helm", chance: 0.15 }, { itemId: "spirit-amulet", chance: 0.08 }, { itemId: "greater-mana-potion", chance: 0.5 }] },
+        { id: 6, name: "Throne of Bones", description: "A throne of fused bones dominates the chamber. The Lich Lord sits upon it.", type: "boss", exits: [] }
+      ]
+    },
+    "dragons-lair": {
+      name: "Dragon's Lair",
+      area: "dragons-lair",
+      background: "assets/backgrounds/dragons-lair-1.png",
+      rooms: [
+        { id: 0, name: "Volcanic Approach", description: "Heat washes over you as you enter the volcanic cavern. The air shimmers.", type: "start", exits: [1, 2] },
+        { id: 1, name: "Cultist Outpost", description: "Dragon cultists perform dark rites around a burning brazier.", type: "enemy", exits: [3], enemyCount: 2 },
+        { id: 2, name: "Scorched Cache", description: "Melted gold and charred treasures lie among the rocks.", type: "treasure", exits: [3], loot: [{ itemId: "dragon-scale", chance: 0.5 }, { itemId: "greater-health-potion", chance: 0.6 }, { itemId: "greater-mana-potion", chance: 0.4 }] },
+        { id: 3, name: "Drake Nesting Ground", description: "Young drakes snarl and snap. Their scales gleam with heat.", type: "enemy", exits: [4, 5], enemyCount: 2 },
+        { id: 4, name: "Thermal Vent", description: "Warm mineral waters bubble here. The heat eases your wounds.", type: "rest", exits: [6], healAmount: 50 },
+        { id: 5, name: "Hoard Antechamber", description: "Mountains of gold and relics fill this chamber. Take what you can carry.", type: "treasure", exits: [6], loot: [{ itemId: "dragon-slayer", chance: 0.08 }, { itemId: "dragonscale-armor", chance: 0.08 }, { itemId: "dragonscale-helm", chance: 0.1 }, { itemId: "dragon-fang-necklace", chance: 0.12 }, { itemId: "greater-health-potion", chance: 0.7 }] },
+        { id: 6, name: "Caldera Throne", description: "Lava flows beneath a platform of obsidian. Above it, the Elder Wyrm waits.", type: "boss", exits: [] },
+        { id: 7, name: "Inner Sanctum", description: "A hidden passage behind the throne reveals the dragon's true hoard.", type: "treasure", exits: [] }
+      ]
     }
   };
 

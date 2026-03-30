@@ -46,6 +46,8 @@
     // data-screen navigation
     var screen = target.getAttribute("data-screen");
     if (screen) {
+      // Block locked area buttons
+      if (target.classList.contains("area-locked")) return;
       World.navigate(screen);
       return;
     }
@@ -56,10 +58,28 @@
     // --- Wilderness explore ---
     if (target.id === "btn-explore") { World.startEncounter("goblin-cave"); return; }
     if (target.id === "btn-explore-bandit") { World.startEncounter("bandit-camp"); return; }
+    if (target.id === "btn-explore-forest") { World.startEncounter("dark-forest"); return; }
+    if (target.id === "btn-explore-ruins") { World.startEncounter("haunted-ruins"); return; }
+    if (target.id === "btn-explore-dragon") { World.startEncounter("dragons-lair"); return; }
 
     // --- Dungeon enter ---
     if (target.id === "btn-enter-dungeon-goblin") { World.enterDungeon("goblin-cave"); return; }
     if (target.id === "btn-enter-dungeon-bandit") { World.enterDungeon("bandit-camp"); return; }
+    if (target.id === "btn-enter-dungeon-forest") { World.enterDungeon("dark-forest"); return; }
+    if (target.id === "btn-enter-dungeon-ruins") { World.enterDungeon("haunted-ruins"); return; }
+    if (target.id === "btn-enter-dungeon-dragon") { World.enterDungeon("dragons-lair"); return; }
+
+    // --- Stat allocation ---
+    var allocStat = target.getAttribute("data-allocate");
+    if (allocStat) {
+      if (Player.allocateStat(allocStat)) {
+        Audio.buttonClick();
+        UI.renderCharacter();
+        UI.updateHeader();
+        MessageLog.add(allocStat.charAt(0).toUpperCase() + allocStat.slice(1) + " increased!", "level");
+      }
+      return;
+    }
 
     // --- Battle ---
     if (target.id === "btn-attack") { Battle.playerAttack(); return; }
@@ -81,6 +101,13 @@
       } else {
         MessageLog.add("No save found!", "damage");
       }
+      return;
+    }
+
+    // --- Victory continue ---
+    if (target.id === "btn-continue-playing") {
+      UI.showScreen("town");
+      MessageLog.add("The adventure continues...", "info");
       return;
     }
 

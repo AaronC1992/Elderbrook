@@ -17,6 +17,9 @@ var Player = (function () {
     defense: 3,
     dexterity: 3,
     intelligence: 2,
+    unspentPoints: 0,
+    areasUnlocked: ["goblin-cave"],
+    bestiary: {},
     equipped: {
       weapon: null,
       helmet: null,
@@ -24,7 +27,7 @@ var Player = (function () {
       legs: null,
       accessory: null
     },
-    inventory: [],   // array of item id strings
+    inventory: [],
     questsActive: [],
     questsCompleted: []
   };
@@ -98,13 +101,55 @@ var Player = (function () {
       state.hp = state.maxHp;
       state.maxMana += 2;
       state.mana = state.maxMana;
-      state.strength += 1;
-      state.defense += 1;
-      state.dexterity += 1;
-      state.intelligence += 1;
+      state.unspentPoints += 3;
       leveled = true;
     }
+    if (leveled && typeof Quests !== "undefined" && Quests.checkLevelQuests) {
+      Quests.checkLevelQuests();
+    }
     return leveled;
+  }
+
+  function allocateStat(statName) {
+    if (state.unspentPoints <= 0) return false;
+    if (statName === "strength" || statName === "defense" || statName === "dexterity" || statName === "intelligence") {
+      state[statName] += 1;
+      state.unspentPoints -= 1;
+      return true;
+    }
+    return false;
+  }
+
+  function recordKill(enemyId) {
+    if (!state.bestiary) state.bestiary = {};
+    state.bestiary[enemyId] = (state.bestiary[enemyId] || 0) + 1;
+  }
+
+  function unlockArea(areaId) {
+    if (!state.areasUnlocked) state.areasUnlocked = ["goblin-cave"];
+    if (state.areasUnlocked.indexOf(areaId) === -1) {
+      state.areasUnlocked.push(areaId);
+      return true;
+    }
+    return false;
+  }
+
+  function isAreaUnlocked(areaId) {
+    if (!state.areasUnlocked) return areaId === "goblin-cave";
+    return state.areasUnlocked.indexOf(areaId) !== -1;
+  }
+
+  function getTotalIntelligence() {
+    var base = state.intelligence;
+    var slots = ["weapon", "helmet", "chest", "legs", "accessory"];
+    for (var i = 0; i < slots.length; i++) {
+      var itemId = state.equipped[slots[i]];
+      if (itemId) {
+        var item = Items.get(itemId);
+        if (item && item.intelligence) base += item.intelligence;
+      }
+    }
+    return base;
   }
 
   function addGold(amount) {
@@ -200,7 +245,12 @@ var Player = (function () {
     getTotalAttack: getTotalAttack,
     getTotalDefense: getTotalDefense,
     getTotalDexterity: getTotalDexterity,
+    getTotalIntelligence: getTotalIntelligence,
     addXp: addXp,
+    allocateStat: allocateStat,
+    recordKill: recordKill,
+    unlockArea: unlockArea,
+    isAreaUnlocked: isAreaUnlocked,
     addGold: addGold,
     spendGold: spendGold,
     addItem: addItem,

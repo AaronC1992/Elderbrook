@@ -41,11 +41,14 @@ var Battle = (function () {
     // Update battle background for current area
     var battleScreen = document.getElementById("screen-battle");
     if (battleScreen) {
-      if (currentArea === "bandit-camp") {
-        battleScreen.style.backgroundImage = "url('assets/backgrounds/bandit-camp-1.png')";
-      } else {
-        battleScreen.style.backgroundImage = "url('assets/backgrounds/goblin-cave-1.png')";
-      }
+      var bgMap = {
+        "goblin-cave": "assets/backgrounds/goblin-cave-1.png",
+        "bandit-camp": "assets/backgrounds/bandit-camp-1.png",
+        "dark-forest": "assets/backgrounds/dark-forest-1.png",
+        "haunted-ruins": "assets/backgrounds/haunted-ruins-1.png",
+        "dragons-lair": "assets/backgrounds/dragons-lair-1.png"
+      };
+      battleScreen.style.backgroundImage = "url('" + (bgMap[currentArea] || bgMap["goblin-cave"]) + "')";
     }
 
     buildActions();
@@ -83,11 +86,14 @@ var Battle = (function () {
 
     var battleScreen = document.getElementById("screen-battle");
     if (battleScreen) {
-      if (currentArea === "bandit-camp") {
-        battleScreen.style.backgroundImage = "url('assets/backgrounds/bandit-camp-1.png')";
-      } else {
-        battleScreen.style.backgroundImage = "url('assets/backgrounds/goblin-cave-1.png')";
-      }
+      var bgMap = {
+        "goblin-cave": "assets/backgrounds/goblin-cave-1.png",
+        "bandit-camp": "assets/backgrounds/bandit-camp-1.png",
+        "dark-forest": "assets/backgrounds/dark-forest-1.png",
+        "haunted-ruins": "assets/backgrounds/haunted-ruins-1.png",
+        "dragons-lair": "assets/backgrounds/dragons-lair-1.png"
+      };
+      battleScreen.style.backgroundImage = "url('" + (bgMap[currentArea] || bgMap["goblin-cave"]) + "')";
     }
 
     buildActions();
@@ -369,6 +375,32 @@ var Battle = (function () {
         logBattle(currentEnemy.name + " is afflicted with " + skill.appliesEffect.type + "!", "info");
       }
 
+      if (skill.recoilPercent) {
+        var recoil = Math.max(1, Math.floor(damage * skill.recoilPercent));
+        Player.takeDamage(recoil);
+        logBattle("Recoil! You take " + recoil + " damage!", "damage");
+      }
+
+      if (currentEnemy.hp <= 0) {
+        currentEnemy.hp = 0;
+        renderBattle();
+        victory();
+        return;
+      }
+    } else if (skill.type === "magic") {
+      var magicDmg = Math.max(1, skill.baseDamage + Math.floor(Player.getTotalIntelligence() * skill.intScaling) - currentEnemy.defense);
+      currentEnemy.hp -= magicDmg;
+      logBattle(skill.name + "! " + magicDmg + " magic damage to " + currentEnemy.name + "!", "damage");
+      Audio.magicCast();
+
+      if (skill.appliesEffect) {
+        var doApply = skill.stunChance ? (Math.random() < skill.stunChance) : true;
+        if (doApply) {
+          applyStatusToEnemy(skill.appliesEffect);
+          logBattle(currentEnemy.name + " is afflicted with " + skill.appliesEffect.type + "!", "info");
+        }
+      }
+
       if (currentEnemy.hp <= 0) {
         currentEnemy.hp = 0;
         renderBattle();
@@ -395,7 +427,18 @@ var Battle = (function () {
   function playerUsePotion() {
     if (!inBattle || !playerTurn) return;
 
-    if (!Player.hasItem("health-potion")) {
+    // Try greater health potion first, then regular
+    var potionId = null;
+    var healAmt = 0;
+    if (Player.hasItem("greater-health-potion")) {
+      potionId = "greater-health-potion";
+      healAmt = 75;
+    } else if (Player.hasItem("health-potion")) {
+      potionId = "health-potion";
+      healAmt = 30;
+    }
+
+    if (!potionId) {
       logBattle("No health potions left!", "damage");
       return;
     }
@@ -403,9 +446,10 @@ var Battle = (function () {
     playerTurn = false;
     isDefending = false;
     setCooldown();
-    Player.removeItem("health-potion");
-    Player.heal(30);
-    logBattle("You drink a Health Potion. +30 HP!", "heal");
+    Player.removeItem(potionId);
+    Player.heal(healAmt);
+    var name = Items.get(potionId) ? Items.get(potionId).name : potionId;
+    logBattle("You drink a " + name + ". +" + healAmt + " HP!", "heal");
     Audio.potionDrink();
 
     processPlayerEffects();
@@ -418,7 +462,17 @@ var Battle = (function () {
   function playerUseManaPotion() {
     if (!inBattle || !playerTurn) return;
 
-    if (!Player.hasItem("mana-potion")) {
+    var potionId = null;
+    var manaAmt = 0;
+    if (Player.hasItem("greater-mana-potion")) {
+      potionId = "greater-mana-potion";
+      manaAmt = 40;
+    } else if (Player.hasItem("mana-potion")) {
+      potionId = "mana-potion";
+      manaAmt = 15;
+    }
+
+    if (!potionId) {
       logBattle("No mana potions left!", "damage");
       return;
     }
@@ -426,9 +480,10 @@ var Battle = (function () {
     playerTurn = false;
     isDefending = false;
     setCooldown();
-    Player.removeItem("mana-potion");
-    Player.restoreMana(15);
-    logBattle("You drink a Mana Potion. +15 MP!", "info");
+    Player.removeItem(potionId);
+    Player.restoreMana(manaAmt);
+    var name = Items.get(potionId) ? Items.get(potionId).name : potionId;
+    logBattle("You drink a " + name + ". +" + manaAmt + " MP!", "info");
     Audio.potionDrink();
 
     processPlayerEffects();
@@ -455,10 +510,15 @@ var Battle = (function () {
       if (Dungeon.isInDungeon()) {
         UI.showScreen("dungeon");
         Dungeon.render();
-      } else if (currentArea === "bandit-camp") {
-        UI.showScreen("bandit-camp");
       } else {
-        UI.showScreen("wilderness");
+        var areaScreenMap = {
+          "goblin-cave": "wilderness",
+          "bandit-camp": "bandit-camp",
+          "dark-forest": "dark-forest",
+          "haunted-ruins": "haunted-ruins",
+          "dragons-lair": "dragons-lair"
+        };
+        UI.showScreen(areaScreenMap[currentArea] || "wilderness");
       }
     } else {
       playerTurn = false;
@@ -573,11 +633,13 @@ var Battle = (function () {
     var leveled = Player.addXp(currentEnemy.xpReward);
     logBattle("+" + currentEnemy.xpReward + " XP.", "xp");
     if (leveled) {
-      logBattle("LEVEL UP! You are now level " + Player.getData().level + "!", "xp");
+      logBattle("LEVEL UP! You are now level " + Player.getData().level + "! You have stat points to allocate!", "xp");
       Audio.levelUp();
     }
 
+    Player.recordKill(currentEnemy.id);
     Quests.progress(currentEnemy.id);
+    checkAreaUnlocks();
 
     // Loot drops - allow multiple
     if (currentEnemy.loot) {
@@ -597,10 +659,27 @@ var Battle = (function () {
 
     UI.updateHeader();
 
+    // Final boss check
+    if (currentEnemy.isFinalBoss) {
+      Audio.finalVictory();
+      var actions = document.getElementById("battle-actions");
+      if (actions) {
+        actions.innerHTML = "";
+        var btn = document.createElement("button");
+        btn.className = "btn-primary";
+        btn.textContent = "You have saved Elderbrook!";
+        btn.addEventListener("click", function () {
+          UI.showScreen("victory");
+        });
+        actions.appendChild(btn);
+      }
+      return;
+    }
+
     // If in dungeon, handle multi-fight rooms
     if (Dungeon.isInDungeon()) {
       var moreFights = Dungeon.onBattleVictory();
-      if (moreFights) return; // Another fight incoming
+      if (moreFights) return;
     }
 
     var actions = document.getElementById("battle-actions");
@@ -613,13 +692,41 @@ var Battle = (function () {
         if (Dungeon.isInDungeon()) {
           UI.showScreen("dungeon");
           Dungeon.render();
-        } else if (currentArea === "bandit-camp") {
-          UI.showScreen("bandit-camp");
         } else {
-          UI.showScreen("wilderness");
+          var areaScreenMap = {
+            "goblin-cave": "wilderness",
+            "bandit-camp": "bandit-camp",
+            "dark-forest": "dark-forest",
+            "haunted-ruins": "haunted-ruins",
+            "dragons-lair": "dragons-lair"
+          };
+          UI.showScreen(areaScreenMap[currentArea] || "wilderness");
         }
       });
       actions.appendChild(btn);
+    }
+  }
+
+  function checkAreaUnlocks() {
+    var data = Player.getData();
+    var unlocks = [
+      { area: "bandit-camp", level: 3, quest: "goblin-king-slayer" },
+      { area: "dark-forest", level: 6, quest: "bandit-leader-bounty" },
+      { area: "haunted-ruins", level: 10, quest: "forest-guardian-quest" },
+      { area: "dragons-lair", level: 14, quest: "lich-lord-quest", requireBoth: true }
+    ];
+    for (var i = 0; i < unlocks.length; i++) {
+      var u = unlocks[i];
+      if (Player.isAreaUnlocked(u.area)) continue;
+      var levelMet = data.level >= u.level;
+      var questMet = u.quest ? Quests.isCompleted(u.quest) : false;
+      var shouldUnlock = u.requireBoth ? (levelMet && questMet) : (levelMet || questMet);
+      if (shouldUnlock) {
+        Player.unlockArea(u.area);
+        Audio.areaUnlock();
+        var areaNames = { "bandit-camp": "Bandit Camp", "dark-forest": "Dark Forest", "haunted-ruins": "Haunted Ruins", "dragons-lair": "Dragon's Lair" };
+        MessageLog.add("NEW AREA UNLOCKED: " + (areaNames[u.area] || u.area) + "!", "xp");
+      }
     }
   }
 

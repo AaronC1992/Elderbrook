@@ -1,9 +1,9 @@
 /* shops.js - Shop rendering and buy/sell logic */
 var Shops = (function () {
   var shopStock = {
-    "weapon-shop": ["rusty-dagger", "iron-sword", "wooden-staff", "short-bow", "steel-sword"],
-    "armor-shop": ["leather-cap", "iron-helm", "cloth-tunic", "leather-armor", "iron-chestplate", "cloth-pants", "leather-leggings", "lucky-charm"],
-    "potion-shop": ["health-potion", "mana-potion"]
+    "weapon-shop": ["rusty-dagger", "iron-sword", "wooden-staff", "short-bow", "steel-sword", "forest-blade", "hunter-bow", "enchanted-staff", "shadow-blade", "spectral-staff", "bone-bow"],
+    "armor-shop": ["leather-cap", "iron-helm", "cloth-tunic", "leather-armor", "iron-chestplate", "cloth-pants", "leather-leggings", "lucky-charm", "woodland-helm", "druid-robes", "forest-greaves", "witch-charm", "wraith-helm", "runed-armor", "shadow-leggings", "spirit-amulet"],
+    "potion-shop": ["health-potion", "mana-potion", "greater-health-potion", "greater-mana-potion", "antidote"]
   };
 
   function renderShop(shopId) {
@@ -60,6 +60,12 @@ var Shops = (function () {
         stat3.textContent = "DEX +" + item.dexterity;
         info.appendChild(stat3);
       }
+      if (item.intelligence) {
+        var stat3b = document.createElement("span");
+        stat3b.className = "item-stat";
+        stat3b.textContent = "INT +" + item.intelligence;
+        info.appendChild(stat3b);
+      }
       if (item.healAmount) {
         var stat4 = document.createElement("span");
         stat4.className = "item-stat";
@@ -71,6 +77,12 @@ var Shops = (function () {
         stat5.className = "item-stat";
         stat5.textContent = "Restores " + item.manaAmount + " MP";
         info.appendChild(stat5);
+      }
+      if (item.curesStatus) {
+        var stat6 = document.createElement("span");
+        stat6.className = "item-stat";
+        stat6.textContent = "Cures poison & bleed";
+        info.appendChild(stat6);
       }
 
       div.appendChild(info);

@@ -1,83 +1,95 @@
 /* quests.js - Quest definitions and tracking */
 var Quests = (function () {
   var definitions = {
+    // --- GOBLIN CAVE ---
     "goblin-menace": {
-      id: "goblin-menace",
-      name: "The Goblin Menace",
+      id: "goblin-menace", name: "The Goblin Menace",
       description: "The village elder asks you to slay goblins threatening the outskirts.",
-      type: "kill",
-      target: "goblin",
-      required: 10,
-      rewards: {
-        xp: 80,
-        gold: 50,
-        item: "iron-sword"
-      }
+      type: "kill", target: "goblin", required: 10,
+      rewards: { xp: 80, gold: 50, item: "iron-sword" }
     },
     "goblin-brute-bounty": {
-      id: "goblin-brute-bounty",
-      name: "Brute Force",
+      id: "goblin-brute-bounty", name: "Brute Force",
       description: "A bounty has been placed on the stronger goblins lurking deeper in the wilds.",
-      type: "kill",
-      target: "goblin-brute",
-      required: 5,
-      rewards: {
-        xp: 120,
-        gold: 80,
-        item: null
-      }
+      type: "kill", target: "goblin-brute", required: 5,
+      rewards: { xp: 120, gold: 80, item: null }
     },
     "goblin-assassin-hunt": {
-      id: "goblin-assassin-hunt",
-      name: "Shadow Stalkers",
+      id: "goblin-assassin-hunt", name: "Shadow Stalkers",
       description: "Goblin assassins have been ambushing travelers on the roads. Eliminate them.",
-      type: "kill",
-      target: "goblin-assassin",
-      required: 3,
-      rewards: {
-        xp: 100,
-        gold: 60,
-        item: "leather-armor"
-      }
+      type: "kill", target: "goblin-assassin", required: 3,
+      rewards: { xp: 100, gold: 60, item: "leather-armor" }
     },
     "goblin-king-slayer": {
-      id: "goblin-king-slayer",
-      name: "Dethrone the King",
+      id: "goblin-king-slayer", name: "Dethrone the King",
       description: "The Goblin King must be stopped. Enter the depths of the cave and defeat him.",
-      type: "kill",
-      target: "goblin-king",
-      required: 1,
-      rewards: {
-        xp: 250,
-        gold: 150,
-        item: "steel-sword"
-      }
+      type: "kill", target: "goblin-king", required: 1,
+      rewards: { xp: 250, gold: 150, item: "steel-sword" }
     },
+    // --- BANDIT CAMP ---
     "bandit-problem": {
-      id: "bandit-problem",
-      name: "Highway Robbery",
+      id: "bandit-problem", name: "Highway Robbery",
       description: "Bandits are raiding merchant caravans. Clear them out.",
-      type: "kill",
-      target: "bandit",
-      required: 8,
-      rewards: {
-        xp: 150,
-        gold: 100,
-        item: "iron-helm"
-      }
+      type: "kill", target: "bandit", required: 8,
+      rewards: { xp: 150, gold: 100, item: "iron-helm" }
     },
     "bandit-leader-bounty": {
-      id: "bandit-leader-bounty",
-      name: "Head of the Snake",
+      id: "bandit-leader-bounty", name: "Head of the Snake",
       description: "Take down the Bandit Leader to scatter their forces for good.",
-      type: "kill",
-      target: "bandit-leader",
-      required: 1,
-      rewards: {
-        xp: 350,
-        gold: 200,
-        item: "iron-chestplate"
-      }
+      type: "kill", target: "bandit-leader", required: 1,
+      rewards: { xp: 350, gold: 200, item: "iron-chestplate" }
+    },
+    // --- DARK FOREST ---
+    "wolf-pack": {
+      id: "wolf-pack", name: "The Wolf Pack",
+      description: "Wolves are terrorizing travelers in the Dark Forest. Thin their numbers.",
+      type: "kill", target: "wolf", required: 8,
+      rewards: { xp: 200, gold: 120, item: "hunter-bow" }
+    },
+    "witch-hunt": {
+      id: "witch-hunt", name: "Witch Hunt",
+      description: "Forest witches have been cursing villagers. Track them down.",
+      type: "kill", target: "forest-witch", required: 5,
+      rewards: { xp: 250, gold: 150, item: "enchanted-staff" }
+    },
+    "forest-guardian-quest": {
+      id: "forest-guardian-quest", name: "Heart of the Forest",
+      description: "A corrupted Forest Guardian rages deep within. End its suffering.",
+      type: "kill", target: "forest-guardian", required: 1,
+      rewards: { xp: 500, gold: 300, item: "druid-robes" }
+    },
+    // --- HAUNTED RUINS ---
+    "skeleton-scourge": {
+      id: "skeleton-scourge", name: "Bones to Dust",
+      description: "Undead skeletons pour from the ruins every night. Destroy them.",
+      type: "kill", target: "skeleton", required: 10,
+      rewards: { xp: 350, gold: 200, item: "wraith-helm" }
+    },
+    "wraith-hunt": {
+      id: "wraith-hunt", name: "Wraith Hunt",
+      description: "Wraiths haunt the upper chambers. They must be banished.",
+      type: "kill", target: "wraith", required: 5,
+      rewards: { xp: 400, gold: 250, item: "shadow-blade" }
+    },
+    "lich-lord-quest": {
+      id: "lich-lord-quest", name: "Lord of the Dead",
+      description: "The Lich Lord commands the undead from his throne of bones. Destroy him.",
+      type: "kill", target: "lich-lord", required: 1,
+      rewards: { xp: 800, gold: 500, item: "runed-armor" }
+    },
+    // --- DRAGON'S LAIR ---
+    "dragon-slayer-quest": {
+      id: "dragon-slayer-quest", name: "Dragon Slayer",
+      description: "The Elder Wyrm threatens all of Elderbrook. End this once and for all.",
+      type: "kill", target: "elder-wyrm", required: 1,
+      rewards: { xp: 1200, gold: 800, item: "dragon-slayer" }
+    },
+    // --- SPECIAL ---
+    "veteran-adventurer": {
+      id: "veteran-adventurer", name: "Veteran Adventurer",
+      description: "Prove your worth by reaching Level 10.",
+      type: "level", target: null, required: 10,
+      rewards: { xp: 500, gold: 300, item: "spirit-amulet" }
     }
   };
 
@@ -121,6 +133,21 @@ var Quests = (function () {
           if (q.progress >= def.required) {
             MessageLog.add("Quest ready to turn in: " + def.name, "xp");
           }
+        }
+      }
+    }
+  }
+
+  function checkLevelQuests() {
+    var data = Player.getData();
+    for (var i = 0; i < data.questsActive.length; i++) {
+      var q = data.questsActive[i];
+      var def = definitions[q.id];
+      if (!def) continue;
+      if (def.type === "level") {
+        q.progress = data.level;
+        if (q.progress >= def.required) {
+          MessageLog.add("Quest ready to turn in: " + def.name, "xp");
         }
       }
     }
@@ -221,10 +248,13 @@ var Quests = (function () {
       var obj = document.createElement("p");
       obj.style.fontSize = "0.85em";
       var prog = active ? getActiveProgress(def.id) : 0;
-      var enemyTemplate = Enemies.get(def.target);
-      obj.textContent = "Objective: Defeat " + def.required + " " + (enemyTemplate ? enemyTemplate.name : def.target) + "s";
-      if (active) {
-        obj.textContent += " (" + prog + "/" + def.required + ")";
+      if (def.type === "level") {
+        obj.textContent = "Objective: Reach Level " + def.required;
+        if (active) obj.textContent += " (Current: " + Player.getData().level + ")";
+      } else {
+        var enemyTemplate = Enemies.get(def.target);
+        obj.textContent = "Objective: Defeat " + def.required + " " + (enemyTemplate ? enemyTemplate.name : def.target) + "s";
+        if (active) obj.textContent += " (" + prog + "/" + def.required + ")";
       }
       card.appendChild(obj);
 
@@ -311,6 +341,7 @@ var Quests = (function () {
 
   return {
     progress: progress,
+    checkLevelQuests: checkLevelQuests,
     renderQuestBoard: renderQuestBoard,
     handleClick: handleClick,
     isActive: isActive,

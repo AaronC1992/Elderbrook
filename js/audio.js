@@ -149,6 +149,37 @@ var Audio = (function () {
     playTone(250, 0.06, "triangle", 0.2);
   }
 
+  function areaUnlock() {
+    playSequence([
+      { freq: 440, dur: 0.15, type: "square" },
+      { freq: 554, dur: 0.15, type: "square" },
+      { freq: 659, dur: 0.15, type: "square" },
+      { freq: 880, dur: 0.3, type: "square" },
+      { freq: 1047, dur: 0.4, type: "square" }
+    ], 140);
+  }
+
+  function finalVictory() {
+    playSequence([
+      { freq: 523, dur: 0.2, type: "square" },
+      { freq: 659, dur: 0.2, type: "square" },
+      { freq: 784, dur: 0.2, type: "square" },
+      { freq: 1047, dur: 0.3, type: "square" },
+      { freq: 784, dur: 0.15, type: "sine" },
+      { freq: 1047, dur: 0.15, type: "sine" },
+      { freq: 1319, dur: 0.15, type: "sine" },
+      { freq: 1568, dur: 0.5, type: "sine" }
+    ], 160);
+  }
+
+  function magicCast() {
+    playSequence([
+      { freq: 800, dur: 0.08, type: "sine", vol: 0.3 },
+      { freq: 1000, dur: 0.08, type: "sine", vol: 0.25 },
+      { freq: 1200, dur: 0.12, type: "sine", vol: 0.2 }
+    ], 60);
+  }
+
   function setEnabled(val) {
     enabled = !!val;
   }
@@ -177,6 +208,9 @@ var Audio = (function () {
     statusPoison: statusPoison,
     statusStun: statusStun,
     miss: miss,
+    areaUnlock: areaUnlock,
+    finalVictory: finalVictory,
+    magicCast: magicCast,
     toggle: toggle,
     isEnabled: isEnabled,
     setEnabled: setEnabled

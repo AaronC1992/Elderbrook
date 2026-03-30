@@ -193,6 +193,9 @@ var Inventory = (function () {
       Player.restoreMana(item.manaAmount);
       MessageLog.add("Used " + item.name + ". Restored " + item.manaAmount + " Mana.", "info");
     }
+    if (item.curesStatus) {
+      MessageLog.add("Used " + item.name + ". Status effects cleared.", "heal");
+    }
 
     render();
     UI.updateHeader();

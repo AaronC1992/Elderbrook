@@ -136,8 +136,11 @@
       <!-- World Map -->
       <section id="screen-world-map" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
         <div class="town-title">World Map</div>
-        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:35%; top:40%;">Goblin Cave</button>
-        <button class="town-poi town-poi-center" data-screen="bandit-camp" style="left:65%; top:40%;">Bandit Camp</button>
+        <button class="town-poi town-poi-center" data-screen="wilderness" style="left:20%; top:30%;">Goblin Cave</button>
+        <button class="town-poi town-poi-center area-btn" id="area-btn-bandit-camp" data-screen="bandit-camp" style="left:50%; top:25%;">Bandit Camp</button>
+        <button class="town-poi town-poi-center area-btn" id="area-btn-dark-forest" data-screen="dark-forest" style="left:80%; top:30%;">Dark Forest</button>
+        <button class="town-poi town-poi-center area-btn" id="area-btn-haunted-ruins" data-screen="haunted-ruins" style="left:35%; top:55%;">Haunted Ruins</button>
+        <button class="town-poi town-poi-center area-btn" id="area-btn-dragons-lair" data-screen="dragons-lair" style="left:65%; top:55%;">Dragon's Lair</button>
         <button class="town-poi town-poi-center" data-screen="town" style="left:50%; bottom:8%;">Back to Elderbrook</button>
       </section>
 
@@ -159,6 +162,39 @@
           <p class="flavor">Campfires glow through the trees. Armed outlaws patrol the perimeter.</p>
           <button class="btn-primary" id="btn-explore-bandit">Hunt Bandits</button>
           <button class="btn-primary" id="btn-enter-dungeon-bandit">Enter Dungeon</button>
+          <button class="btn-back" data-screen="world-map">Back to World Map</button>
+        </div>
+      </section>
+
+      <!-- Dark Forest -->
+      <section id="screen-dark-forest" class="screen" style="background-image:url('assets/backgrounds/dark-forest-1.png');">
+        <div class="panel">
+          <h2>Dark Forest</h2>
+          <p class="flavor">Ancient trees loom overhead, their twisted branches blocking the sky. Wolves howl in the distance.</p>
+          <button class="btn-primary" id="btn-explore-forest">Hunt Creatures</button>
+          <button class="btn-primary" id="btn-enter-dungeon-forest">Enter Dungeon</button>
+          <button class="btn-back" data-screen="world-map">Back to World Map</button>
+        </div>
+      </section>
+
+      <!-- Haunted Ruins -->
+      <section id="screen-haunted-ruins" class="screen" style="background-image:url('assets/backgrounds/haunted-ruins-1.png');">
+        <div class="panel">
+          <h2>Haunted Ruins</h2>
+          <p class="flavor">Crumbling stone walls glow with an eerie light. The dead do not rest peacefully here.</p>
+          <button class="btn-primary" id="btn-explore-ruins">Hunt Undead</button>
+          <button class="btn-primary" id="btn-enter-dungeon-ruins">Enter Dungeon</button>
+          <button class="btn-back" data-screen="world-map">Back to World Map</button>
+        </div>
+      </section>
+
+      <!-- Dragon's Lair -->
+      <section id="screen-dragons-lair" class="screen" style="background-image:url('assets/backgrounds/dragons-lair-1.png');">
+        <div class="panel">
+          <h2>Dragon's Lair</h2>
+          <p class="flavor">Scorched earth and molten rock surround the entrance. Immense heat radiates from within.</p>
+          <button class="btn-primary" id="btn-explore-dragon">Hunt Drakes</button>
+          <button class="btn-primary" id="btn-enter-dungeon-dragon">Enter Dungeon</button>
           <button class="btn-back" data-screen="world-map">Back to World Map</button>
         </div>
       </section>
@@ -215,10 +251,31 @@
         </div>
       </section>
 
+      <!-- Victory -->
+      <section id="screen-victory" class="screen">
+        <div class="panel victory-panel">
+          <h2 class="victory-title">Victory!</h2>
+          <p class="victory-subtitle">You have defeated the Elder Wyrm and saved the realm of Elderbrook!</p>
+          <div id="victory-stats"></div>
+          <div class="victory-actions">
+            <button class="btn-primary" id="btn-continue-playing">Continue Playing</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Character Screen -->
       <section id="screen-character" class="screen">
         <div class="panel">
           <h2>Character</h2>
+          <div id="stat-alloc-panel" class="stat-alloc-panel hidden">
+            <h3>Allocate Stat Points (<span id="unspent-points">0</span> available)</h3>
+            <div class="alloc-grid">
+              <div class="alloc-row"><span>Strength</span><button class="btn-small btn-primary" data-allocate="strength">+1</button></div>
+              <div class="alloc-row"><span>Defense</span><button class="btn-small btn-primary" data-allocate="defense">+1</button></div>
+              <div class="alloc-row"><span>Dexterity</span><button class="btn-small btn-primary" data-allocate="dexterity">+1</button></div>
+              <div class="alloc-row"><span>Intelligence</span><button class="btn-small btn-primary" data-allocate="intelligence">+1</button></div>
+            </div>
+          </div>
           <div id="char-stats">
             <div class="stat-row"><span class="stat-label">Name</span><span class="stat-value" id="char-name">-</span></div>
             <div class="stat-row"><span class="stat-label">Level</span><span class="stat-value" id="char-level">-</span></div>
@@ -239,6 +296,8 @@
             <div class="equip-slot"><span class="equip-slot-label">Legs</span><span class="equip-slot-item" id="char-legs">(none)</span></div>
             <div class="equip-slot"><span class="equip-slot-label">Accessory</span><span class="equip-slot-item" id="char-accessory">(none)</span></div>
           </div>
+          <h3>Bestiary</h3>
+          <div id="bestiary-list" class="bestiary-grid"></div>
         </div>
       </section>
 
