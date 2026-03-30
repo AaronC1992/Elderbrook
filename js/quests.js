@@ -127,7 +127,7 @@ var Quests = (function () {
       var q = data.questsActive[i];
       var def = definitions[q.id];
       if (!def) continue;
-      if (def.type === "kill" && enemyId.indexOf(def.target) === 0) {
+      if (def.type === "kill" && enemyId === def.target) {
         if (q.progress < def.required) {
           q.progress++;
           if (q.progress >= def.required) {

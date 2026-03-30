@@ -18,6 +18,9 @@ var SaveSystem = (function () {
     if (!json) return false;
     try {
       var data = JSON.parse(json);
+      if (!data.unspentPoints) data.unspentPoints = 0;
+      if (!data.areasUnlocked) data.areasUnlocked = ["goblin-cave"];
+      if (!data.bestiary) data.bestiary = {};
       Player.setData(data);
       return true;
     } catch (e) {

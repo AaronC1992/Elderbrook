@@ -73,7 +73,7 @@ var Dungeon = (function () {
         { id: 3, name: "Drake Nesting Ground", description: "Young drakes snarl and snap. Their scales gleam with heat.", type: "enemy", exits: [4, 5], enemyCount: 2 },
         { id: 4, name: "Thermal Vent", description: "Warm mineral waters bubble here. The heat eases your wounds.", type: "rest", exits: [6], healAmount: 50 },
         { id: 5, name: "Hoard Antechamber", description: "Mountains of gold and relics fill this chamber. Take what you can carry.", type: "treasure", exits: [6], loot: [{ itemId: "dragon-slayer", chance: 0.08 }, { itemId: "dragonscale-armor", chance: 0.08 }, { itemId: "dragonscale-helm", chance: 0.1 }, { itemId: "dragon-fang-necklace", chance: 0.12 }, { itemId: "greater-health-potion", chance: 0.7 }] },
-        { id: 6, name: "Caldera Throne", description: "Lava flows beneath a platform of obsidian. Above it, the Elder Wyrm waits.", type: "boss", exits: [] },
+        { id: 6, name: "Caldera Throne", description: "Lava flows beneath a platform of obsidian. Above it, the Elder Wyrm waits.", type: "boss", exits: [7] },
         { id: 7, name: "Inner Sanctum", description: "A hidden passage behind the throne reveals the dragon's true hoard.", type: "treasure", exits: [] }
       ]
     }
