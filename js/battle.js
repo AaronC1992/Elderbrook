@@ -44,6 +44,11 @@ var Battle = (function () {
     if (pName) pName.textContent = Player.getData().name;
 
     // Update portraits
+    var pPortrait = document.getElementById("player-portrait");
+    if (pPortrait) {
+      var g = Player.getData().gender || "male";
+      pPortrait.src = "assets/portraits/" + g + "-player.png";
+    }
     var ePortrait = document.getElementById("enemy-portrait");
     if (ePortrait && currentEnemy.portrait) ePortrait.src = currentEnemy.portrait;
 

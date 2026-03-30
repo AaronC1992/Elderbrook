@@ -4,6 +4,7 @@ var Player = (function () {
 
   var defaultState = {
     name: "",
+    gender: "male",
     level: 1,
     xp: 0,
     xpToNext: 50,
@@ -30,9 +31,10 @@ var Player = (function () {
 
   var state = {};
 
-  function create(name) {
+  function create(name, gender) {
     state = JSON.parse(JSON.stringify(defaultState));
     state.name = name;
+    state.gender = gender || "male";
     // Starting gear
     state.equipped.weapon = "rusty-dagger";
     state.equipped.chest = "cloth-tunic";

@@ -31,6 +31,18 @@
         <div class="panel create-panel">
           <h2>Create Your Adventurer</h2>
           <form id="create-form">
+            <div class="gender-picker">
+              <label class="gender-option selected" data-gender="male">
+                <input type="radio" name="gender" value="male" checked hidden />
+                <img src="assets/portraits/male-player.png" alt="Male" class="gender-portrait" />
+                <span>Male</span>
+              </label>
+              <label class="gender-option" data-gender="female">
+                <input type="radio" name="gender" value="female" hidden />
+                <img src="assets/portraits/female-player.png" alt="Female" class="gender-portrait" />
+                <span>Female</span>
+              </label>
+            </div>
             <label>Name <input type="text" id="player-name" maxlength="20" value="Hero" /></label>
             <button type="submit" class="btn-primary">Begin Journey</button>
           </form>

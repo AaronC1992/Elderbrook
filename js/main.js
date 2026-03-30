@@ -8,10 +8,24 @@
       var nameInput = document.getElementById("player-name");
       var name = nameInput ? nameInput.value.trim() : "";
       if (!name) return;
-      Player.create(name);
+      var genderInput = document.querySelector('input[name="gender"]:checked');
+      var gender = genderInput ? genderInput.value : "male";
+      Player.create(name, gender);
       UI.updateHeader();
       MessageLog.add("Welcome to Elderbrook, " + name + "!", "info");
       UI.showScreen("town");
+    });
+  }
+
+  // --- Gender Picker ---
+  var genderOptions = document.querySelectorAll(".gender-option");
+  for (var i = 0; i < genderOptions.length; i++) {
+    genderOptions[i].addEventListener("click", function () {
+      for (var j = 0; j < genderOptions.length; j++) {
+        genderOptions[j].classList.remove("selected");
+      }
+      this.classList.add("selected");
+      this.querySelector("input").checked = true;
     });
   }
 

@@ -293,16 +293,55 @@ button {
 
 /* Create */
 .create-panel {
-  max-width: 400px;
+  max-width: 480px;
   margin: auto;
   text-align: center;
+}
+.gender-picker {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.2rem 0;
+}
+.gender-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  padding: 0.6rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+.gender-option:hover {
+  border-color: var(--border);
+}
+.gender-option.selected {
+  border-color: var(--accent);
+  background: rgba(212, 164, 56, 0.08);
+}
+.gender-option span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.gender-option.selected span {
+  color: var(--accent);
+}
+.gender-portrait {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+  border-radius: var(--radius);
 }
 .create-panel label {
   display: block;
   margin: 1rem 0 0.4rem;
   color: var(--text-muted);
 }
-.create-panel input {
+.create-panel input[type="text"] {
   width: 100%;
   background: var(--bg-dark);
   border: 1px solid var(--border);
