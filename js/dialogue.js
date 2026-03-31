@@ -45,18 +45,24 @@ var Dialogue = (function () {
 
     var html = "";
 
-    // Portrait and speaker
-    if (node.portrait) {
-      html += '<div class="dialogue-portrait-wrap">';
-      html += '<img class="dialogue-portrait" src="' + node.portrait + '" alt="' + (node.speaker || '') + '" onerror="this.style.display=\'none\'">';
-      html += '</div>';
+    // Full portrait in the portrait area (visual novel style)
+    var portraitArea = document.getElementById("dialogue-portrait-area");
+    if (portraitArea) {
+      if (node.portrait) {
+        portraitArea.innerHTML = '<img class="dialogue-portrait" src="' + node.portrait + '" alt="' + (node.speaker || '') + '" onerror="this.style.display=\'none\'">';
+      } else {
+        portraitArea.innerHTML = '';
+      }
     }
+
+    // Speaker name and text in the bottom box
     if (node.speaker) {
       html += '<div class="dialogue-speaker">' + node.speaker + '</div>';
     }
     html += '<div class="dialogue-text" id="dialogue-typewriter"></div>';
 
-    // Choices or continue button
+    // Choices or continue button + skip
+    html += '<div class="dialogue-bottom-row">';
     if (node.choices && node.choices.length > 0) {
       html += '<div class="dialogue-choices" id="dialogue-choices-wrap" style="display:none">';
       for (var i = 0; i < node.choices.length; i++) {
@@ -69,9 +75,8 @@ var Dialogue = (function () {
       html += '<button class="btn dialogue-continue-btn" data-action="dialogue-continue">' + (isLast ? "Close" : "Continue") + '</button>';
       html += '</div>';
     }
-
-    // Skip button
     html += '<button class="btn btn-secondary dialogue-skip-btn" data-action="dialogue-skip">Skip</button>';
+    html += '</div>';
 
     container.innerHTML = html;
     startTypewriter(node.text);

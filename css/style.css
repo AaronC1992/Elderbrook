@@ -201,74 +201,71 @@ button {
   position: absolute;
   inset: 0;
 }
-#screen-town #town-content {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-#screen-town #town-content h2 {
-  text-align: center;
-  color: var(--accent);
-  font-size: 1.6rem;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-  margin-bottom: 0.5rem;
-}
-.town-poi {
-  position: relative;
-  font-family: inherit;
-  cursor: default;
-  background: rgba(14, 17, 23, 0.75);
-  color: var(--accent);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  font-weight: 700;
-  font-size: 0.95rem;
-  transition: all 0.25s;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 2;
-  text-align: center;
-}
-.town-poi:hover {
-  background: rgba(60, 50, 20, 0.9);
-  border-color: var(--accent-hover);
-  color: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(212, 164, 56, 0.3);
-}
-.town-poi .btn {
-  width: 100%;
-  background: transparent;
-  color: var(--accent);
-  border: none;
+#screen-town.active {
+  display: block;
   padding: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
 }
-.town-poi .btn:hover {
-  color: var(--accent-hover);
-}
-.town-poi p {
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: 400;
-  margin-top: 0.3rem;
+#town-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 .town-title {
   position: absolute;
-  top: 3%;
+  top: 2%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--accent);
-  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5);
-  letter-spacing: 0.05em;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.6);
+  letter-spacing: 0.08em;
   white-space: nowrap;
+  z-index: 3;
+  pointer-events: none;
+}
+.town-poi {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: inherit;
+  cursor: pointer;
+  background: rgba(14, 17, 23, 0.7);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.25s;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   z-index: 2;
+  white-space: nowrap;
+}
+.town-poi:hover {
+  background: rgba(60, 50, 20, 0.92);
+  border-color: var(--accent-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 24px rgba(212, 164, 56, 0.35);
+}
+.town-poi-exit:hover {
+  transform: translateX(-50%) translateY(-3px);
+}
+.poi-name {
+  display: block;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.poi-sub {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 400;
+  margin-top: 0.15rem;
 }
 
 /* NPC Portraits & Shop Layout */
@@ -473,42 +470,83 @@ button {
   opacity: 1;
 }
 
-/* Dialogue */
-.dialogue-portrait-wrap {
+/* Dialogue — Visual Novel Layout */
+#screen-dialogue.active {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: flex-end;
+  padding: 0;
+  background: var(--bg-dark);
+}
+#dialogue-portrait-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
 }
 .dialogue-portrait {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
-  object-fit: cover;
-  background: var(--bg-dark);
+  width: auto;
+  height: 75vh;
+  max-height: 80%;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7));
+  border: none;
+  border-radius: 0;
+  background: none;
+  margin-bottom: 0;
+  transition: opacity 0.3s;
+}
+.dialogue-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 100%;
+  background: rgba(14, 17, 23, 0.92);
+  border-top: 2px solid var(--border);
+  padding: 1rem 2rem 1.2rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  flex-shrink: 0;
+  min-height: 140px;
 }
 .dialogue-speaker {
   color: var(--accent);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.3rem;
 }
 .dialogue-text {
   color: var(--text);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+  min-height: 2em;
 }
 .dialogue-choices {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  max-width: 600px;
 }
 .dialogue-choice-btn {
   text-align: left;
 }
 .dialogue-continue-btn {
   align-self: flex-end;
+}
+.dialogue-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
 /* Battle (new) */
@@ -814,15 +852,7 @@ button {
   margin-top: 0.3rem;
 }
 
-/* Town locations */
-.town-locations {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.8rem;
-  padding: 0.5rem 0;
-  max-width: 900px;
-  margin: 0 auto;
-}
+/* Town locations — no longer grid, POIs are absolutely positioned */
 
 /* Chapter end */
 .chapter-end {
@@ -1411,8 +1441,9 @@ button {
   .header-center { font-size: 0.78rem; }
   .battle-portrait { width: 120px; }
   .battle-combatant .bar-wrap { width: 120px; }
-  .town-poi { font-size: 0.82rem; padding: 0.6rem 0.8rem; }
-  .town-locations { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .town-poi { font-size: 0.75rem; padding: 0.4rem 0.7rem; }
+  .poi-name { font-size: 0.8rem; }
+  .poi-sub { font-size: 0.65rem; }
   .npc-fullbody { width: 120px; }
   .shop-layout { gap: 0.8rem; }
   .rel-grid, .social-grid { grid-template-columns: 1fr; }
@@ -1809,8 +1840,10 @@ button {
 
 /* ── Dialogue Skip Button ── */
 .dialogue-skip-btn {
-  margin-top: 0.6rem;
-  font-size: 0.8rem;
+  margin-left: auto;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+  align-self: flex-end;
 }
 
 /* ── Minimap Branch/Secret Indicators ── */

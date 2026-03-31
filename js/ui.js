@@ -241,26 +241,25 @@ var UI = (function () {
     var container = document.getElementById("town-content");
     if (!container) return;
 
-    var html = '<h2>Elderbrook</h2>';
-    html += '<div class="town-locations">';
+    var html = '<div class="town-title">Elderbrook</div>';
 
-    html += '<div class="town-poi"><button class="btn" data-action="go-guild">Adventurers Guild</button><p>Meet Guildmaster Rowan</p></div>';
-    html += '<div class="town-poi"><button class="btn" data-action="go-shop" data-shop="weapon-shop">Weapon Shop</button><p>Bram Ironhand</p></div>';
-    html += '<div class="town-poi"><button class="btn" data-action="go-shop" data-shop="armor-shop">Armor Shop</button><p>Harlan Stonevein</p></div>';
-    html += '<div class="town-poi"><button class="btn" data-action="go-shop" data-shop="potion-shop">Potion Shop</button><p>Mira Voss</p></div>';
-    html += '<div class="town-poi"><button class="btn" data-action="go-questboard">Quest Board</button><p>Check for jobs</p></div>';
-    html += '<div class="town-poi"><button class="btn" data-action="go-elric">Guard Post</button><p>Captain Elric</p></div>';
-    html += '<div class="town-poi"><button class="btn" data-action="go-inn">The Hearthstone Inn</button><p>Rest and recover</p></div>';
+    // Place POIs near buildings in the background image
+    html += '<button class="town-poi" style="top:12%;left:3%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">Guildmaster Rowan</span></button>';
+    html += '<button class="town-poi" style="top:35%;left:18%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">Weapon Shop</span><span class="poi-sub">Bram Ironhand</span></button>';
+    html += '<button class="town-poi" style="top:18%;left:38%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">Harlan Stonevein</span></button>';
+    html += '<button class="town-poi" style="top:30%;right:5%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">Potion Shop</span><span class="poi-sub">Mira Voss</span></button>';
+    html += '<button class="town-poi" style="top:55%;left:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
+    html += '<button class="town-poi" style="top:8%;right:28%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">Captain Elric</span></button>';
+    html += '<button class="town-poi" style="top:12%;right:3%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">Rest &amp; recover</span></button>';
     if (Player.hasFlag('metElira')) {
-      html += '<div class="town-poi"><button class="btn" data-action="go-elira">The Hearthstone Inn (Upstairs)</button><p>Visit Elira</p></div>';
+      html += '<button class="town-poi" style="top:30%;right:22%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
     }
-    html += '<div class="town-poi"><button class="btn" data-action="go-social">Town Square</button><p>Socialize with townsfolk</p></div>';
+    html += '<button class="town-poi" style="top:52%;left:38%" data-action="go-social"><span class="poi-name">Town Square</span><span class="poi-sub">Socialize</span></button>';
     if (Player.hasFlag('bramForgeUnlocked')) {
-      html += '<div class="town-poi"><button class="btn" data-action="open-crafting">Bram\'s Forge</button><p>Craft enhanced gear</p></div>';
+      html += '<button class="town-poi" style="top:52%;left:20%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
     }
-    html += '<div class="town-poi"><button class="btn" data-action="go-worldmap">World Map</button><p>Travel beyond Elderbrook</p></div>';
+    html += '<button class="town-poi town-poi-exit" style="bottom:5%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
 
-    html += '</div>';
     container.innerHTML = html;
   }
 
