@@ -61,11 +61,8 @@
         UI.showScreen("create");
         break;
       case "continue-game":
-        if (Save.load()) {
-          World.navigate(Player.get().currentArea || "elderbrook");
-        } else {
-          UI.showMessage("No save found.");
-        }
+        UI.renderSaveSlots('load');
+        UI.showScreen('save-select');
         break;
 
       /* ── Navigation ── */
@@ -84,9 +81,19 @@
       case "go-inn":
         World.restAtInn();
         break;
+      case "go-elric":
+        World.visitElric();
+        break;
+      case "go-elira":
+        World.visitElira();
+        break;
       case "go-worldmap":
         UI.renderWorldMap();
         UI.showScreen("worldmap");
+        break;
+      case "go-social":
+        UI.renderSocial();
+        UI.showScreen("social");
         break;
       case "travel":
         World.navigate(btn.getAttribute("data-location"));
@@ -202,6 +209,9 @@
       case "dungeon-exit":
         Dungeon.exitDungeon();
         break;
+      case "dungeon-search-secret":
+        Dungeon.searchForSecret();
+        break;
 
       /* ── Quests ── */
       case "accept-quest":
@@ -229,23 +239,152 @@
       case "dialogue-choice":
         Dialogue.choose(parseInt(btn.getAttribute("data-choice"), 10));
         break;
+      case "dialogue-skip":
+        Dialogue.skipText();
+        break;
 
-      /* ── Save / Sound ── */
+      /* ── Relationships / Social ── */
+      case "open-relationships":
+        UI.renderRelationships();
+        UI.showScreen("relationships");
+        break;
+      case "social-chat":
+        Relationships.chat(btn.getAttribute("data-npc"), function () {
+          UI.renderSocial();
+          UI.showScreen("social");
+        });
+        break;
+      case "social-gift":
+        UI.renderGiftSelect(btn.getAttribute("data-npc"));
+        break;
+      case "give-gift-confirm":
+        Relationships.giveGift(btn.getAttribute("data-npc"), btn.getAttribute("data-item"), function () {
+          UI.renderSocial();
+          UI.showScreen("social");
+        });
+        break;
+      case "social-date":
+        Relationships.goOnDate(btn.getAttribute("data-npc"), function () {
+          UI.renderSocial();
+          UI.showScreen("social");
+        });
+        break;
+
+      /* ── Save / Sound / Settings ── */
       case "save-game":
-        Save.save();
-        UI.showMessage("Game saved!");
-        Audio.play("buttonClick");
+        UI.renderSaveSlots('save');
+        UI.showScreen('save-select');
+        break;
+      case "save-slot":
+        var slotNum = parseInt(btn.getAttribute('data-slot'), 10);
+        Save.setSlot(slotNum);
+        Save.save(slotNum);
+        UI.showMessage('Saved to slot ' + slotNum + '!');
+        Audio.play('buttonClick');
+        UI.renderSaveSlots('save');
+        break;
+      case "load-slot":
+        var lSlot = parseInt(btn.getAttribute('data-slot'), 10);
+        if (Save.load(lSlot)) {
+          World.navigate(Player.get().currentArea || 'elderbrook');
+        } else {
+          UI.showMessage('Failed to load.');
+        }
+        break;
+      case "delete-slot":
+        Save.deleteSave(parseInt(btn.getAttribute('data-slot'), 10));
+        UI.showMessage('Save deleted.');
+        if (UI.getScreen() === 'save-select') {
+          var slotContainer = document.getElementById('save-select-content');
+          var slotMode = slotContainer ? (slotContainer.getAttribute('data-mode') || 'save') : 'save';
+          UI.renderSaveSlots(slotMode);
+        }
         break;
       case "toggle-sound":
         var on = Audio.toggle();
         UI.showMessage("Sound " + (on ? "on" : "off"));
         UI.updateHeader();
         break;
+      case "toggle-sound-setting":
+      case "set-sound":
+        var wantSound = btn.getAttribute('data-sound');
+        if (wantSound === 'on' && !Audio.isEnabled()) Audio.toggle();
+        else if (wantSound === 'off' && Audio.isEnabled()) Audio.toggle();
+        else if (!wantSound) Audio.toggle();
+        UI.renderSettings();
+        UI.updateHeader();
+        break;
+
+      /* ── Settings ── */
+      case "open-settings":
+        UI.renderSettings();
+        UI.showScreen('settings');
+        break;
+      case "set-text-speed":
+        var sp = btn.getAttribute('data-speed');
+        var ps = Player.get();
+        if (ps && ps.settings) ps.settings.textSpeed = sp;
+        UI.renderSettings();
+        break;
+      case "set-difficulty":
+        var diff = btn.getAttribute('data-difficulty');
+        var pd = Player.get();
+        if (pd) pd.difficulty = diff;
+        UI.renderSettings();
+        break;
+      case "select-difficulty":
+        var selDiff = btn.getAttribute('data-difficulty');
+        var psd = Player.get();
+        if (psd) psd.difficulty = selDiff;
+        World.navigate('elderbrook');
+        break;
+
+      /* ── Achievements / Bestiary ── */
+      case "open-achievements":
+        UI.renderAchievements();
+        UI.showScreen('achievements');
+        break;
+      case "open-bestiary":
+        UI.renderBestiary();
+        UI.showScreen('bestiary');
+        break;
+
+      /* ── Build Class ── */
+      case "choose-build":
+        var build = btn.getAttribute('data-build');
+        var pb = Player.get();
+        if (pb) {
+          pb.buildClass = build;
+          Player.setFlag('choseBuild');
+          Player.recalcStats();
+          Audio.play('achievement');
+          UI.showMessage('You chose the ' + build.charAt(0).toUpperCase() + build.slice(1) + ' path!');
+          World.navigate('elderbrook');
+        }
+        break;
+
+      /* ── Crafting ── */
+      case "open-crafting":
+        Shops.renderCrafting();
+        UI.showScreen('crafting');
+        break;
+      case "craft-item":
+        var craftResult = Shops.craft(btn.getAttribute('data-recipe'));
+        UI.showMessage(craftResult.message);
+        Shops.renderCrafting();
+        UI.updateHeader();
+        break;
+      case "close-crafting":
+        World.navigate('elderbrook');
+        break;
     }
   });
 
   /* ── Init ── */
   function init() {
+    // Migrate legacy single-slot saves to new multi-slot system
+    Save.migrateLegacy();
+
     // Show title screen
     UI.showScreen("title");
 

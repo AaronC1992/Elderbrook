@@ -17,7 +17,8 @@ var Dungeon = (function () {
           description: "Narrow tunnels dimly lit by fungal growth. Goblins patrol here.",
           enemies: ["goblin-guard", "goblin-scout"],
           enemyCount: 2,
-          exits: [2]
+          exits: [2],
+          secret: { id: 8, dexCheck: 5, hint: "You notice scratch marks along the wall..." }
         },
         {
           id: 2, name: "Supply Cache", type: "treasure",
@@ -34,7 +35,7 @@ var Dungeon = (function () {
           description: "A wider cave room. Goblin guards stand watch over the deeper passages.",
           enemies: ["goblin-guard", "goblin-guard", "goblin-brute"],
           enemyCount: 2,
-          exits: [4]
+          exits: [4, 9]
         },
         {
           id: 4, name: "Underground Spring", type: "rest",
@@ -62,6 +63,29 @@ var Dungeon = (function () {
           description: "The deepest chamber. A crude throne sits atop a pile of stolen goods. Goblin Chief Grisk awaits.",
           boss: "goblin-chief-grisk",
           exits: []
+        },
+        {
+          id: 8, name: "Hidden Alcove", type: "treasure", isSecret: true,
+          description: "A hidden passage behind crumbling rock reveals a forgotten stash.",
+          loot: [
+            { id: "enchanted-shard", chance: 1.0 },
+            { id: "shadow-essence", chance: 0.8 },
+            { id: "greater-health-potion", chance: 1.0 },
+            { id: "shadow-fang", chance: 0.15 }
+          ],
+          exits: [1]
+        },
+        {
+          id: 9, name: "Collapsed Passage", type: "enemy",
+          description: "A side tunnel partially blocked by rubble. Goblins tried to seal it off.",
+          enemies: ["goblin-brute", "goblin-shaman"],
+          enemyCount: 2,
+          exits: [5],
+          loot: [
+            { id: "iron-ore", chance: 0.8 },
+            { id: "iron-ore", chance: 0.5 },
+            { id: "beast-sinew", chance: 0.6 }
+          ]
         }
       ]
     }
@@ -79,6 +103,7 @@ var Dungeon = (function () {
     currentRoomIndex = 0;
     clearedRooms = {};
     dungeonLoot = {};
+    roomHistory = [];
     renderRoom();
     UI.showScreen("dungeon");
     return true;
@@ -136,6 +161,11 @@ var Dungeon = (function () {
       }
     }
 
+    // Search for secrets
+    if (room.secret && !clearedRooms['secret_' + room.id] && (isCleared || room.type === 'start')) {
+      html += '<button class="btn btn-secondary" data-action="dungeon-search-secret">Search for secrets</button>';
+    }
+
     // Navigation
     html += '<div class="dungeon-nav">';
     if (currentRoomIndex > 0) {
@@ -163,14 +193,30 @@ var Dungeon = (function () {
 
   function renderMiniMap() {
     var html = '<div class="dungeon-minimap">';
-    for (var i = 0; i < currentDungeon.rooms.length; i++) {
-      var r = currentDungeon.rooms[i];
+    var mainPath = [0, 1, 2, 3, 4, 5, 6, 7];
+    for (var i = 0; i < mainPath.length; i++) {
+      var r = currentDungeon.rooms[mainPath[i]];
       var cls = "minimap-room";
-      if (i === currentRoomIndex) cls += " minimap-current";
+      if (r.id === currentRoomIndex) cls += " minimap-current";
       else if (clearedRooms[r.id]) cls += " minimap-cleared";
-      html += '<div class="' + cls + '" title="' + r.name + '">' + (i + 1) + '</div>';
-      if (i < currentDungeon.rooms.length - 1) {
+      var label = r.type === "boss" ? "B" : String(i + 1);
+      html += '<div class="' + cls + '" title="' + r.name + '">' + label + '</div>';
+      if (r.exits && r.exits.length > 1) {
+        html += '<div class="minimap-branch" title="Branching path">*</div>';
+      }
+      if (i < mainPath.length - 1) {
         html += '<div class="minimap-connector"></div>';
+      }
+    }
+    // Show secret/branch rooms if discovered
+    for (var j = 8; j < currentDungeon.rooms.length; j++) {
+      var sr = currentDungeon.rooms[j];
+      if (clearedRooms[sr.id] || sr.id === currentRoomIndex) {
+        html += '<div class="minimap-connector minimap-secret-conn"></div>';
+        var scls = "minimap-room minimap-secret";
+        if (sr.id === currentRoomIndex) scls += " minimap-current";
+        else if (clearedRooms[sr.id]) scls += " minimap-cleared";
+        html += '<div class="' + scls + '" title="' + sr.name + '">?</div>';
       }
     }
     html += '</div>';
@@ -180,13 +226,16 @@ var Dungeon = (function () {
   function moveToRoom(roomIndex) {
     if (!currentDungeon) return;
     if (roomIndex < 0 || roomIndex >= currentDungeon.rooms.length) return;
+    roomHistory.push(currentRoomIndex);
     currentRoomIndex = roomIndex;
     renderRoom();
   }
 
+  var roomHistory = [];
+
   function goBack() {
-    if (currentRoomIndex > 0) {
-      currentRoomIndex--;
+    if (roomHistory.length > 0) {
+      currentRoomIndex = roomHistory.pop();
       renderRoom();
     }
   }
@@ -228,6 +277,15 @@ var Dungeon = (function () {
     // Check if room fully cleared
     if (clearedRooms[room.id + "_fights"] >= (room.enemyCount || 1)) {
       clearedRooms[room.id] = true;
+
+      // Drop room loot (for enemy rooms with loot arrays)
+      if (room.loot) {
+        for (var li = 0; li < room.loot.length; li++) {
+          if (Math.random() < room.loot[li].chance) {
+            Player.addItem(room.loot[li].id);
+          }
+        }
+      }
 
       // Drop special loot
       if (room.specialLoot) {
@@ -286,9 +344,31 @@ var Dungeon = (function () {
     UI.showMessage("Rested. Restored " + healAmount + " HP and " + manaAmount + " MP.");
   }
 
+  function searchForSecret() {
+    if (!currentDungeon) return;
+    var room = currentDungeon.rooms[currentRoomIndex];
+    if (!room || !room.secret || clearedRooms['secret_' + room.id]) return;
+
+    clearedRooms['secret_' + room.id] = true;
+    var p = Player.get();
+    var dex = p.dexterity || 0;
+    var roll = Math.floor(Math.random() * 10) + 1 + dex;
+
+    if (roll >= room.secret.dexCheck) {
+      Audio.play('secretFound');
+      Player.unlockAchievement('treasure-seeker');
+      UI.showMessage('You found a hidden passage!');
+      moveToRoom(room.secret.id);
+    } else {
+      UI.showMessage(room.secret.hint || 'You search but find nothing.');
+      renderRoom();
+    }
+  }
+
   function exitDungeon() {
     currentDungeon = null;
     currentRoomIndex = 0;
+    roomHistory = [];
     World.navigate("elderbrook");
   }
 
@@ -301,6 +381,7 @@ var Dungeon = (function () {
     fightBoss: fightBoss,
     collectLoot: collectLoot,
     restInRoom: restInRoom,
+    searchForSecret: searchForSecret,
     exitDungeon: exitDungeon
   };
 })();

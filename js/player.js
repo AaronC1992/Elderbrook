@@ -39,7 +39,26 @@ var Player = (function () {
       activeQuests: [],
       completedQuests: [],
       currentArea: "elderbrook",
-      hasEnteredTown: false
+      hasEnteredTown: false,
+      bonusStats: { attack: 0, defense: 0, dexterity: 0, intelligence: 0 },
+      relationships: {
+        mira:   { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        toma:   { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        elira:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        bram:   { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        harlan: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        elric:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
+      },
+      /* ── New Systems ── */
+      difficulty: "normal",         // easy, normal, hard
+      buildClass: null,             // null until Lv3 choice: warrior, rogue, mage
+      skillProficiency: {},         // { skillId: usageCount }
+      achievements: [],             // array of unlocked achievement ids
+      choiceHistory: {},            // { dialogueId: choiceIndex }
+      settings: { textSpeed: "normal", soundEnabled: true },
+      totalPlayTime: 0,             // seconds
+      townEventsSeen: [],           // array of event ids already triggered
+      bestiaryRewards: []           // milestone ids claimed
     };
   }
 
@@ -80,6 +99,12 @@ var Player = (function () {
   }
 
   function recalcStats() {
+    // Undo previous transient maxHp/maxMp bonuses before recalculating
+    if (state._transientMaxHp) { state.maxHp -= state._transientMaxHp; }
+    if (state._transientMaxMp) { state.maxMp -= state._transientMaxMp; }
+    state._transientMaxHp = 0;
+    state._transientMaxMp = 0;
+
     state.attack = BASE_STATS.attack;
     state.defense = BASE_STATS.defense;
     state.dexterity = BASE_STATS.dexterity;
@@ -98,6 +123,138 @@ var Player = (function () {
     var lvlBonus = state.level - 1;
     state.attack += Math.floor(lvlBonus * 0.5);
     state.defense += Math.floor(lvlBonus * 0.3);
+
+    // Add allocated bonus stats
+    if (state.bonusStats) {
+      state.attack += state.bonusStats.attack;
+      state.defense += state.bonusStats.defense;
+      state.dexterity += state.bonusStats.dexterity;
+      state.intelligence += state.bonusStats.intelligence;
+    }
+
+    // Build class bonus (from Lv3 specialization)
+    if (state.buildClass === "warrior") {
+      state.attack += 2; state.defense += 1;
+    } else if (state.buildClass === "rogue") {
+      state.dexterity += 2; state.attack += 1;
+    } else if (state.buildClass === "mage") {
+      state.intelligence += 2; state.maxMp += 10; state._transientMaxMp += 10;
+    }
+
+    // Set bonus detection
+    var setBonuses = getEquippedSetBonuses();
+    for (var sb = 0; sb < setBonuses.length; sb++) {
+      var bonus = setBonuses[sb];
+      if (bonus.attack) state.attack += bonus.attack;
+      if (bonus.defense) state.defense += bonus.defense;
+      if (bonus.dexterity) state.dexterity += bonus.dexterity;
+      if (bonus.intelligence) state.intelligence += bonus.intelligence;
+      if (bonus.maxHp) { state.maxHp += bonus.maxHp; state._transientMaxHp += bonus.maxHp; }
+    }
+
+    // Partner relationship bonus
+    if (typeof Relationships !== 'undefined') {
+      var partner = Relationships.getPartnerBonus();
+      if (partner && partner.bonus) {
+        if (partner.bonus.attack) state.attack += partner.bonus.attack;
+        if (partner.bonus.defense) state.defense += partner.bonus.defense;
+        if (partner.bonus.dexterity) state.dexterity += partner.bonus.dexterity;
+        if (partner.bonus.intelligence) state.intelligence += partner.bonus.intelligence;
+      }
+    }
+  }
+
+  function getEquippedSetBonuses() {
+    var setCount = {};
+    for (var i = 0; i < EQUIP_SLOTS.length; i++) {
+      var itemId = state.equipped[EQUIP_SLOTS[i]];
+      if (!itemId) continue;
+      var item = Items.get(itemId);
+      if (item && item.setId) {
+        if (!setCount[item.setId]) setCount[item.setId] = 0;
+        setCount[item.setId]++;
+      }
+    }
+    var bonuses = [];
+    var allItems = Items.getAll();
+    var setDefs = {};
+    for (var key in allItems) {
+      var itm = allItems[key];
+      if (itm.setBonus && itm.setId && !setDefs[itm.setId]) {
+        setDefs[itm.setId] = itm.setBonus;
+      }
+    }
+    for (var sid in setCount) {
+      if (setDefs[sid]) {
+        for (var t = 0; t < setDefs[sid].length; t++) {
+          var req = setDefs[sid][t];
+          if (setCount[sid] >= req.pieces) {
+            var b = JSON.parse(JSON.stringify(req.bonus));
+            b.setId = sid;
+            b.count = setCount[sid];
+            bonuses.push(b);
+          }
+        }
+      }
+    }
+    return bonuses;
+  }
+
+  function getDifficultyMultiplier() {
+    if (!state) return 1;
+    if (state.difficulty === "easy") return 0.75;
+    if (state.difficulty === "hard") return 1.35;
+    return 1;
+  }
+
+  function trackSkillUse(skillId) {
+    if (!state.skillProficiency) state.skillProficiency = {};
+    if (!state.skillProficiency[skillId]) state.skillProficiency[skillId] = 0;
+    state.skillProficiency[skillId]++;
+  }
+
+  function getSkillProficiency(skillId) {
+    if (!state || !state.skillProficiency) return 0;
+    return state.skillProficiency[skillId] || 0;
+  }
+
+  function getSkillProficiencyBonus(skillId) {
+    var uses = getSkillProficiency(skillId);
+    // Every 10 uses grants +5% effectiveness, max +25%
+    return Math.min(0.25, Math.floor(uses / 10) * 0.05);
+  }
+
+  function getSkillProficiencyStars(skillId) {
+    var uses = getSkillProficiency(skillId);
+    if (uses >= 50) return 5;
+    if (uses >= 40) return 4;
+    if (uses >= 30) return 3;
+    if (uses >= 20) return 2;
+    if (uses >= 10) return 1;
+    return 0;
+  }
+
+  function unlockAchievement(id) {
+    if (!state.achievements) state.achievements = [];
+    if (state.achievements.indexOf(id) === -1) {
+      state.achievements.push(id);
+      return true;
+    }
+    return false;
+  }
+
+  function hasAchievement(id) {
+    return state.achievements && state.achievements.indexOf(id) !== -1;
+  }
+
+  function recordChoice(dialogueId, choiceIndex) {
+    if (!state.choiceHistory) state.choiceHistory = {};
+    state.choiceHistory[dialogueId] = choiceIndex;
+  }
+
+  function getChoice(dialogueId) {
+    if (!state || !state.choiceHistory) return null;
+    return state.choiceHistory.hasOwnProperty(dialogueId) ? state.choiceHistory[dialogueId] : null;
   }
 
   /* ── Inventory ── */
@@ -149,12 +306,13 @@ var Player = (function () {
     if (state.unspentPoints <= 0) return false;
     if (stat === "maxHp") { state.maxHp += 5; state.hp += 5; }
     else if (stat === "maxMp") { state.maxMp += 3; state.mp += 3; }
-    else if (stat === "attack") { state.attack += 1; }
-    else if (stat === "defense") { state.defense += 1; }
-    else if (stat === "dexterity") { state.dexterity += 1; }
-    else if (stat === "intelligence") { state.intelligence += 1; }
+    else if (stat === "attack") { state.bonusStats.attack += 1; }
+    else if (stat === "defense") { state.bonusStats.defense += 1; }
+    else if (stat === "dexterity") { state.bonusStats.dexterity += 1; }
+    else if (stat === "intelligence") { state.bonusStats.intelligence += 1; }
     else return false;
     state.unspentPoints--;
+    recalcStats();
     return true;
   }
 
@@ -205,9 +363,12 @@ var Player = (function () {
   function getTotalDefense() { return state.defense; }
 
   function getPortrait() {
-    return state.gender === "female"
-      ? "assets/portraits/female-player.png"
-      : "assets/portraits/male-player.png";
+    var prefix = state.gender === "female" ? "female" : "male";
+    var classMap = { warrior: "warrior", rogue: "ranger", mage: "mage" };
+    if (state.buildClass && classMap[state.buildClass]) {
+      return "assets/portraits/" + prefix + "_player_" + classMap[state.buildClass] + ".png";
+    }
+    return "assets/portraits/" + prefix + "-player.png";
   }
 
   return {
@@ -235,6 +396,16 @@ var Player = (function () {
     takeDamage: takeDamage,
     getTotalAttack: getTotalAttack,
     getTotalDefense: getTotalDefense,
-    getPortrait: getPortrait
+    getPortrait: getPortrait,
+    getDifficultyMultiplier: getDifficultyMultiplier,
+    trackSkillUse: trackSkillUse,
+    getSkillProficiency: getSkillProficiency,
+    getSkillProficiencyBonus: getSkillProficiencyBonus,
+    getSkillProficiencyStars: getSkillProficiencyStars,
+    unlockAchievement: unlockAchievement,
+    hasAchievement: hasAchievement,
+    recordChoice: recordChoice,
+    getChoice: getChoice,
+    getEquippedSetBonuses: getEquippedSetBonuses
   };
 })();

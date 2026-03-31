@@ -65,7 +65,18 @@ var Audio = (function () {
     miss: function () { playTone(350, 0.06, "sine", 0.04); },
     magicCast: function () { playSequence([{ freq: 600, duration: 0.08, type: "sine" }, { freq: 900, duration: 0.12, type: "sine" }]); },
     dialogueOpen: function () { playTone(500, 0.06, "sine", 0.04); },
-    error: function () { playSequence([{ freq: 200, duration: 0.1, type: "square" }, { freq: 150, duration: 0.15, type: "square" }]); }
+    error: function () { playSequence([{ freq: 200, duration: 0.1, type: "square" }, { freq: 150, duration: 0.15, type: "square" }]); },
+    statusBleed: function () { playSequence([{ freq: 160, duration: 0.08, type: "sawtooth" }, { freq: 140, duration: 0.1, type: "sawtooth" }]); },
+    statusBurn: function () { playSequence([{ freq: 300, duration: 0.06, type: "sawtooth" }, { freq: 450, duration: 0.08, type: "sawtooth" }, { freq: 250, duration: 0.06, type: "sawtooth" }]); },
+    statusFear: function () { playSequence([{ freq: 400, duration: 0.12, type: "sine" }, { freq: 200, duration: 0.2, type: "sine" }]); },
+    statusSilence: function () { playTone(80, 0.25, "sine", 0.04); },
+    statusWeakness: function () { playSequence([{ freq: 250, duration: 0.1, type: "square" }, { freq: 180, duration: 0.15, type: "square" }]); },
+    phaseTransition: function () { playSequence([{ freq: 150, duration: 0.15, type: "sawtooth" }, { freq: 200, duration: 0.12, type: "sawtooth" }, { freq: 120, duration: 0.2, type: "sawtooth" }]); },
+    ambush: function () { playSequence([{ freq: 300, duration: 0.05, type: "square" }, { freq: 500, duration: 0.05, type: "square" }, { freq: 300, duration: 0.05, type: "square" }, { freq: 500, duration: 0.08, type: "square" }]); },
+    achievement: function () { playSequence([{ freq: 659, duration: 0.08, type: "sine" }, { freq: 784, duration: 0.08, type: "sine" }, { freq: 1047, duration: 0.08, type: "sine" }, { freq: 1319, duration: 0.15, type: "sine" }]); },
+    lowHp: function () { playSequence([{ freq: 200, duration: 0.15, type: "square" }, { freq: 180, duration: 0.2, type: "square" }]); },
+    craft: function () { playSequence([{ freq: 300, duration: 0.06, type: "sawtooth" }, { freq: 400, duration: 0.06, type: "sawtooth" }, { freq: 600, duration: 0.1, type: "sawtooth" }]); },
+    secretFound: function () { playSequence([{ freq: 400, duration: 0.1, type: "sine" }, { freq: 500, duration: 0.1, type: "sine" }, { freq: 700, duration: 0.1, type: "sine" }, { freq: 900, duration: 0.15, type: "sine" }]); }
   };
 
   function play(name) {

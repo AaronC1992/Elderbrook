@@ -657,6 +657,7 @@ button {
   gap: 0.8rem;
 }
 .inventory-item:hover { border-color: var(--accent); }
+.item-icon { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; border-radius: 4px; }
 .inv-item-name { font-weight: 700; }
 .inv-item-desc { font-size: 0.82rem; color: var(--text-muted); }
 .inv-item-actions {
@@ -753,6 +754,12 @@ button {
 .worldmap-desc {
   font-size: 0.82rem;
   color: var(--text-muted);
+}
+.worldmap-level {
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 0.2rem;
 }
 .locked-text {
   font-size: 0.75rem;
@@ -874,6 +881,7 @@ button {
 .shop-item-info { flex: 1; }
 .shop-item-name { font-weight: 700; color: var(--text); }
 .shop-item-stats { font-size: 0.82rem; color: var(--text-muted); }
+.shop-item-compare { font-size: 0.78rem; color: var(--text-muted); font-style: italic; margin-top: 0.15rem; }
 .shop-item-price { color: var(--accent); font-weight: 700; white-space: nowrap; }
 .shop-item button { flex-shrink: 0; }
 .item-stat {
@@ -1357,4 +1365,415 @@ button {
   .town-poi { font-size: 0.82rem; padding: 0.5rem 1rem; }
   .npc-fullbody { width: 120px; }
   .shop-layout { gap: 0.8rem; }
+  .rel-grid, .social-grid { grid-template-columns: 1fr; }
+  .gift-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   Relationships & Social System
+   ═══════════════════════════════════════════ */
+
+/* Relationship Overview Grid */
+.rel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+.rel-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+}
+.rel-portrait {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.rel-info {
+  flex: 1;
+  min-width: 0;
+}
+.rel-name {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+.rel-level {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+.rel-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(180, 80, 80, 0.3);
+}
+.rel-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #a04050, #d46080);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.rel-affinity {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+  text-align: right;
+}
+.partner-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #a04060, #d46080);
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Social Hub Grid */
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+.social-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 0.8rem;
+  text-align: center;
+}
+.social-portrait {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+}
+.social-info {
+  width: 100%;
+}
+.social-name {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+.social-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.social-actions .btn-small {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+}
+.social-actions .btn-small:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn-date {
+  background: rgba(160, 64, 80, 0.5) !important;
+  border-color: rgba(210, 96, 128, 0.5) !important;
+  color: #f0c0cc !important;
+}
+.btn-date:hover {
+  background: rgba(180, 70, 90, 0.7) !important;
+  border-color: rgba(220, 110, 140, 0.7) !important;
+}
+
+/* Gift Selection Grid */
+.gift-npc-preview {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.gift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin: 0.8rem 0;
+}
+.gift-item {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.7rem;
+}
+.gift-item-name {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+.gift-item-desc {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Status Effect Tags ── */
+.effect-bleed { background: rgba(180, 40, 40, 0.3); color: #e85555; border: 1px solid rgba(180, 40, 40, 0.5); }
+.effect-burn { background: rgba(200, 100, 20, 0.3); color: #f0a030; border: 1px solid rgba(200, 100, 20, 0.5); }
+.effect-silence { background: rgba(100, 80, 160, 0.3); color: #b090e0; border: 1px solid rgba(100, 80, 160, 0.5); }
+.effect-fear { background: rgba(80, 50, 120, 0.3); color: #a070d0; border: 1px solid rgba(80, 50, 120, 0.5); }
+.effect-weakness { background: rgba(120, 100, 60, 0.3); color: #c0a858; border: 1px solid rgba(120, 100, 60, 0.5); }
+
+/* ── Battle Log Colors ── */
+.log-crit { color: #ff4444; font-weight: 700; }
+.log-victory { color: #44dd44; font-weight: 700; }
+.log-effect { color: #cc88ff; }
+.log-debuff { color: #e8a030; }
+.log-miss { color: var(--text-muted); font-style: italic; }
+.log-danger { color: #ff6666; font-weight: 700; }
+
+/* ── Skill Proficiency Stars ── */
+.skill-stars { margin-left: 0.5rem; letter-spacing: 2px; }
+.star-filled { color: var(--accent); font-weight: 700; }
+.star-empty { color: var(--text-muted); }
+
+/* ── Set Bonus Display ── */
+.char-set-bonuses { margin-top: 1rem; }
+.set-bonus-entry {
+  color: #8cd;
+  font-size: 0.85rem;
+  padding: 0.2rem 0;
+}
+.char-build {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── Settings Screen ── */
+.settings-group {
+  margin-bottom: 1.2rem;
+}
+.settings-group label {
+  display: block;
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.settings-options {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.btn-active {
+  background: var(--accent) !important;
+  color: var(--bg-dark) !important;
+}
+
+/* ── Achievements Screen ── */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.achievement-card {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+}
+.achievement-unlocked {
+  border-color: var(--accent);
+}
+.achievement-locked {
+  opacity: 0.5;
+}
+.achievement-name {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.achievement-desc {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ── Bestiary Screen ── */
+.bestiary-count {
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+}
+.bestiary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.bestiary-card {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+}
+.bestiary-name {
+  color: var(--danger);
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.bestiary-kills {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+.bestiary-stats {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 0.2rem;
+}
+
+/* ── Build Class Selection ── */
+.build-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.build-card {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+.build-card h3 {
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.build-card p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Difficulty Selection ── */
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.difficulty-card {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+.difficulty-card h3 {
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Save Slot Selection ── */
+.save-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.save-slot {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.save-slot-header {
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 50px;
+}
+.save-slot-info {
+  flex: 1;
+  color: var(--text);
+}
+.save-slot-date {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* ── Crafting Screen ── */
+.crafting-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.crafting-recipe {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+}
+.crafting-unavailable {
+  opacity: 0.6;
+}
+.crafting-result {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.crafting-desc {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+.crafting-needs {
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+.crafting-have { color: var(--heal); }
+.crafting-missing { color: var(--danger); }
+.crafting-stats {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Dialogue Skip Button ── */
+.dialogue-skip-btn {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+}
+
+/* ── Minimap Branch/Secret Indicators ── */
+.minimap-branch {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.7rem;
+  align-self: center;
+}
+.minimap-secret {
+  border-color: #a070d0 !important;
+  color: #a070d0 !important;
+}
+.minimap-secret-conn {
+  border-color: #a070d0 !important;
 }

@@ -24,6 +24,7 @@ var Inventory = (function () {
         equipHtml += '<div class="equip-slot">';
         equipHtml += '<div class="equip-slot-label">' + slotLabels[slotId] + '</div>';
         if (eqItem) {
+          if (eqItem.icon) equipHtml += '<img class="item-icon" src="' + eqItem.icon + '" alt="' + eqItem.name + '" onerror="this.style.display=\'none\'">';
           equipHtml += '<div class="equip-slot-item">' + eqItem.name;
           equipHtml += ' <button class="btn btn-small" data-action="unequip" data-slot="' + slotId + '">Unequip</button>';
           equipHtml += '</div>';
@@ -56,6 +57,7 @@ var Inventory = (function () {
       if (currentFilter !== "all" && item.type !== currentFilter) continue;
 
       html += '<div class="inventory-item">';
+      if (item.icon) html += '<img class="item-icon" src="' + item.icon + '" alt="' + item.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="inv-item-name">' + item.name + '</div>';
       html += '<div class="inv-item-desc">' + item.description + '</div>';
       html += '<div class="inv-item-actions">';

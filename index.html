@@ -49,8 +49,8 @@
           <div class="weapon-picker">
             <button class="weapon-btn selected" data-weapon="basic-sword">Sword<br><span class="weapon-stat">+3 ATK</span></button>
             <button class="weapon-btn" data-weapon="basic-dagger">Dagger<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
-            <button class="weapon-btn" data-weapon="basic-bow">Bow<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
-            <button class="weapon-btn" data-weapon="basic-staff">Staff<br><span class="weapon-stat">+1 ATK, +3 INT</span></button>
+            <button class="weapon-btn" data-weapon="basic-bow">Bow<br><span class="weapon-stat">+3 ATK</span></button>
+            <button class="weapon-btn" data-weapon="basic-staff">Staff<br><span class="weapon-stat">+2 ATK, +1 INT</span></button>
           </div>
 
           <form id="create-form">
@@ -142,9 +142,72 @@
         </div>
       </section>
 
+      <!-- Relationships Overview (populated by ui.js renderRelationships) -->
+      <section id="screen-relationships" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="relationships-content"></div>
+        </div>
+      </section>
+
+      <!-- Social Hub / Town Square (populated by ui.js renderSocial) -->
+      <section id="screen-social" class="screen">
+        <div class="panel" style="max-width:800px;">
+          <div id="social-content"></div>
+        </div>
+      </section>
+
       <!-- Chapter End (populated by ui.js renderChapterEnd) -->
       <section id="screen-chapter-end" class="screen">
         <div id="chapter-end-content" class="panel" style="max-width:600px; text-align:center;"></div>
+      </section>
+
+      <!-- Settings (populated by ui.js renderSettings) -->
+      <section id="screen-settings" class="screen">
+        <div class="panel" style="max-width:600px;">
+          <div id="settings-content"></div>
+        </div>
+      </section>
+
+      <!-- Achievements (populated by ui.js renderAchievements) -->
+      <section id="screen-achievements" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="achievements-content"></div>
+        </div>
+      </section>
+
+      <!-- Bestiary (populated by ui.js renderBestiary) -->
+      <section id="screen-bestiary" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="bestiary-content"></div>
+        </div>
+      </section>
+
+      <!-- Crafting (populated by shops.js renderCrafting) -->
+      <section id="screen-crafting" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="crafting-content"></div>
+        </div>
+      </section>
+
+      <!-- Save Slot Selection (populated by ui.js renderSaveSlots) -->
+      <section id="screen-save-select" class="screen">
+        <div class="panel" style="max-width:600px;">
+          <div id="save-select-content"></div>
+        </div>
+      </section>
+
+      <!-- Build Class Selection (populated by ui.js renderBuildSelect) -->
+      <section id="screen-build-select" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="build-select-content"></div>
+        </div>
+      </section>
+
+      <!-- Difficulty Selection (populated by ui.js renderDifficultySelect) -->
+      <section id="screen-difficulty" class="screen">
+        <div class="panel" style="max-width:700px;">
+          <div id="difficulty-content"></div>
+        </div>
       </section>
 
     </main>
@@ -163,6 +226,7 @@
   <script src="js/shops.js"></script>
   <script src="js/quests.js"></script>
   <script src="js/dialogue.js"></script>
+  <script src="js/relationships.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/battle.js"></script>
   <script src="js/dungeon.js"></script>
