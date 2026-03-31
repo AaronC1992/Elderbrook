@@ -65,6 +65,7 @@ var Shops = (function () {
       if (!item) continue;
       var canBuy = (item.price && p.gold >= item.price);
       html += '<div class="shop-item">';
+      html += '<div class="shop-item-info">';
       if (item.icon) html += '<img class="item-icon" src="' + item.icon + '" alt="' + item.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="shop-item-name">' + item.name + '</div>';
       html += '<div class="shop-item-desc">' + item.description + '</div>';
@@ -95,6 +96,7 @@ var Shops = (function () {
         }
         html += '</div>';
       }
+      html += '</div>';
 
       html += '<div class="shop-item-price">' + (item.price || 0) + ' gold</div>';
       html += '<button class="btn shop-buy-btn" data-action="buy" data-item="' + item.id + '" data-shop="' + shopId + '"' + (canBuy ? '' : ' disabled') + '>Buy</button>';
