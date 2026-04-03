@@ -49,6 +49,13 @@ var Player = (function () {
         harlan: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         elric:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
       },
+      /* ── Day / Time / Energy (SimGirl system) ── */
+      day: 1,
+      energy: 8,
+      maxEnergy: 8,
+      charm: 1,                     // social stat — affects relationship gains
+      trainingDone: {},             // { train-str: true, study: true } — daily limit per type
+
       /* ── New Systems ── */
       difficulty: "normal",         // easy, normal, hard
       buildClass: null,             // null until Lv3 choice: warrior, rogue, mage
@@ -371,6 +378,78 @@ var Player = (function () {
     return "assets/portraits/" + prefix + "-player.png";
   }
 
+  /* ── Day / Time / Energy System ── */
+  function getTimeOfDay() {
+    if (!state) return 'morning';
+    var ratio = state.energy / state.maxEnergy;
+    if (ratio > 0.625) return 'morning';
+    if (ratio > 0.375) return 'afternoon';
+    if (ratio > 0.125) return 'evening';
+    return 'night';
+  }
+
+  function spendEnergy(cost) {
+    if (!state) return false;
+    if (state.energy < cost) return false;
+    state.energy -= cost;
+    return true;
+  }
+
+  function sleep() {
+    if (!state) return;
+    state.day++;
+    state.energy = state.maxEnergy;
+    state.hp = state.maxHp;
+    state.mp = state.maxMp;
+    state.trainingDone = {};
+    Relationships.resetDaily();
+  }
+
+  function trainStat(statId) {
+    if (!state) return null;
+    if (state.trainingDone[statId]) return { success: false, message: "You've already trained " + statId + " today." };
+    if (!spendEnergy(2)) return { success: false, message: "Not enough energy." };
+
+    state.trainingDone[statId] = true;
+    var gain = 0;
+    var statName = '';
+
+    switch (statId) {
+      case 'strength':
+        gain = Math.random() < 0.7 ? 1 : 0;
+        if (gain) state.bonusStats.attack += 1;
+        statName = 'Strength';
+        break;
+      case 'defense':
+        gain = Math.random() < 0.7 ? 1 : 0;
+        if (gain) state.bonusStats.defense += 1;
+        statName = 'Defense';
+        break;
+      case 'dexterity':
+        gain = Math.random() < 0.6 ? 1 : 0;
+        if (gain) state.bonusStats.dexterity += 1;
+        statName = 'Dexterity';
+        break;
+      case 'intelligence':
+        gain = Math.random() < 0.6 ? 1 : 0;
+        if (gain) state.bonusStats.intelligence += 1;
+        statName = 'Intelligence';
+        break;
+      case 'charm':
+        gain = Math.random() < 0.65 ? 1 : 0;
+        if (gain) state.charm += 1;
+        statName = 'Charm';
+        break;
+    }
+
+    if (gain) recalcStats();
+
+    var msgs = gain
+      ? ["You feel yourself improving! " + statName + " +1!", "The training pays off! " + statName + " +1!", "Hard work rewarded! " + statName + " +1!"]
+      : ["You trained hard, but didn't make a breakthrough this time.", "No improvement today, but you'll get there.", "A tough session with no gains. Try again tomorrow."];
+    return { success: true, gained: gain > 0, message: msgs[Math.floor(Math.random() * msgs.length)] };
+  }
+
   return {
     MAX_INVENTORY: MAX_INVENTORY,
     EQUIP_SLOTS: EQUIP_SLOTS,
@@ -406,6 +485,10 @@ var Player = (function () {
     hasAchievement: hasAchievement,
     recordChoice: recordChoice,
     getChoice: getChoice,
-    getEquippedSetBonuses: getEquippedSetBonuses
+    getEquippedSetBonuses: getEquippedSetBonuses,
+    getTimeOfDay: getTimeOfDay,
+    spendEnergy: spendEnergy,
+    sleep: sleep,
+    trainStat: trainStat
   };
 })();

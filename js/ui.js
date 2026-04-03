@@ -14,7 +14,16 @@ var UI = (function () {
       target.classList.add("active");
       currentScreen = id;
     }
-    // Update header on non-title, non-create screens
+    // Toggle menu mode (hides sidebars/nav on title & create)
+    var gc = document.getElementById("game-container");
+    if (gc) {
+      if (id === "title" || id === "create") {
+        gc.classList.add("mode-menu");
+      } else {
+        gc.classList.remove("mode-menu");
+      }
+    }
+    // Update header + sidebars on gameplay screens
     if (id !== "title" && id !== "create") {
       updateHeader();
     }
@@ -22,34 +31,85 @@ var UI = (function () {
 
   function getScreen() { return currentScreen; }
 
+  /* ── Top Status Bar ── */
   function updateHeader() {
-    var header = document.getElementById("game-header");
-    if (!header) return;
     var p = Player.get();
-    if (!p) { header.innerHTML = ""; return; }
+    if (!p) return;
 
-    var html = '<div class="header-left">';
-    html += '<span class="header-name">' + p.name + '</span>';
-    html += '<span class="header-level">Lv.' + p.level + '</span>';
-    html += '</div>';
-    html += '<div class="header-center">';
-    html += '<span class="header-hp">HP: ' + p.hp + '/' + p.maxHp + '</span>';
-    html += '<span class="header-mp">MP: ' + p.mp + '/' + p.maxMp + '</span>';
-    html += '<span class="header-gold">Gold: ' + p.gold + '</span>';
-    html += '<span class="header-xp">XP: ' + p.xp + '/' + p.xpToNext + '</span>';
-    html += '</div>';
-    html += '<div class="header-right">';
-    html += '<button class="btn btn-small header-btn" data-action="open-character">Character</button>';
-    html += '<button class="btn btn-small header-btn" data-action="open-inventory">Inventory</button>';
-    html += '<button class="btn btn-small header-btn" data-action="open-quests">Quests</button>';
-    html += '<button class="btn btn-small header-btn" data-action="open-relationships">Social</button>';
-    html += '<button class="btn btn-small header-btn" data-action="open-bestiary">Bestiary</button>';
-    html += '<button class="btn btn-small header-btn" data-action="open-achievements">Achievements</button>';
-    html += '<button class="btn btn-small header-btn" data-action="open-settings">Settings</button>';
-    html += '<button class="btn btn-small header-btn" data-action="save-game">Save</button>';
-    html += '<button class="btn btn-small header-btn" data-action="toggle-sound">' + (Audio.isEnabled() ? 'Sound On' : 'Sound Off') + '</button>';
-    html += '</div>';
-    header.innerHTML = html;
+    var dayEl = document.getElementById("header-day");
+    var timeEl = document.getElementById("header-time");
+    var energyFill = document.getElementById("energy-fill");
+    var energyText = document.getElementById("energy-text");
+    var goldEl = document.getElementById("header-gold");
+    var soundBtn = document.getElementById("btn-sound");
+
+    if (dayEl) dayEl.textContent = "Day " + (p.day || 1);
+    if (timeEl) {
+      var tod = Player.getTimeOfDay();
+      timeEl.textContent = tod.charAt(0).toUpperCase() + tod.slice(1);
+    }
+    if (energyFill) energyFill.style.width = Math.round((p.energy / p.maxEnergy) * 100) + "%";
+    if (energyText) energyText.textContent = p.energy + "/" + p.maxEnergy;
+    if (goldEl) goldEl.textContent = "Gold: " + p.gold;
+    if (soundBtn) soundBtn.textContent = Audio.isEnabled() ? "Sound On" : "Sound Off";
+    updateSidebars();
+  }
+
+  /* ── Sidebars ── */
+  function updateSidebars() {
+    var p = Player.get();
+    if (!p) return;
+
+    // Left: stats
+    var portrait = document.getElementById("sidebar-portrait");
+    var nameEl = document.getElementById("sidebar-name");
+    var levelEl = document.getElementById("sidebar-level");
+    if (portrait) portrait.src = Player.getPortrait();
+    if (nameEl) nameEl.textContent = p.name;
+    if (levelEl) levelEl.textContent = "Lv." + p.level + (p.buildClass ? " " + p.buildClass.charAt(0).toUpperCase() + p.buildClass.slice(1) : "");
+
+    // Bars
+    setBar("bar-hp", p.hp, p.maxHp);   setStat("stat-hp", p.hp + "/" + p.maxHp);
+    setBar("bar-mp", p.mp, p.maxMp);   setStat("stat-mp", p.mp + "/" + p.maxMp);
+    setBar("bar-xp", p.xp, p.xpToNext); setStat("stat-xp", p.xp + "/" + p.xpToNext);
+
+    setStat("stat-atk", p.attack);
+    setStat("stat-def", p.defense);
+    setStat("stat-dex", p.dexterity);
+    setStat("stat-int", p.intelligence);
+    setStat("stat-cha", p.charm || 1);
+
+    // Right: relationship meters
+    var relContainer = document.getElementById("rel-meters");
+    if (relContainer && p.relationships) {
+      var npcs = Relationships.getDateableNPCs();
+      var html = "";
+      for (var i = 0; i < npcs.length; i++) {
+        var npcId = npcs[i];
+        var cfg = Relationships.getConfig(npcId);
+        var rel = p.relationships[npcId];
+        if (!cfg || !rel) continue;
+        var pct = Math.min(100, Math.floor((rel.affinity / Relationships.MAX_AFFINITY) * 100));
+        var lvlName = Relationships.getLevelName(rel.affinity);
+        html += '<div class="rel-meter">';
+        html += '<div class="rel-meter-row">';
+        html += '<img class="rel-meter-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
+        html += '<div class="rel-meter-info">';
+        html += '<div class="rel-meter-name"><span>' + cfg.name.split(" ")[0] + '</span><span class="rel-lvl">' + lvlName + '</span></div>';
+        html += '<div class="rel-meter-bar"><div class="rel-meter-fill" style="width:' + pct + '%"></div></div>';
+        html += '</div></div></div>';
+      }
+      relContainer.innerHTML = html;
+    }
+  }
+
+  function setBar(id, val, max) {
+    var el = document.getElementById(id);
+    if (el) el.style.width = Math.round((val / Math.max(1, max)) * 100) + "%";
+  }
+  function setStat(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
   }
 
   /* ── Character Screen ── */
@@ -615,10 +675,99 @@ var UI = (function () {
     container.innerHTML = html;
   }
 
+  /* ── Training Screen ── */
+  function renderTraining() {
+    var container = document.getElementById("training-content");
+    if (!container) return;
+    var p = Player.get();
+    if (!p) return;
+
+    var stats = [
+      { id: "strength", label: "Strength", desc: "Hit harder in combat.", stat: "attack", icon: "Sword" },
+      { id: "defense",  label: "Defense",  desc: "Take less damage.",    stat: "defense", icon: "Shield" },
+      { id: "dexterity",label: "Dexterity",desc: "Dodge & crit more.",  stat: "dexterity", icon: "Wind" },
+      { id: "charm",    label: "Charm",    desc: "Better social outcomes.", stat: "charm", icon: "Heart" }
+    ];
+    var done = p.trainingDone || {};
+
+    var html = '<h2>Training Grounds</h2>';
+    html += '<p class="flavor">Spend energy to train your body and mind. (2 energy per session)</p>';
+    html += '<div class="training-grid">';
+    for (var i = 0; i < stats.length; i++) {
+      var s = stats[i];
+      var trained = done[s.id];
+      html += '<div class="training-card">';
+      html += '<div class="training-icon">' + s.icon + '</div>';
+      html += '<h3>' + s.label + '</h3>';
+      html += '<p>' + s.desc + '</p>';
+      html += '<div class="training-current">Current: ' + (p[s.stat] || 1) + '</div>';
+      if (trained) {
+        html += '<button class="btn btn-small" disabled>Done Today</button>';
+      } else if (p.energy < 2) {
+        html += '<button class="btn btn-small" disabled>No Energy</button>';
+      } else {
+        html += '<button class="btn btn-small btn-primary" data-action="train-stat" data-stat="' + s.id + '">Train (2 EP)</button>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '<button class="btn" data-action="go-town">Back to Town</button>';
+    container.innerHTML = html;
+  }
+
+  /* ── Academy Screen ── */
+  function renderAcademy() {
+    var container = document.getElementById("academy-content");
+    if (!container) return;
+    var p = Player.get();
+    if (!p) return;
+
+    var done = p.trainingDone || {};
+    var html = '<h2>Elderbrook Academy</h2>';
+    html += '<p class="flavor">Study to sharpen your intellect. (2 energy per session)</p>';
+    html += '<div class="academy-grid">';
+
+    // Intelligence training
+    html += '<div class="training-card">';
+    html += '<div class="training-icon">Book</div>';
+    html += '<h3>Study Magic</h3>';
+    html += '<p>Increase magical potency.</p>';
+    html += '<div class="training-current">Intelligence: ' + p.intelligence + '</div>';
+    if (done["intelligence"]) {
+      html += '<button class="btn btn-small" disabled>Studied Today</button>';
+    } else if (p.energy < 2) {
+      html += '<button class="btn btn-small" disabled>No Energy</button>';
+    } else {
+      html += '<button class="btn btn-small btn-primary" data-action="train-stat" data-stat="intelligence">Study (2 EP)</button>';
+    }
+    html += '</div>';
+
+    // Skill review (read-only info)
+    var skills = Skills.getAvailable(p.level);
+    if (skills.length > 0) {
+      html += '<div class="training-card">';
+      html += '<div class="training-icon">Scroll</div>';
+      html += '<h3>Skill Review</h3>';
+      html += '<p>Review your known techniques.</p>';
+      for (var s = 0; s < skills.length; s++) {
+        var prof = Player.getSkillProficiencyStars(skills[s].id);
+        var stars = '';
+        for (var st = 0; st < 5; st++) stars += st < prof ? '*' : '-';
+        html += '<div class="skill-entry">' + skills[s].name + ' [' + stars + ']</div>';
+      }
+      html += '</div>';
+    }
+
+    html += '</div>';
+    html += '<button class="btn" data-action="go-town">Back to Town</button>';
+    container.innerHTML = html;
+  }
+
   return {
     showScreen: showScreen,
     getScreen: getScreen,
     updateHeader: updateHeader,
+    updateSidebars: updateSidebars,
     renderCharacter: renderCharacter,
     renderQuestLog: renderQuestLog,
     renderQuestBoard: renderQuestBoard,
@@ -634,6 +783,8 @@ var UI = (function () {
     renderBuildSelect: renderBuildSelect,
     renderSaveSlots: renderSaveSlots,
     renderDifficultySelect: renderDifficultySelect,
+    renderTraining: renderTraining,
+    renderAcademy: renderAcademy,
     showMessage: showMessage
   };
 })();

@@ -45,6 +45,8 @@
       }
       Player.create(name, selectedGender, selectedWeapon);
       Audio.play("buttonClick");
+      var gc = document.getElementById("game-container");
+      if (gc) gc.classList.remove("mode-menu");
       World.navigate("elderbrook");
     });
   }
@@ -286,6 +288,8 @@
       case "load-slot":
         var lSlot = parseInt(btn.getAttribute('data-slot'), 10);
         if (Save.load(lSlot)) {
+          var gcLoad = document.getElementById("game-container");
+          if (gcLoad) gcLoad.classList.remove("mode-menu");
           World.navigate(Player.get().currentArea || 'elderbrook');
         } else {
           UI.showMessage('Failed to load.');
@@ -376,6 +380,38 @@
         break;
       case "close-crafting":
         World.navigate('elderbrook');
+        break;
+
+      /* ── SimGirl: Training / Academy / Sleep ── */
+      case "go-training":
+        UI.renderTraining();
+        UI.showScreen('training');
+        break;
+      case "go-academy":
+        UI.renderAcademy();
+        UI.showScreen('academy');
+        break;
+      case "go-sleep":
+        Player.sleep();
+        UI.showMessage("You rest for the night... A new day begins.");
+        Audio.play("buttonClick");
+        UI.updateHeader();
+        UI.updateSidebars();
+        World.navigate("elderbrook");
+        break;
+      case "train-stat":
+        var trainResult = Player.trainStat(btn.getAttribute("data-stat"));
+        if (trainResult.success) {
+          UI.showMessage(trainResult.message);
+          Audio.play("buttonClick");
+        } else {
+          UI.showMessage(trainResult.message);
+        }
+        UI.updateHeader();
+        UI.updateSidebars();
+        // Re-render whichever training screen we're on
+        if (UI.getScreen() === 'training') UI.renderTraining();
+        else if (UI.getScreen() === 'academy') UI.renderAcademy();
         break;
     }
   });

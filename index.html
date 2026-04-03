@@ -10,209 +10,287 @@
 <body>
   <div id="game-container">
 
-    <!-- Header (populated by ui.js updateHeader) -->
-    <header id="game-header"></header>
+    <!-- ═══ TOP STATUS BAR (SimGirl-style) ═══ -->
+    <header id="game-header">
+      <div id="header-day" class="header-cell">Day 1</div>
+      <div id="header-time" class="header-cell">Morning</div>
+      <div id="header-energy" class="header-cell">
+        <span class="energy-label">Energy</span>
+        <div class="energy-bar"><div id="energy-fill" class="energy-fill"></div></div>
+        <span id="energy-text">8/8</span>
+      </div>
+      <div id="header-gold" class="header-cell">Gold: 0</div>
+      <div class="header-cell header-btns">
+        <button class="hdr-btn" data-action="save-game">Save</button>
+        <button class="hdr-btn" data-action="open-settings">Settings</button>
+        <button class="hdr-btn" data-action="toggle-sound" id="btn-sound">Sound</button>
+      </div>
+    </header>
 
-    <main id="screen-container">
+    <!-- ═══ MAIN 3-COLUMN LAYOUT ═══ -->
+    <div id="game-body">
 
-      <!-- Title Screen -->
-      <section id="screen-title" class="screen active">
-        <div class="panel create-panel" style="text-align:center;">
-          <h2 style="font-size:2.2rem; margin-bottom:0.3rem;">Elderbrook</h2>
-          <p class="flavor" style="margin-bottom:2rem;">Chapter 1 &mdash; The Goblin Threat</p>
-          <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:center;">
-            <button class="btn-primary" data-action="new-game" style="width:220px; font-size:1.1rem;">New Game</button>
-            <button class="btn-secondary" data-action="continue-game" id="btn-continue" style="width:220px; font-size:1.1rem;">Continue</button>
-          </div>
+      <!-- LEFT SIDEBAR: Player Stats -->
+      <aside id="sidebar-stats">
+        <div id="player-portrait-box">
+          <img id="sidebar-portrait" src="" alt="Player" />
         </div>
-      </section>
-
-      <!-- Character Creation -->
-      <section id="screen-create" class="screen">
-        <div class="panel create-panel">
-          <h2>Create Your Hero</h2>
-
-          <p style="color:var(--text-muted); margin-bottom:0.5rem;">Choose your appearance</p>
-          <div class="gender-picker">
-            <button class="gender-btn selected" data-gender="male">
-              <img class="gender-portrait" src="assets/portraits/male-player.png" alt="Male" />
-              <span>Male</span>
-            </button>
-            <button class="gender-btn" data-gender="female">
-              <img class="gender-portrait" src="assets/portraits/female-player.png" alt="Female" />
-              <span>Female</span>
-            </button>
-          </div>
-
-          <img id="create-portrait" class="gender-portrait" src="assets/portraits/male-player.png" alt="Preview" style="display:none;" />
-
-          <p style="color:var(--text-muted); margin:1rem 0 0.5rem;">Choose your starting weapon</p>
-          <div class="weapon-picker">
-            <button class="weapon-btn selected" data-weapon="basic-sword">Sword<br><span class="weapon-stat">+3 ATK</span></button>
-            <button class="weapon-btn" data-weapon="basic-dagger">Dagger<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
-            <button class="weapon-btn" data-weapon="basic-bow">Bow<br><span class="weapon-stat">+3 ATK</span></button>
-            <button class="weapon-btn" data-weapon="basic-staff">Staff<br><span class="weapon-stat">+2 ATK, +1 INT</span></button>
-          </div>
-
-          <form id="create-form">
-            <label for="char-name">Your Name</label>
-            <input type="text" id="char-name" maxlength="20" required placeholder="Enter name" autocomplete="off" />
-            <button class="btn-primary" type="submit">Begin Adventure</button>
-          </form>
+        <div id="sidebar-name" class="sidebar-val"></div>
+        <div id="sidebar-level" class="sidebar-val"></div>
+        <div class="stat-row"><span class="stat-label">HP</span><div class="stat-bar"><div id="bar-hp" class="stat-fill hp-fill"></div></div><span id="stat-hp" class="stat-num"></span></div>
+        <div class="stat-row"><span class="stat-label">MP</span><div class="stat-bar"><div id="bar-mp" class="stat-fill mp-fill"></div></div><span id="stat-mp" class="stat-num"></span></div>
+        <div class="stat-row"><span class="stat-label">XP</span><div class="stat-bar"><div id="bar-xp" class="stat-fill xp-fill"></div></div><span id="stat-xp" class="stat-num"></span></div>
+        <div class="stat-line"><span>ATK</span><span id="stat-atk">0</span></div>
+        <div class="stat-line"><span>DEF</span><span id="stat-def">0</span></div>
+        <div class="stat-line"><span>DEX</span><span id="stat-dex">0</span></div>
+        <div class="stat-line"><span>INT</span><span id="stat-int">0</span></div>
+        <div class="stat-line"><span>CHA</span><span id="stat-cha">0</span></div>
+        <div class="sidebar-btns">
+          <button class="side-btn" data-action="open-character">Character</button>
+          <button class="side-btn" data-action="open-inventory">Inventory</button>
+          <button class="side-btn" data-action="open-quests">Quests</button>
+          <button class="side-btn" data-action="open-bestiary">Bestiary</button>
+          <button class="side-btn" data-action="open-achievements">Achieve.</button>
         </div>
-      </section>
+      </aside>
 
-      <!-- Dialogue (populated by dialogue.js) -->
-      <section id="screen-dialogue" class="screen">
-        <div id="dialogue-portrait-area"></div>
-        <div id="dialogue-content" class="dialogue-box"></div>
-      </section>
+      <!-- CENTER: Scene / Screens -->
+      <main id="screen-container">
 
-      <!-- Town Hub (populated by ui.js renderTown) -->
-      <section id="screen-town" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
-        <div id="town-content"></div>
-      </section>
-
-      <!-- Shop (populated by shops.js renderShop) -->
-      <section id="screen-shop" class="screen">
-        <div class="panel shop-panel" style="max-width:800px;">
-          <div class="shop-header">
-            <img id="shop-npc-portrait" class="npc-portrait" src="" alt="Shopkeep" />
-            <div>
-              <h2 id="shop-title">Shop</h2>
-              <p id="shop-npc-name" class="npc-dialogue"></p>
+        <!-- Title Screen (full overlay) -->
+        <section id="screen-title" class="screen active">
+          <div class="panel create-panel" style="text-align:center;">
+            <h2 style="font-size:2.2rem; margin-bottom:0.3rem;">Elderbrook</h2>
+            <p class="flavor" style="margin-bottom:2rem;">Chapter 1 &mdash; The Goblin Threat</p>
+            <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:center;">
+              <button class="btn-primary" data-action="new-game" style="width:220px; font-size:1.1rem;">New Game</button>
+              <button class="btn-secondary" data-action="continue-game" id="btn-continue" style="width:220px; font-size:1.1rem;">Continue</button>
             </div>
           </div>
-          <div id="shop-inventory" class="shop-grid"></div>
-          <button class="btn-back" data-action="go-town">Back to Town</button>
+        </section>
+
+        <!-- Character Creation -->
+        <section id="screen-create" class="screen">
+          <div class="panel create-panel">
+            <h2>Create Your Hero</h2>
+            <p style="color:var(--text-muted); margin-bottom:0.5rem;">Choose your appearance</p>
+            <div class="gender-picker">
+              <button class="gender-btn selected" data-gender="male">
+                <img class="gender-portrait" src="assets/portraits/male-player.png" alt="Male" />
+                <span>Male</span>
+              </button>
+              <button class="gender-btn" data-gender="female">
+                <img class="gender-portrait" src="assets/portraits/female-player.png" alt="Female" />
+                <span>Female</span>
+              </button>
+            </div>
+            <img id="create-portrait" class="gender-portrait" src="assets/portraits/male-player.png" alt="Preview" style="display:none;" />
+            <p style="color:var(--text-muted); margin:1rem 0 0.5rem;">Choose your starting weapon</p>
+            <div class="weapon-picker">
+              <button class="weapon-btn selected" data-weapon="basic-sword">Sword<br><span class="weapon-stat">+3 ATK</span></button>
+              <button class="weapon-btn" data-weapon="basic-dagger">Dagger<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
+              <button class="weapon-btn" data-weapon="basic-bow">Bow<br><span class="weapon-stat">+3 ATK</span></button>
+              <button class="weapon-btn" data-weapon="basic-staff">Staff<br><span class="weapon-stat">+2 ATK, +1 INT</span></button>
+            </div>
+            <form id="create-form">
+              <label for="char-name">Your Name</label>
+              <input type="text" id="char-name" maxlength="20" required placeholder="Enter name" autocomplete="off" />
+              <button class="btn-primary" type="submit">Begin Adventure</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Dialogue -->
+        <section id="screen-dialogue" class="screen">
+          <div id="dialogue-portrait-area"></div>
+          <div id="dialogue-content" class="dialogue-box"></div>
+        </section>
+
+        <!-- Town Hub (location scene) -->
+        <section id="screen-town" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
+          <div id="town-content"></div>
+        </section>
+
+        <!-- Shop -->
+        <section id="screen-shop" class="screen">
+          <div class="panel shop-panel">
+            <div class="shop-header">
+              <img id="shop-npc-portrait" class="npc-portrait" src="" alt="Shopkeep" />
+              <div>
+                <h2 id="shop-title">Shop</h2>
+                <p id="shop-npc-name" class="npc-dialogue"></p>
+              </div>
+            </div>
+            <div id="shop-inventory" class="shop-grid"></div>
+            <button class="btn-back" data-action="go-town">Back to Town</button>
+          </div>
+        </section>
+
+        <!-- Quest Board -->
+        <section id="screen-questboard" class="screen">
+          <div class="panel">
+            <div id="questboard-content"></div>
+            <button class="btn-back" data-action="go-town" style="margin-top:1rem;">Back to Town</button>
+          </div>
+        </section>
+
+        <!-- World Map -->
+        <section id="screen-worldmap" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
+          <div id="worldmap-content"></div>
+        </section>
+
+        <!-- Area / Exploration -->
+        <section id="screen-area" class="screen">
+          <div id="area-content" class="panel"></div>
+        </section>
+
+        <!-- Battle -->
+        <section id="screen-battle" class="screen">
+          <div id="battle-content"></div>
+        </section>
+
+        <!-- Dungeon -->
+        <section id="screen-dungeon" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
+          <div id="dungeon-content" class="panel dungeon-panel"></div>
+        </section>
+
+        <!-- Inventory -->
+        <section id="screen-inventory" class="screen">
+          <div class="panel">
+            <h2>Inventory</h2>
+            <h3>Equipment</h3>
+            <div id="equipment-slots"></div>
+            <h3>Items</h3>
+            <div id="inventory-items"></div>
+            <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+          </div>
+        </section>
+
+        <!-- Character Screen -->
+        <section id="screen-character" class="screen">
+          <div class="panel">
+            <div id="character-content"></div>
+            <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+          </div>
+        </section>
+
+        <!-- Quest Log -->
+        <section id="screen-quests" class="screen">
+          <div class="panel">
+            <div id="quests-content"></div>
+            <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+          </div>
+        </section>
+
+        <!-- Relationships Overview -->
+        <section id="screen-relationships" class="screen">
+          <div class="panel">
+            <div id="relationships-content"></div>
+          </div>
+        </section>
+
+        <!-- Social Hub / Town Square -->
+        <section id="screen-social" class="screen">
+          <div class="panel">
+            <div id="social-content"></div>
+          </div>
+        </section>
+
+        <!-- Training Grounds (new for SimGirl) -->
+        <section id="screen-training" class="screen">
+          <div class="panel">
+            <div id="training-content"></div>
+          </div>
+        </section>
+
+        <!-- Academy (new for SimGirl) -->
+        <section id="screen-academy" class="screen">
+          <div class="panel">
+            <div id="academy-content"></div>
+          </div>
+        </section>
+
+        <!-- Chapter End -->
+        <section id="screen-chapter-end" class="screen">
+          <div id="chapter-end-content" class="panel" style="text-align:center;"></div>
+        </section>
+
+        <!-- Settings -->
+        <section id="screen-settings" class="screen">
+          <div class="panel">
+            <div id="settings-content"></div>
+          </div>
+        </section>
+
+        <!-- Achievements -->
+        <section id="screen-achievements" class="screen">
+          <div class="panel">
+            <div id="achievements-content"></div>
+          </div>
+        </section>
+
+        <!-- Bestiary -->
+        <section id="screen-bestiary" class="screen">
+          <div class="panel">
+            <div id="bestiary-content"></div>
+          </div>
+        </section>
+
+        <!-- Crafting -->
+        <section id="screen-crafting" class="screen">
+          <div class="panel">
+            <div id="crafting-content"></div>
+          </div>
+        </section>
+
+        <!-- Save Slot Selection -->
+        <section id="screen-save-select" class="screen">
+          <div class="panel">
+            <div id="save-select-content"></div>
+          </div>
+        </section>
+
+        <!-- Build Class Selection -->
+        <section id="screen-build-select" class="screen">
+          <div class="panel">
+            <div id="build-select-content"></div>
+          </div>
+        </section>
+
+        <!-- Difficulty Selection -->
+        <section id="screen-difficulty" class="screen">
+          <div class="panel">
+            <div id="difficulty-content"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- RIGHT SIDEBAR: Relationships -->
+      <aside id="sidebar-relations">
+        <h3 class="sidebar-heading">Relationships</h3>
+        <div id="rel-meters"></div>
+        <div class="sidebar-btns">
+          <button class="side-btn" data-action="open-relationships">Details</button>
         </div>
-      </section>
+      </aside>
 
-      <!-- Quest Board (populated by ui.js renderQuestBoard) -->
-      <section id="screen-questboard" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="questboard-content"></div>
-          <button class="btn-back" data-action="go-town" style="margin-top:1rem;">Back to Town</button>
-        </div>
-      </section>
+    </div><!-- /game-body -->
 
-      <!-- World Map (populated by ui.js renderWorldMap) -->
-      <section id="screen-worldmap" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
-        <div id="worldmap-content"></div>
-      </section>
-
-      <!-- Area / Exploration (populated by world.js navigate) -->
-      <section id="screen-area" class="screen">
-        <div id="area-content" class="panel" style="max-width:600px;"></div>
-      </section>
-
-      <!-- Battle (populated by battle.js) -->
-      <section id="screen-battle" class="screen">
-        <div id="battle-content"></div>
-      </section>
-
-      <!-- Dungeon (populated by dungeon.js) -->
-      <section id="screen-dungeon" class="screen" style="background-image:url('assets/backgrounds/goblin-cave-1.png');">
-        <div id="dungeon-content" class="panel dungeon-panel"></div>
-      </section>
-
-      <!-- Inventory (populated by inventory.js render) -->
-      <section id="screen-inventory" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <h2>Inventory</h2>
-          <h3>Equipment</h3>
-          <div id="equipment-slots"></div>
-          <h3>Items</h3>
-          <div id="inventory-items"></div>
-          <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
-        </div>
-      </section>
-
-      <!-- Character Screen (populated by ui.js renderCharacter) -->
-      <section id="screen-character" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="character-content"></div>
-          <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
-        </div>
-      </section>
-
-      <!-- Quest Log (populated by ui.js renderQuestLog) -->
-      <section id="screen-quests" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="quests-content"></div>
-          <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
-        </div>
-      </section>
-
-      <!-- Relationships Overview (populated by ui.js renderRelationships) -->
-      <section id="screen-relationships" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="relationships-content"></div>
-        </div>
-      </section>
-
-      <!-- Social Hub / Town Square (populated by ui.js renderSocial) -->
-      <section id="screen-social" class="screen">
-        <div class="panel" style="max-width:800px;">
-          <div id="social-content"></div>
-        </div>
-      </section>
-
-      <!-- Chapter End (populated by ui.js renderChapterEnd) -->
-      <section id="screen-chapter-end" class="screen">
-        <div id="chapter-end-content" class="panel" style="max-width:600px; text-align:center;"></div>
-      </section>
-
-      <!-- Settings (populated by ui.js renderSettings) -->
-      <section id="screen-settings" class="screen">
-        <div class="panel" style="max-width:600px;">
-          <div id="settings-content"></div>
-        </div>
-      </section>
-
-      <!-- Achievements (populated by ui.js renderAchievements) -->
-      <section id="screen-achievements" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="achievements-content"></div>
-        </div>
-      </section>
-
-      <!-- Bestiary (populated by ui.js renderBestiary) -->
-      <section id="screen-bestiary" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="bestiary-content"></div>
-        </div>
-      </section>
-
-      <!-- Crafting (populated by shops.js renderCrafting) -->
-      <section id="screen-crafting" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="crafting-content"></div>
-        </div>
-      </section>
-
-      <!-- Save Slot Selection (populated by ui.js renderSaveSlots) -->
-      <section id="screen-save-select" class="screen">
-        <div class="panel" style="max-width:600px;">
-          <div id="save-select-content"></div>
-        </div>
-      </section>
-
-      <!-- Build Class Selection (populated by ui.js renderBuildSelect) -->
-      <section id="screen-build-select" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="build-select-content"></div>
-        </div>
-      </section>
-
-      <!-- Difficulty Selection (populated by ui.js renderDifficultySelect) -->
-      <section id="screen-difficulty" class="screen">
-        <div class="panel" style="max-width:700px;">
-          <div id="difficulty-content"></div>
-        </div>
-      </section>
-
-    </main>
+    <!-- ═══ BOTTOM NAV BAR (SimGirl location buttons) ═══ -->
+    <nav id="game-nav">
+      <button class="nav-btn" data-action="go-town">Town</button>
+      <button class="nav-btn" data-action="go-guild">Guild</button>
+      <button class="nav-btn" data-action="go-shop" data-shop="weapon-shop">Weapons</button>
+      <button class="nav-btn" data-action="go-shop" data-shop="armor-shop">Armor</button>
+      <button class="nav-btn" data-action="go-shop" data-shop="potion-shop">Potions</button>
+      <button class="nav-btn" data-action="go-questboard">Quests</button>
+      <button class="nav-btn" data-action="go-training">Train</button>
+      <button class="nav-btn" data-action="go-academy">Academy</button>
+      <button class="nav-btn" data-action="go-social">Square</button>
+      <button class="nav-btn" data-action="go-worldmap">World Map</button>
+      <button class="nav-btn nav-sleep" data-action="go-sleep">Sleep</button>
+    </nav>
 
     <!-- Toast Message -->
     <div id="game-message" class="game-message"></div>

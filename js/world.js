@@ -101,6 +101,10 @@ var World = (function () {
   }
 
   function explore(areaId) {
+    if (!Player.spendEnergy(2)) {
+      UI.showMessage("You're too tired to explore. Sleep to restore energy.");
+      return;
+    }
     Battle.start(areaId, function () {
       // After battle victory, return to area
       var loc = Chapter1.getLocation(areaId);
@@ -116,6 +120,11 @@ var World = (function () {
   function gather(areaId) {
     var loc = Chapter1.getLocation(areaId);
     if (!loc || !loc.gatherItem) return;
+
+    if (!Player.spendEnergy(1)) {
+      UI.showMessage("You're too tired to gather. Sleep to restore energy.");
+      return;
+    }
 
     // 55% herb, 10% rare find (gold/double herb), 25% enemy, 10% nothing
     var roll = Math.random();
@@ -173,8 +182,7 @@ var World = (function () {
       return;
     }
     p.gold -= cost;
-    Player.fullRestore();
-    Relationships.resetDaily();
+    Player.sleep(); // advances day, restores HP/MP/energy, resets daily limits
     Audio.play("heal");
     Save.autoSave();
     UI.updateHeader();
@@ -184,7 +192,7 @@ var World = (function () {
       "The fire crackles in the hearth as you drift off. Morning comes quickly.",
       "A bowl of stew and a warm bed — simple comforts after a long day."
     ];
-    UI.showMessage(innTexts[Math.floor(Math.random() * innTexts.length)] + " (-" + cost + " gold. Fully restored. Game saved.)");
+    UI.showMessage(innTexts[Math.floor(Math.random() * innTexts.length)] + " (-" + cost + " gold. Day " + p.day + " begins.)");
   }
 
   /* NPC interaction routing for town POIs */
