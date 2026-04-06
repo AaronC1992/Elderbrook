@@ -550,6 +550,20 @@ button {
   box-shadow: 0 4px 24px rgba(212, 164, 56, 0.35);
 }
 .town-poi-exit:hover { transform: translateX(-50%) translateY(-3px); }
+.town-poi-event {
+  border-color: #8b6fc0;
+  animation: eventPulse 2s ease-in-out infinite;
+}
+.town-poi-event .poi-name { color: #c4a6ff; }
+.town-poi-event:hover {
+  background: rgba(60, 30, 80, 0.92);
+  border-color: #c4a6ff;
+  box-shadow: 0 4px 24px rgba(140, 100, 220, 0.4);
+}
+@keyframes eventPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(140, 100, 220, 0.2); }
+  50% { box-shadow: 0 0 14px rgba(140, 100, 220, 0.5); }
+}
 .poi-name { display: block; color: var(--accent); font-weight: 700; font-size: 0.82rem; }
 .poi-sub { display: block; color: var(--text-muted); font-size: 0.68rem; font-weight: 400; margin-top: 0.1rem; }
 

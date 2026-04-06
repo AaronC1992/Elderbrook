@@ -3,16 +3,28 @@ var UI = (function () {
 
   var currentScreen = "title";
   var messageTimeout = null;
+  var pendingDialogueBg = null;
+
+  function setDialogueBackground(url) {
+    pendingDialogueBg = url ? "url('" + url + "')" : null;
+  }
 
   function showScreen(id) {
-    // Before switching, capture current screen's background for dialogue
+    // Before switching, set dialogue background from pending or inherit from current screen
     if (id === "dialogue") {
-      var curScreen = document.getElementById("screen-" + currentScreen);
       var dlgScreen = document.getElementById("screen-dialogue");
-      if (curScreen && dlgScreen && !dlgScreen.style.backgroundImage) {
-        var bg = curScreen.style.backgroundImage || window.getComputedStyle(curScreen).backgroundImage;
-        if (bg && bg !== "none") {
-          dlgScreen.style.backgroundImage = bg;
+      if (dlgScreen) {
+        if (pendingDialogueBg) {
+          dlgScreen.style.backgroundImage = pendingDialogueBg;
+          pendingDialogueBg = null;
+        } else if (!dlgScreen.style.backgroundImage) {
+          var curScreen = document.getElementById("screen-" + currentScreen);
+          if (curScreen) {
+            var bg = curScreen.style.backgroundImage || window.getComputedStyle(curScreen).backgroundImage;
+            if (bg && bg !== "none") {
+              dlgScreen.style.backgroundImage = bg;
+            }
+          }
         }
       }
     }
@@ -24,6 +36,7 @@ var UI = (function () {
     if (id !== "dialogue") {
       var dlgScreen = document.getElementById("screen-dialogue");
       if (dlgScreen) dlgScreen.style.backgroundImage = "";
+      pendingDialogueBg = null;
     }
     var target = document.getElementById("screen-" + id);
     if (target) {
@@ -335,6 +348,18 @@ var UI = (function () {
       html += '<button class="town-poi" style="top:52%;left:20%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
     }
     html += '<button class="town-poi town-poi-exit" style="bottom:5%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
+
+    // Spawn event NPCs
+    var p = Player.get();
+    var spawns = (p && p.eventSpawns) ? p.eventSpawns : [];
+    var events = Chapter1.getActiveEvents("town", spawns);
+    for (var e = 0; e < events.length; e++) {
+      var ev = events[e];
+      html += '<button class="town-poi town-poi-event" style="' + ev.poiPosition + '" data-action="interact-event" data-event="' + ev.id + '">';
+      html += '<span class="poi-name">' + ev.npcName + '</span>';
+      html += '<span class="poi-sub">' + ev.poiSub + '</span>';
+      html += '</button>';
+    }
 
     container.innerHTML = html;
   }
@@ -781,6 +806,7 @@ var UI = (function () {
 
   return {
     showScreen: showScreen,
+    setDialogueBackground: setDialogueBackground,
     getScreen: getScreen,
     updateHeader: updateHeader,
     updateSidebars: updateSidebars,

@@ -736,13 +736,18 @@ var Chapter1 = (function () {
     }
   };
 
-  /* ── Town Events (random events on entering town) ── */
+  /* ── Town Events (spawnable NPC encounters) ── */
   var townEvents = [
     {
       id: "traveling-merchant",
       weight: 20,
       flag: "townEventMerchant",
       repeatable: false,
+      location: "town",
+      npcName: "Traveling Merchant",
+      npcPortrait: "assets/portraits/traveler.png",
+      poiPosition: "top:65%;right:8%",
+      poiSub: "Rare wares",
       dialogue: {
         id: "town-event-merchant",
         nodes: [
@@ -762,16 +767,21 @@ var Chapter1 = (function () {
       weight: 15,
       flag: "townEventBard",
       repeatable: false,
+      location: "town",
+      npcName: "Wandering Bard",
+      npcPortrait: "assets/portraits/bard_placeholder.png",
+      poiPosition: "top:60%;left:35%",
+      poiSub: "A song for the hero",
       dialogue: {
         id: "town-event-bard",
         nodes: [
-          { speaker: "Wandering Bard", portrait: "assets/portraits/toma.png", text: "A hero walks among us! Let me sing of your deeds! The ballad of the goblin slayer!" },
+          { speaker: "Wandering Bard", portrait: "assets/portraits/bard_placeholder.png", text: "A hero walks among us! Let me sing of your deeds! The ballad of the goblin slayer!" },
           { speaker: "", portrait: "", text: "A bard has heard of your adventures and composed a song.", choices: [
             { text: "Listen to the song.", next: 2 },
             { text: "Maybe later.", next: 3 }
           ]},
-          { speaker: "Wandering Bard", portrait: "assets/portraits/toma.png", text: "...and steel met fang, in the hollow dark! The hero stood where none would dare! A magnificent tale! Your reputation precedes you, friend." },
-          { speaker: "Wandering Bard", portrait: "assets/portraits/toma.png", text: "A humble performer respects your time. Perhaps our paths will cross again." }
+          { speaker: "Wandering Bard", portrait: "assets/portraits/bard_placeholder.png", text: "...and steel met fang, in the hollow dark! The hero stood where none would dare! A magnificent tale! Your reputation precedes you, friend.", end: true },
+          { speaker: "Wandering Bard", portrait: "assets/portraits/bard_placeholder.png", text: "A humble performer respects your time. Perhaps our paths will cross again.", end: true }
         ],
         onEnd: { flags: ["townEventBard"] }
       }
@@ -781,6 +791,11 @@ var Chapter1 = (function () {
       weight: 25,
       flag: "townEventRumor",
       repeatable: false,
+      location: "town",
+      npcName: "Worried Villager",
+      npcPortrait: "assets/portraits/villager_female.png",
+      poiPosition: "top:48%;left:50%",
+      poiSub: "Looks troubled",
       dialogue: {
         id: "town-event-rumor",
         nodes: [
@@ -790,8 +805,8 @@ var Chapter1 = (function () {
             { text: "I'll look into it. Stay safe.", next: 3 },
             { text: "It's probably nothing. Don't worry.", next: 4 }
           ]},
-          { speaker: "Worried Villager", portrait: "assets/portraits/villager_female.png", text: "Bless you, adventurer. Be careful out there." },
-          { speaker: "Worried Villager", portrait: "assets/portraits/villager_female.png", text: "I hope you're right. I really do." }
+          { speaker: "Worried Villager", portrait: "assets/portraits/villager_female.png", text: "Bless you, adventurer. Be careful out there.", end: true },
+          { speaker: "Worried Villager", portrait: "assets/portraits/villager_female.png", text: "I hope you're right. I really do.", end: true }
         ],
         onEnd: { flags: ["townEventRumor"] }
       }
@@ -857,6 +872,39 @@ var Chapter1 = (function () {
     return null;
   }
 
+  /* Roll which event NPCs spawn this visit (stored on player) */
+  function rollEventSpawns(p) {
+    var spawned = [];
+    for (var i = 0; i < townEvents.length; i++) {
+      var ev = townEvents[i];
+      if (!ev.repeatable && p.storyFlags[ev.flag]) continue;
+      // Weighted chance: weight out of 100
+      if (Math.random() * 100 < ev.weight) {
+        spawned.push(ev.id);
+      }
+    }
+    return spawned;
+  }
+
+  /* Get active event NPCs for a given location screen */
+  function getActiveEvents(location, spawnedIds) {
+    var results = [];
+    for (var i = 0; i < townEvents.length; i++) {
+      var ev = townEvents[i];
+      if (ev.location === location && spawnedIds.indexOf(ev.id) !== -1) {
+        results.push(ev);
+      }
+    }
+    return results;
+  }
+
+  function getTownEventById(id) {
+    for (var i = 0; i < townEvents.length; i++) {
+      if (townEvents[i].id === id) return townEvents[i];
+    }
+    return null;
+  }
+
   return {
     getNPC: getNPC,
     getAllNPCs: getAllNPCs,
@@ -869,6 +917,9 @@ var Chapter1 = (function () {
     getTownEvents: getTownEvents,
     getAchievements: getAchievements,
     getAchievement: getAchievement,
-    rollTownEvent: rollTownEvent
+    rollTownEvent: rollTownEvent,
+    rollEventSpawns: rollEventSpawns,
+    getActiveEvents: getActiveEvents,
+    getTownEventById: getTownEventById
   };
 })();

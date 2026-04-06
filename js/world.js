@@ -11,25 +11,15 @@ var World = (function () {
       if (!p.hasEnteredTown) {
         p.hasEnteredTown = true;
         Dialogue.start("rowan-arrival", function () {
+          // Roll event spawns for first visit
+          p.eventSpawns = Chapter1.rollEventSpawns(p);
           UI.showScreen("town");
           UI.renderTown();
         });
         return;
       }
-      // Roll town event
-      var evt = Chapter1.rollTownEvent(p);
-      if (evt) {
-        if (evt.flag) Player.setFlag(evt.flag);
-        Dialogue.startDirect(evt.dialogue, function () {
-          if (Player.hasFlag("merchantBrowsed")) {
-            openShop("merchant-shop");
-            return;
-          }
-          UI.showScreen("town");
-          UI.renderTown();
-        });
-        return;
-      }
+      // Roll event NPC spawns each time we enter town
+      p.eventSpawns = Chapter1.rollEventSpawns(p);
       // Prompt build class at level 3
       if (p.level >= 3 && !p.buildClass && !Player.hasFlag('choseBuild')) {
         UI.renderBuildSelect();
@@ -213,6 +203,11 @@ var World = (function () {
   function visitShop(shopId) {
     var shop = Shops.getShop(shopId);
 
+    // Set shop background for any dialogue that fires before the shop opens
+    if (shop && shop.background) {
+      UI.setDialogueBackground(shop.background);
+    }
+
     // Check for chain quest turn-ins
     if (shop) {
       if (shop.npc === "bram") {
@@ -340,9 +335,8 @@ var World = (function () {
   function visitGuild() {
     var p = Player.get();
 
-    // Set guild background on dialogue screen
-    var dlgScreen = document.getElementById("screen-dialogue");
-    if (dlgScreen) dlgScreen.style.backgroundImage = "url('assets/backgrounds/main-town-adventurers-guild.png')";
+    // Set guild background for dialogue
+    UI.setDialogueBackground("assets/backgrounds/main-town-adventurers-guild.png");
 
     // Check for quest turn-ins in order
     if (Quests.isActive("mq1") && Quests.checkObjectives("mq1")) {
@@ -449,6 +443,9 @@ var World = (function () {
   }
 
   function visitQuestBoard() {
+    // Set questboard background for dialogue
+    UI.setDialogueBackground("assets/backgrounds/main-town-questboard.png");
+
     // Check SQ4 turn-in (Toma's bounty quest)
     if (Quests.isActive("sq4") && Quests.checkObjectives("sq4")) {
       var result = Quests.turnIn("sq4");
@@ -476,6 +473,9 @@ var World = (function () {
   }
 
   function visitElric() {
+    // Set guard post background for dialogue
+    UI.setDialogueBackground("assets/backgrounds/watch-post.png");
+
     // Check chain quests cq5, cq6
     var ecqs = ["cq5", "cq6"];
     for (var ei = 0; ei < ecqs.length; ei++) {
@@ -518,6 +518,20 @@ var World = (function () {
     });
   }
 
+  function interactEvent(eventId) {
+    var evt = Chapter1.getTownEventById(eventId);
+    if (!evt) return;
+    Dialogue.startDirect(evt.dialogue, function () {
+      // Special: merchant opens shop after browsing
+      if (eventId === "traveling-merchant" && Player.hasFlag("merchantBrowsed")) {
+        openShop("merchant-shop");
+        return;
+      }
+      UI.showScreen("town");
+      UI.renderTown();
+    });
+  }
+
   return {
     navigate: navigate,
     explore: explore,
@@ -527,6 +541,7 @@ var World = (function () {
     visitGuild: visitGuild,
     visitQuestBoard: visitQuestBoard,
     visitElric: visitElric,
-    visitElira: visitElira
+    visitElira: visitElira,
+    interactEvent: interactEvent
   };
 })();

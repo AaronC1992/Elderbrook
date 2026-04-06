@@ -40,6 +40,7 @@ var Player = (function () {
       completedQuests: [],
       currentArea: "elderbrook",
       hasEnteredTown: false,
+      eventSpawns: [],
       bonusStats: { attack: 0, defense: 0, dexterity: 0, intelligence: 0 },
       relationships: {
         mira:   { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },

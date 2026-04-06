@@ -82,6 +82,7 @@ var Save = (function () {
     if (!data.equipped.bracers) data.equipped.bracers = null;
     if (data.hasEnteredTown === undefined) data.hasEnteredTown = false;
     if (!data.currentArea) data.currentArea = "elderbrook";
+    if (!data.eventSpawns) data.eventSpawns = [];
     if (!data.bonusStats) data.bonusStats = { attack: 0, defense: 0, dexterity: 0, intelligence: 0 };
 
     // V2 new fields

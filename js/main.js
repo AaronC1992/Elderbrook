@@ -89,6 +89,9 @@
       case "go-elira":
         World.visitElira();
         break;
+      case "interact-event":
+        World.interactEvent(btn.getAttribute("data-event"));
+        break;
       case "go-worldmap":
         UI.renderWorldMap();
         UI.showScreen("worldmap");
