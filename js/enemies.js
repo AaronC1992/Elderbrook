@@ -19,7 +19,8 @@ var Enemies = (function () {
       loot: [
         { id: "goblin-fang", chance: 0.40 },
         { id: "lesser-health-potion", chance: 0.10 },
-        { id: "supply-note", chance: 0.12 }
+        { id: "supply-note", chance: 0.12 },
+        { id: "tomas-ledger", chance: 0.08 }
       ],
       abilities: []
     },
@@ -29,7 +30,8 @@ var Enemies = (function () {
       loot: [
         { id: "goblin-fang", chance: 0.35 },
         { id: "rusted-scrap", chance: 0.20 },
-        { id: "shadow-essence", chance: 0.05 }
+        { id: "shadow-essence", chance: 0.05 },
+        { id: "tomas-ledger", chance: 0.06 }
       ],
       abilities: [
         { name: "Backstab", chance: 0.25, multiplier: 1.4 },
@@ -45,8 +47,9 @@ var Enemies = (function () {
         { id: "goblin-fang", chance: 0.40 },
         { id: "goblin-scrap", chance: 0.30 },
         { id: "health-potion", chance: 0.08 },
-        { id: "stolen-supply-crate", chance: 0.10 },
-        { id: "iron-ore", chance: 0.08 }
+        { id: "stolen-supply-crate", chance: 0.15 },
+        { id: "iron-ore", chance: 0.08 },
+        { id: "moonpetal", chance: 0.05 }
       ],
       abilities: [
         { name: "Reckless Swing", chance: 0.20, multiplier: 1.3, effect: { type: "weakness", damage: 0, turns: 2 } }
@@ -58,7 +61,9 @@ var Enemies = (function () {
       loot: [
         { id: "goblin-fang", chance: 0.35 },
         { id: "torn-cloth", chance: 0.25 },
-        { id: "beast-sinew", chance: 0.08 }
+        { id: "beast-sinew", chance: 0.08 },
+        { id: "stolen-supply-crate", chance: 0.10 },
+        { id: "moonpetal", chance: 0.05 }
       ],
       abilities: [
         { name: "Aimed Shot", chance: 0.20, multiplier: 1.5 },
@@ -87,7 +92,8 @@ var Enemies = (function () {
         { id: "iron-helm", chance: 0.03 },
         { id: "guard-badge", chance: 0.08 },
         { id: "iron-ore", chance: 0.10 },
-        { id: "goblin-slayer-gloves", chance: 0.03 }
+        { id: "goblin-slayer-gloves", chance: 0.03 },
+        { id: "patrol-logs", chance: 0.12 }
       ],
       abilities: [
         { name: "Shield Slam", chance: 0.20, multiplier: 1.2, effect: { type: "stun", damage: 0, turns: 1 } }
@@ -101,7 +107,8 @@ var Enemies = (function () {
         { id: "mana-potion", chance: 0.15 },
         { id: "cave-herb", chance: 0.25 },
         { id: "enchanted-shard", chance: 0.05 },
-        { id: "shadow-essence", chance: 0.08 }
+        { id: "shadow-essence", chance: 0.08 },
+        { id: "moonpetal", chance: 0.12 }
       ],
       abilities: [
         { name: "Hex", chance: 0.30, effect: { type: "poison", damage: 2, turns: 3 } },
@@ -116,7 +123,8 @@ var Enemies = (function () {
         { id: "goblin-scrap", chance: 0.50 },
         { id: "health-potion", chance: 0.15 },
         { id: "iron-ore", chance: 0.10 },
-        { id: "goblin-slayer-bracers", chance: 0.03 }
+        { id: "goblin-slayer-bracers", chance: 0.03 },
+        { id: "moonpetal", chance: 0.05 }
       ],
       abilities: [
         { name: "Crushing Blow", chance: 0.25, multiplier: 1.5 },

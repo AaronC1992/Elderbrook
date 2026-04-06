@@ -296,6 +296,18 @@ var World = (function () {
           return;
         }
       }
+      // Harlan (armor-shop) - SQ13 (Arms for the Guard)
+      if (shop.npc === "harlan" && Quests.isActive("sq13") && Quests.checkObjectives("sq13")) {
+        var result = Quests.turnIn("sq13");
+        if (result) {
+          Audio.play("questComplete");
+          Dialogue.start("sq13-complete", function () {
+            showNPCMenu(npcId, menuOptions);
+            UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+          });
+          return;
+        }
+      }
       // Mira (potion-shop) - SQ1, SQ2
       if (shop.npc === "mira") {
         if (Quests.isActive("sq1") && Quests.checkObjectives("sq1")) {
@@ -314,6 +326,30 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq2-complete", function () {
+              showNPCMenu(npcId, menuOptions);
+              UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+            });
+            return;
+          }
+        }
+        // SQ11 (Mira's Moonpetal)
+        if (Quests.isActive("sq11") && Quests.checkObjectives("sq11")) {
+          var result = Quests.turnIn("sq11");
+          if (result) {
+            Audio.play("questComplete");
+            Dialogue.start("sq11-complete", function () {
+              showNPCMenu(npcId, menuOptions);
+              UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+            });
+            return;
+          }
+        }
+        // SQ14 (The Herbalist's Request)
+        if (Quests.isActive("sq14") && Quests.checkObjectives("sq14")) {
+          var result = Quests.turnIn("sq14");
+          if (result) {
+            Audio.play("questComplete");
+            Dialogue.start("sq14-complete", function () {
               showNPCMenu(npcId, menuOptions);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
@@ -474,6 +510,20 @@ var World = (function () {
       }
     }
 
+    // Check SQ9 turn-in (Hungry Wolves - Rowan)
+    if (Quests.isActive("sq9") && Quests.checkObjectives("sq9")) {
+      var result = Quests.turnIn("sq9");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq9-complete", function () {
+          UI.showScreen("town");
+          UI.renderTown();
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
+
     // Default: idle Rowan dialogue
     Dialogue.start("rowan-idle", function () {
       UI.showScreen("town");
@@ -493,6 +543,30 @@ var World = (function () {
       if (result) {
         Audio.play("questComplete");
         Dialogue.start("sq4-complete", function () {
+          showNPCMenu("toma", menuOptions);
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
+    // Check SQ8 turn-in (Toma's Lost Ledger)
+    if (Quests.isActive("sq8") && Quests.checkObjectives("sq8")) {
+      var result = Quests.turnIn("sq8");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq8-complete", function () {
+          showNPCMenu("toma", menuOptions);
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
+    // Check SQ12 turn-in (Toma's Special Bounty)
+    if (Quests.isActive("sq12") && Quests.checkObjectives("sq12")) {
+      var result = Quests.turnIn("sq12");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq12-complete", function () {
           showNPCMenu("toma", menuOptions);
           UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
         });
@@ -564,6 +638,19 @@ var World = (function () {
         return;
       }
     }
+    // Check SQ10 turn-in (The Old Patrol Logs - Elric)
+    if (Quests.isActive("sq10") && Quests.checkObjectives("sq10")) {
+      var result = Quests.turnIn("sq10");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq10-complete", function () {
+          UI.showScreen("town");
+          UI.renderTown();
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
     Dialogue.start("elric-idle", function () {
       UI.showScreen("town");
       UI.renderTown();
@@ -584,6 +671,18 @@ var World = (function () {
           });
           return;
         }
+      }
+    }
+    // Check SQ15 turn-in (Whispers in the Dark - Elira)
+    if (Quests.isActive("sq15") && Quests.checkObjectives("sq15")) {
+      var result = Quests.turnIn("sq15");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq15-complete", function () {
+          showNPCMenu("elira", { background: '' });
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
       }
     }
     showNPCMenu("elira", { background: '' });

@@ -154,6 +154,7 @@ var Chapter1 = (function () {
     /* Town events */
     townEventMerchant: false, townEventBard: false, townEventRumor: false,
     eliraForeshadow: false,
+    townEventGuard: false, townEventChild: false, townEventFestival: false, townEventStranger: false,
 
     /* Elira chain quests */
     completedCQ7: false, completedCQ8: false
@@ -334,6 +335,92 @@ var Chapter1 = (function () {
       ],
       rewards: { xp: 100, gold: 80, items: ["greater-health-potion", "iron-helm"] },
       requireFlags: ["elricPatrolRoute"]
+    },
+    sq8: {
+      id: "sq8", name: "Toma's Lost Ledger", type: "side",
+      description: "Toma lost his quest ledger while filing reports near the Forest Road. The goblins probably grabbed it. Find and return it.",
+      giver: "toma", turnIn: "toma",
+      objectives: [
+        { id: "ledger", text: "Recover Toma's Ledger (drops from goblins on Forest Road)", type: "collect", item: "tomas-ledger", required: 1 }
+      ],
+      rewards: { xp: 30, gold: 20, items: ["health-potion"] },
+      requireFlags: ["completedMQ1"]
+    },
+    sq9: {
+      id: "sq9", name: "Hungry Wolves", type: "side",
+      description: "Wolves have been scaring merchants away from the Forest Road. Thin the pack and bring wolf pelts as proof.",
+      giver: "rowan", turnIn: "rowan",
+      objectives: [
+        { id: "wolves", text: "Defeat Wolves on the Forest Road", type: "kill", target: "wolf", required: 4 },
+        { id: "pelts", text: "Collect Wolf Pelts as proof", type: "collect", item: "wolf-pelt", required: 2 }
+      ],
+      rewards: { xp: 45, gold: 35 },
+      requireFlags: ["completedMQ2"]
+    },
+    sq10: {
+      id: "sq10", name: "The Old Patrol Logs", type: "side",
+      description: "Captain Elric wants old patrol journals recovered from the Watch Post. They contain guard routes and intel the goblins shouldn't have.",
+      giver: "elric", turnIn: "elric",
+      objectives: [
+        { id: "logs", text: "Recover Patrol Logs from the Watch Post", type: "collect", item: "patrol-logs", required: 1 },
+        { id: "clear", text: "Defeat goblin sneaks at the Watch Post", type: "kill", target: "goblin-sneak", required: 3 }
+      ],
+      rewards: { xp: 55, gold: 40, items: ["iron-bracers"] },
+      requireFlags: ["completedMQ3"]
+    },
+    sq11: {
+      id: "sq11", name: "Mira's Moonpetal", type: "side",
+      description: "Mira has heard of rare moonpetals that grow deep in goblin territory. She needs them for a potent new formula.",
+      giver: "mira", turnIn: "mira",
+      objectives: [
+        { id: "petals", text: "Collect Moonpetals (drop from goblins)", type: "collect", item: "moonpetal", required: 2 }
+      ],
+      rewards: { xp: 60, gold: 45, items: ["greater-health-potion", "mana-potion"] },
+      requireFlags: ["completedMQ4"]
+    },
+    sq12: {
+      id: "sq12", name: "Toma's Special Bounty", type: "side",
+      description: "A high-value bounty has been posted: take down the most dangerous goblins lurking in the caves.",
+      giver: "toma", turnIn: "toma",
+      objectives: [
+        { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 3 },
+        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 2 }
+      ],
+      rewards: { xp: 90, gold: 70, items: ["greater-health-potion"] },
+      requireFlags: ["completedMQ5"]
+    },
+    sq13: {
+      id: "sq13", name: "Arms for the Guard", type: "side",
+      description: "Harlan is forging new equipment for Elric's guards. He needs iron ore and beast sinew to finish the order.",
+      giver: "harlan", turnIn: "harlan",
+      objectives: [
+        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 3 },
+        { id: "sinew", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 2 }
+      ],
+      rewards: { xp: 70, gold: 55, items: ["iron-chestplate"] },
+      requireFlags: ["completedMQ5"]
+    },
+    sq14: {
+      id: "sq14", name: "The Herbalist's Request", type: "side",
+      description: "A traveling herbalist left a request with Mira for cave herbs and wolf pelts to brew a special restorative formula.",
+      giver: "mira", turnIn: "mira",
+      objectives: [
+        { id: "herbs", text: "Gather Cave Herbs", type: "collect", item: "cave-herb", required: 4 },
+        { id: "pelts", text: "Collect Wolf Pelts", type: "collect", item: "wolf-pelt", required: 3 }
+      ],
+      rewards: { xp: 50, gold: 40, items: ["greater-health-potion", "antidote", "smelling-salts"] },
+      requireFlags: ["completedMQ2"]
+    },
+    sq15: {
+      id: "sq15", name: "Whispers in the Dark", type: "side",
+      description: "Elira senses dark energy seeping from the goblin caves. She needs shadow essences and an enchanted shard to seal the breach.",
+      giver: "elira", turnIn: "elira",
+      objectives: [
+        { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 3 },
+        { id: "shard", text: "Find an Enchanted Shard", type: "collect", item: "enchanted-shard", required: 1 }
+      ],
+      rewards: { xp: 100, gold: 65, items: ["greater-health-potion", "mana-potion", "smelling-salts"] },
+      requireFlags: ["completedMQ6"]
     },
 
     /* --- NPC Chain Quests --- */
@@ -655,6 +742,69 @@ var Chapter1 = (function () {
         { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Elderbrook's trade lines are open again. Take this, you've earned every coin." }
       ]
     },
+    "sq8-complete": {
+      id: "sq8-complete",
+      nodes: [
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "My ledger! Oh thank goodness! All the pending contracts are in there." },
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "I was filing reports near the forest edge and those goblins snatched it right out of my hands. I was too scared to chase them." },
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "Please don't tell Rowan. He already thinks I'm disorganized. Here, take this as thanks!" }
+      ]
+    },
+    "sq9-complete": {
+      id: "sq9-complete",
+      nodes: [
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Four wolves down and pelts to prove it. The merchants coming through will rest easier tonight." },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "I've already had two caravan masters ask when the road would be safe again. I'll let them know you've handled it." }
+      ]
+    },
+    "sq10-complete": {
+      id: "sq10-complete",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "These patrol logs... three months of route data, guard schedules, blind spots in our coverage." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "If the goblins decoded any of this, they'd know exactly where our defenses are weakest. You may have prevented something far worse." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Take these bracers. They belonged to Sergeant Vos. She'd want them used well." }
+      ]
+    },
+    "sq11-complete": {
+      id: "sq11-complete",
+      nodes: [
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Moonpetals! Oh, look at the luminescence! These are even more potent than I hoped." },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "With these I can brew a potion that no one in Elderbrook has seen for generations. You're helping me make history!" },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Take these. You'll need them more than my shelf does right now." }
+      ]
+    },
+    "sq12-complete": {
+      id: "sq12-complete",
+      nodes: [
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "Brutes AND shamans? You actually did it! I honestly posted that bounty thinking no one would take it." },
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "The merchant caravans chipped in extra gold for this one. You've earned every coin. Elderbrook's hero!" }
+      ]
+    },
+    "sq13-complete": {
+      id: "sq13-complete",
+      nodes: [
+        { speaker: "Harlan Stonevein", portrait: npcs.harlan.portrait, text: "Iron ore and sinew. Good quality too. This'll make a full set of guard equipment." },
+        { speaker: "Harlan Stonevein", portrait: npcs.harlan.portrait, text: "Elric's been on my case about outfitting his new recruits. Thanks to you, I can deliver on time." },
+        { speaker: "Harlan Stonevein", portrait: npcs.harlan.portrait, text: "Here. Made you something extra while I was at it. Think of it as a professional courtesy." }
+      ]
+    },
+    "sq14-complete": {
+      id: "sq14-complete",
+      nodes: [
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Cave herbs and wolf pelts! The traveling herbalist will be thrilled when she returns." },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "She's developing a restorative brew that could help guard patrols last longer in the field. Important work." },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "She left these supplies as payment. I threw in a little extra from my own stock. You've earned it." }
+      ]
+    },
+    "sq15-complete": {
+      id: "sq15-complete",
+      nodes: [
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "The essences are pulsing with residual energy. And this shard... yes, it still holds enough power." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "I can weave a temporary ward near the cave mouth. It won't stop whatever is down there, but it will slow the spread of that dark influence." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "You've done well. The people of Elderbrook don't know what you've saved them from. Not yet." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "But they will. When the truth comes to light, they'll need someone they can trust. I hope that someone is you." }
+      ]
+    },
 
     /* --- NPC Random Lines (for repeat visits) --- */
     "bram-idle": {
@@ -910,6 +1060,109 @@ var Chapter1 = (function () {
         ],
         onEnd: { flags: ["eliraForeshadow"] }
       }
+    },
+    {
+      id: "injured-guard",
+      weight: 18,
+      flag: "townEventGuard",
+      repeatable: true,
+      location: "town",
+      npcName: "Injured Guard",
+      npcPortrait: "assets/portraits/elric.png",
+      poiPosition: "top:55%;right:15%",
+      poiSub: "Looks wounded",
+      dialogue: {
+        id: "town-event-guard",
+        nodes: [
+          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "Ambushed... on the east road. Three of them came out of nowhere." },
+          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "The goblins are getting bolder. They hit our patrol just a mile from the gates. We barely got away." },
+          { speaker: "", portrait: "", text: "The guard is bleeding from a gash on his arm.", choices: [
+            { text: "Rest easy. I'll deal with the goblins.", next: 3 },
+            { text: "Get to Mira's shop. She can patch you up.", next: 4 }
+          ]},
+          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "Thank you, adventurer. Captain Elric will want to hear about this. Be careful out there.", end: true },
+          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "Good thinking. I'll head there now. Watch yourself, they're not just scouts anymore, these ones fought like soldiers.", end: true }
+        ],
+        onEnd: { flags: ["townEventGuard"] }
+      }
+    },
+    {
+      id: "lost-child",
+      weight: 12,
+      flag: "townEventChild",
+      repeatable: true,
+      location: "town",
+      npcName: "Lost Child",
+      npcPortrait: "assets/portraits/villager_female.png",
+      poiPosition: "top:68%;left:25%",
+      poiSub: "Looking around",
+      dialogue: {
+        id: "town-event-child",
+        nodes: [
+          { speaker: "Lost Child", portrait: "assets/portraits/villager_female.png", text: "Excuse me... have you seen my cat? She ran toward the front gate and I can't find her anywhere." },
+          { speaker: "", portrait: "", text: "A small child looks up at you with tearful eyes.", choices: [
+            { text: "I'll keep an eye out for her. What does she look like?", next: 2 },
+            { text: "I'm sure she'll come back on her own. Cats always do.", next: 3 }
+          ]},
+          { speaker: "Lost Child", portrait: "assets/portraits/villager_female.png", text: "She's orange with a white spot on her nose! Her name is Biscuit. Thank you, you're really nice!", end: true },
+          { speaker: "Lost Child", portrait: "assets/portraits/villager_female.png", text: "I hope so. Mama says cats have nine lives, but I still worry about her.", end: true }
+        ],
+        onEnd: { flags: ["townEventChild"] }
+      }
+    },
+    {
+      id: "festival-prep",
+      weight: 10,
+      flag: "townEventFestival",
+      repeatable: true,
+      requireFlag: "completedMQ4",
+      location: "town",
+      npcName: "Cheerful Villager",
+      npcPortrait: "assets/portraits/villager_female.png",
+      poiPosition: "top:50%;left:45%",
+      poiSub: "Decorating",
+      dialogue: {
+        id: "town-event-festival",
+        nodes: [
+          { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "You haven't heard? We're preparing a harvest festival! The first one in two years, thanks to adventurers like you keeping the roads safe." },
+          { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "Mira's brewing festive cider, Bram's making commemorative daggers, even grumpy Harlan is smiling. Well, almost." },
+          { speaker: "", portrait: "", text: "The town feels alive with activity.", choices: [
+            { text: "Sounds wonderful. I'll try not to miss it.", next: 3 },
+            { text: "A festival? In these times?", next: 4 }
+          ]},
+          { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "You should stick around! Everyone's talking about you. The hero of Elderbrook deserves a celebration too!", end: true },
+          { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "That's exactly why we need it! People have been living in fear for months. A little joy reminds us what we're fighting for.", end: true }
+        ],
+        onEnd: { flags: ["townEventFestival"] }
+      }
+    },
+    {
+      id: "suspicious-stranger",
+      weight: 15,
+      flag: "townEventStranger",
+      repeatable: false,
+      requireFlag: "completedMQ6",
+      location: "town",
+      npcName: "Cloaked Figure",
+      npcPortrait: "assets/portraits/traveler.png",
+      poiPosition: "top:40%;left:10%",
+      poiSub: "Watching the guild",
+      dialogue: {
+        id: "town-event-stranger",
+        nodes: [
+          { speaker: "", portrait: "", text: "A cloaked figure lingers near the guild hall, studying the building with an unsettling focus. They notice you watching them." },
+          { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "You're the one who's been causing trouble for the goblins. News travels faster than you'd think." },
+          { speaker: "", portrait: "", text: "Something about them feels wrong.", choices: [
+            { text: "Who are you? What do you want?", next: 3 },
+            { text: "You seem to know a lot about me.", next: 4 }
+          ]},
+          { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "Nobody important. Just a traveler with an interest in... ancient things. That sigil the goblins carried? It's older than this village. Much older." },
+          { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "I make it my business to know things. Especially about people who poke around in dark caves and find things they shouldn't." },
+          { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "A word of advice, adventurer. Not everything buried beneath the earth wants to stay buried. And not everyone searching for it has good intentions." },
+          { speaker: "", portrait: "", text: "The figure turns and walks calmly into the crowd. By the time you follow, they're gone.", end: true }
+        ],
+        onEnd: { flags: ["townEventStranger"] }
+      }
     }
   ];
 
@@ -930,7 +1183,10 @@ var Chapter1 = (function () {
     { id: "chapter-complete", name: "Chapter Complete", description: "Complete Chapter 1." },
     { id: "no-defeat", name: "Unbroken", description: "Defeat Grisk without ever being knocked out." },
     { id: "herbalist", name: "Herbalist", description: "Gather 20 herbs from the Riverbank." },
-    { id: "treasure-seeker", name: "Treasure Seeker", description: "Find a secret room in the dungeon." }
+    { id: "treasure-seeker", name: "Treasure Seeker", description: "Find a secret room in the dungeon." },
+    { id: "errand-runner", name: "Errand Runner", description: "Complete 5 side quests." },
+    { id: "town-hero", name: "Town Hero", description: "Complete all Chapter 1 side quests." },
+    { id: "town-regular", name: "Town Regular", description: "Experience 4 different town events." }
   ];
 
   /* ── Public API ── */

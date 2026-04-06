@@ -59,6 +59,8 @@ var Items = (function () {
     "strange-sigil":        { id: "strange-sigil",        name: "Strange Sigil",        type: "quest", icon: "", sellPrice: 0, description: "An unfamiliar symbol etched into dark stone." },
     "chiefs-relic":         { id: "chiefs-relic",         name: "Chief's Relic",         type: "quest", icon: "", sellPrice: 0, description: "An ancient relic carried by the goblin chief." },
     "goblin-orders":        { id: "goblin-orders",        name: "Goblin Orders",         type: "quest", icon: "", sellPrice: 0, description: "Written orders found on the goblin chief. Not in goblin tongue." },
+    "tomas-ledger":         { id: "tomas-ledger",         name: "Toma's Ledger",         type: "quest", icon: "", sellPrice: 0, description: "A worn leather-bound ledger filled with quest records in Toma's careful handwriting." },
+    "patrol-logs":          { id: "patrol-logs",          name: "Old Patrol Logs",       type: "quest", icon: "", sellPrice: 0, description: "Weathered journals from the Watch Post's last garrison." },
 
     /* ── Rare Weapons (boss/quest rewards) ── */
     "grisk-cleaver":    { id: "grisk-cleaver",    name: "Grisk's Cleaver",     type: "weapon", slot: "weapon", icon: "", attack: 9, dexterity: 1, price: 0, sellPrice: 45, tier: "rare", description: "The goblin chief's brutal cleaver. Still stained with battle." },
@@ -77,6 +79,7 @@ var Items = (function () {
     "iron-ore":               { id: "iron-ore",               name: "Iron Ore",          type: "crafting", icon: "", sellPrice: 6,  description: "Raw iron. Can be smelted and forged." },
     "beast-sinew":            { id: "beast-sinew",            name: "Beast Sinew",       type: "crafting", icon: "", sellPrice: 5,  description: "Tough animal tendon. Used to reinforce gear." },
     "enchanted-shard":        { id: "enchanted-shard",        name: "Enchanted Shard",   type: "crafting", icon: "", sellPrice: 20, description: "A fragment of crystallized mana. Hums faintly." },
+    "moonpetal":              { id: "moonpetal",              name: "Moonpetal",         type: "crafting", icon: "", sellPrice: 15, description: "A luminous white flower that blooms in dangerous places. Prized by alchemists." },
 
     /* ── Enhanced / Crafted Items ── */
     "tempered-sword":      { id: "tempered-sword",      name: "Tempered Sword",      type: "weapon", slot: "weapon",  icon: "", attack: 8, price: 0, sellPrice: 40, tier: "enhanced", description: "A reinforced sword re-forged with iron ore and sinew." },
