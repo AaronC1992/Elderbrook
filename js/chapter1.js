@@ -748,13 +748,13 @@ var Chapter1 = (function () {
         nodes: [
           { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Psst! You there! I've got rare wares from beyond the frontier. Interested?" },
           { speaker: "", portrait: "", text: "A travelling merchant has set up near the gate.", choices: [
-            { text: "Browse the wares.", next: 2 },
+            { text: "Browse the wares.", next: 2, flags: ["merchantBrowsed"], giveItems: ["enchanted-shard"] },
             { text: "Not interested.", next: 3 }
           ]},
-          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "A discerning eye! Here, take this on the house. Consider it a sample." },
-          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Your loss, friend. I'll be moving on soon." }
+          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "A discerning eye! Here, take this on the house. Consider it a sample. Let me show you what else I've got.", end: true },
+          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Your loss, friend. I'll be moving on soon.", end: true }
         ],
-        onEnd: { flags: ["townEventMerchant"], giveItems: ["enchanted-shard"] }
+        onEnd: { flags: ["townEventMerchant"] }
       }
     },
     {

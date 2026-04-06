@@ -112,6 +112,13 @@ var Dialogue = (function () {
     // Set flags from choice
     if (choice.flags) Player.setFlags(choice.flags);
 
+    // Give items from choice
+    if (choice.giveItems) {
+      for (var k = 0; k < choice.giveItems.length; k++) {
+        Player.addItem(choice.giveItems[k]);
+      }
+    }
+
     // Navigate to target node
     if (typeof choice.next === "number") {
       currentNode = choice.next;

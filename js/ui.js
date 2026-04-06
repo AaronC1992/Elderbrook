@@ -5,6 +5,17 @@ var UI = (function () {
   var messageTimeout = null;
 
   function showScreen(id) {
+    // Before switching, capture current screen's background for dialogue
+    if (id === "dialogue") {
+      var curScreen = document.getElementById("screen-" + currentScreen);
+      var dlgScreen = document.getElementById("screen-dialogue");
+      if (curScreen && dlgScreen && !dlgScreen.style.backgroundImage) {
+        var bg = curScreen.style.backgroundImage || window.getComputedStyle(curScreen).backgroundImage;
+        if (bg && bg !== "none") {
+          dlgScreen.style.backgroundImage = bg;
+        }
+      }
+    }
     var screens = document.querySelectorAll(".screen");
     for (var i = 0; i < screens.length; i++) {
       screens[i].classList.remove("active");

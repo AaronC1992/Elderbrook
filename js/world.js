@@ -21,6 +21,10 @@ var World = (function () {
       if (evt) {
         if (evt.flag) Player.setFlag(evt.flag);
         Dialogue.startDirect(evt.dialogue, function () {
+          if (Player.hasFlag("merchantBrowsed")) {
+            openShop("merchant-shop");
+            return;
+          }
           UI.showScreen("town");
           UI.renderTown();
         });

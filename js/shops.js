@@ -33,6 +33,16 @@ var Shops = (function () {
         "lesser-health-potion", "health-potion", "greater-health-potion", "mana-potion",
         "wildflowers", "herbal-tea", "sweet-roll", "moonstone", "old-book"
       ]
+    },
+    "merchant-shop": {
+      id: "merchant-shop",
+      name: "Traveling Merchant",
+      npc: "elira",
+      background: "",
+      stock: [
+        "enchanted-shard", "moonstone", "silver-ring", "antidote", "smelling-salts",
+        "greater-health-potion", "mana-potion", "old-book"
+      ]
     }
   };
 
