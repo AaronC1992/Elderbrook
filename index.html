@@ -46,11 +46,8 @@
         <div class="stat-line"><span>INT</span><span id="stat-int">0</span></div>
         <div class="stat-line"><span>CHA</span><span id="stat-cha">0</span></div>
         <div class="sidebar-btns">
-          <button class="side-btn" data-action="open-character">Character</button>
+          <button class="side-btn" data-action="open-ledger">Ledger</button>
           <button class="side-btn" data-action="open-inventory">Inventory</button>
-          <button class="side-btn" data-action="open-quests">Quests</button>
-          <button class="side-btn" data-action="open-bestiary">Bestiary</button>
-          <button class="side-btn" data-action="open-achievements">Achieve.</button>
         </div>
       </aside>
 
@@ -215,21 +212,31 @@
           <div id="chapter-end-content" class="panel" style="text-align:center;"></div>
         </section>
 
-        <!-- Settings -->
+        <!-- Ledger (book-style overlay) -->
+        <section id="screen-ledger" class="screen">
+          <div class="ledger-book">
+            <div class="ledger-spine"></div>
+            <div class="ledger-tabs" id="ledger-tabs"></div>
+            <div class="ledger-page" id="ledger-page"></div>
+            <button class="ledger-close" data-action="close-overlay">&times;</button>
+          </div>
+        </section>
+
+        <!-- Settings (kept for fallback) -->
         <section id="screen-settings" class="screen">
           <div class="panel">
             <div id="settings-content"></div>
           </div>
         </section>
 
-        <!-- Achievements -->
+        <!-- Achievements (kept for fallback) -->
         <section id="screen-achievements" class="screen">
           <div class="panel">
             <div id="achievements-content"></div>
           </div>
         </section>
 
-        <!-- Bestiary -->
+        <!-- Bestiary (kept for fallback) -->
         <section id="screen-bestiary" class="screen">
           <div class="panel">
             <div id="bestiary-content"></div>

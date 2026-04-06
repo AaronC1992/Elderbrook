@@ -145,23 +145,28 @@
         Inventory.setFilter(btn.getAttribute("data-filter"));
         break;
 
-      /* ── Character ── */
+      /* ── Character / Ledger ── */
+      case "open-ledger":
+        UI.renderLedger();
+        UI.showScreen("ledger");
+        break;
       case "open-character":
-        UI.renderCharacter();
-        UI.showScreen("character");
+        UI.renderLedger("character");
+        UI.showScreen("ledger");
         break;
       case "open-inventory":
         Inventory.render();
         UI.showScreen("inventory");
         break;
       case "open-quests":
-        UI.renderQuestLog();
-        UI.showScreen("quests");
+        UI.renderLedger("quests");
+        UI.showScreen("ledger");
         break;
       case "allocate-stat":
         Player.allocateStat(btn.getAttribute("data-stat"));
         Audio.play("buttonClick");
-        UI.renderCharacter();
+        if (UI.getScreen() === 'ledger') UI.renderLedger('character');
+        else UI.renderCharacter();
         UI.updateHeader();
         break;
       case "close-overlay":
@@ -228,7 +233,8 @@
           Audio.play("questComplete");
           UI.showMessage("Quest complete! +" + turnInResult.rewards.xp + " XP, +" + (turnInResult.rewards.gold || 0) + " gold");
           if (turnInResult.leveled) UI.showMessage("LEVEL UP!");
-          UI.renderQuestLog();
+          if (UI.getScreen() === 'ledger') UI.renderLedger('quests');
+          else UI.renderQuestLog();
           UI.updateHeader();
         }
         break;
@@ -267,8 +273,8 @@
         World.returnToNPCMenu();
         break;
       case "open-relationships":
-        UI.renderRelationships();
-        UI.showScreen("relationships");
+        UI.renderLedger("relationships");
+        UI.showScreen("ledger");
         break;
 
       /* ── Save / Sound / Settings ── */
@@ -314,26 +320,29 @@
         if (wantSound === 'on' && !Audio.isEnabled()) Audio.toggle();
         else if (wantSound === 'off' && Audio.isEnabled()) Audio.toggle();
         else if (!wantSound) Audio.toggle();
-        UI.renderSettings();
+        if (UI.getScreen() === 'ledger') UI.renderLedger('settings');
+        else UI.renderSettings();
         UI.updateHeader();
         break;
 
       /* ── Settings ── */
       case "open-settings":
-        UI.renderSettings();
-        UI.showScreen('settings');
+        UI.renderLedger("settings");
+        UI.showScreen("ledger");
         break;
       case "set-text-speed":
         var sp = btn.getAttribute('data-speed');
         var ps = Player.get();
         if (ps && ps.settings) ps.settings.textSpeed = sp;
-        UI.renderSettings();
+        if (UI.getScreen() === 'ledger') UI.renderLedger('settings');
+        else UI.renderSettings();
         break;
       case "set-difficulty":
         var diff = btn.getAttribute('data-difficulty');
         var pd = Player.get();
         if (pd) pd.difficulty = diff;
-        UI.renderSettings();
+        if (UI.getScreen() === 'ledger') UI.renderLedger('settings');
+        else UI.renderSettings();
         break;
       case "select-difficulty":
         var selDiff = btn.getAttribute('data-difficulty');
@@ -344,12 +353,21 @@
 
       /* ── Achievements / Bestiary ── */
       case "open-achievements":
-        UI.renderAchievements();
-        UI.showScreen('achievements');
+        UI.renderLedger("achievements");
+        UI.showScreen("ledger");
         break;
       case "open-bestiary":
-        UI.renderBestiary();
-        UI.showScreen('bestiary');
+        UI.renderLedger("bestiary");
+        UI.showScreen("ledger");
+        break;
+
+      /* ── Ledger tab switching ── */
+      case "ledger-tab":
+        UI.renderLedger(btn.getAttribute("data-tab"));
+        break;
+      case "load-game-menu":
+        UI.renderSaveSlots('load');
+        UI.showScreen('save-select');
         break;
 
       /* ── Build Class ── */

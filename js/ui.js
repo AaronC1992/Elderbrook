@@ -828,6 +828,286 @@ var UI = (function () {
     container.innerHTML = html;
   }
 
+  /* ══════════════════════════════════════════════════════════════
+     LEDGER — Book-style tabbed overlay
+     ══════════════════════════════════════════════════════════════ */
+  var ledgerTabs = [
+    { id: "quests",        label: "Quests" },
+    { id: "character",     label: "Character" },
+    { id: "bestiary",      label: "Bestiary" },
+    { id: "achievements",  label: "Achievements" },
+    { id: "relationships", label: "Relations" },
+    { id: "settings",      label: "Settings" }
+  ];
+  var currentLedgerTab = "quests";
+
+  function renderLedger(tab) {
+    tab = tab || currentLedgerTab || "quests";
+    currentLedgerTab = tab;
+
+    // Render tabs
+    var tabsEl = document.getElementById("ledger-tabs");
+    if (tabsEl) {
+      var th = '';
+      for (var t = 0; t < ledgerTabs.length; t++) {
+        var lt = ledgerTabs[t];
+        th += '<button class="ledger-tab' + (lt.id === tab ? ' active' : '') + '" data-action="ledger-tab" data-tab="' + lt.id + '">' + lt.label + '</button>';
+      }
+      tabsEl.innerHTML = th;
+    }
+
+    // Render page content
+    var pageEl = document.getElementById("ledger-page");
+    if (!pageEl) return;
+
+    var html = '';
+    switch (tab) {
+      case "quests":        html = renderLedgerQuests(); break;
+      case "character":     html = renderLedgerCharacter(); break;
+      case "bestiary":      html = renderLedgerBestiary(); break;
+      case "achievements":  html = renderLedgerAchievements(); break;
+      case "relationships": html = renderLedgerRelationships(); break;
+      case "settings":      html = renderLedgerSettings(); break;
+    }
+    pageEl.innerHTML = html;
+  }
+
+  /* ── Quests Page ── */
+  function renderLedgerQuests() {
+    var active = Quests.getActive();
+    var p = Player.get();
+    var html = '<h2>Quest Journal</h2>';
+
+    if (active.length === 0 && (!p || p.completedQuests.length === 0)) {
+      html += '<p class="flavor">No quests recorded yet. Visit the Quest Board to find work.</p>';
+      return html;
+    }
+
+    // Active quests
+    if (active.length > 0) {
+      html += '<h3>Active Quests</h3>';
+      for (var i = 0; i < active.length; i++) {
+        var q = active[i];
+        var complete = Quests.checkObjectives(q.id);
+        html += '<div class="ledger-quest' + (complete ? ' quest-ready' : '') + '">';
+        html += '<div class="ledger-quest-name">' + q.name + '<span class="ledger-quest-type"> [' + q.type + ']</span></div>';
+        html += '<div class="ledger-quest-desc">' + q.description + '</div>';
+        for (var j = 0; j < q.objectives.length; j++) {
+          html += '<div class="ledger-quest-obj">' + Quests.getObjectiveStatus(q.id, j) + '</div>';
+        }
+        if (complete) {
+          html += '<button class="ledger-btn" data-action="turn-in-quest" data-quest="' + q.id + '">Turn In</button>';
+        }
+        html += '</div>';
+      }
+    }
+
+    // Completed quests
+    if (p && p.completedQuests.length > 0) {
+      html += '<h3>Completed Quests</h3>';
+      for (var c = 0; c < p.completedQuests.length; c++) {
+        var cq = Chapter1.getQuest(p.completedQuests[c]);
+        if (cq) {
+          html += '<div class="ledger-quest quest-complete">';
+          html += '<div class="ledger-quest-name">' + cq.name + '</div>';
+          html += '</div>';
+        }
+      }
+    }
+    return html;
+  }
+
+  /* ── Character Page ── */
+  function renderLedgerCharacter() {
+    var p = Player.get();
+    if (!p) return '<p>No character data.</p>';
+
+    var html = '<h2>Character Sheet</h2>';
+    html += '<h3>' + p.name + (p.buildClass ? ' &mdash; ' + p.buildClass.charAt(0).toUpperCase() + p.buildClass.slice(1) : '') + '</h3>';
+
+    // Core stats
+    html += '<div class="ledger-stats-grid">';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Level</span><span class="ledger-stat-value">' + p.level + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">XP</span><span class="ledger-stat-value">' + p.xp + ' / ' + p.xpToNext + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">HP</span><span class="ledger-stat-value">' + p.hp + ' / ' + p.maxHp + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">MP</span><span class="ledger-stat-value">' + p.mp + ' / ' + p.maxMp + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Attack</span><span class="ledger-stat-value">' + p.attack + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Defense</span><span class="ledger-stat-value">' + p.defense + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Dexterity</span><span class="ledger-stat-value">' + p.dexterity + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Intelligence</span><span class="ledger-stat-value">' + p.intelligence + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Charm</span><span class="ledger-stat-value">' + (p.charm || 1) + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Gold</span><span class="ledger-stat-value">' + p.gold + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Difficulty</span><span class="ledger-stat-value">' + (p.difficulty || 'normal') + '</span></div>';
+    html += '<div class="ledger-stat"><span class="ledger-stat-label">Day</span><span class="ledger-stat-value">' + (p.day || 1) + '</span></div>';
+    html += '</div>';
+
+    // Stat allocation
+    if (p.unspentPoints > 0) {
+      html += '<div class="ledger-alloc">';
+      html += '<h3>Unspent Points: ' + p.unspentPoints + '</h3>';
+      html += '<div class="ledger-alloc-btns">';
+      var stats = ["maxHp", "maxMp", "attack", "defense", "dexterity", "intelligence"];
+      var labels = { maxHp: "+5 Max HP", maxMp: "+3 Max MP", attack: "+1 ATK", defense: "+1 DEF", dexterity: "+1 DEX", intelligence: "+1 INT" };
+      for (var i = 0; i < stats.length; i++) {
+        html += '<button class="ledger-btn" data-action="allocate-stat" data-stat="' + stats[i] + '">' + labels[stats[i]] + '</button>';
+      }
+      html += '</div></div>';
+    }
+
+    // Skills
+    var skills = Skills.getAvailable(p.level);
+    if (skills.length > 0) {
+      html += '<h3>Known Skills</h3>';
+      for (var s = 0; s < skills.length; s++) {
+        var prof = Player.getSkillProficiencyStars(skills[s].id);
+        var stars = '';
+        for (var st = 0; st < 5; st++) {
+          stars += st < prof ? '\u2605' : '\u2606';
+        }
+        html += '<div class="ledger-skill">' + skills[s].name + ' <span class="ledger-skill-stars">' + stars + '</span> &mdash; ' + skills[s].description + ' (MP: ' + skills[s].mpCost + ')</div>';
+      }
+    }
+
+    // Set bonuses
+    var setBonuses = Player.getEquippedSetBonuses();
+    if (setBonuses.length > 0) {
+      html += '<h3>Set Bonuses</h3>';
+      for (var sb = 0; sb < setBonuses.length; sb++) {
+        html += '<p>' + setBonuses[sb].setId + ' (' + setBonuses[sb].count + ' pieces)</p>';
+      }
+    }
+
+    return html;
+  }
+
+  /* ── Bestiary Page ── */
+  function renderLedgerBestiary() {
+    var p = Player.get();
+    if (!p) return '<p>No data.</p>';
+
+    var bKeys = Object.keys(p.bestiary || {});
+    var html = '<h2>Bestiary</h2>';
+    html += '<p class="flavor">Creatures discovered: ' + bKeys.length + '</p>';
+
+    if (bKeys.length === 0) {
+      html += '<p>No creatures encountered yet.</p>';
+      return html;
+    }
+
+    for (var b = 0; b < bKeys.length; b++) {
+      var en = Enemies.get(bKeys[b]);
+      html += '<div class="ledger-creature">';
+      html += '<span class="ledger-creature-name">' + (en ? en.name : bKeys[b]) + '</span>';
+      html += '<span class="ledger-creature-info">Defeated: ' + p.bestiary[bKeys[b]];
+      if (en) {
+        html += ' | HP ' + en.hp + ' | ATK ' + en.attack + ' | DEF ' + en.defense;
+      }
+      html += '</span></div>';
+    }
+    return html;
+  }
+
+  /* ── Achievements Page ── */
+  function renderLedgerAchievements() {
+    var p = Player.get();
+    var allAch = Chapter1.getAchievements();
+
+    var html = '<h2>Achievements</h2>';
+
+    var unlocked = 0;
+    for (var i = 0; i < allAch.length; i++) {
+      if (p && p.achievements && p.achievements.indexOf(allAch[i].id) !== -1) unlocked++;
+    }
+    html += '<p class="flavor">' + unlocked + ' of ' + allAch.length + ' unlocked</p>';
+
+    for (var i = 0; i < allAch.length; i++) {
+      var a = allAch[i];
+      var isUnlocked = p && p.achievements && p.achievements.indexOf(a.id) !== -1;
+      html += '<div class="ledger-ach ' + (isUnlocked ? 'unlocked' : 'locked') + '">';
+      html += '<div class="ledger-ach-name">' + a.name + '</div>';
+      html += '<div class="ledger-ach-desc">' + a.description + '</div>';
+      html += '</div>';
+    }
+    return html;
+  }
+
+  /* ── Relationships Page ── */
+  function renderLedgerRelationships() {
+    var p = Player.get();
+    if (!p || !p.relationships) return '<h2>Relationships</h2><p class="flavor">No relationships yet.</p>';
+
+    var npcs = Relationships.getDateableNPCs();
+    var html = '<h2>Relationships</h2>';
+
+    for (var i = 0; i < npcs.length; i++) {
+      var npcId = npcs[i];
+      var cfg = Relationships.getConfig(npcId);
+      var rel = p.relationships[npcId];
+      if (!cfg || !rel) continue;
+
+      var levelName = Relationships.getLevelName(rel.affinity);
+      var pct = Math.min(100, Math.floor((rel.affinity / Relationships.MAX_AFFINITY) * 100));
+      var isPartner = rel.affinity >= 75 && Player.hasFlag(npcId + "Romantic");
+
+      html += '<div class="ledger-rel">';
+      html += '<img class="ledger-rel-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
+      html += '<div class="ledger-rel-info">';
+      html += '<div class="ledger-rel-name">' + cfg.name + (isPartner ? ' (Partner)' : '') + '</div>';
+      html += '<div class="ledger-rel-level">' + levelName + ' &mdash; ' + rel.affinity + '/' + Relationships.MAX_AFFINITY + '</div>';
+      html += '<div class="ledger-rel-bar"><div class="ledger-rel-fill" style="width:' + pct + '%"></div></div>';
+      html += '</div></div>';
+    }
+    return html;
+  }
+
+  /* ── Settings Page ── */
+  function renderLedgerSettings() {
+    var p = Player.get();
+    var settings = (p && p.settings) || { textSpeed: 'normal', soundEnabled: true };
+
+    var html = '<h2>Settings</h2>';
+
+    // Text speed
+    html += '<div class="ledger-setting">';
+    html += '<span class="ledger-setting-label">Text Speed</span>';
+    html += '<div class="ledger-setting-options">';
+    var speeds = ['slow', 'normal', 'fast', 'instant'];
+    for (var i = 0; i < speeds.length; i++) {
+      var sel = settings.textSpeed === speeds[i] ? ' active' : '';
+      html += '<button class="ledger-btn' + sel + '" data-action="set-text-speed" data-speed="' + speeds[i] + '">' + speeds[i].charAt(0).toUpperCase() + speeds[i].slice(1) + '</button>';
+    }
+    html += '</div></div>';
+
+    // Sound
+    html += '<div class="ledger-setting">';
+    html += '<span class="ledger-setting-label">Sound</span>';
+    html += '<div class="ledger-setting-options">';
+    html += '<button class="ledger-btn' + (Audio.isEnabled() ? ' active' : '') + '" data-action="set-sound" data-sound="on">On</button>';
+    html += '<button class="ledger-btn' + (!Audio.isEnabled() ? ' active' : '') + '" data-action="set-sound" data-sound="off">Off</button>';
+    html += '</div></div>';
+
+    // Difficulty
+    html += '<div class="ledger-setting">';
+    html += '<span class="ledger-setting-label">Difficulty</span>';
+    html += '<div class="ledger-setting-options">';
+    var diffs = ['easy', 'normal', 'hard'];
+    var diffLabels = { easy: 'Easy', normal: 'Normal', hard: 'Hard' };
+    for (var d = 0; d < diffs.length; d++) {
+      var dsel = (p && p.difficulty) === diffs[d] ? ' active' : '';
+      html += '<button class="ledger-btn' + dsel + '" data-action="set-difficulty" data-difficulty="' + diffs[d] + '">' + diffLabels[diffs[d]] + '</button>';
+    }
+    html += '</div></div>';
+
+    // Save/Load
+    html += '<h3>Game Data</h3>';
+    html += '<div style="display:flex;gap:0.5rem;margin-top:0.4rem;">';
+    html += '<button class="ledger-btn" data-action="save-game">Save Game</button>';
+    html += '<button class="ledger-btn" data-action="load-game-menu">Load Game</button>';
+    html += '</div>';
+
+    return html;
+  }
+
   return {
     showScreen: showScreen,
     setDialogueBackground: setDialogueBackground,
@@ -851,6 +1131,7 @@ var UI = (function () {
     renderDifficultySelect: renderDifficultySelect,
     renderTraining: renderTraining,
     renderAcademy: renderAcademy,
+    renderLedger: renderLedger,
     showMessage: showMessage
   };
 })();
