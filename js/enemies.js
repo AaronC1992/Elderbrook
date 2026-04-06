@@ -132,6 +132,34 @@ var Enemies = (function () {
       ]
     },
 
+    /* ── Winter Enemies ── */
+    "snow-wolf": {
+      id: "snow-wolf", name: "Snow Wolf", portrait: "assets/portraits/Frostbitten fury of the snow wolf.png",
+      hp: 24, attack: 6, defense: 2, xp: 12, gold: [3, 7],
+      loot: [
+        { id: "wolf-pelt", chance: 0.50 },
+        { id: "beast-sinew", chance: 0.15 },
+        { id: "torn-cloth", chance: 0.15 }
+      ],
+      abilities: [
+        { name: "Frostbite", chance: 0.20, effect: { type: "weakness", damage: 0, turns: 2 } },
+        { name: "Pack Howl", chance: 0.12, buff: { stat: "attack", amount: 2, turns: 3 } }
+      ]
+    },
+    "frost-goblin": {
+      id: "frost-goblin", name: "Frost-bound Goblin", portrait: "assets/portraits/Frost-bound snow goblin warrior.png",
+      hp: 22, attack: 5, defense: 3, xp: 14, gold: [4, 8],
+      loot: [
+        { id: "goblin-fang", chance: 0.40 },
+        { id: "goblin-scrap", chance: 0.25 },
+        { id: "health-potion", chance: 0.10 }
+      ],
+      abilities: [
+        { name: "Frozen Strike", chance: 0.20, multiplier: 1.3, effect: { type: "stun", damage: 0, turns: 1 } },
+        { name: "Ice Shard", chance: 0.15, effect: { type: "bleed", damage: 2, turns: 2 } }
+      ]
+    },
+
     /* ── Boss ── */
     "goblin-chief-grisk": {
       id: "goblin-chief-grisk", name: "Goblin Chief Grisk", portrait: "assets/portraits/goblin-king-enemy.png",
@@ -164,14 +192,42 @@ var Enemies = (function () {
 
   function get(id) { return enemies[id] || null; }
 
+  /* Map of base enemies to their winter variants */
+  var winterSwaps = {
+    "wolf": "snow-wolf",
+    "wolf-pack": "snow-wolf",
+    "goblin-scout": "frost-goblin",
+    "goblin-sneak": "frost-goblin"
+  };
+
   function getRandomForArea(areaId) {
     var loc = Chapter1.getLocation(areaId);
     if (!loc || !loc.enemies || loc.enemies.length === 0) return null;
     var pool = loc.enemies;
     var pick = pool[Math.floor(Math.random() * pool.length)];
+
+    // In winter, swap eligible enemies for their winter variants
+    if (Player.getSeason() === "winter" && winterSwaps[pick]) {
+      pick = winterSwaps[pick];
+    }
+
     var template = enemies[pick];
     if (!template) return null;
-    return JSON.parse(JSON.stringify(template));
+    var e = JSON.parse(JSON.stringify(template));
+
+    // Winter makes all enemies tougher — harsher conditions, desperate creatures
+    if (Player.getSeason() === "winter") {
+      e.hp = Math.floor(e.hp * 1.2);
+      e.attack += 2;
+      e.defense += 1;
+      e.xp = Math.floor(e.xp * 1.25);
+      if (e.gold) {
+        e.gold[0] = Math.floor(e.gold[0] * 1.2);
+        e.gold[1] = Math.floor(e.gold[1] * 1.2);
+      }
+    }
+
+    return e;
   }
 
   function getBoss(id) {

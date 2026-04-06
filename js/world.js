@@ -212,6 +212,7 @@ var World = (function () {
       UI.showMessage("The innkeeper shakes his head. 'That'll be " + cost + " gold, friend.' You don't have enough.");
       return;
     }
+    var oldSeason = Player.getSeason();
     p.gold -= cost;
     Player.sleep(); // advances day, restores HP/MP/energy, resets daily limits
     Audio.play("heal");
@@ -223,8 +224,13 @@ var World = (function () {
       "The fire crackles in the hearth as you drift off. Morning comes quickly.",
       "A bowl of stew and a warm bed — simple comforts after a long day."
     ];
-    UI.showMessage(innTexts[Math.floor(Math.random() * innTexts.length)] + " (-" + cost + " gold. Day " + p.day + " begins.)");
-  }
+    var msg = innTexts[Math.floor(Math.random() * innTexts.length)] + " (-" + cost + " gold. Day " + p.day + " begins.)";
+    var newSeason = Player.getSeason();
+    if (newSeason !== oldSeason) {
+      var seasonCap = newSeason.charAt(0).toUpperCase() + newSeason.slice(1);
+      msg += " The season has changed to " + seasonCap + ".";
+    }
+    UI.showMessage(msg);  }
 
   /* NPC interaction routing for town POIs */
   function visitShop(shopId) {

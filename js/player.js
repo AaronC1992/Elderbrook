@@ -52,6 +52,8 @@ var Player = (function () {
       },
       /* ── Day / Time / Energy (SimGirl system) ── */
       day: 1,
+      season: "spring",
+      seasonDay: 1,
       energy: 8,
       maxEnergy: 8,
       charm: 1,                     // social stat — affects relationship gains
@@ -395,14 +397,31 @@ var Player = (function () {
     return true;
   }
 
+  var SEASONS = ["spring", "summer", "autumn", "winter"];
+  var DAYS_PER_SEASON = 14;
+
   function sleep() {
     if (!state) return;
     state.day++;
+    state.seasonDay = (state.seasonDay || 0) + 1;
+    if (state.seasonDay > DAYS_PER_SEASON) {
+      state.seasonDay = 1;
+      var idx = SEASONS.indexOf(state.season);
+      state.season = SEASONS[(idx + 1) % SEASONS.length];
+    }
     state.energy = state.maxEnergy;
     state.hp = state.maxHp;
     state.mp = state.maxMp;
     state.trainingDone = {};
     Relationships.resetDaily();
+  }
+
+  function getSeason() {
+    return state ? (state.season || "spring") : "spring";
+  }
+
+  function getSeasonDay() {
+    return state ? (state.seasonDay || 1) : 1;
   }
 
   function getTrainingCost(statId) {
@@ -502,6 +521,9 @@ var Player = (function () {
     getChoice: getChoice,
     getEquippedSetBonuses: getEquippedSetBonuses,
     getTimeOfDay: getTimeOfDay,
+    getSeason: getSeason,
+    getSeasonDay: getSeasonDay,
+    DAYS_PER_SEASON: DAYS_PER_SEASON,
     spendEnergy: spendEnergy,
     sleep: sleep,
     trainStat: trainStat,

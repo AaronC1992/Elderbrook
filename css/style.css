@@ -432,20 +432,54 @@ button {
   background: url('../assets/backgrounds/ElderBrook%20village%20under%20the%20midday%20sun.png') center/cover no-repeat, radial-gradient(ellipse at center, #1a1f2e 0%, #0e1117 70%);
 }
 
-/* ── Create ── */
-.create-panel {
-  max-width: 600px;
+/* ── Create (redesigned) ── */
+.create-wrapper {
+  max-width: 700px;
   width: 95%;
   margin: auto;
-  text-align: center;
-  padding: 2rem;
+  padding: 1.5rem 1rem;
 }
-.create-panel h2 { font-size: 1.6rem; margin-bottom: 0.8rem; }
+.create-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.create-header h2 {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.04em;
+}
+.create-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+.create-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.create-step {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+}
+.create-step-label {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
 .gender-picker {
   display: flex;
   justify-content: center;
   gap: 2rem;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
 }
 .gender-btn {
   display: flex;
@@ -456,7 +490,7 @@ button {
   padding: 0.8rem;
   border: 2px solid transparent;
   border-radius: var(--radius);
-  transition: all 0.2s;
+  transition: all 0.25s;
   background: transparent;
   color: var(--text-muted);
   font-size: 1rem;
@@ -467,57 +501,140 @@ button {
 .gender-btn.selected { border-color: var(--accent); background: rgba(212, 164, 56, 0.08); }
 .gender-btn.selected span { color: var(--accent); }
 .gender-portrait {
-  width: 180px;
+  width: 160px;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.6));
   border-radius: var(--radius);
+  transition: transform 0.25s;
 }
+.gender-btn.selected .gender-portrait { transform: scale(1.05); }
 .weapon-picker {
-  display: flex;
-  justify-content: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin: 0.4rem 0;
 }
 .weapon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
   background: var(--bg-panel-alt);
   color: var(--text-muted);
-  padding: 0.6rem 0.8rem;
+  padding: 0.8rem 0.6rem;
   border: 2px solid transparent;
   border-radius: var(--radius);
   cursor: pointer;
   font-family: inherit;
   font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1.3;
-  transition: all 0.2s;
+  transition: all 0.25s;
+  text-align: center;
 }
 .weapon-btn:hover { border-color: var(--border); }
 .weapon-btn.selected { border-color: var(--accent); background: rgba(212, 164, 56, 0.08); color: var(--accent); }
-.weapon-stat { font-size: 0.72rem; color: var(--text-muted); }
-.create-panel label {
-  display: block;
-  margin: 1rem 0 0.4rem;
-  color: var(--text-muted);
-  font-size: 1rem;
+.weapon-name { font-weight: 700; font-size: 0.95rem; }
+.weapon-stat { font-size: 0.72rem; color: var(--heal); }
+.weapon-desc { font-size: 0.68rem; color: var(--text-muted); font-style: italic; margin-top: 0.15rem; }
+.weapon-btn.selected .weapon-desc { color: var(--text); }
+.create-step form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
 }
-.create-panel input[type="text"] {
+.create-step input[type="text"] {
   width: 100%;
   max-width: 320px;
   background: var(--bg-dark);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
-  padding: 0.5rem 0.8rem;
+  padding: 0.6rem 0.8rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 1.05rem;
   text-align: center;
-  margin-bottom: 1rem;
 }
-.create-panel input[type="text"]:focus {
+.create-step input[type="text"]:focus {
   outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(212, 164, 56, 0.2);
+}
+.create-begin-btn {
+  font-size: 1.1rem;
+  padding: 0.6rem 2.5rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Intro / Lore Screen ── */
+#screen-intro.active {
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #1a1f2e 0%, #0a0c10 80%);
+}
+.intro-wrapper {
+  max-width: 650px;
+  width: 90%;
+  margin: auto;
+  text-align: center;
+  padding: 2rem 1rem;
+  position: relative;
+}
+.intro-text-container {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.intro-text {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.8;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.intro-text.visible {
+  opacity: 1;
+}
+.intro-text p {
+  margin: 0.6rem 0;
+  color: var(--text-muted);
+}
+.intro-text p.intro-accent {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.intro-text p.intro-dim {
+  color: rgba(200, 200, 200, 0.5);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+.intro-text h3 {
+  color: var(--accent);
+  font-size: 1.3rem;
+  margin: 1rem 0 0.5rem;
+  letter-spacing: 0.06em;
+}
+.intro-skip-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  opacity: 0.5;
+}
+.intro-skip-btn:hover { opacity: 1; }
+.intro-continue-btn {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  padding: 0.5rem 2rem;
+  animation: introFadeIn 0.5s ease forwards;
+}
+@keyframes introFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Town ── */
@@ -772,6 +889,48 @@ button {
   border: none;
   background: none;
   border-radius: 0;
+}
+
+/* ── Multi-enemy & Target Selection ── */
+.battle-enemies-group {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.battle-enemy {
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  transition: border-color 0.2s, opacity 0.3s, filter 0.3s;
+  text-align: center;
+}
+.battle-enemy:hover:not(.battle-enemy-dead) {
+  border-color: rgba(255,255,255,0.3);
+}
+.battle-target-selected {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 12px rgba(200,170,110,0.4);
+}
+.battle-enemy-dead {
+  opacity: 0.3;
+  filter: grayscale(1);
+  pointer-events: none;
+  cursor: default;
+}
+.battle-enemies-group .battle-portrait {
+  width: 110px;
+}
+.battle-enemies-group .battle-hp-bar {
+  width: 100px;
+}
+.battle-player {
+  text-align: center;
+}
+.battle-player .battle-portrait {
+  width: 130px;
 }
 .battle-hp-bar {
   width: 120px;
@@ -2065,7 +2224,11 @@ button {
   #game-header { padding: 0.25rem 0.5rem; gap: 0.5rem; }
   .energy-bar { width: 70px; }
   .gender-portrait { width: 120px; }
+  .weapon-picker { grid-template-columns: repeat(2, 1fr); }
   .battle-portrait { width: 100px; }
+  .battle-enemies-group .battle-portrait { width: 80px; }
+  .battle-enemies-group .battle-hp-bar { width: 80px; }
+  .battle-player .battle-portrait { width: 100px; }
   #player-portrait-box { aspect-ratio: 1/1; }
   .town-npc-portrait { height: 100px; }
 }

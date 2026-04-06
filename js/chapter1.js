@@ -69,7 +69,7 @@ var Chapter1 = (function () {
     "goblin-trail": {
       id: "goblin-trail", name: "Goblin Trail",
       description: "A rougher path leading toward the goblin caves. Stronger enemies patrol here.",
-      background: "assets/backgrounds/goblin-trail.png",
+      background: "assets/backgrounds/GoblinTrail.png",
       enemies: ["goblin-raider", "goblin-archer", "wolf-pack"],
       recommendedLevel: "Lv. 3-5",
       requireFlag: "unlockedGoblinTrail"

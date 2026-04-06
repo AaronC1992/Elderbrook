@@ -82,7 +82,9 @@ var UI = (function () {
     if (dayEl) dayEl.textContent = "Day " + (p.day || 1);
     if (timeEl) {
       var tod = Player.getTimeOfDay();
-      timeEl.textContent = tod.charAt(0).toUpperCase() + tod.slice(1);
+      var season = Player.getSeason();
+      var seasonCap = season.charAt(0).toUpperCase() + season.slice(1);
+      timeEl.textContent = seasonCap + " \u2022 " + tod.charAt(0).toUpperCase() + tod.slice(1);
     }
     if (energyFill) energyFill.style.width = Math.round((p.energy / p.maxEnergy) * 100) + "%";
     if (energyText) energyText.textContent = p.energy + "/" + p.maxEnergy;

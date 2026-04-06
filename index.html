@@ -66,34 +66,77 @@
           </div>
         </section>
 
-        <!-- Character Creation -->
+        <!-- Character Creation (redesigned) -->
         <section id="screen-create" class="screen">
-          <div class="panel create-panel">
-            <h2>Create Your Hero</h2>
-            <p style="color:var(--text-muted); margin-bottom:0.5rem;">Choose your appearance</p>
-            <div class="gender-picker">
-              <button class="gender-btn selected" data-gender="male">
-                <img class="gender-portrait" src="assets/portraits/male-player.png" alt="Male" />
-                <span>Male</span>
-              </button>
-              <button class="gender-btn" data-gender="female">
-                <img class="gender-portrait" src="assets/portraits/female-player.png" alt="Female" />
-                <span>Female</span>
-              </button>
+          <div class="create-wrapper">
+            <div class="create-header">
+              <h2>Forge Your Legend</h2>
+              <p class="create-subtitle">Every hero has a beginning. This is yours.</p>
             </div>
-            <img id="create-portrait" class="gender-portrait" src="assets/portraits/male-player.png" alt="Preview" style="display:none;" />
-            <p style="color:var(--text-muted); margin:1rem 0 0.5rem;">Choose your starting weapon</p>
-            <div class="weapon-picker">
-              <button class="weapon-btn selected" data-weapon="basic-sword">Sword<br><span class="weapon-stat">+3 ATK</span></button>
-              <button class="weapon-btn" data-weapon="basic-dagger">Dagger<br><span class="weapon-stat">+2 ATK, +1 DEX</span></button>
-              <button class="weapon-btn" data-weapon="basic-bow">Bow<br><span class="weapon-stat">+3 ATK</span></button>
-              <button class="weapon-btn" data-weapon="basic-staff">Staff<br><span class="weapon-stat">+2 ATK, +1 INT</span></button>
+
+            <div class="create-steps">
+              <!-- Step 1: Appearance -->
+              <div class="create-step">
+                <div class="create-step-label">Appearance</div>
+                <div class="gender-picker">
+                  <button class="gender-btn selected" data-gender="male">
+                    <img class="gender-portrait" src="assets/portraits/male-player.png" alt="Male" />
+                    <span>Male</span>
+                  </button>
+                  <button class="gender-btn" data-gender="female">
+                    <img class="gender-portrait" src="assets/portraits/female-player.png" alt="Female" />
+                    <span>Female</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 2: Weapon -->
+              <div class="create-step">
+                <div class="create-step-label">Starting Weapon</div>
+                <div class="weapon-picker">
+                  <button class="weapon-btn selected" data-weapon="basic-sword">
+                    <span class="weapon-name">Sword</span>
+                    <span class="weapon-stat">+3 ATK</span>
+                    <span class="weapon-desc">A reliable blade for close combat.</span>
+                  </button>
+                  <button class="weapon-btn" data-weapon="basic-dagger">
+                    <span class="weapon-name">Dagger</span>
+                    <span class="weapon-stat">+2 ATK, +1 DEX</span>
+                    <span class="weapon-desc">Quick and precise. Favors the agile.</span>
+                  </button>
+                  <button class="weapon-btn" data-weapon="basic-bow">
+                    <span class="weapon-name">Bow</span>
+                    <span class="weapon-stat">+3 ATK</span>
+                    <span class="weapon-desc">Strike from a distance with deadly aim.</span>
+                  </button>
+                  <button class="weapon-btn" data-weapon="basic-staff">
+                    <span class="weapon-name">Staff</span>
+                    <span class="weapon-stat">+2 ATK, +1 INT</span>
+                    <span class="weapon-desc">Channels arcane energy. For the wise.</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 3: Name -->
+              <div class="create-step">
+                <div class="create-step-label">Your Name</div>
+                <form id="create-form">
+                  <input type="text" id="char-name" maxlength="20" required placeholder="Enter your name..." autocomplete="off" />
+                  <button class="btn-primary create-begin-btn" type="submit">Begin Your Story</button>
+                </form>
+              </div>
             </div>
-            <form id="create-form">
-              <label for="char-name">Your Name</label>
-              <input type="text" id="char-name" maxlength="20" required placeholder="Enter name" autocomplete="off" />
-              <button class="btn-primary" type="submit">Begin Adventure</button>
-            </form>
+          </div>
+        </section>
+
+        <!-- World Intro / Lore (shown after creation, before gameplay) -->
+        <section id="screen-intro" class="screen">
+          <div class="intro-wrapper">
+            <div class="intro-text-container">
+              <div id="intro-text" class="intro-text"></div>
+            </div>
+            <button class="btn intro-skip-btn" data-action="intro-skip">Skip</button>
+            <button class="btn-primary intro-continue-btn" id="intro-continue-btn" data-action="intro-continue" style="display:none;">Continue</button>
           </div>
         </section>
 

@@ -1,6 +1,65 @@
 /* main.js - Entry point and event wiring */
 (function () {
 
+  /* ── Intro Lore Sequence ── */
+  var introPages = [
+    {
+      html: '<h3>The World of Elderbrook</h3>' +
+        '<p>For centuries, the kingdom of Astenmere thrived under the protection of the Wardstones, ancient pillars of magic that kept the wilds at bay and the roads safe for travelers.</p>' +
+        '<p>But the Wardstones have been fading. One by one, their light dims, and the creatures of the deep forest grow bolder.</p>' +
+        '<p class="intro-dim">No one knows why. No one knows how to stop it.</p>'
+    },
+    {
+      html: '<h3>The Village</h3>' +
+        '<p>Elderbrook sits on the eastern frontier, a small village at the edge of civilization. Once a quiet trading post, it now stands as the first line of defense against the growing goblin threat.</p>' +
+        '<p>The Adventurers Guild, led by Guildmaster Rowan, has put out a call for anyone brave enough to help.</p>' +
+        '<p class="intro-accent">Mercenaries, drifters, dreamers, the desperate... all are welcome.</p>'
+    },
+    {
+      html: '<h3>Your Story</h3>' +
+        '<p>You arrived in Elderbrook three days ago with little more than the clothes on your back and a weapon at your side.</p>' +
+        '<p>Whether you came seeking coin, glory, or simply a place to belong, you were drawn here by the same rumor everyone else heard:</p>' +
+        '<p class="intro-accent">The goblins are organized. Something is commanding them. And Elderbrook needs heroes.</p>' +
+        '<p class="intro-dim">Today, your story begins.</p>'
+    }
+  ];
+  var introPageIndex = 0;
+  var introTimer = null;
+
+  function showIntroPage(idx) {
+    var textEl = document.getElementById("intro-text");
+    var continueBtn = document.getElementById("intro-continue-btn");
+    if (!textEl) return;
+
+    // Fade out
+    textEl.classList.remove("visible");
+    if (continueBtn) continueBtn.style.display = "none";
+
+    setTimeout(function () {
+      if (idx >= introPages.length) {
+        finishIntro();
+        return;
+      }
+      textEl.innerHTML = introPages[idx].html;
+      // Fade in
+      textEl.classList.add("visible");
+      // Show continue after a short reading delay
+      introTimer = setTimeout(function () {
+        if (continueBtn) {
+          continueBtn.style.display = "";
+          continueBtn.textContent = (idx >= introPages.length - 1) ? "Enter Elderbrook" : "Continue";
+        }
+      }, 2000);
+    }, 500);
+  }
+
+  function finishIntro() {
+    if (introTimer) { clearTimeout(introTimer); introTimer = null; }
+    var gc = document.getElementById("game-container");
+    if (gc) gc.classList.remove("mode-menu");
+    World.navigate("elderbrook");
+  }
+
   /* ── Character Creation ── */
   var createForm = document.getElementById("create-form");
   var genderBtns = document.querySelectorAll(".gender-btn");
@@ -14,13 +73,6 @@
       selectedGender = this.getAttribute("data-gender");
       for (var i = 0; i < genderBtns.length; i++) genderBtns[i].classList.remove("selected");
       this.classList.add("selected");
-      // Update portrait preview
-      var preview = document.getElementById("create-portrait");
-      if (preview) {
-        preview.src = selectedGender === "female"
-          ? "assets/portraits/female-player.png"
-          : "assets/portraits/male-player.png";
-      }
     });
   }
 
@@ -45,9 +97,10 @@
       }
       Player.create(name, selectedGender, selectedWeapon);
       Audio.play("buttonClick");
-      var gc = document.getElementById("game-container");
-      if (gc) gc.classList.remove("mode-menu");
-      World.navigate("elderbrook");
+      // Show lore intro instead of jumping straight to town
+      introPageIndex = 0;
+      UI.showScreen("intro");
+      showIntroPage(0);
     });
   }
 
@@ -69,6 +122,13 @@
       case "continue-game":
         UI.renderSaveSlots('load');
         UI.showScreen('save-select');
+        break;
+      case "intro-continue":
+        introPageIndex++;
+        showIntroPage(introPageIndex);
+        break;
+      case "intro-skip":
+        finishIntro();
         break;
 
       /* ── Navigation ── */
@@ -195,6 +255,9 @@
         break;
       case "battle-run":
         Battle.playerRun();
+        break;
+      case "battle-target":
+        Battle.selectTarget(parseInt(btn.getAttribute("data-index"), 10));
         break;
       case "battle-continue":
         Battle.continueAfterVictory();
