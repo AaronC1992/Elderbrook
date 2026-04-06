@@ -282,6 +282,10 @@
         UI.renderLedger("relationships");
         UI.showScreen("ledger");
         break;
+      case "toggle-quest-detail":
+        var detail = document.getElementById("quest-detail-" + btn.getAttribute("data-quest"));
+        if (detail) detail.style.display = detail.style.display === "none" ? "block" : "none";
+        break;
 
       /* ── Save / Sound / Settings ── */
       case "save-game":

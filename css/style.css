@@ -187,8 +187,8 @@ body {
 }
 .side-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── RIGHT SIDEBAR: Relationships ── */
-#sidebar-relations {
+/* ── RIGHT SIDEBAR: Quest Tracker ── */
+#sidebar-quests {
   background: var(--bg-panel);
   border-left: 1px solid var(--border);
   padding: 0.6rem;
@@ -206,46 +206,61 @@ body {
   border-bottom: 1px solid var(--border);
   margin-bottom: 0.2rem;
 }
-.rel-meter {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.3rem 0;
+.quest-tracker-empty {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+.quest-tracker-item {
+  padding: 0.35rem 0.3rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
 }
-.rel-meter-name {
-  font-size: 0.75rem;
+.quest-tracker-item:hover {
+  background: rgba(212, 164, 56, 0.06);
+  border-left-color: var(--accent);
+}
+.quest-tracker-ready {
+  border-left-color: var(--heal);
+}
+.quest-tracker-ready:hover {
+  border-left-color: var(--heal);
+}
+.quest-tracker-name {
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--text);
-  display: flex;
-  justify-content: space-between;
 }
-.rel-meter-name .rel-lvl { color: var(--text-muted); font-size: 0.65rem; }
-.rel-meter-bar {
-  height: 6px;
-  background: var(--bg-dark);
-  border-radius: 3px;
-  overflow: hidden;
+.quest-tracker-ready .quest-tracker-name {
+  color: var(--heal);
 }
-.rel-meter-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #884422, #d4a438);
-  border-radius: 3px;
-  transition: width 0.3s;
+.quest-tracker-detail {
+  margin-top: 0.25rem;
+  padding-left: 0.3rem;
 }
-.rel-meter-portrait {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  object-fit: cover;
-  flex-shrink: 0;
+.quest-tracker-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+  line-height: 1.4;
 }
-.rel-meter-row {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
+.quest-tracker-obj {
+  font-size: 0.7rem;
+  color: var(--text);
+  padding: 0.1rem 0;
+  padding-left: 0.4rem;
+  border-left: 1px solid rgba(255,255,255,0.08);
 }
-.rel-meter-info { flex: 1; min-width: 0; }
+.quest-tracker-status {
+  font-size: 0.7rem;
+  color: var(--heal);
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
 
 /* ── CENTER: Screens ── */
 #screen-container {
@@ -308,7 +323,7 @@ body {
 
 /* Hide sidebars + nav on title/create (full-screen overlay) */
 #game-container.mode-menu #sidebar-stats,
-#game-container.mode-menu #sidebar-relations,
+#game-container.mode-menu #sidebar-quests,
 #game-container.mode-menu #game-nav {
   display: none;
 }
@@ -555,28 +570,21 @@ button {
   padding: 0;
   z-index: 2;
   transition: transform 0.25s, filter 0.25s;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
 }
 .town-npc:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 4px 12px rgba(212, 164, 56, 0.5));
+  transform: scale(1.06);
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.7));
 }
 .town-npc-portrait {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  object-fit: cover;
-  transition: border-color 0.25s, box-shadow 0.25s;
-  box-shadow: 0 0 10px rgba(212, 164, 56, 0.2);
-}
-.town-npc:hover .town-npc-portrait {
-  border-color: var(--accent-hover);
-  box-shadow: 0 0 16px rgba(212, 164, 56, 0.4);
+  width: auto;
+  height: 120px;
+  object-fit: contain;
+  display: block;
 }
 .town-npc-name {
   display: block;
-  margin-top: 0.2rem;
+  margin-top: 0.15rem;
   font-family: Georgia, serif;
   font-size: 0.72rem;
   font-weight: 600;
@@ -586,25 +594,9 @@ button {
   border-radius: 3px;
   white-space: nowrap;
 }
-/* Event NPC variant — purple glow */
-.town-npc-event .town-npc-portrait {
-  border-color: #8b6fc0;
-  box-shadow: 0 0 10px rgba(140, 100, 220, 0.3);
-  animation: npcGlow 2.5s ease-in-out infinite;
-}
-.town-npc-event:hover .town-npc-portrait {
-  border-color: #c4a6ff;
-  box-shadow: 0 0 16px rgba(140, 100, 220, 0.5);
-}
-.town-npc-event:hover {
-  filter: drop-shadow(0 4px 12px rgba(140, 100, 220, 0.6));
-}
+/* Event NPC variant — purple name */
 .town-npc-event .town-npc-name {
   color: #c4a6ff;
-}
-@keyframes npcGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(140, 100, 220, 0.25); }
-  50% { box-shadow: 0 0 16px rgba(140, 100, 220, 0.5); }
 }
 .town-poi:hover {
   background: rgba(60, 50, 20, 0.92);
@@ -1908,14 +1900,13 @@ button {
   .gender-portrait { width: 120px; }
   .battle-portrait { width: 100px; }
   #player-portrait-box { aspect-ratio: 1/1; }
-  .poi-portrait { width: 44px; height: 44px; }
-  .town-npc-portrait { width: 64px; height: 64px; }
+  .town-npc-portrait { height: 100px; }
 }
 
 @media (max-width: 600px) {
   :root { --sidebar-w: 0px; }
   #game-body { grid-template-columns: 1fr; }
-  #sidebar-stats, #sidebar-relations { display: none; }
+  #sidebar-stats, #sidebar-quests { display: none; }
   #game-nav { font-size: 0.72rem; }
   .nav-btn { padding: 0.25rem 0.4rem; font-size: 0.7rem; }
   #game-header { flex-wrap: wrap; }
@@ -1926,8 +1917,7 @@ button {
   .ledger-tab { font-size: 0.58rem; padding: 6px 2px; }
   .ledger-page { margin-right: 32px; padding: 0.8rem; font-size: 0.82rem; }
   .ledger-stats-grid { grid-template-columns: 1fr; }
-  .poi-portrait { width: 36px; height: 36px; }
-  .town-npc-portrait { width: 52px; height: 52px; }
+  .town-npc-portrait { height: 80px; }
   .poi-name { font-size: 0.72rem; }
   .poi-sub { font-size: 0.6rem; }
 }

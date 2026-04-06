@@ -115,27 +115,31 @@ var UI = (function () {
     setStat("stat-int", p.intelligence);
     setStat("stat-cha", p.charm || 1);
 
-    // Right: relationship meters
-    var relContainer = document.getElementById("rel-meters");
-    if (relContainer && p.relationships) {
-      var npcs = Relationships.getDateableNPCs();
-      var html = "";
-      for (var i = 0; i < npcs.length; i++) {
-        var npcId = npcs[i];
-        var cfg = Relationships.getConfig(npcId);
-        var rel = p.relationships[npcId];
-        if (!cfg || !rel) continue;
-        var pct = Math.min(100, Math.floor((rel.affinity / Relationships.MAX_AFFINITY) * 100));
-        var lvlName = Relationships.getLevelName(rel.affinity);
-        html += '<div class="rel-meter">';
-        html += '<div class="rel-meter-row">';
-        html += '<img class="rel-meter-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
-        html += '<div class="rel-meter-info">';
-        html += '<div class="rel-meter-name"><span>' + cfg.name.split(" ")[0] + '</span><span class="rel-lvl">' + lvlName + '</span></div>';
-        html += '<div class="rel-meter-bar"><div class="rel-meter-fill" style="width:' + pct + '%"></div></div>';
-        html += '</div></div></div>';
+    // Right: quest tracker
+    var questContainer = document.getElementById("quest-tracker");
+    if (questContainer) {
+      var activeQ = Quests.getActive();
+      var qhtml = "";
+      if (activeQ.length === 0) {
+        qhtml += '<div class="quest-tracker-empty">No active quests</div>';
+      } else {
+        for (var qi = 0; qi < activeQ.length; qi++) {
+          var q = activeQ[qi];
+          var ready = Quests.checkObjectives(q.id);
+          qhtml += '<div class="quest-tracker-item' + (ready ? ' quest-tracker-ready' : '') + '" data-action="toggle-quest-detail" data-quest="' + q.id + '">';
+          qhtml += '<div class="quest-tracker-name">' + q.name + '</div>';
+          qhtml += '<div class="quest-tracker-detail" id="quest-detail-' + q.id + '" style="display:none">';
+          qhtml += '<div class="quest-tracker-desc">' + q.description + '</div>';
+          for (var oj = 0; oj < q.objectives.length; oj++) {
+            qhtml += '<div class="quest-tracker-obj">' + Quests.getObjectiveStatus(q.id, oj) + '</div>';
+          }
+          if (ready) {
+            qhtml += '<div class="quest-tracker-status">Ready to turn in</div>';
+          }
+          qhtml += '</div></div>';
+        }
       }
-      relContainer.innerHTML = html;
+      questContainer.innerHTML = qhtml;
     }
   }
 
