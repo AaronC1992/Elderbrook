@@ -36,6 +36,12 @@ var Battle = (function () {
     e.attack = Math.ceil(e.attack * diff);
     e.xp = Math.floor(e.xp * (2 - diff)); // easier = more xp
 
+    // Elric patrol route: weaken enemies on patrolled roads
+    if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
+      e.hp = Math.floor(e.hp * 0.8);
+      e.attack = Math.max(1, e.attack - 1);
+    }
+
     // Apply encounter modifier (#15)
     encounterMod = Enemies.rollEncounterModifier();
     e = encounterMod.modify(e);
@@ -118,6 +124,13 @@ var Battle = (function () {
   function playerAttack() {
     if (!enemy) return;
 
+    // Stun: skip entire turn
+    if (findEffect(playerEffects, "stun") !== -1) {
+      addLog("You are stunned and can't act!");
+      enemyTurn();
+      return;
+    }
+
     // Fear: chance to lose turn
     if (findEffect(playerEffects, "fear") !== -1 && Math.random() < 0.3) {
       addLog("You are paralyzed with fear and can't act!");
@@ -135,6 +148,15 @@ var Battle = (function () {
 
     var def = enemy.defense + getBuffTotal(enemyBuffs, "defense");
     var baseDmg = Math.max(1, atk - def + Math.floor(Math.random() * 3));
+
+    // Accuracy check: base 75% + 2% per DEX, capped at 98%
+    var hitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
+    if (Math.random() > hitChance) {
+      addLog("Your attack misses!");
+      Audio.play("miss");
+      enemyTurn();
+      return;
+    }
 
     // Dexterity-based dodge chance for enemy (reduced by player DEX)
     var dodgeChance = Math.max(0.02, 0.08 - p.dexterity * 0.005);
@@ -163,6 +185,13 @@ var Battle = (function () {
     var skill = Skills.get(skillId);
     if (!skill) return;
     var p = Player.get();
+
+    // Stun: skip entire turn
+    if (findEffect(playerEffects, "stun") !== -1) {
+      addLog("You are stunned and can't act!");
+      enemyTurn();
+      return;
+    }
 
     // Silence prevents skill use
     if (findEffect(playerEffects, "silence") !== -1) {
@@ -210,6 +239,16 @@ var Battle = (function () {
       }
       Audio.play("heal");
     } else if (skill.type === "attack" || skill.type === "magic") {
+      // Accuracy check for offensive skills
+      var skillHitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
+      if (skill.intScaling) skillHitChance = Math.min(0.98, 0.80 + p.intelligence * 0.02); // magic is slightly more accurate
+      if (Math.random() > skillHitChance) {
+        addLog("Your " + skill.name + " misses!");
+        Audio.play("miss");
+        checkBattleEnd() || enemyTurn();
+        return;
+      }
+
       var atk = Player.getTotalAttack() + getBuffTotal(playerBuffs, "attack");
       if (skill.intScaling) {
         atk = p.intelligence + getBuffTotal(playerBuffs, "attack");
@@ -278,6 +317,10 @@ var Battle = (function () {
       addLog("You can't run from a boss fight!");
       return;
     }
+    if (enemy && enemy.cornered) {
+      addLog("The enemy has you cornered! You can't escape!");
+      return;
+    }
     var chance = 0.55 + (Player.get().dexterity * 0.03);
     if (Math.random() < chance) {
       addLog("You escaped!");
@@ -312,24 +355,32 @@ var Battle = (function () {
 
     // Check for special ability
     var usedAbility = false;
+    // Enemy accuracy: based on attack stat. Base 70%, +3% per attack point, capped 95%
+    var enemyHitChance = Math.min(0.95, 0.70 + enemy.attack * 0.03);
     if (enemy.abilities && enemy.abilities.length > 0) {
       for (var a = 0; a < enemy.abilities.length; a++) {
         var ab = enemy.abilities[a];
         if (Math.random() < ab.chance) {
           if (ab.multiplier) {
-            var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
-            var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
-            var dmg = Math.max(1, Math.floor((atk - def) * ab.multiplier) + Math.floor(Math.random() * 2));
-
-            // Check evasion
-            var evasion = getBuffTotal(playerBuffs, "evasion");
-            if (evasion > 0 && Math.random() * 100 < evasion) {
-              addLog("You dodge " + enemy.name + "'s " + ab.name + "!");
+            // Enemy accuracy check for ability attacks
+            if (Math.random() > enemyHitChance) {
+              addLog(enemy.name + "'s " + ab.name + " misses!");
               Audio.play("miss");
             } else {
-              Player.takeDamage(dmg);
-              addLog(enemy.name + " uses " + ab.name + " for " + dmg + " damage!");
-              Audio.play("enemyHit");
+              var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
+              var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
+              var dmg = Math.max(1, Math.floor((atk - def) * ab.multiplier) + Math.floor(Math.random() * 2));
+
+              // Check evasion
+              var evasion = getBuffTotal(playerBuffs, "evasion");
+              if (evasion > 0 && Math.random() * 100 < evasion) {
+                addLog("You dodge " + enemy.name + "'s " + ab.name + "!");
+                Audio.play("miss");
+              } else {
+                Player.takeDamage(dmg);
+                addLog(enemy.name + " uses " + ab.name + " for " + dmg + " damage!");
+                Audio.play("enemyHit");
+              }
             }
           }
           if (ab.buff) {
@@ -364,22 +415,27 @@ var Battle = (function () {
     }
 
     if (!usedAbility) {
-      // Normal attack
-      var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
-      var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
-      var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 2));
-
-      // Dexterity gives passive dodge chance + Quick Dodge buff
-      var evasion = getBuffTotal(playerBuffs, "evasion");
-      var dexDodge = Player.get().dexterity * 1.5;
-      var totalDodge = evasion + dexDodge;
-      if (totalDodge > 0 && Math.random() * 100 < totalDodge) {
-        addLog("You dodge " + enemy.name + "'s attack!");
+      // Normal attack — enemy accuracy check
+      if (Math.random() > enemyHitChance) {
+        addLog(enemy.name + "'s attack misses!");
         Audio.play("miss");
       } else {
-        Player.takeDamage(dmg);
-        addLog(enemy.name + " attacks for " + dmg + " damage.");
-        Audio.play("enemyHit");
+        var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
+        var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
+        var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 2));
+
+        // Dexterity gives passive dodge chance + Quick Dodge buff
+        var evasion = getBuffTotal(playerBuffs, "evasion");
+        var dexDodge = Player.get().dexterity * 1.5;
+        var totalDodge = evasion + dexDodge;
+        if (totalDodge > 0 && Math.random() * 100 < totalDodge) {
+          addLog("You dodge " + enemy.name + "'s attack!");
+          Audio.play("miss");
+        } else {
+          Player.takeDamage(dmg);
+          addLog(enemy.name + " attacks for " + dmg + " damage.");
+          Audio.play("enemyHit");
+        }
       }
     }
 

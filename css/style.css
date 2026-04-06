@@ -1179,6 +1179,7 @@ button {
 .bestiary-name { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
 .bestiary-kills { color: var(--text-muted); font-size: 0.78rem; }
 .bestiary-stats { color: var(--text-muted); font-size: 0.72rem; }
+.bestiary-stats.locked-text { font-style: italic; opacity: 0.6; }
 
 /* ── Build Select ── */
 .build-grid {
@@ -1637,6 +1638,173 @@ button {
   background: linear-gradient(180deg, #8a6830, #6a5020);
   color: #ede0c0;
   border-color: #5a4020;
+}
+
+/* ── Stats Guide (inside ledger) ── */
+.ledger-stat-guide {
+  background: rgba(180,150,90,0.10);
+  border: 1px solid rgba(160,130,80,0.2);
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.4rem;
+}
+.ledger-stat-guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.15rem;
+}
+.ledger-stat-guide-name {
+  font-weight: 700;
+  color: #3b2a1a;
+  font-size: 0.9rem;
+}
+.ledger-stat-guide-val {
+  font-weight: 700;
+  color: #8a6830;
+  font-size: 0.88rem;
+}
+.ledger-stat-guide-desc {
+  font-size: 0.8rem;
+  color: #5a4020;
+  line-height: 1.4;
+}
+
+/* ── Skills Compendium (inside ledger) ── */
+.ledger-skill-card {
+  background: rgba(180,150,90,0.10);
+  border: 1px solid rgba(160,130,80,0.2);
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.4rem;
+}
+.ledger-skill-card.ledger-skill-locked {
+  opacity: 0.55;
+  border-style: dashed;
+}
+.ledger-skill-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+.ledger-skill-name {
+  font-weight: 700;
+  color: #3b2a1a;
+  font-size: 0.9rem;
+}
+.ledger-skill-type {
+  font-size: 0.75rem;
+  color: #8a6830;
+  font-style: italic;
+}
+.ledger-skill-desc {
+  font-size: 0.82rem;
+  color: #5a4020;
+  margin-bottom: 0.2rem;
+}
+.ledger-skill-details {
+  font-size: 0.78rem;
+  color: #4a3520;
+  line-height: 1.5;
+}
+.ledger-skill-tip {
+  font-size: 0.76rem;
+  color: #7a6545;
+  font-style: italic;
+  margin-top: 0.2rem;
+}
+.locked-text {
+  font-style: italic;
+  color: #8a7a60;
+}
+
+/* ── Bestiary Progressive (inside ledger) ── */
+.ledger-creature-card {
+  background: rgba(180,150,90,0.10);
+  border: 1px solid rgba(160,130,80,0.2);
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.ledger-creature-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+.ledger-creature-portrait {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  border: 1px solid #c4a96a;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.ledger-creature-title {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.ledger-creature-name {
+  font-weight: 700;
+  color: #3b2a1a;
+  font-size: 0.9rem;
+}
+.ledger-creature-tier {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  width: fit-content;
+}
+.bestiary-tier-1 { background: #b8a88a; color: #3b2a1a; }
+.bestiary-tier-2 { background: #8aaa6a; color: #1a2a10; }
+.bestiary-tier-3 { background: #6a8acc; color: #0e1a30; }
+.bestiary-tier-4 { background: #c4a438; color: #2a1d12; }
+.ledger-creature-kills {
+  font-size: 0.78rem;
+  color: #7a6545;
+}
+.ledger-creature-stats {
+  font-size: 0.8rem;
+  color: #4a3520;
+  margin-top: 0.2rem;
+}
+.ledger-creature-abilities {
+  font-size: 0.8rem;
+  color: #4a3520;
+  margin-top: 0.2rem;
+}
+.ledger-creature-loot {
+  font-size: 0.8rem;
+  color: #4a3520;
+  margin-top: 0.2rem;
+}
+.ledger-creature-phases {
+  font-size: 0.8rem;
+  color: #4a3520;
+  margin-top: 0.2rem;
+}
+.ledger-phase {
+  padding-left: 0.6rem;
+  font-size: 0.78rem;
+  color: #5a4020;
+}
+.ledger-creature-progress {
+  height: 5px;
+  background: rgba(160,130,80,0.2);
+  border-radius: 3px;
+  margin-top: 0.35rem;
+  overflow: hidden;
+}
+.ledger-creature-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #b89850, #d4a438);
+  border-radius: 3px;
+  transition: width 0.3s;
 }
 
 /* ── Stat allocation (inside ledger) ── */

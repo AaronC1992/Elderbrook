@@ -2,6 +2,7 @@
 var UI = (function () {
 
   var currentScreen = "title";
+  var previousScreen = null;
   var messageTimeout = null;
   var pendingDialogueBg = null;
 
@@ -41,6 +42,11 @@ var UI = (function () {
     var target = document.getElementById("screen-" + id);
     if (target) {
       target.classList.add("active");
+      // Track previous screen for overlay returns
+      var overlays = ["ledger","inventory","character","quests","settings","achievements","bestiary","relationships","save-select"];
+      if (overlays.indexOf(id) !== -1 && overlays.indexOf(currentScreen) === -1) {
+        previousScreen = currentScreen;
+      }
       currentScreen = id;
     }
     // Toggle menu mode (hides sidebars/nav on title & create)
@@ -59,6 +65,7 @@ var UI = (function () {
   }
 
   function getScreen() { return currentScreen; }
+  function getPreviousScreen() { return previousScreen; }
 
   /* ── Top Status Bar ── */
   function updateHeader() {
@@ -605,7 +612,7 @@ var UI = (function () {
     container.innerHTML = html;
   }
 
-  /* ── Bestiary Screen ── */
+  /* ── Bestiary Screen (progressive knowledge) ── */
   function renderBestiary() {
     var container = document.getElementById("bestiary-content");
     if (!container) return;
@@ -619,11 +626,18 @@ var UI = (function () {
 
     for (var b = 0; b < bKeys.length; b++) {
       var en = Enemies.get(bKeys[b]);
+      var kills = p.bestiary[bKeys[b]];
       html += '<div class="bestiary-card">';
       html += '<div class="bestiary-name">' + (en ? en.name : bKeys[b]) + '</div>';
-      html += '<div class="bestiary-kills">Defeated: ' + p.bestiary[bKeys[b]] + '</div>';
+      html += '<div class="bestiary-kills">Defeated: ' + kills + '</div>';
       if (en) {
-        html += '<div class="bestiary-stats">HP: ' + en.hp + ' | ATK: ' + en.attack + ' | DEF: ' + en.defense + '</div>';
+        if (kills >= 3) {
+          html += '<div class="bestiary-stats">HP: ' + en.hp + ' | ATK: ' + en.attack;
+          if (kills >= 5) html += ' | DEF: ' + en.defense;
+          html += '</div>';
+        } else {
+          html += '<div class="bestiary-stats locked-text">Defeat more to learn stats...</div>';
+        }
       }
       html += '</div>';
     }
@@ -756,22 +770,26 @@ var UI = (function () {
     var done = p.trainingDone || {};
 
     var html = '<h2>Training Grounds</h2>';
-    html += '<p class="flavor">Spend energy to train your body and mind. (2 energy per session)</p>';
+    html += '<p class="flavor">Spend energy and gold to train your body and mind. (2 energy per session)</p>';
     html += '<div class="training-grid">';
     for (var i = 0; i < stats.length; i++) {
       var s = stats[i];
       var trained = done[s.id];
+      var cost = Player.getTrainingCost(s.id);
       html += '<div class="training-card">';
       html += '<div class="training-icon">' + s.icon + '</div>';
       html += '<h3>' + s.label + '</h3>';
       html += '<p>' + s.desc + '</p>';
       html += '<div class="training-current">Current: ' + (p[s.stat] || 1) + '</div>';
+      html += '<div class="training-cost">Cost: ' + cost + ' gold</div>';
       if (trained) {
         html += '<button class="btn btn-small" disabled>Done Today</button>';
       } else if (p.energy < 2) {
         html += '<button class="btn btn-small" disabled>No Energy</button>';
+      } else if (p.gold < cost) {
+        html += '<button class="btn btn-small" disabled>Can\'t Afford</button>';
       } else {
-        html += '<button class="btn btn-small btn-primary" data-action="train-stat" data-stat="' + s.id + '">Train (2 EP)</button>';
+        html += '<button class="btn btn-small btn-primary" data-action="train-stat" data-stat="' + s.id + '">Train (2 EP, ' + cost + 'g)</button>';
       }
       html += '</div>';
     }
@@ -789,21 +807,25 @@ var UI = (function () {
 
     var done = p.trainingDone || {};
     var html = '<h2>Elderbrook Academy</h2>';
-    html += '<p class="flavor">Study to sharpen your intellect. (2 energy per session)</p>';
+    html += '<p class="flavor">Study to sharpen your intellect. (2 energy + gold per session)</p>';
     html += '<div class="academy-grid">';
 
     // Intelligence training
+    var intCost = Player.getTrainingCost('intelligence');
     html += '<div class="training-card">';
     html += '<div class="training-icon">Book</div>';
     html += '<h3>Study Magic</h3>';
     html += '<p>Increase magical potency.</p>';
     html += '<div class="training-current">Intelligence: ' + p.intelligence + '</div>';
+    html += '<div class="training-cost">Cost: ' + intCost + ' gold</div>';
     if (done["intelligence"]) {
       html += '<button class="btn btn-small" disabled>Studied Today</button>';
     } else if (p.energy < 2) {
       html += '<button class="btn btn-small" disabled>No Energy</button>';
+    } else if (p.gold < intCost) {
+      html += '<button class="btn btn-small" disabled>Can\'t Afford</button>';
     } else {
-      html += '<button class="btn btn-small btn-primary" data-action="train-stat" data-stat="intelligence">Study (2 EP)</button>';
+      html += '<button class="btn btn-small btn-primary" data-action="train-stat" data-stat="intelligence">Study (2 EP, ' + intCost + 'g)</button>';
     }
     html += '</div>';
 
@@ -834,6 +856,8 @@ var UI = (function () {
   var ledgerTabs = [
     { id: "quests",        label: "Quests" },
     { id: "character",     label: "Character" },
+    { id: "stats",         label: "Stats" },
+    { id: "skills",        label: "Skills" },
     { id: "bestiary",      label: "Bestiary" },
     { id: "achievements",  label: "Achievements" },
     { id: "relationships", label: "Relations" },
@@ -864,6 +888,8 @@ var UI = (function () {
     switch (tab) {
       case "quests":        html = renderLedgerQuests(); break;
       case "character":     html = renderLedgerCharacter(); break;
+      case "stats":         html = renderLedgerStats(); break;
+      case "skills":        html = renderLedgerSkills(); break;
       case "bestiary":      html = renderLedgerBestiary(); break;
       case "achievements":  html = renderLedgerAchievements(); break;
       case "relationships": html = renderLedgerRelationships(); break;
@@ -980,29 +1006,202 @@ var UI = (function () {
     return html;
   }
 
-  /* ── Bestiary Page ── */
+  /* ── Stats Guide Page ── */
+  function renderLedgerStats() {
+    var p = Player.get();
+    if (!p) return '<p>No data.</p>';
+
+    var statGuide = [
+      { label: "Attack", value: p.attack, desc: "Determines physical damage dealt. Higher attack means stronger normal attacks and attack-type skills." },
+      { label: "Defense", value: p.defense, desc: "Reduces incoming physical damage. Each point of defense subtracts from enemy attack rolls." },
+      { label: "Dexterity", value: p.dexterity, desc: "Improves accuracy, critical hit chance, dodge chance, and escape success. Each point increases hit chance by 2%, crit chance by 2%, and passive dodge by 1.5%." },
+      { label: "Intelligence", value: p.intelligence, desc: "Powers magic-type skills like Arcane Bolt. Higher intelligence deals more spell damage." },
+      { label: "Charm", value: p.charm || 1, desc: "Influences social outcomes and NPC interactions. Improved through training." },
+      { label: "Max HP", value: p.maxHp, desc: "Your total health pool. Reaching 0 HP means defeat. Increased by leveling, equipment, and stat allocation." },
+      { label: "Max MP", value: p.maxMp, desc: "Your mana pool for using skills. Skills consume MP on use. Restored by mana potions, the Meditate skill, or resting." },
+      { label: "Energy", value: p.energy + "/" + p.maxEnergy, desc: "Spent when exploring, gathering, or training (2 per action). Restored fully by sleeping at the inn." }
+    ];
+
+    var html = '<h2>Stats Guide</h2>';
+    html += '<p class="flavor">Understanding your attributes and how they affect combat and exploration.</p>';
+
+    for (var i = 0; i < statGuide.length; i++) {
+      var s = statGuide[i];
+      html += '<div class="ledger-stat-guide">';
+      html += '<div class="ledger-stat-guide-header"><span class="ledger-stat-guide-name">' + s.label + '</span><span class="ledger-stat-guide-val">' + s.value + '</span></div>';
+      html += '<div class="ledger-stat-guide-desc">' + s.desc + '</div>';
+      html += '</div>';
+    }
+
+    html += '<h3>Combat Mechanics</h3>';
+    html += '<div class="ledger-stat-guide"><div class="ledger-stat-guide-header"><span class="ledger-stat-guide-name">Accuracy</span></div>';
+    html += '<div class="ledger-stat-guide-desc">Base hit chance is 75%. Each point of Dexterity adds 2% accuracy (capped at 98%). Missing an attack wastes your turn.</div></div>';
+    html += '<div class="ledger-stat-guide"><div class="ledger-stat-guide-header"><span class="ledger-stat-guide-name">Critical Hits</span></div>';
+    html += '<div class="ledger-stat-guide-desc">Base crit chance is 5%. Each point of Dexterity adds 2%. Critical hits deal 1.5x damage.</div></div>';
+    html += '<div class="ledger-stat-guide"><div class="ledger-stat-guide-header"><span class="ledger-stat-guide-name">Dodge</span></div>';
+    html += '<div class="ledger-stat-guide-desc">Passive dodge chance is Dexterity x 1.5%. The Quick Dodge skill adds a large temporary evasion boost on top of this.</div></div>';
+    html += '<div class="ledger-stat-guide"><div class="ledger-stat-guide-header"><span class="ledger-stat-guide-name">Enemy Accuracy</span></div>';
+    html += '<div class="ledger-stat-guide-desc">Enemies also have a chance to miss based on their stats. Weaker enemies miss more often. Stronger enemies are more precise.</div></div>';
+
+    return html;
+  }
+
+  /* ── Skills Guide Page ── */
+  function renderLedgerSkills() {
+    var p = Player.get();
+    if (!p) return '<p>No data.</p>';
+
+    var allSkills = Skills.getAll();
+    var html = '<h2>Skills Compendium</h2>';
+    html += '<p class="flavor">All learnable skills. New skills unlock as you level up.</p>';
+
+    var typeLabels = { attack: "Attack", buff: "Buff", heal: "Heal", magic: "Magic" };
+
+    for (var i = 0; i < allSkills.length; i++) {
+      var sk = allSkills[i];
+      var known = p.level >= sk.unlockLevel;
+      var prof = known ? Player.getSkillProficiencyStars(sk.id) : 0;
+      var stars = '';
+      for (var st = 0; st < 5; st++) stars += st < prof ? '\u2605' : '\u2606';
+
+      html += '<div class="ledger-skill-card' + (known ? '' : ' ledger-skill-locked') + '">';
+      html += '<div class="ledger-skill-header">';
+      html += '<span class="ledger-skill-name">' + sk.name + '</span>';
+      html += '<span class="ledger-skill-type">[' + (typeLabels[sk.type] || sk.type) + ']</span>';
+      html += '</div>';
+
+      if (known) {
+        html += '<div class="ledger-skill-stars">' + stars + '</div>';
+        html += '<div class="ledger-skill-desc">' + sk.description + '</div>';
+        html += '<div class="ledger-skill-details">';
+        html += '<span>MP Cost: ' + sk.mpCost + '</span>';
+        if (sk.damageMultiplier) html += '<span>Damage: ' + sk.damageMultiplier + 'x</span>';
+        if (sk.healAmount) html += '<span>Heal: ' + sk.healAmount + ' HP</span>';
+        if (sk.manaRestore) html += '<span>Restore: ' + sk.manaRestore + ' MP</span>';
+        if (sk.buffType) html += '<span>Buff: ' + sk.buffType + ' +' + sk.buffAmount + ' (' + sk.buffDuration + ' turns)</span>';
+        if (sk.hits) html += '<span>Hits: ' + sk.hits + 'x</span>';
+        if (sk.intScaling) html += '<span>Scales with Intelligence</span>';
+        if (sk.appliesEffect) html += '<span>Effect: ' + sk.appliesEffect.type + (sk.appliesEffect.chance ? ' (' + Math.round(sk.appliesEffect.chance * 100) + '% chance)' : '') + '</span>';
+        html += '</div>';
+        html += '<div class="ledger-skill-tip">';
+        if (sk.type === 'attack') html += 'Proficiency increases damage. Use often to improve.';
+        else if (sk.type === 'magic') html += 'Scales with Intelligence instead of Attack. Proficiency boosts damage.';
+        else if (sk.type === 'heal') html += 'Healing scales with level above unlock. Proficiency improves recovery.';
+        else if (sk.type === 'buff') html += 'Activate before attacking for maximum effect.';
+        html += '</div>';
+      } else {
+        html += '<div class="ledger-skill-desc locked-text">Unlocks at Level ' + sk.unlockLevel + '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    return html;
+  }
+
+  /* ── Bestiary Page (progressive knowledge) ── */
   function renderLedgerBestiary() {
     var p = Player.get();
     if (!p) return '<p>No data.</p>';
 
     var bKeys = Object.keys(p.bestiary || {});
     var html = '<h2>Bestiary</h2>';
-    html += '<p class="flavor">Creatures discovered: ' + bKeys.length + '</p>';
+    html += '<p class="flavor">Creatures discovered: ' + bKeys.length + '. Defeat enemies repeatedly to learn more about them.</p>';
 
     if (bKeys.length === 0) {
-      html += '<p>No creatures encountered yet.</p>';
+      html += '<p>No creatures encountered yet. Venture out and fight to fill your bestiary.</p>';
       return html;
     }
 
+    // Knowledge tiers: 1+=name, 3+=hp/atk, 5+=def/abilities, 10+=loot
     for (var b = 0; b < bKeys.length; b++) {
       var en = Enemies.get(bKeys[b]);
-      html += '<div class="ledger-creature">';
-      html += '<span class="ledger-creature-name">' + (en ? en.name : bKeys[b]) + '</span>';
-      html += '<span class="ledger-creature-info">Defeated: ' + p.bestiary[bKeys[b]];
-      if (en) {
-        html += ' | HP ' + en.hp + ' | ATK ' + en.attack + ' | DEF ' + en.defense;
+      var kills = p.bestiary[bKeys[b]];
+      if (!en) continue;
+
+      var tier = kills >= 10 ? 4 : kills >= 5 ? 3 : kills >= 3 ? 2 : 1;
+      var tierLabels = ["Sighted", "Studied", "Known", "Mastered"];
+      var tierLabel = tierLabels[tier - 1];
+
+      html += '<div class="ledger-creature-card">';
+      html += '<div class="ledger-creature-header">';
+      if (en.portrait) html += '<img class="ledger-creature-portrait" src="' + en.portrait + '" alt="' + en.name + '" onerror="this.style.display=\'none\'">';
+      html += '<div class="ledger-creature-title">';
+      html += '<span class="ledger-creature-name">' + en.name + (en.isBoss ? ' (BOSS)' : '') + '</span>';
+      html += '<span class="ledger-creature-tier bestiary-tier-' + tier + '">' + tierLabel + '</span>';
+      html += '</div>';
+      html += '<span class="ledger-creature-kills">Defeated: ' + kills + '</span>';
+      html += '</div>';
+
+      // Tier 1: just name and kill count (already shown above)
+
+      // Tier 2 (3+ kills): HP and Attack
+      if (tier >= 2) {
+        html += '<div class="ledger-creature-stats">';
+        html += '<span>HP: ' + en.hp + '</span>';
+        html += '<span>ATK: ' + en.attack + '</span>';
+        if (tier < 3) html += '<span>DEF: ???</span>';
+        html += '</div>';
+      } else {
+        html += '<div class="ledger-creature-stats locked-text">Defeat ' + (3 - kills) + ' more to learn basic stats...</div>';
       }
-      html += '</span></div>';
+
+      // Tier 3 (5+ kills): Defense and abilities
+      if (tier >= 3) {
+        html += '<div class="ledger-creature-stats">';
+        if (tier < 4) html += '<span>HP: ' + en.hp + '</span><span>ATK: ' + en.attack + '</span>';
+        html += '<span>DEF: ' + en.defense + '</span>';
+        html += '<span>XP: ' + en.xp + '</span>';
+        html += '</div>';
+        if (en.abilities && en.abilities.length > 0) {
+          html += '<div class="ledger-creature-abilities"><strong>Abilities:</strong> ';
+          var abNames = [];
+          for (var a = 0; a < en.abilities.length; a++) {
+            var abText = en.abilities[a].name;
+            if (tier >= 4 && en.abilities[a].effect) abText += ' (' + en.abilities[a].effect.type + ')';
+            abNames.push(abText);
+          }
+          html += abNames.join(', ');
+          html += '</div>';
+        } else {
+          html += '<div class="ledger-creature-abilities"><em>No special abilities</em></div>';
+        }
+      } else if (tier >= 2) {
+        html += '<div class="ledger-creature-stats locked-text">Defeat ' + (5 - kills) + ' more to learn abilities...</div>';
+      }
+
+      // Tier 4 (10+ kills): Loot table and boss phases
+      if (tier >= 4) {
+        if (en.loot && en.loot.length > 0) {
+          html += '<div class="ledger-creature-loot"><strong>Known Drops:</strong> ';
+          var lootNames = [];
+          for (var l = 0; l < en.loot.length; l++) {
+            var lootItem = Items.get(en.loot[l].id);
+            if (lootItem) lootNames.push(lootItem.name);
+          }
+          html += lootNames.join(', ');
+          html += '</div>';
+        }
+        if (en.phases && en.phases.length > 0) {
+          html += '<div class="ledger-creature-phases"><strong>Battle Phases:</strong>';
+          for (var ph = 0; ph < en.phases.length; ph++) {
+            html += '<div class="ledger-phase">' + en.phases[ph].name + ' (at ' + Math.round(en.phases[ph].threshold * 100) + '% HP)</div>';
+          }
+          html += '</div>';
+        }
+      } else if (tier >= 3) {
+        html += '<div class="ledger-creature-stats locked-text">Defeat ' + (10 - kills) + ' more to learn drop table...</div>';
+      }
+
+      // Progress bar to next tier
+      var nextTierKills = tier === 1 ? 3 : tier === 2 ? 5 : tier === 3 ? 10 : 0;
+      if (nextTierKills > 0) {
+        var prevTier = tier === 1 ? 1 : tier === 2 ? 3 : 5;
+        var pct = Math.min(100, Math.round(((kills - prevTier) / (nextTierKills - prevTier)) * 100));
+        html += '<div class="ledger-creature-progress"><div class="ledger-creature-progress-fill" style="width:' + pct + '%"></div></div>';
+      }
+
+      html += '</div>';
     }
     return html;
   }
@@ -1112,6 +1311,7 @@ var UI = (function () {
     showScreen: showScreen,
     setDialogueBackground: setDialogueBackground,
     getScreen: getScreen,
+    getPreviousScreen: getPreviousScreen,
     updateHeader: updateHeader,
     updateSidebars: updateSidebars,
     renderCharacter: renderCharacter,

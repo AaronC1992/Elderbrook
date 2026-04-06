@@ -42,6 +42,11 @@ var Chapter1 = (function () {
       id: "grisk", name: "Goblin Chief Grisk",
       portrait: "assets/portraits/goblin-king-enemy.png",
       role: "Chapter 1 Boss", personality: "Brutal, cunning, organized."
+    },
+    merchant: {
+      id: "merchant", name: "Traveling Merchant",
+      portrait: "assets/portraits/traveler.png",
+      role: "Merchant", personality: "Shrewd, friendly, secretive."
     }
   };
 
@@ -147,7 +152,11 @@ var Chapter1 = (function () {
     choseBuild: false,
 
     /* Town events */
-    townEventMerchant: false, townEventBard: false, townEventRumor: false
+    townEventMerchant: false, townEventBard: false, townEventRumor: false,
+    eliraForeshadow: false,
+
+    /* Elira chain quests */
+    completedCQ7: false, completedCQ8: false
   };
 
   /* ── Quest Definitions ── */
@@ -314,6 +323,18 @@ var Chapter1 = (function () {
       rewards: { xp: 35, gold: 30, items: ["sharpened-dagger"] },
       requireFlags: ["completedMQ2"]
     },
+    sq7: {
+      id: "sq7", name: "Patrol Escort", type: "side",
+      description: "With the patrol route re-established, Captain Elric needs an escort for the first supply run. Clear hostiles along the Forest Road and Goblin Trail.",
+      giver: "elric", turnIn: "elric",
+      objectives: [
+        { id: "road-clear", text: "Defeat enemies on the Forest Road", type: "kill", target: "goblin-scout", required: 4 },
+        { id: "trail-clear", text: "Defeat enemies on the Goblin Trail", type: "kill", target: "goblin-raider", required: 4 },
+        { id: "wolves-clear", text: "Defeat wolves along the route", type: "kill", target: "wolf", required: 3 }
+      ],
+      rewards: { xp: 100, gold: 80, items: ["greater-health-potion", "iron-helm"] },
+      requireFlags: ["elricPatrolRoute"]
+    },
 
     /* --- NPC Chain Quests --- */
     cq1: {
@@ -389,6 +410,31 @@ var Chapter1 = (function () {
       rewards: { xp: 90, gold: 70, items: ["iron-gloves"] },
       onComplete: ["completedCQ6", "elricPatrolRoute"],
       requireFlags: ["completedCQ5"]
+    },
+    cq7: {
+      id: "cq7", name: "Elira's Research", type: "chain",
+      description: "Elira is investigating the strange sigil found in the goblin cave. She needs shadow essence and goblin orders as research material.",
+      giver: "elira", turnIn: "elira",
+      objectives: [
+        { id: "sigil-essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 2 },
+        { id: "sigil-scrap", text: "Collect Goblin Scrap (for inscriptions)", type: "collect", item: "goblin-scrap", required: 3 }
+      ],
+      rewards: { xp: 75, gold: 55, items: ["mana-potion", "mana-potion", "greater-health-potion"] },
+      onComplete: ["completedCQ7"],
+      startsQuest: "cq8",
+      requireFlags: ["completedMQ6"]
+    },
+    cq8: {
+      id: "cq8", name: "The Old Texts", type: "chain",
+      description: "Elira's research has revealed a connection to ancient ruins. She needs beast sinew for binding and cave herbs to preserve fragile manuscripts she's found.",
+      giver: "elira", turnIn: "elira",
+      objectives: [
+        { id: "binding", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 3 },
+        { id: "preserve", text: "Gather Cave Herbs", type: "collect", item: "cave-herb", required: 4 }
+      ],
+      rewards: { xp: 110, gold: 75, items: ["enchanted-shard", "greater-health-potion"] },
+      onComplete: ["completedCQ8"],
+      requireFlags: ["completedCQ7"]
     }
   };
 
@@ -601,6 +647,14 @@ var Chapter1 = (function () {
         { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "I'll melt this down and turn it into something proper. Here, I sharpened this dagger for you. Finest edge you'll find." }
       ]
     },
+    "sq7-complete": {
+      id: "sq7-complete",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "The supply wagon made it through without a scratch. First clean run in months." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards can handle regular patrols now, but that first escort needed someone like you clearing the way." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Elderbrook's trade lines are open again. Take this, you've earned every coin." }
+      ]
+    },
 
     /* --- NPC Random Lines (for repeat visits) --- */
     "bram-idle": {
@@ -733,6 +787,24 @@ var Chapter1 = (function () {
         { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "The Watch Post is ours again. Another badge recovered too. Two families will find peace tonight." },
         { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards can resume patrols. The roads will be safer because of what you've done." }
       ]
+    },
+    "cq7-complete": {
+      id: "cq7-complete",
+      nodes: [
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Shadow essence and goblin inscriptions. Let me see..." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Yes, just as I suspected. The sigil is a binding mark, old magic used to compel obedience. Someone branded it onto the goblins to control them." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "But this script is incomplete. There are texts in the northern ruins that could tell us more. I need materials to preserve them before they crumble to dust." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Bring me beast sinew for binding and cave herbs for preservation. Then we'll learn who is truly behind all of this." }
+      ]
+    },
+    "cq8-complete": {
+      id: "cq8-complete",
+      nodes: [
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Perfect. With these I can preserve the manuscripts and bind them properly." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "The texts speak of a power that slumbered beneath these lands for centuries. The goblins were just the first to be touched by it." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Whatever comes next will be far more dangerous than goblin raids. But at least now we know what we're dealing with." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Keep this enchanted shard. You'll need it. And keep your eyes open, the signs are everywhere if you know where to look." }
+      ]
     }
   };
 
@@ -742,7 +814,7 @@ var Chapter1 = (function () {
       id: "traveling-merchant",
       weight: 20,
       flag: "townEventMerchant",
-      repeatable: false,
+      repeatable: true,
       location: "town",
       npcName: "Traveling Merchant",
       npcPortrait: "assets/portraits/traveler.png",
@@ -753,10 +825,10 @@ var Chapter1 = (function () {
         nodes: [
           { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Psst! You there! I've got rare wares from beyond the frontier. Interested?" },
           { speaker: "", portrait: "", text: "A travelling merchant has set up near the gate.", choices: [
-            { text: "Browse the wares.", next: 2, flags: ["merchantBrowsed"], giveItems: ["enchanted-shard"] },
+            { text: "Browse the wares.", next: 2, flags: ["merchantBrowsed"] },
             { text: "Not interested.", next: 3 }
           ]},
-          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "A discerning eye! Here, take this on the house. Consider it a sample. Let me show you what else I've got.", end: true },
+          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "A keen eye! I've got goods you won't find in any local shop. Come find me at the market if you want to trade.", end: true },
           { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Your loss, friend. I'll be moving on soon.", end: true }
         ],
         onEnd: { flags: ["townEventMerchant"] }
@@ -766,7 +838,7 @@ var Chapter1 = (function () {
       id: "wandering-bard",
       weight: 15,
       flag: "townEventBard",
-      repeatable: false,
+      repeatable: true,
       location: "town",
       npcName: "Wandering Bard",
       npcPortrait: "assets/portraits/Bard.png",
@@ -790,7 +862,7 @@ var Chapter1 = (function () {
       id: "rumor-mill",
       weight: 25,
       flag: "townEventRumor",
-      repeatable: false,
+      repeatable: true,
       location: "town",
       npcName: "Worried Villager",
       npcPortrait: "assets/portraits/villager_female.png",
@@ -809,6 +881,34 @@ var Chapter1 = (function () {
           { speaker: "Worried Villager", portrait: "assets/portraits/villager_female.png", text: "I hope you're right. I really do.", end: true }
         ],
         onEnd: { flags: ["townEventRumor"] }
+      }
+    },
+    {
+      id: "elira-sighting",
+      weight: 40,
+      flag: "eliraForeshadow",
+      repeatable: false,
+      requireFlag: "completedMQ5",
+      location: "town",
+      npcName: "Hooded Stranger",
+      npcPortrait: "assets/portraits/elira.png",
+      poiPosition: "top:42%;right:20%",
+      poiSub: "Watching you",
+      dialogue: {
+        id: "town-event-elira",
+        nodes: [
+          { speaker: "", portrait: "", text: "A hooded figure stands near the edge of the square, watching you with quiet intensity. Something about her feels familiar." },
+          { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "You've been busy. The cave, the sigil, the goblins... you've stumbled into something far older than you realize." },
+          { speaker: "", portrait: "", text: "She seems to know more than she should.", choices: [
+            { text: "Who are you? How do you know about the cave?", next: 3 },
+            { text: "Are you following me?", next: 4 }
+          ]},
+          { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Someone who's been watching these events unfold longer than you'd believe. That sigil you found, it's not goblin work. It's much older." },
+          { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Let's just say our paths are intertwined, whether you know it yet or not. That sigil the goblins carry, it's a mark I've seen before." },
+          { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Be careful in those depths. The goblin chief answers to something he doesn't understand. And when you've dealt with him, find me. We have much to discuss." },
+          { speaker: "", portrait: "", text: "Before you can respond, she slips into the crowd and vanishes.", end: true }
+        ],
+        onEnd: { flags: ["eliraForeshadow"] }
       }
     }
   ];
@@ -856,6 +956,7 @@ var Chapter1 = (function () {
     for (var i = 0; i < townEvents.length; i++) {
       var ev = townEvents[i];
       if (!ev.repeatable && p.storyFlags[ev.flag]) continue;
+      if (ev.requireFlag && !p.storyFlags[ev.requireFlag]) continue;
       available.push(ev);
     }
     if (available.length === 0) return null;
@@ -878,6 +979,7 @@ var Chapter1 = (function () {
     for (var i = 0; i < townEvents.length; i++) {
       var ev = townEvents[i];
       if (!ev.repeatable && p.storyFlags[ev.flag]) continue;
+      if (ev.requireFlag && !p.storyFlags[ev.requireFlag]) continue;
       // Weighted chance: weight out of 100
       if (Math.random() * 100 < ev.weight) {
         spawned.push(ev.id);

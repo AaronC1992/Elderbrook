@@ -551,6 +551,19 @@ var World = (function () {
         return;
       }
     }
+    // Check SQ7 turn-in (Patrol Escort quest)
+    if (Quests.isActive("sq7") && Quests.checkObjectives("sq7")) {
+      var result = Quests.turnIn("sq7");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq7-complete", function () {
+          UI.showScreen("town");
+          UI.renderTown();
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
     Dialogue.start("elric-idle", function () {
       UI.showScreen("town");
       UI.renderTown();
@@ -558,6 +571,21 @@ var World = (function () {
   }
 
   function visitElira() {
+    // Check chain quests cq7, cq8
+    var ecqs = ["cq7", "cq8"];
+    for (var ei = 0; ei < ecqs.length; ei++) {
+      if (Quests.isActive(ecqs[ei]) && Quests.checkObjectives(ecqs[ei])) {
+        var eqr = Quests.turnIn(ecqs[ei]);
+        if (eqr) {
+          Audio.play("questComplete");
+          Save.autoSave();
+          Dialogue.start(ecqs[ei] + "-complete", function () {
+            showNPCMenu("elira", { background: '' });
+          });
+          return;
+        }
+      }
+    }
     showNPCMenu("elira", { background: '' });
   }
 

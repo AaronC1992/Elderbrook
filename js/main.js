@@ -170,7 +170,13 @@
         UI.updateHeader();
         break;
       case "close-overlay":
-        World.navigate(Player.get().currentArea || "elderbrook");
+        var prev = UI.getPreviousScreen();
+        if (prev) {
+          UI.showScreen(prev);
+          if (prev === "town") UI.renderTown();
+        } else {
+          World.navigate(Player.get().currentArea || "elderbrook");
+        }
         break;
 
       /* ── Battle ── */
@@ -314,7 +320,6 @@
         UI.showMessage("Sound " + (on ? "on" : "off"));
         UI.updateHeader();
         break;
-      case "toggle-sound-setting":
       case "set-sound":
         var wantSound = btn.getAttribute('data-sound');
         if (wantSound === 'on' && !Audio.isEnabled()) Audio.toggle();

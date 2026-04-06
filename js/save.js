@@ -84,6 +84,7 @@ var Save = (function () {
     if (!data.currentArea) data.currentArea = "elderbrook";
     if (!data.eventSpawns) data.eventSpawns = [];
     if (!data.bonusStats) data.bonusStats = { attack: 0, defense: 0, dexterity: 0, intelligence: 0 };
+    if (!data.trainingDone) data.trainingDone = {};
 
     // V2 new fields
     if (!data.difficulty) data.difficulty = "normal";
@@ -94,7 +95,6 @@ var Save = (function () {
     if (!data.settings) data.settings = { textSpeed: "normal", soundEnabled: true };
     if (data.totalPlayTime === undefined) data.totalPlayTime = 0;
     if (!data.townEventsSeen) data.townEventsSeen = [];
-    if (!data.bestiaryRewards) data.bestiaryRewards = [];
 
     // Migrate relationships
     if (!data.relationships) {

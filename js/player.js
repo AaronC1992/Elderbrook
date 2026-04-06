@@ -65,8 +65,7 @@ var Player = (function () {
       choiceHistory: {},            // { dialogueId: choiceIndex }
       settings: { textSpeed: "normal", soundEnabled: true },
       totalPlayTime: 0,             // seconds
-      townEventsSeen: [],           // array of event ids already triggered
-      bestiaryRewards: []           // milestone ids claimed
+      townEventsSeen: []            // array of event ids already triggered
     };
   }
 
@@ -406,11 +405,26 @@ var Player = (function () {
     Relationships.resetDaily();
   }
 
+  function getTrainingCost(statId) {
+    if (!state || !state.bonusStats) return 25;
+    var level = 0;
+    if (statId === 'charm') {
+      level = (state.charm || 1) - 1;
+    } else {
+      var key = statId === 'strength' ? 'attack' : statId;
+      level = state.bonusStats[key] || 0;
+    }
+    return 25 * Math.pow(2, level);
+  }
+
   function trainStat(statId) {
     if (!state) return null;
     if (state.trainingDone[statId]) return { success: false, message: "You've already trained " + statId + " today." };
+    var cost = getTrainingCost(statId);
+    if (state.gold < cost) return { success: false, message: "Not enough gold. You need " + cost + " gold." };
     if (!spendEnergy(2)) return { success: false, message: "Not enough energy." };
 
+    state.gold -= cost;
     state.trainingDone[statId] = true;
     var gain = 0;
     var statName = '';
@@ -490,6 +504,7 @@ var Player = (function () {
     getTimeOfDay: getTimeOfDay,
     spendEnergy: spendEnergy,
     sleep: sleep,
-    trainStat: trainStat
+    trainStat: trainStat,
+    getTrainingCost: getTrainingCost
   };
 })();

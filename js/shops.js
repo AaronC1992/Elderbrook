@@ -32,12 +32,18 @@ var Shops = (function () {
       stock: [
         "lesser-health-potion", "health-potion", "greater-health-potion", "mana-potion",
         "wildflowers", "herbal-tea", "sweet-roll", "moonstone", "old-book"
-      ]
+      ],
+      upgradedStock: [
+        "lesser-health-potion", "health-potion", "greater-health-potion", "mana-potion",
+        "antidote", "smelling-salts",
+        "wildflowers", "herbal-tea", "sweet-roll", "moonstone", "old-book"
+      ],
+      upgradeFlag: "miraLabUnlocked"
     },
     "merchant-shop": {
       id: "merchant-shop",
       name: "Traveling Merchant",
-      npc: "elira",
+      npc: "merchant",
       background: "",
       stock: [
         "enchanted-shard", "moonstone", "silver-ring", "antidote", "smelling-salts",
@@ -75,8 +81,13 @@ var Shops = (function () {
     var html = '<div class="shop-gold">Your Gold: ' + p.gold + '</div>';
     html += '<div class="shop-items">';
 
-    for (var i = 0; i < shop.stock.length; i++) {
-      var item = Items.get(shop.stock[i]);
+    var stock = shop.stock;
+    if (shop.upgradeFlag && shop.upgradedStock && Player.hasFlag(shop.upgradeFlag)) {
+      stock = shop.upgradedStock;
+    }
+
+    for (var i = 0; i < stock.length; i++) {
+      var item = Items.get(stock[i]);
       if (!item) continue;
       var canBuy = (item.price && p.gold >= item.price);
       html += '<div class="shop-item">';
@@ -125,7 +136,11 @@ var Shops = (function () {
   function buy(shopId, itemId) {
     var shop = shops[shopId];
     if (!shop) return { success: false, message: "Shop not found." };
-    if (shop.stock.indexOf(itemId) === -1) return { success: false, message: "Item not in stock." };
+    var stock = shop.stock;
+    if (shop.upgradeFlag && shop.upgradedStock && Player.hasFlag(shop.upgradeFlag)) {
+      stock = shop.upgradedStock;
+    }
+    if (stock.indexOf(itemId) === -1) return { success: false, message: "Item not in stock." };
 
     var item = Items.get(itemId);
     if (!item || !item.price) return { success: false, message: "Invalid item." };

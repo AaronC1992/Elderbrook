@@ -38,7 +38,7 @@ var Inventory = (function () {
 
     // Inventory filter
     var filterHtml = '<div class="inventory-filters">';
-    var filts = ["all", "weapon", "armor", "potion", "loot", "quest"];
+    var filts = ["all", "weapon", "armor", "potion", "loot", "quest", "gift", "crafting"];
     for (var f = 0; f < filts.length; f++) {
       filterHtml += '<button class="btn btn-small' + (currentFilter === filts[f] ? ' active' : '') + '" data-action="inv-filter" data-filter="' + filts[f] + '">' + filts[f].charAt(0).toUpperCase() + filts[f].slice(1) + '</button>';
     }
