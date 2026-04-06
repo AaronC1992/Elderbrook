@@ -14,6 +14,7 @@ var Battle = (function () {
   var bossPhaseIndex = 0;
   var bossMaxHp = 0;
   var encounterMod = null;
+  var animating = false;
 
   var encounterTexts = [
     "A {name} appears!",
@@ -117,12 +118,86 @@ var Battle = (function () {
     enemyEffects = [];
     turnCount = 0;
     bossPhaseIndex = 0;
+    animating = false;
+  }
+
+  /* ── Combat Animation Helper ── */
+
+  function playAnim(attackerClass, targetClass, duration, callback) {
+    var attackerEl = document.getElementById(attackerClass === "anim-player-melee" || attackerClass === "anim-magic-cast" || attackerClass === "anim-heal-glow" ? "battle-player" : "battle-enemy");
+    var targetEl = document.getElementById(targetClass === "anim-hit-shake" || targetClass === "anim-magic-impact" || targetClass === "anim-dodge" ? (attackerEl && attackerEl.id === "battle-player" ? "battle-enemy" : "battle-player") : null);
+
+    if (attackerEl) attackerEl.classList.add(attackerClass);
+    if (targetEl) targetEl.classList.add(targetClass);
+
+    animating = true;
+    setTimeout(function () {
+      if (attackerEl) attackerEl.classList.remove(attackerClass);
+      if (targetEl) targetEl.classList.remove(targetClass);
+      animating = false;
+      if (callback) callback();
+    }, duration);
+  }
+
+  function animateCombat(who, type, callback) {
+    // who: "player" or "enemy"
+    // type: "melee", "magic", "heal", "buff", "miss", "dodge"
+    var attackerId = (who === "player") ? "battle-player" : "battle-enemy";
+    var targetId = (who === "player") ? "battle-enemy" : "battle-player";
+    var attackerEl = document.getElementById(attackerId);
+    var targetEl = document.getElementById(targetId);
+
+    if (!attackerEl) { if (callback) callback(); return; }
+
+    animating = true;
+
+    if (type === "melee") {
+      var lungeClass = (who === "player") ? "anim-player-melee" : "anim-enemy-melee";
+      attackerEl.classList.add(lungeClass);
+      setTimeout(function () {
+        if (targetEl) targetEl.classList.add("anim-hit-shake");
+      }, 180);
+      setTimeout(function () {
+        attackerEl.classList.remove(lungeClass);
+        if (targetEl) targetEl.classList.remove("anim-hit-shake");
+        animating = false;
+        if (callback) callback();
+      }, 500);
+    } else if (type === "magic") {
+      attackerEl.classList.add("anim-magic-cast");
+      setTimeout(function () {
+        if (targetEl) targetEl.classList.add("anim-magic-impact");
+      }, 200);
+      setTimeout(function () {
+        attackerEl.classList.remove("anim-magic-cast");
+        if (targetEl) targetEl.classList.remove("anim-magic-impact");
+        animating = false;
+        if (callback) callback();
+      }, 550);
+    } else if (type === "heal" || type === "buff") {
+      attackerEl.classList.add("anim-heal-glow");
+      setTimeout(function () {
+        attackerEl.classList.remove("anim-heal-glow");
+        animating = false;
+        if (callback) callback();
+      }, 500);
+    } else if (type === "miss" || type === "dodge") {
+      if (targetEl) targetEl.classList.add("anim-dodge");
+      setTimeout(function () {
+        if (targetEl) targetEl.classList.remove("anim-dodge");
+        animating = false;
+        if (callback) callback();
+      }, 400);
+    } else {
+      animating = false;
+      if (callback) callback();
+    }
   }
 
   /* ── Player Actions ── */
 
   function playerAttack() {
-    if (!enemy) return;
+    if (!enemy || animating) return;
 
     // Stun: skip entire turn
     if (findEffect(playerEffects, "stun") !== -1) {
@@ -154,34 +229,45 @@ var Battle = (function () {
     if (Math.random() > hitChance) {
       addLog("Your attack misses!");
       Audio.play("miss");
-      enemyTurn();
+      animateCombat("player", "miss", function () {
+        enemyTurn();
+      });
       return;
     }
 
     // Dexterity-based dodge chance for enemy (reduced by player DEX)
     var dodgeChance = Math.max(0.02, 0.08 - p.dexterity * 0.005);
     if (Math.random() < dodgeChance) {
-      addLog("The " + enemy.name + " dodges your attack!");
-      Audio.play("miss");
+      animateCombat("player", "melee", function () {
+        addLog("The " + enemy.name + " dodges your attack!");
+        Audio.play("miss");
+        renderBattle();
+        checkBattleEnd() || enemyTurn();
+      });
     } else {
       // Dexterity-based crit chance
       var critChance = 0.05 + p.dexterity * 0.02;
       var dmg = baseDmg;
-      if (Math.random() < critChance) {
+      var isCrit = Math.random() < critChance;
+      if (isCrit) {
         dmg = Math.floor(baseDmg * 1.5);
-        addLog("Critical hit! You strike " + enemy.name + " for " + dmg + " damage!");
-      } else {
-        addLog("You hit " + enemy.name + " for " + dmg + " damage.");
       }
-      enemy.hp -= dmg;
-      Audio.play("swordHit");
+      animateCombat("player", "melee", function () {
+        if (isCrit) {
+          addLog("Critical hit! You strike " + enemy.name + " for " + dmg + " damage!");
+        } else {
+          addLog("You hit " + enemy.name + " for " + dmg + " damage.");
+        }
+        enemy.hp -= dmg;
+        Audio.play("swordHit");
+        renderBattle();
+        checkBattleEnd() || enemyTurn();
+      });
     }
-
-    checkBattleEnd() || enemyTurn();
   }
 
   function playerUseSkill(skillId) {
-    if (!enemy) return;
+    if (!enemy || animating) return;
     var skill = Skills.get(skillId);
     if (!skill) return;
     var p = Player.get();
@@ -219,33 +305,48 @@ var Battle = (function () {
 
     if (skill.id === "meditate") {
       var manaAmt = Math.floor(skill.manaRestore * (1 + profBonus));
-      Player.restoreMana(manaAmt);
-      addLog("You meditate and restore " + manaAmt + " MP.");
-      Audio.play("heal");
+      animateCombat("player", "heal", function () {
+        Player.restoreMana(manaAmt);
+        addLog("You meditate and restore " + manaAmt + " MP.");
+        Audio.play("heal");
+        renderBattle();
+        checkBattleEnd() || enemyTurn();
+      });
     } else if (skill.type === "heal") {
-      // First Aid scales: base healAmount + 3 per level above unlock + proficiency
       var healAmt = skill.healAmount + Math.max(0, (p.level - skill.unlockLevel)) * 3;
       healAmt = Math.floor(healAmt * (1 + profBonus));
-      Player.heal(healAmt);
-      addLog("You use " + skill.name + " and restore " + healAmt + " HP.");
-      Audio.play("heal");
+      animateCombat("player", "heal", function () {
+        Player.heal(healAmt);
+        addLog("You use " + skill.name + " and restore " + healAmt + " HP.");
+        Audio.play("heal");
+        renderBattle();
+        checkBattleEnd() || enemyTurn();
+      });
     } else if (skill.type === "buff") {
-      if (skill.buffType === "evasion") {
-        playerBuffs.push({ stat: "evasion", amount: skill.buffAmount, turns: skill.buffDuration });
-        addLog("You use " + skill.name + "! Evasion increased.");
-      } else {
-        playerBuffs.push({ stat: skill.buffType, amount: skill.buffAmount, turns: skill.buffDuration });
-        addLog("You use " + skill.name + "! " + skill.buffType + " boosted.");
-      }
-      Audio.play("heal");
+      animateCombat("player", "buff", function () {
+        if (skill.buffType === "evasion") {
+          playerBuffs.push({ stat: "evasion", amount: skill.buffAmount, turns: skill.buffDuration });
+          addLog("You use " + skill.name + "! Evasion increased.");
+        } else {
+          playerBuffs.push({ stat: skill.buffType, amount: skill.buffAmount, turns: skill.buffDuration });
+          addLog("You use " + skill.name + "! " + skill.buffType + " boosted.");
+        }
+        Audio.play("heal");
+        renderBattle();
+        checkBattleEnd() || enemyTurn();
+      });
     } else if (skill.type === "attack" || skill.type === "magic") {
       // Accuracy check for offensive skills
       var skillHitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
-      if (skill.intScaling) skillHitChance = Math.min(0.98, 0.80 + p.intelligence * 0.02); // magic is slightly more accurate
+      if (skill.intScaling) skillHitChance = Math.min(0.98, 0.80 + p.intelligence * 0.02);
       if (Math.random() > skillHitChance) {
         addLog("Your " + skill.name + " misses!");
         Audio.play("miss");
-        checkBattleEnd() || enemyTurn();
+        var missType = skill.type === "magic" ? "miss" : "miss";
+        animateCombat("player", "miss", function () {
+          renderBattle();
+          checkBattleEnd() || enemyTurn();
+        });
         return;
       }
 
@@ -262,30 +363,35 @@ var Battle = (function () {
         totalDmg += dmg;
       }
 
-      enemy.hp -= totalDmg;
-      addLog("You use " + skill.name + " dealing " + totalDmg + " damage!");
-      Audio.play(skill.type === "magic" ? "magicCast" : "swordHit");
+      var animType = skill.type === "magic" ? "magic" : "melee";
+      animateCombat("player", animType, function () {
+        enemy.hp -= totalDmg;
+        addLog("You use " + skill.name + " dealing " + totalDmg + " damage!");
+        Audio.play(skill.type === "magic" ? "magicCast" : "swordHit");
 
-      // Apply effect
-      if (skill.appliesEffect) {
-        var eff = skill.appliesEffect;
-        if (eff.type === "stun" && Math.random() < (eff.chance || 1)) {
-          enemyEffects.push({ type: "stun", turns: eff.turns });
-          addLog(enemy.name + " is stunned!");
-          Audio.play("statusStun");
-        } else if (eff.type === "poison") {
-          enemyEffects.push({ type: "poison", damage: eff.damage, turns: eff.turns });
-          addLog(enemy.name + " is poisoned!");
-          Audio.play("statusPoison");
+        // Apply effect
+        if (skill.appliesEffect) {
+          var eff = skill.appliesEffect;
+          if (eff.type === "stun" && Math.random() < (eff.chance || 1)) {
+            enemyEffects.push({ type: "stun", turns: eff.turns });
+            addLog(enemy.name + " is stunned!");
+            Audio.play("statusStun");
+          } else if (eff.type === "poison") {
+            enemyEffects.push({ type: "poison", damage: eff.damage, turns: eff.turns });
+            addLog(enemy.name + " is poisoned!");
+            Audio.play("statusPoison");
+          }
         }
-      }
+        renderBattle();
+        checkBattleEnd() || enemyTurn();
+      });
+    } else {
+      checkBattleEnd() || enemyTurn();
     }
-
-    checkBattleEnd() || enemyTurn();
   }
 
   function playerUsePotion(itemId) {
-    if (!enemy) return;
+    if (!enemy || animating) return;
     var item = Items.get(itemId);
     if (!item || item.type !== "potion") return;
     if (!Player.hasItem(itemId)) { addLog("You don't have that!"); return; }
@@ -313,6 +419,7 @@ var Battle = (function () {
   }
 
   function playerRun() {
+    if (animating) return;
     if (isBossFight) {
       addLog("You can't run from a boss fight!");
       return;
@@ -353,49 +460,6 @@ var Battle = (function () {
       return;
     }
 
-    // Check for special ability
-    var usedAbility = false;
-    // Enemy accuracy: based on attack stat. Base 70%, +3% per attack point, capped 95%
-    var enemyHitChance = Math.min(0.95, 0.70 + enemy.attack * 0.03);
-    if (enemy.abilities && enemy.abilities.length > 0) {
-      for (var a = 0; a < enemy.abilities.length; a++) {
-        var ab = enemy.abilities[a];
-        if (Math.random() < ab.chance) {
-          if (ab.multiplier) {
-            // Enemy accuracy check for ability attacks
-            if (Math.random() > enemyHitChance) {
-              addLog(enemy.name + "'s " + ab.name + " misses!");
-              Audio.play("miss");
-            } else {
-              var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
-              var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
-              var dmg = Math.max(1, Math.floor((atk - def) * ab.multiplier) + Math.floor(Math.random() * 2));
-
-              // Check evasion
-              var evasion = getBuffTotal(playerBuffs, "evasion");
-              if (evasion > 0 && Math.random() * 100 < evasion) {
-                addLog("You dodge " + enemy.name + "'s " + ab.name + "!");
-                Audio.play("miss");
-              } else {
-                Player.takeDamage(dmg);
-                addLog(enemy.name + " uses " + ab.name + " for " + dmg + " damage!");
-                Audio.play("enemyHit");
-              }
-            }
-          }
-          if (ab.buff) {
-            enemyBuffs.push({ stat: ab.buff.stat, amount: ab.buff.amount, turns: ab.buff.turns });
-            addLog(enemy.name + " uses " + ab.name + "!");
-          }
-          if (ab.effect) {
-            applyEnemyEffect(ab.effect, enemy.name);
-          }
-          usedAbility = true;
-          break;
-        }
-      }
-    }
-
     // Boss phase check (#2)
     if (enemy.phases && enemy.phases.length > bossPhaseIndex) {
       var hpRatio = enemy.hp / bossMaxHp;
@@ -414,38 +478,119 @@ var Battle = (function () {
       }
     }
 
-    if (!usedAbility) {
-      // Normal attack — enemy accuracy check
-      if (Math.random() > enemyHitChance) {
-        addLog(enemy.name + "'s attack misses!");
-        Audio.play("miss");
-      } else {
-        var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
-        var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
-        var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 2));
+    // Pre-determine enemy action outcome
+    var enemyHitChance = Math.min(0.95, 0.70 + enemy.attack * 0.03);
+    var action = determineEnemyAction(enemyHitChance);
 
-        // Dexterity gives passive dodge chance + Quick Dodge buff
-        var evasion = getBuffTotal(playerBuffs, "evasion");
-        var dexDodge = Player.get().dexterity * 1.5;
-        var totalDodge = evasion + dexDodge;
-        if (totalDodge > 0 && Math.random() * 100 < totalDodge) {
-          addLog("You dodge " + enemy.name + "'s attack!");
-          Audio.play("miss");
-        } else {
-          Player.takeDamage(dmg);
-          addLog(enemy.name + " attacks for " + dmg + " damage.");
-          Audio.play("enemyHit");
+    // Pick animation type based on action
+    var animType = "melee";
+    if (action.type === "miss") animType = "melee";
+    else if (action.type === "dodge") animType = "melee";
+    else if (action.type === "buff-only") animType = "buff";
+    else if (action.type === "effect-only") animType = "magic";
+    else animType = "melee";
+
+    // Small delay so player sees the turn transition
+    setTimeout(function () {
+      animateCombat("enemy", animType, function () {
+        applyEnemyAction(action);
+        tickPlayerEffects();
+        tickBuffs(playerBuffs);
+        tickBuffs(enemyBuffs);
+        renderBattle();
+        checkBattleEnd();
+      });
+    }, 300);
+  }
+
+  function determineEnemyAction(enemyHitChance) {
+    // Check for special ability first
+    if (enemy.abilities && enemy.abilities.length > 0) {
+      for (var a = 0; a < enemy.abilities.length; a++) {
+        var ab = enemy.abilities[a];
+        if (Math.random() < ab.chance) {
+          var result = { type: "ability", ability: ab, damage: 0, missed: false, dodged: false, buff: null, effect: null };
+
+          if (ab.multiplier) {
+            if (Math.random() > enemyHitChance) {
+              result.missed = true;
+            } else {
+              var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
+              var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
+              var dmg = Math.max(1, Math.floor((atk - def) * ab.multiplier) + Math.floor(Math.random() * 2));
+              var evasion = getBuffTotal(playerBuffs, "evasion");
+              if (evasion > 0 && Math.random() * 100 < evasion) {
+                result.dodged = true;
+              } else {
+                result.damage = dmg;
+              }
+            }
+          }
+          if (ab.buff) result.buff = ab.buff;
+          if (ab.effect) result.effect = ab.effect;
+
+          // Determine animation type
+          if (!ab.multiplier && ab.buff && !ab.effect) result.type = "buff-only";
+          else if (!ab.multiplier && ab.effect) result.type = "effect-only";
+
+          return result;
         }
       }
     }
 
-    // Tick player effects (poison etc)
-    tickPlayerEffects();
-    tickBuffs(playerBuffs);
-    tickBuffs(enemyBuffs);
+    // Normal attack
+    if (Math.random() > enemyHitChance) {
+      return { type: "miss" };
+    }
 
-    checkBattleEnd();
-    renderBattle();
+    var atk = enemy.attack + getBuffTotal(enemyBuffs, "attack");
+    var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
+    var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 2));
+
+    var evasion = getBuffTotal(playerBuffs, "evasion");
+    var dexDodge = Player.get().dexterity * 1.5;
+    var totalDodge = evasion + dexDodge;
+    if (totalDodge > 0 && Math.random() * 100 < totalDodge) {
+      return { type: "dodge" };
+    }
+
+    return { type: "hit", damage: dmg };
+  }
+
+  function applyEnemyAction(action) {
+    if (action.type === "miss") {
+      addLog(enemy.name + "'s attack misses!");
+      Audio.play("miss");
+    } else if (action.type === "dodge") {
+      addLog("You dodge " + enemy.name + "'s attack!");
+      Audio.play("miss");
+    } else if (action.type === "hit") {
+      Player.takeDamage(action.damage);
+      addLog(enemy.name + " attacks for " + action.damage + " damage.");
+      Audio.play("enemyHit");
+    } else if (action.type === "ability" || action.type === "buff-only" || action.type === "effect-only") {
+      var ab = action.ability;
+      if (ab.multiplier) {
+        if (action.missed) {
+          addLog(enemy.name + "'s " + ab.name + " misses!");
+          Audio.play("miss");
+        } else if (action.dodged) {
+          addLog("You dodge " + enemy.name + "'s " + ab.name + "!");
+          Audio.play("miss");
+        } else if (action.damage > 0) {
+          Player.takeDamage(action.damage);
+          addLog(enemy.name + " uses " + ab.name + " for " + action.damage + " damage!");
+          Audio.play("enemyHit");
+        }
+      }
+      if (action.buff) {
+        enemyBuffs.push({ stat: action.buff.stat, amount: action.buff.amount, turns: action.buff.turns });
+        addLog(enemy.name + " uses " + ab.name + "!");
+      }
+      if (action.effect) {
+        applyEnemyEffect(action.effect, enemy.name);
+      }
+    }
   }
 
   /* ── Status Effect Helpers ── */
@@ -607,8 +752,8 @@ var Battle = (function () {
     var html = '';
 
     // Enemy info
-    html += '<div class="battle-enemy">';
-    html += '<img class="battle-portrait" src="' + (enemy.portrait || '') + '" alt="' + enemy.name + '" onerror="this.style.display=\'none\'">';
+    html += '<div class="battle-enemy" id="battle-enemy">';
+    html += '<img class="battle-portrait" id="enemy-portrait" src="' + (enemy.portrait || '') + '" alt="' + enemy.name + '" onerror="this.style.display=\'none\'">';
     html += '<div class="battle-enemy-info">';
     html += '<div class="battle-name">' + enemy.name + (enemy.isBoss ? ' (BOSS)' : '') + '</div>';
     html += '<div class="battle-hp-bar"><div class="hp-fill enemy-hp" style="width:' + Math.max(0, (enemy.hp / bossMaxHp) * 100) + '%"></div></div>';
@@ -624,7 +769,7 @@ var Battle = (function () {
     html += '</div></div>';
 
     // Player info in battle
-    html += '<div class="battle-player">';
+    html += '<div class="battle-player" id="battle-player">';
     html += '<div class="battle-player-info">';
     html += '<div class="battle-name">' + p.name + ' (Lv.' + p.level + ')</div>';
     html += '<div class="battle-hp-bar"><div class="hp-fill player-hp" style="width:' + (p.hp / p.maxHp * 100) + '%"></div></div>';
