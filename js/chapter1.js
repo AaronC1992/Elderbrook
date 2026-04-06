@@ -62,7 +62,7 @@ var Chapter1 = (function () {
       id: "forest-road", name: "Forest Road",
       description: "A winding path through the woods. Goblins and wolves lurk here.",
       background: "assets/backgrounds/forest-road.png",
-      enemies: ["wolf", "goblin-scout", "goblin-sneak"],
+      enemies: ["wolf", "goblin-scout", "goblin-sneak", "bandit"],
       recommendedLevel: "Lv. 1-3",
       requireFlag: "unlockedForestRoad"
     },
@@ -70,7 +70,7 @@ var Chapter1 = (function () {
       id: "goblin-trail", name: "Goblin Trail",
       description: "A rougher path leading toward the goblin caves. Stronger enemies patrol here.",
       background: "assets/backgrounds/GoblinTrail.png",
-      enemies: ["goblin-raider", "goblin-archer", "wolf-pack"],
+      enemies: ["goblin-raider", "goblin-archer", "wolf-pack", "bandit"],
       recommendedLevel: "Lv. 3-5",
       requireFlag: "unlockedGoblinTrail"
     },
@@ -86,7 +86,7 @@ var Chapter1 = (function () {
       id: "watch-post", name: "Abandoned Watch Post",
       description: "An old guard outpost, overrun and left to ruin.",
       background: "assets/backgrounds/watch-post.png",
-      enemies: ["goblin-raider", "goblin-guard", "goblin-sneak"],
+      enemies: ["goblin-raider", "goblin-guard", "goblin-sneak", "bandit"],
       recommendedLevel: "Lv. 3-5",
       requireFlag: "unlockedWatchPost"
     },

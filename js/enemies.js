@@ -132,6 +132,23 @@ var Enemies = (function () {
       ]
     },
 
+    /* ── Bandits ── */
+    "bandit": {
+      id: "bandit", name: "Bandit", portrait: "assets/portraits/bandit_enemy.png",
+      hp: 24, attack: 6, defense: 2, xp: 16, gold: [5, 10],
+      loot: [
+        { id: "torn-cloth", chance: 0.35 },
+        { id: "rusted-scrap", chance: 0.25 },
+        { id: "health-potion", chance: 0.10 },
+        { id: "iron-ore", chance: 0.08 },
+        { id: "stolen-supply-crate", chance: 0.12 }
+      ],
+      abilities: [
+        { name: "Ambush Strike", chance: 0.25, multiplier: 1.4 },
+        { name: "Dirty Trick", chance: 0.15, effect: { type: "weakness", damage: 0, turns: 2 } }
+      ]
+    },
+
     /* ── Winter Enemies ── */
     "snow-wolf": {
       id: "snow-wolf", name: "Snow Wolf", portrait: "assets/portraits/Frostbitten fury of the snow wolf.png",
@@ -157,6 +174,21 @@ var Enemies = (function () {
       abilities: [
         { name: "Frozen Strike", chance: 0.20, multiplier: 1.3, effect: { type: "stun", damage: 0, turns: 1 } },
         { name: "Ice Shard", chance: 0.15, effect: { type: "bleed", damage: 2, turns: 2 } }
+      ]
+    },
+    "snow-bandit": {
+      id: "snow-bandit", name: "Frostbitten Bandit", portrait: "assets/portraits/Frostbitten bandit in a frigid stance.png",
+      hp: 26, attack: 7, defense: 3, xp: 18, gold: [6, 12],
+      loot: [
+        { id: "torn-cloth", chance: 0.35 },
+        { id: "rusted-scrap", chance: 0.25 },
+        { id: "health-potion", chance: 0.12 },
+        { id: "iron-ore", chance: 0.10 },
+        { id: "stolen-supply-crate", chance: 0.15 }
+      ],
+      abilities: [
+        { name: "Frostbite Slash", chance: 0.25, multiplier: 1.4, effect: { type: "weakness", damage: 0, turns: 2 } },
+        { name: "Blinding Snow", chance: 0.15, effect: { type: "stun", damage: 0, turns: 1 } }
       ]
     },
 
@@ -197,7 +229,8 @@ var Enemies = (function () {
     "wolf": "snow-wolf",
     "wolf-pack": "snow-wolf",
     "goblin-scout": "frost-goblin",
-    "goblin-sneak": "frost-goblin"
+    "goblin-sneak": "frost-goblin",
+    "bandit": "snow-bandit"
   };
 
   function getRandomForArea(areaId) {
