@@ -31,6 +31,10 @@ var Battle = (function () {
     var e = Enemies.getRandomForArea(areaId);
     if (!e) return false;
 
+    // Apply encounter modifier (#15) before difficulty scaling
+    encounterMod = Enemies.rollEncounterModifier();
+    e = encounterMod.modify(e);
+
     // Apply difficulty scaling
     var diff = Player.getDifficultyMultiplier();
     e.hp = Math.floor(e.hp * diff);
@@ -42,10 +46,6 @@ var Battle = (function () {
       e.hp = Math.floor(e.hp * 0.8);
       e.attack = Math.max(1, e.attack - 1);
     }
-
-    // Apply encounter modifier (#15)
-    encounterMod = Enemies.rollEncounterModifier();
-    e = encounterMod.modify(e);
 
     enemy = e;
     bossMaxHp = e.hp;
@@ -122,22 +122,6 @@ var Battle = (function () {
   }
 
   /* ── Combat Animation Helper ── */
-
-  function playAnim(attackerClass, targetClass, duration, callback) {
-    var attackerEl = document.getElementById(attackerClass === "anim-player-melee" || attackerClass === "anim-magic-cast" || attackerClass === "anim-heal-glow" ? "battle-player" : "battle-enemy");
-    var targetEl = document.getElementById(targetClass === "anim-hit-shake" || targetClass === "anim-magic-impact" || targetClass === "anim-dodge" ? (attackerEl && attackerEl.id === "battle-player" ? "battle-enemy" : "battle-player") : null);
-
-    if (attackerEl) attackerEl.classList.add(attackerClass);
-    if (targetEl) targetEl.classList.add(targetClass);
-
-    animating = true;
-    setTimeout(function () {
-      if (attackerEl) attackerEl.classList.remove(attackerClass);
-      if (targetEl) targetEl.classList.remove(targetClass);
-      animating = false;
-      if (callback) callback();
-    }, duration);
-  }
 
   function animateCombat(who, type, callback) {
     // who: "player" or "enemy"
@@ -415,6 +399,7 @@ var Battle = (function () {
       addLog("You use " + item.name + " and cleanse all negative effects!");
     }
     Audio.play("potionDrink");
+    renderBattle();
     enemyTurn();
   }
 
@@ -436,6 +421,7 @@ var Battle = (function () {
     } else {
       addLog("Failed to escape!");
       Audio.play("miss");
+      renderBattle();
       enemyTurn();
     }
   }

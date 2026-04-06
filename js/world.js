@@ -192,7 +192,13 @@ var World = (function () {
         }
       }
     } else if (roll < 0.90) {
-      explore(areaId);
+      // Start combat directly — energy was already spent on the gather action
+      Battle.start(areaId, function () {
+        var loc2 = Chapter1.getLocation(areaId);
+        if (loc2 && loc2.isGathering) enterGatheringArea(areaId, loc2);
+        else if (loc2) enterCombatArea(areaId, loc2);
+        UI.showScreen("area");
+      });
       return;
     } else {
       UI.showMessage(nothingTexts[Math.floor(Math.random() * nothingTexts.length)]);
@@ -497,10 +503,10 @@ var World = (function () {
         return;
       }
     }
-    if (Quests.isActive("mq8")) {
-      Player.setFlag("chapter1Complete");
+    if (Quests.isActive("mq8") && Quests.checkObjectives("mq8")) {
       var result = Quests.turnIn("mq8");
       if (result) {
+        Player.setFlag("chapter1Complete");
         Audio.play("questComplete");
         Dialogue.start("chapter1-ending", function () {
           UI.renderChapterEnd();
@@ -651,10 +657,15 @@ var World = (function () {
         return;
       }
     }
-    Dialogue.start("elric-idle", function () {
-      UI.showScreen("town");
-      UI.renderTown();
-    });
+    // Default: show NPC menu (same as other NPCs) for relationship interactions
+    var elricMenuOptions = { background: "assets/backgrounds/watch-post.png" };
+    if (!Player.hasFlag("visitedElric")) {
+      Dialogue.start("elric-idle", function () {
+        showNPCMenu("elric", elricMenuOptions);
+      });
+      return;
+    }
+    showNPCMenu("elric", elricMenuOptions);
   }
 
   function visitElira() {

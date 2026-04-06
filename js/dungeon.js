@@ -294,7 +294,6 @@ var Dungeon = (function () {
           if (sl.requireQuest && !Quests.isActive(sl.requireQuest)) continue;
           if (Math.random() < sl.chance) {
             Player.addItem(sl.id);
-            var it = Items.get(sl.id);
           }
         }
       }
