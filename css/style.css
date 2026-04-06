@@ -409,7 +409,7 @@ button {
 #screen-title.active {
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at center, #1a1f2e 0%, #0e1117 70%);
+  background: url('../assets/backgrounds/ElderBrook%20village%20under%20the%20midday%20sun.png') center/cover no-repeat, radial-gradient(ellipse at center, #1a1f2e 0%, #0e1117 70%);
 }
 
 /* ── Create ── */
@@ -899,7 +899,57 @@ button {
 .training-icon { font-size: 1.1rem; color: var(--accent); margin-bottom: 0.3rem; font-weight: bold; }
 .training-current { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.5rem; }
 
-/* ── Social Hub ── */
+/* ── NPC Interaction Menu ── */
+.npc-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+.npc-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-panel-alt);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 0.8rem 1.2rem;
+  width: 100%;
+  max-width: 360px;
+}
+.npc-menu-portrait {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-dark);
+}
+.npc-menu-info {
+  flex: 1;
+  min-width: 0;
+}
+.npc-menu-name {
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem 0;
+}
+.npc-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 360px;
+}
+.npc-menu-actions .btn {
+  width: 100%;
+  text-align: center;
+}
+
+/* ── Social Hub (kept for backwards compat) ── */
 .social-grid {
   display: flex;
   flex-direction: column;

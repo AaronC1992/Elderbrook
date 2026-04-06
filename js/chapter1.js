@@ -769,19 +769,19 @@ var Chapter1 = (function () {
       repeatable: false,
       location: "town",
       npcName: "Wandering Bard",
-      npcPortrait: "assets/portraits/bard_placeholder.png",
+      npcPortrait: "assets/portraits/Bard.png",
       poiPosition: "top:60%;left:35%",
       poiSub: "A song for the hero",
       dialogue: {
         id: "town-event-bard",
         nodes: [
-          { speaker: "Wandering Bard", portrait: "assets/portraits/bard_placeholder.png", text: "A hero walks among us! Let me sing of your deeds! The ballad of the goblin slayer!" },
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "A hero walks among us! Let me sing of your deeds! The ballad of the goblin slayer!" },
           { speaker: "", portrait: "", text: "A bard has heard of your adventures and composed a song.", choices: [
             { text: "Listen to the song.", next: 2 },
             { text: "Maybe later.", next: 3 }
           ]},
-          { speaker: "Wandering Bard", portrait: "assets/portraits/bard_placeholder.png", text: "...and steel met fang, in the hollow dark! The hero stood where none would dare! A magnificent tale! Your reputation precedes you, friend.", end: true },
-          { speaker: "Wandering Bard", portrait: "assets/portraits/bard_placeholder.png", text: "A humble performer respects your time. Perhaps our paths will cross again.", end: true }
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "...and steel met fang, in the hollow dark! The hero stood where none would dare! A magnificent tale! Your reputation precedes you, friend.", end: true },
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "A humble performer respects your time. Perhaps our paths will cross again.", end: true }
         ],
         onEnd: { flags: ["townEventBard"] }
       }

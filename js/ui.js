@@ -343,7 +343,7 @@ var UI = (function () {
     if (Player.hasFlag('metElira')) {
       html += '<button class="town-poi" style="top:30%;right:22%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
     }
-    html += '<button class="town-poi" style="top:52%;left:38%" data-action="go-social"><span class="poi-name">Town Square</span><span class="poi-sub">Socialize</span></button>';
+
     if (Player.hasFlag('bramForgeUnlocked')) {
       html += '<button class="town-poi" style="top:52%;left:20%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
     }
@@ -415,60 +415,84 @@ var UI = (function () {
     container.innerHTML = html;
   }
 
-  /* ── Social Hub (Town Square) ── */
-  function renderSocial() {
+  /* ── NPC Interaction Menu ── */
+  function renderNPCMenu(npcId, options) {
     var container = document.getElementById("social-content");
     if (!container) return;
+
+    var cfg = Relationships.getConfig(npcId);
     var p = Player.get();
-    if (!p || !p.relationships) return;
+    var rel = p && p.relationships ? p.relationships[npcId] : null;
 
-    var npcs = Relationships.getDateableNPCs();
-    var html = '<h2>Town Square</h2>';
-    html += '<p class="flavor">The heart of Elderbrook. Townsfolk gather here between their duties.</p>';
-    html += '<div class="social-grid">';
+    // Set background on the social screen to match the location
+    var screen = document.getElementById("screen-social");
+    if (screen) {
+      screen.style.backgroundImage = options.background ? "url('" + options.background + "')" : "";
+    }
 
-    for (var i = 0; i < npcs.length; i++) {
-      var npcId = npcs[i];
-      var cfg = Relationships.getConfig(npcId);
-      var rel = p.relationships[npcId];
-      if (!cfg || !rel) continue;
+    var html = '<div class="npc-menu">';
 
-      var levelName = Relationships.getLevelName(rel.affinity);
-      var pct = Math.min(100, Math.floor((rel.affinity / Relationships.MAX_AFFINITY) * 100));
+    // NPC portrait and info
+    if (cfg) {
+      var levelName = Relationships.getLevelName(rel ? rel.affinity : 0);
+      var pct = rel ? Math.min(100, Math.floor((rel.affinity / Relationships.MAX_AFFINITY) * 100)) : 0;
+      var isPartner = rel && rel.affinity >= 75 && Player.hasFlag(npcId + "Romantic");
 
-      html += '<div class="social-card">';
-      html += '<img class="social-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
-      html += '<div class="social-info">';
-      html += '<div class="social-name">' + cfg.name + '</div>';
+      html += '<div class="npc-menu-header">';
+      html += '<img class="npc-menu-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
+      html += '<div class="npc-menu-info">';
+      html += '<h2 class="npc-menu-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</h2>';
       html += '<div class="rel-level">' + levelName + '</div>';
       html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
-      html += '</div>';
-      html += '<div class="social-actions">';
-
-      if (Relationships.canChat(npcId)) {
-        html += '<button class="btn btn-small" data-action="social-chat" data-npc="' + npcId + '">Chat</button>';
-      } else {
-        html += '<button class="btn btn-small" disabled>Chatted</button>';
-      }
-
-      if (Relationships.canGift(npcId)) {
-        html += '<button class="btn btn-small" data-action="social-gift" data-npc="' + npcId + '">Give Gift</button>';
-      } else {
-        html += '<button class="btn btn-small" disabled>Gifted</button>';
-      }
-
-      if (Relationships.canDate(npcId)) {
-        html += '<button class="btn btn-small btn-date" data-action="social-date" data-npc="' + npcId + '">Date</button>';
-      } else if (rel.affinity >= 55 && rel.dated) {
-        html += '<button class="btn btn-small" disabled>Dated</button>';
-      }
-
+      html += '<div class="rel-affinity">' + (rel ? rel.affinity : 0) + ' / ' + Relationships.MAX_AFFINITY + '</div>';
       html += '</div></div>';
     }
 
-    html += '</div>';
-    html += '<p class="flavor" style="margin-top:0.8rem;">Rest at the inn to reset daily social actions.</p>';
+    html += '<div class="npc-menu-actions">';
+
+    // Shop button
+    if (options.shopId) {
+      html += '<button class="btn" data-action="npc-shop" data-shop="' + options.shopId + '">Shop</button>';
+    }
+
+    // Quest Board button
+    if (options.questBoard) {
+      html += '<button class="btn" data-action="npc-questboard">Quest Board</button>';
+    }
+
+    // Chat
+    if (cfg && rel) {
+      if (Relationships.canChat(npcId)) {
+        html += '<button class="btn" data-action="npc-chat" data-npc="' + npcId + '">Chat</button>';
+      } else {
+        html += '<button class="btn" disabled>Chatted Today</button>';
+      }
+    }
+
+    // Gift
+    if (cfg && rel) {
+      if (Relationships.canGift(npcId)) {
+        html += '<button class="btn" data-action="npc-gift" data-npc="' + npcId + '">Give Gift</button>';
+      } else {
+        html += '<button class="btn" disabled>Gifted Today</button>';
+      }
+    }
+
+    // Date
+    if (cfg && rel) {
+      if (Relationships.canDate(npcId)) {
+        html += '<button class="btn btn-date" data-action="npc-date" data-npc="' + npcId + '">Date</button>';
+      } else if (rel.affinity >= 55 && rel.dated) {
+        html += '<button class="btn" disabled>Dated Today</button>';
+      }
+    }
+
     html += '<button class="btn" data-action="go-town">Back to Town</button>';
+    html += '</div>';
+
+    // Daily reset hint
+    html += '<p class="flavor" style="margin-top:0.8rem;text-align:center;">Rest at the inn to reset daily social actions.</p>';
+    html += '</div>';
     container.innerHTML = html;
   }
 
@@ -496,13 +520,13 @@ var UI = (function () {
         html += '<div class="gift-item">';
         html += '<div class="gift-item-name">' + g.item.name + ' (x' + g.count + ')</div>';
         html += '<div class="gift-item-desc">' + g.item.description + '</div>';
-        html += '<button class="btn btn-small" data-action="give-gift-confirm" data-npc="' + npcId + '" data-item="' + g.item.id + '">Give</button>';
+        html += '<button class="btn btn-small" data-action="npc-give-gift" data-npc="' + npcId + '" data-item="' + g.item.id + '">Give</button>';
         html += '</div>';
       }
       html += '</div>';
     }
 
-    html += '<button class="btn btn-back" data-action="go-social" style="margin-top:1rem;">Back</button>';
+    html += '<button class="btn btn-back" data-action="npc-back" style="margin-top:1rem;">Back</button>';
     container.innerHTML = html;
   }
 
@@ -817,7 +841,7 @@ var UI = (function () {
     renderTown: renderTown,
     renderChapterEnd: renderChapterEnd,
     renderRelationships: renderRelationships,
-    renderSocial: renderSocial,
+    renderNPCMenu: renderNPCMenu,
     renderGiftSelect: renderGiftSelect,
     renderSettings: renderSettings,
     renderAchievements: renderAchievements,

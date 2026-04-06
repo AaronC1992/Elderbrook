@@ -1,10 +1,31 @@
 /* world.js - Navigation, area encounters, town interactions */
 var World = (function () {
 
+  var currentNPCContext = null; // { npcId, shopId, questBoard, background }
+
+  function showNPCMenu(npcId, options) {
+    currentNPCContext = { npcId: npcId, shopId: options.shopId || null, questBoard: options.questBoard || false, background: options.background || '' };
+    UI.renderNPCMenu(npcId, options);
+    UI.showScreen("social");
+  }
+
+  function getNPCContext() { return currentNPCContext; }
+
+  function returnToNPCMenu() {
+    if (currentNPCContext) {
+      showNPCMenu(currentNPCContext.npcId, currentNPCContext);
+    } else {
+      navigate("elderbrook");
+    }
+  }
+
   function navigate(locationId) {
     var p = Player.get();
     if (!p) return;
     p.currentArea = locationId;
+
+    // Clear NPC context when navigating away
+    currentNPCContext = null;
 
     if (locationId === "elderbrook") {
       // Show first-time arrival dialogue
@@ -202,13 +223,18 @@ var World = (function () {
   /* NPC interaction routing for town POIs */
   function visitShop(shopId) {
     var shop = Shops.getShop(shopId);
+    if (!shop) return;
 
-    // Set shop background for any dialogue that fires before the shop opens
-    if (shop && shop.background) {
+    var npcId = shop.npc; // "bram", "harlan", "mira"
+    var background = shop.background || '';
+    var menuOptions = { shopId: shopId, background: background };
+
+    // Set shop background for any dialogue that fires
+    if (shop.background) {
       UI.setDialogueBackground(shop.background);
     }
 
-    // Check for chain quest turn-ins
+    // Check for chain quest turn-ins (fire automatically on arrival)
     if (shop) {
       if (shop.npc === "bram") {
         var cqs = ["cq1", "cq2"];
@@ -219,7 +245,7 @@ var World = (function () {
               Audio.play("questComplete");
               Save.autoSave();
               Dialogue.start(cqs[ci] + "-complete", function () {
-                openShop(shopId);
+                showNPCMenu(npcId, menuOptions);
               });
               return;
             }
@@ -235,7 +261,7 @@ var World = (function () {
               Audio.play("questComplete");
               Save.autoSave();
               Dialogue.start(mcqs[mi] + "-complete", function () {
-                openShop(shopId);
+                showNPCMenu(npcId, menuOptions);
               });
               return;
             }
@@ -244,7 +270,7 @@ var World = (function () {
       }
     }
 
-    // Check for side quest turn-ins before shopping
+    // Check for side quest turn-ins
     if (shop) {
       // Bram (weapon-shop) - SQ6
       if (shop.npc === "bram" && Quests.isActive("sq6") && Quests.checkObjectives("sq6")) {
@@ -252,7 +278,7 @@ var World = (function () {
         if (result) {
           Audio.play("questComplete");
           Dialogue.start("sq6-complete", function () {
-            openShop(shopId);
+            showNPCMenu(npcId, menuOptions);
             UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
           });
           return;
@@ -264,7 +290,7 @@ var World = (function () {
         if (result) {
           Audio.play("questComplete");
           Dialogue.start("sq3-complete", function () {
-            openShop(shopId);
+            showNPCMenu(npcId, menuOptions);
             UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
           });
           return;
@@ -277,7 +303,7 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq1-complete", function () {
-              openShop(shopId);
+              showNPCMenu(npcId, menuOptions);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
             return;
@@ -288,7 +314,7 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq2-complete", function () {
-              openShop(shopId);
+              showNPCMenu(npcId, menuOptions);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
             return;
@@ -296,29 +322,42 @@ var World = (function () {
         }
       }
 
-      // First visit dialogues
+      // First visit dialogues → then NPC menu
       if (shop.npc === "bram" && !Player.hasFlag("visitedBram")) {
         Dialogue.start("bram-first", function () {
-          openShop(shopId);
+          showNPCMenu(npcId, menuOptions);
         });
         return;
       }
       if (shop.npc === "harlan" && !Player.hasFlag("visitedHarlan")) {
         Dialogue.start("harlan-first", function () {
-          openShop(shopId);
+          showNPCMenu(npcId, menuOptions);
         });
         return;
       }
       if (shop.npc === "mira" && !Player.hasFlag("visitedMira")) {
         Dialogue.start("mira-first", function () {
-          openShop(shopId);
+          showNPCMenu(npcId, menuOptions);
         });
         return;
       }
     }
-    // Idle lines on revisit
-    var idleKey = shop ? shop.npc + "-idle" : null;
-    if (idleKey && Chapter1.getDialogue(idleKey)) {
+
+    // Default: show NPC menu
+    showNPCMenu(npcId, menuOptions);
+  }
+
+  /* Opens shop with optional idle dialogue (called from NPC menu "Shop" button) */
+  function npcOpenShop(shopId) {
+    var shop = Shops.getShop(shopId);
+    if (!shop) return;
+
+    if (shop.background) {
+      UI.setDialogueBackground(shop.background);
+    }
+
+    var idleKey = shop.npc + "-idle";
+    if (Chapter1.getDialogue(idleKey)) {
       Dialogue.start(idleKey, function () {
         openShop(shopId);
       });
@@ -446,14 +485,15 @@ var World = (function () {
     // Set questboard background for dialogue
     UI.setDialogueBackground("assets/backgrounds/main-town-questboard.png");
 
+    var menuOptions = { questBoard: true, background: "assets/backgrounds/main-town-questboard.png" };
+
     // Check SQ4 turn-in (Toma's bounty quest)
     if (Quests.isActive("sq4") && Quests.checkObjectives("sq4")) {
       var result = Quests.turnIn("sq4");
       if (result) {
         Audio.play("questComplete");
         Dialogue.start("sq4-complete", function () {
-          UI.renderQuestBoard();
-          UI.showScreen("questboard");
+          showNPCMenu("toma", menuOptions);
           UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
         });
         return;
@@ -461,11 +501,17 @@ var World = (function () {
     }
     if (!Player.hasFlag("visitedQuestBoard")) {
       Dialogue.start("toma-first", function () {
-        UI.renderQuestBoard();
-        UI.showScreen("questboard");
+        showNPCMenu("toma", menuOptions);
       });
       return;
     }
+    // Default: show NPC menu
+    showNPCMenu("toma", menuOptions);
+  }
+
+  /* Opens quest board with Toma's idle dialogue (called from NPC menu "Quest Board" button) */
+  function npcOpenQuestBoard() {
+    UI.setDialogueBackground("assets/backgrounds/main-town-questboard.png");
     Dialogue.start("toma-idle", function () {
       UI.renderQuestBoard();
       UI.showScreen("questboard");
@@ -512,9 +558,39 @@ var World = (function () {
   }
 
   function visitElira() {
-    Dialogue.start("elira-idle", function () {
-      UI.showScreen("town");
-      UI.renderTown();
+    showNPCMenu("elira", { background: '' });
+  }
+
+  /* ── NPC Menu Actions ── */
+
+  function npcChat(npcId) {
+    if (currentNPCContext && currentNPCContext.background) {
+      UI.setDialogueBackground(currentNPCContext.background);
+    }
+    Relationships.chat(npcId, function () {
+      returnToNPCMenu();
+    });
+  }
+
+  function npcGift(npcId) {
+    UI.renderGiftSelect(npcId);
+  }
+
+  function npcGiveGift(npcId, itemId) {
+    if (currentNPCContext && currentNPCContext.background) {
+      UI.setDialogueBackground(currentNPCContext.background);
+    }
+    Relationships.giveGift(npcId, itemId, function () {
+      returnToNPCMenu();
+    });
+  }
+
+  function npcDate(npcId) {
+    if (currentNPCContext && currentNPCContext.background) {
+      UI.setDialogueBackground(currentNPCContext.background);
+    }
+    Relationships.goOnDate(npcId, function () {
+      returnToNPCMenu();
     });
   }
 
@@ -542,6 +618,14 @@ var World = (function () {
     visitQuestBoard: visitQuestBoard,
     visitElric: visitElric,
     visitElira: visitElira,
-    interactEvent: interactEvent
+    interactEvent: interactEvent,
+    getNPCContext: getNPCContext,
+    returnToNPCMenu: returnToNPCMenu,
+    npcOpenShop: npcOpenShop,
+    npcOpenQuestBoard: npcOpenQuestBoard,
+    npcChat: npcChat,
+    npcGift: npcGift,
+    npcGiveGift: npcGiveGift,
+    npcDate: npcDate
   };
 })();

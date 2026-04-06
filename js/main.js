@@ -96,10 +96,6 @@
         UI.renderWorldMap();
         UI.showScreen("worldmap");
         break;
-      case "go-social":
-        UI.renderSocial();
-        UI.showScreen("social");
-        break;
       case "travel":
         World.navigate(btn.getAttribute("data-location"));
         break;
@@ -248,31 +244,31 @@
         Dialogue.skipText();
         break;
 
-      /* ── Relationships / Social ── */
+      /* ── NPC Menu Actions ── */
+      case "npc-shop":
+        World.npcOpenShop(btn.getAttribute("data-shop"));
+        break;
+      case "npc-questboard":
+        World.npcOpenQuestBoard();
+        break;
+      case "npc-chat":
+        World.npcChat(btn.getAttribute("data-npc"));
+        break;
+      case "npc-gift":
+        World.npcGift(btn.getAttribute("data-npc"));
+        break;
+      case "npc-give-gift":
+        World.npcGiveGift(btn.getAttribute("data-npc"), btn.getAttribute("data-item"));
+        break;
+      case "npc-date":
+        World.npcDate(btn.getAttribute("data-npc"));
+        break;
+      case "npc-back":
+        World.returnToNPCMenu();
+        break;
       case "open-relationships":
         UI.renderRelationships();
         UI.showScreen("relationships");
-        break;
-      case "social-chat":
-        Relationships.chat(btn.getAttribute("data-npc"), function () {
-          UI.renderSocial();
-          UI.showScreen("social");
-        });
-        break;
-      case "social-gift":
-        UI.renderGiftSelect(btn.getAttribute("data-npc"));
-        break;
-      case "give-gift-confirm":
-        Relationships.giveGift(btn.getAttribute("data-npc"), btn.getAttribute("data-item"), function () {
-          UI.renderSocial();
-          UI.showScreen("social");
-        });
-        break;
-      case "social-date":
-        Relationships.goOnDate(btn.getAttribute("data-npc"), function () {
-          UI.renderSocial();
-          UI.showScreen("social");
-        });
         break;
 
       /* ── Save / Sound / Settings ── */
