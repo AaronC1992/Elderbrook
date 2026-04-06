@@ -340,19 +340,19 @@ var UI = (function () {
     var html = '<div class="town-title">Elderbrook</div>';
 
     // Place POIs near buildings in the background image
-    html += '<button class="town-poi" style="top:12%;left:3%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">Guildmaster Rowan</span></button>';
-    html += '<button class="town-poi" style="top:35%;left:18%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">Weapon Shop</span><span class="poi-sub">Bram Ironhand</span></button>';
-    html += '<button class="town-poi" style="top:18%;left:38%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">Harlan Stonevein</span></button>';
-    html += '<button class="town-poi" style="top:30%;right:5%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">Potion Shop</span><span class="poi-sub">Mira Voss</span></button>';
+    html += '<button class="town-poi town-poi-npc" style="top:12%;left:3%" data-action="go-guild"><img class="poi-portrait" src="assets/portraits/rowan.png" alt="Rowan" onerror="this.style.display=\'none\'"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">Guildmaster Rowan</span></button>';
+    html += '<button class="town-poi town-poi-npc" style="top:35%;left:18%" data-action="go-shop" data-shop="weapon-shop"><img class="poi-portrait" src="assets/portraits/bram.png" alt="Bram" onerror="this.style.display=\'none\'"><span class="poi-name">Weapon Shop</span><span class="poi-sub">Bram Ironhand</span></button>';
+    html += '<button class="town-poi town-poi-npc" style="top:18%;left:38%" data-action="go-shop" data-shop="armor-shop"><img class="poi-portrait" src="assets/portraits/harlan.png" alt="Harlan" onerror="this.style.display=\'none\'"><span class="poi-name">Armor Shop</span><span class="poi-sub">Harlan Stonevein</span></button>';
+    html += '<button class="town-poi town-poi-npc" style="top:30%;right:5%" data-action="go-shop" data-shop="potion-shop"><img class="poi-portrait" src="assets/portraits/mira.png" alt="Mira" onerror="this.style.display=\'none\'"><span class="poi-name">Potion Shop</span><span class="poi-sub">Mira Voss</span></button>';
     html += '<button class="town-poi" style="top:55%;left:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
-    html += '<button class="town-poi" style="top:8%;right:28%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">Captain Elric</span></button>';
+    html += '<button class="town-poi town-poi-npc" style="top:8%;right:28%" data-action="go-elric"><img class="poi-portrait" src="assets/portraits/elric.png" alt="Elric" onerror="this.style.display=\'none\'"><span class="poi-name">Captain Elric</span><span class="poi-sub">Town Guard</span></button>';
     html += '<button class="town-poi" style="top:12%;right:3%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">Rest &amp; recover</span></button>';
     if (Player.hasFlag('metElira')) {
-      html += '<button class="town-poi" style="top:30%;right:22%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
+      html += '<button class="town-poi town-poi-npc" style="top:30%;right:22%" data-action="go-elira"><img class="poi-portrait" src="assets/portraits/elira.png" alt="Elira" onerror="this.style.display=\'none\'"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
     }
 
     if (Player.hasFlag('bramForgeUnlocked')) {
-      html += '<button class="town-poi" style="top:52%;left:20%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
+      html += '<button class="town-poi town-poi-npc" style="top:52%;left:20%" data-action="open-crafting"><img class="poi-portrait" src="assets/portraits/bram.png" alt="Bram" onerror="this.style.display=\'none\'"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
     }
     html += '<button class="town-poi town-poi-exit" style="bottom:5%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
 
@@ -362,7 +362,8 @@ var UI = (function () {
     var events = Chapter1.getActiveEvents("town", spawns);
     for (var e = 0; e < events.length; e++) {
       var ev = events[e];
-      html += '<button class="town-poi town-poi-event" style="' + ev.poiPosition + '" data-action="interact-event" data-event="' + ev.id + '">';
+      html += '<button class="town-poi town-poi-event town-poi-npc" style="' + ev.poiPosition + '" data-action="interact-event" data-event="' + ev.id + '">';
+      if (ev.npcPortrait) html += '<img class="poi-portrait" src="' + ev.npcPortrait + '" alt="' + ev.npcName + '" onerror="this.style.display=\'none\'">';
       html += '<span class="poi-name">' + ev.npcName + '</span>';
       html += '<span class="poi-sub">' + ev.poiSub + '</span>';
       html += '</button>';

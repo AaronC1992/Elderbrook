@@ -543,6 +543,32 @@ button {
   z-index: 2;
   white-space: nowrap;
 }
+/* NPC portrait variant */
+.town-poi-npc {
+  padding: 0.3rem 0.6rem 0.4rem;
+  border-radius: 10px;
+  background: rgba(14, 17, 23, 0.75);
+  gap: 0.15rem;
+}
+.poi-portrait {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+  transition: border-color 0.25s, transform 0.25s;
+  display: block;
+}
+.town-poi-npc:hover .poi-portrait {
+  border-color: var(--accent-hover);
+  transform: scale(1.08);
+}
+.town-poi-event .poi-portrait {
+  border-color: #8b6fc0;
+}
+.town-poi-event:hover .poi-portrait {
+  border-color: #c4a6ff;
+}
 .town-poi:hover {
   background: rgba(60, 50, 20, 0.92);
   border-color: var(--accent-hover);
@@ -1859,6 +1885,7 @@ button {
   .gender-portrait { width: 120px; }
   .battle-portrait { width: 100px; }
   #player-portrait-box { aspect-ratio: 1/1; }
+  .poi-portrait { width: 44px; height: 44px; }
 }
 
 @media (max-width: 600px) {
@@ -1875,4 +1902,7 @@ button {
   .ledger-tab { font-size: 0.58rem; padding: 6px 2px; }
   .ledger-page { margin-right: 32px; padding: 0.8rem; font-size: 0.82rem; }
   .ledger-stats-grid { grid-template-columns: 1fr; }
+  .poi-portrait { width: 36px; height: 36px; }
+  .poi-name { font-size: 0.72rem; }
+  .poi-sub { font-size: 0.6rem; }
 }
