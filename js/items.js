@@ -3,10 +3,10 @@ var Items = (function () {
 
   var items = {
     /* ── Starter Weapons (given at character creation) ── */
-    "basic-sword":   { id: "basic-sword",   name: "Basic Sword",   type: "weapon", slot: "weapon", icon: "assets/items/basic-iron-sword.png", attack: 3, price: 30, sellPrice: 10, description: "A standard-issue iron sword." },
-    "basic-dagger":  { id: "basic-dagger",  name: "Basic Dagger",  type: "weapon", slot: "weapon", icon: "assets/items/basic-iron-dagger.png", attack: 2, dexterity: 1, price: 25, sellPrice: 8, description: "A light dagger, quick in the hand." },
-    "basic-bow":     { id: "basic-bow",     name: "Basic Bow",     type: "weapon", slot: "weapon", icon: "assets/items/basic-short-bow.png", attack: 3, price: 30, sellPrice: 10, description: "A simple wooden shortbow." },
-    "basic-staff":   { id: "basic-staff",   name: "Basic Staff",   type: "weapon", slot: "weapon", icon: "assets/items/basic-staff.png", attack: 2, intelligence: 1, price: 25, sellPrice: 8, description: "A gnarled wooden staff humming with faint energy." },
+    "basic-sword":   { id: "basic-sword",   name: "Basic Sword",   type: "weapon", slot: "weapon", icon: "", attack: 3, price: 30, sellPrice: 10, description: "A standard-issue iron sword." },
+    "basic-dagger":  { id: "basic-dagger",  name: "Basic Dagger",  type: "weapon", slot: "weapon", icon: "", attack: 2, dexterity: 1, price: 25, sellPrice: 8, description: "A light dagger, quick in the hand." },
+    "basic-bow":     { id: "basic-bow",     name: "Basic Bow",     type: "weapon", slot: "weapon", icon: "", attack: 3, price: 30, sellPrice: 10, description: "A simple wooden shortbow." },
+    "basic-staff":   { id: "basic-staff",   name: "Basic Staff",   type: "weapon", slot: "weapon", icon: "", attack: 2, intelligence: 1, price: 25, sellPrice: 8, description: "A gnarled wooden staff humming with faint energy." },
 
     /* ── Upgrade Weapons (Bram's shop) ── */
     "reinforced-sword":   { id: "reinforced-sword",   name: "Reinforced Sword",   type: "weapon", slot: "weapon", icon: "", attack: 6, price: 80, sellPrice: 28, description: "A blade tempered with iron bands. Hits hard." },
@@ -22,17 +22,17 @@ var Items = (function () {
     "leather-bracers":  { id: "leather-bracers",  name: "Leather Bracers",  type: "armor", slot: "bracers", icon: "", defense: 1, price: 15, sellPrice: 5, description: "Simple wrist guards." },
 
     /* ── Iron Armor Tier ── */
-    "iron-helm":       { id: "iron-helm",       name: "Iron Helm",       type: "armor", slot: "helmet",  icon: "assets/items/basic-male-iron-helm.png", defense: 3, price: 60, sellPrice: 20, description: "A solid iron half-helm." },
-    "iron-chestplate": { id: "iron-chestplate", name: "Iron Chestplate", type: "armor", slot: "chest",   icon: "assets/items/basic-male-iron-chestplate.png", defense: 4, price: 90, sellPrice: 30, description: "Heavy iron breastplate. Reliable protection." },
-    "iron-leggings":   { id: "iron-leggings",   name: "Iron Leggings",   type: "armor", slot: "legs",    icon: "assets/items/basic-female-iron-leggings.png", defense: 2, price: 50, sellPrice: 17, description: "Iron-banded leg guards." },
-    "iron-gloves":     { id: "iron-gloves",     name: "Iron Gloves",     type: "armor", slot: "gloves",  icon: "assets/items/basic-male-iron-gloves.png", defense: 2, price: 35, sellPrice: 12, description: "Reinforced iron gauntlets." },
-    "iron-bracers":    { id: "iron-bracers",    name: "Iron Bracers",    type: "armor", slot: "bracers", icon: "assets/items/basic-male-iron-bracers.png", defense: 2, price: 40, sellPrice: 13, description: "Thick iron arm guards." },
+    "iron-helm":       { id: "iron-helm",       name: "Iron Helm",       type: "armor", slot: "helmet",  icon: "", defense: 3, price: 60, sellPrice: 20, description: "A solid iron half-helm." },
+    "iron-chestplate": { id: "iron-chestplate", name: "Iron Chestplate", type: "armor", slot: "chest",   icon: "", defense: 4, price: 90, sellPrice: 30, description: "Heavy iron breastplate. Reliable protection." },
+    "iron-leggings":   { id: "iron-leggings",   name: "Iron Leggings",   type: "armor", slot: "legs",    icon: "", defense: 2, price: 50, sellPrice: 17, description: "Iron-banded leg guards." },
+    "iron-gloves":     { id: "iron-gloves",     name: "Iron Gloves",     type: "armor", slot: "gloves",  icon: "", defense: 2, price: 35, sellPrice: 12, description: "Reinforced iron gauntlets." },
+    "iron-bracers":    { id: "iron-bracers",    name: "Iron Bracers",    type: "armor", slot: "bracers", icon: "", defense: 2, price: 40, sellPrice: 13, description: "Thick iron arm guards." },
 
     /* ── Potions ── */
-    "lesser-health-potion": { id: "lesser-health-potion", name: "Lesser Health Potion", type: "potion", subtype: "health", icon: "assets/items/health-potion.png", healAmount: 15, price: 8,  sellPrice: 3, description: "Restores 15 HP." },
-    "health-potion":        { id: "health-potion",        name: "Health Potion",        type: "potion", subtype: "health", icon: "assets/items/health-potion.png", healAmount: 30, price: 18, sellPrice: 6, description: "Restores 30 HP." },
-    "greater-health-potion":{ id: "greater-health-potion", name: "Greater Health Potion",type: "potion", subtype: "health", icon: "assets/items/health-potion.png", healAmount: 60, price: 40, sellPrice: 14, description: "Restores 60 HP." },
-    "mana-potion":          { id: "mana-potion",          name: "Mana Potion",          type: "potion", subtype: "mana",   icon: "assets/items/mana-potion.png", manaAmount: 20, price: 15, sellPrice: 5, description: "Restores 20 MP." },
+    "lesser-health-potion": { id: "lesser-health-potion", name: "Lesser Health Potion", type: "potion", subtype: "health", icon: "", healAmount: 15, price: 8,  sellPrice: 3, description: "Restores 15 HP." },
+    "health-potion":        { id: "health-potion",        name: "Health Potion",        type: "potion", subtype: "health", icon: "", healAmount: 30, price: 18, sellPrice: 6, description: "Restores 30 HP." },
+    "greater-health-potion":{ id: "greater-health-potion", name: "Greater Health Potion",type: "potion", subtype: "health", icon: "", healAmount: 60, price: 40, sellPrice: 14, description: "Restores 60 HP." },
+    "mana-potion":          { id: "mana-potion",          name: "Mana Potion",          type: "potion", subtype: "mana",   icon: "", manaAmount: 20, price: 15, sellPrice: 5, description: "Restores 20 MP." },
 
     /* ── Loot / Materials ── */
     "goblin-fang":   { id: "goblin-fang",   name: "Goblin Fang",   type: "loot", icon: "", sellPrice: 3, description: "A yellowed goblin fang." },

@@ -69,6 +69,11 @@ var World = (function () {
     var container = document.getElementById("area-content");
     if (!container) return;
 
+    var areaScreen = document.getElementById("screen-area");
+    if (areaScreen && loc.background) {
+      areaScreen.style.backgroundImage = "url('" + loc.background + "')";
+    }
+
     var html = '<div class="area-screen">';
     html += '<h2>' + loc.name + '</h2>';
     if (loc.recommendedLevel) html += '<p class="area-level">' + loc.recommendedLevel + '</p>';
@@ -85,6 +90,11 @@ var World = (function () {
   function enterGatheringArea(areaId, loc) {
     var container = document.getElementById("area-content");
     if (!container) return;
+
+    var areaScreen = document.getElementById("screen-area");
+    if (areaScreen && loc.background) {
+      areaScreen.style.backgroundImage = "url('" + loc.background + "')";
+    }
 
     var html = '<div class="area-screen">';
     html += '<h2>' + loc.name + '</h2>';
@@ -325,6 +335,10 @@ var World = (function () {
 
   function visitGuild() {
     var p = Player.get();
+
+    // Set guild background on dialogue screen
+    var dlgScreen = document.getElementById("screen-dialogue");
+    if (dlgScreen) dlgScreen.style.backgroundImage = "url('assets/backgrounds/main-town-adventurers-guild.png')";
 
     // Check for quest turn-ins in order
     if (Quests.isActive("mq1") && Quests.checkObjectives("mq1")) {

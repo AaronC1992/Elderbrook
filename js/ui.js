@@ -9,6 +9,11 @@ var UI = (function () {
     for (var i = 0; i < screens.length; i++) {
       screens[i].classList.remove("active");
     }
+    // Clear dynamic backgrounds on dialogue screen when leaving it
+    if (id !== "dialogue") {
+      var dlgScreen = document.getElementById("screen-dialogue");
+      if (dlgScreen) dlgScreen.style.backgroundImage = "";
+    }
     var target = document.getElementById("screen-" + id);
     if (target) {
       target.classList.add("active");

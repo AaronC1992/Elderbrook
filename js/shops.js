@@ -42,6 +42,11 @@ var Shops = (function () {
     var shop = shops[shopId];
     if (!shop) return;
 
+    var shopScreen = document.getElementById("screen-shop");
+    if (shopScreen && shop.background) {
+      shopScreen.style.backgroundImage = "url('" + shop.background + "')";
+    }
+
     var npc = Chapter1.getNPC(shop.npc);
     var container = document.getElementById("shop-inventory");
     var npcPortrait = document.getElementById("shop-npc-portrait");
