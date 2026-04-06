@@ -35,7 +35,7 @@ var Enemies = (function () {
       ],
       abilities: [
         { name: "Backstab", chance: 0.25, multiplier: 1.4 },
-        { name: "Poison Scratch", chance: 0.15, effect: { type: "bleed", damage: 2, turns: 2 } }
+        { name: "Poison Scratch", chance: 0.15, effect: { type: "poison", damage: 2, turns: 2 } }
       ]
     },
 

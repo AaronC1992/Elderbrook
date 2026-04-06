@@ -6,6 +6,24 @@ var UI = (function () {
   var messageTimeout = null;
   var pendingDialogueBg = null;
 
+  function buildHeartsHTML(affinity, max) {
+    var totalHearts = 5;
+    var perHeart = max / totalHearts;
+    var html = '<div class="rel-hearts">';
+    for (var i = 0; i < totalHearts; i++) {
+      var threshold = perHeart * i;
+      var fillPct = Math.min(100, Math.max(0, ((affinity - threshold) / perHeart) * 100));
+      html += '<div class="rel-heart">';
+      html += '<span class="rel-heart-empty">&#9829;</span>';
+      if (fillPct > 0) {
+        html += '<span class="rel-heart-fill" style="clip-path:inset(0 ' + (100 - fillPct) + '% 0 0)">&#9829;</span>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
   function setDialogueBackground(url) {
     pendingDialogueBg = url ? "url('" + url + "')" : null;
   }
@@ -86,6 +104,16 @@ var UI = (function () {
     }
     if (energyFill) energyFill.style.width = Math.round((p.energy / p.maxEnergy) * 100) + "%";
     if (energyText) energyText.textContent = p.energy + "/" + p.maxEnergy;
+
+    // Energy warning when low
+    var energyBar = energyFill ? energyFill.parentElement : null;
+    if (energyBar) {
+      if (p.energy <= 2 && p.energy > 0) {
+        energyBar.classList.add("energy-low");
+      } else {
+        energyBar.classList.remove("energy-low");
+      }
+    }
     if (goldEl) goldEl.textContent = "Gold: " + p.gold;
     if (soundBtn) soundBtn.textContent = Audio.isEnabled() ? "Sound On" : "Sound Off";
     updateSidebars();
@@ -418,8 +446,7 @@ var UI = (function () {
       html += '<div class="rel-info">';
       html += '<div class="rel-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</div>';
       html += '<div class="rel-level">' + levelName + '</div>';
-      html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
-      html += '<div class="rel-affinity">' + rel.affinity + ' / ' + Relationships.MAX_AFFINITY + '</div>';
+      html += buildHeartsHTML(rel.affinity, Relationships.MAX_AFFINITY);
       html += '</div></div>';
     }
 
@@ -456,8 +483,7 @@ var UI = (function () {
       html += '<div class="npc-menu-info">';
       html += '<h2 class="npc-menu-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</h2>';
       html += '<div class="rel-level">' + levelName + '</div>';
-      html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
-      html += '<div class="rel-affinity">' + (rel ? rel.affinity : 0) + ' / ' + Relationships.MAX_AFFINITY + '</div>';
+      html += buildHeartsHTML(rel ? rel.affinity : 0, Relationships.MAX_AFFINITY);
       html += '</div></div>';
     }
 

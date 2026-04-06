@@ -57,6 +57,10 @@
     if (!btn) return;
     var action = btn.getAttribute("data-action");
 
+    // Global button click feedback
+    if (!btn.disabled) {
+      Audio.play("buttonClick");
+    }
     switch (action) {
       /* ── Title Screen ── */
       case "new-game":

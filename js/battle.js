@@ -15,6 +15,7 @@ var Battle = (function () {
   var bossMaxHp = 0;
   var encounterMod = null;
   var animating = false;
+  var lastVictoryData = null;
 
   var encounterTexts = [
     "A {name} appears!",
@@ -706,6 +707,16 @@ var Battle = (function () {
       addLog("Loot: " + drops.join(", "));
     }
 
+    // Store reward data for the victory screen
+    lastVictoryData = {
+      enemyName: enemy.name,
+      xp: enemy.xp,
+      gold: goldDrop,
+      drops: drops,
+      leveled: leveled,
+      newLevel: p.level
+    };
+
     renderBattle();
     showVictoryButtons();
   }
@@ -828,7 +839,27 @@ var Battle = (function () {
     var container = document.getElementById("battle-content");
     if (!container) return;
     var html = container.innerHTML;
-    html += '<div class="battle-result"><button class="btn" data-action="battle-continue">Continue</button></div>';
+    var d = lastVictoryData || { enemyName: "Enemy", xp: 0, gold: 0, drops: [], leveled: false, newLevel: 1 };
+
+    html += '<div class="battle-result">';
+    html += '<div class="victory-overlay">';
+    html += '<h3>Victory!</h3>';
+    html += '<div class="victory-rewards">';
+    html += '<div class="victory-stat"><span class="victory-stat-value xp-value">+' + d.xp + '</span><span class="victory-stat-label">XP</span></div>';
+    html += '<div class="victory-stat"><span class="victory-stat-value gold-value">+' + d.gold + '</span><span class="victory-stat-label">Gold</span></div>';
+    html += '</div>';
+    if (d.leveled) {
+      html += '<div class="victory-levelup">Level Up! Now Level ' + d.newLevel + '</div>';
+    }
+    if (d.drops.length > 0) {
+      html += '<div class="victory-loot">';
+      for (var i = 0; i < d.drops.length; i++) {
+        html += '<div class="victory-loot-item">' + d.drops[i] + '</div>';
+      }
+      html += '</div>';
+    }
+    html += '<button class="btn" data-action="battle-continue">Continue</button>';
+    html += '</div></div>';
     container.innerHTML = html;
   }
 

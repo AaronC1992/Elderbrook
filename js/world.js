@@ -660,7 +660,7 @@ var World = (function () {
     // Default: show NPC menu (same as other NPCs) for relationship interactions
     var elricMenuOptions = { background: "assets/backgrounds/watch-post.png" };
     if (!Player.hasFlag("visitedElric")) {
-      Dialogue.start("elric-idle", function () {
+      Dialogue.start("elric-first", function () {
         showNPCMenu("elric", elricMenuOptions);
       });
       return;

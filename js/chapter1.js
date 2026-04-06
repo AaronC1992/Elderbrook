@@ -867,6 +867,15 @@ var Chapter1 = (function () {
         "Rowan says you're making real progress. Keep it up!"
       ]
     },
+    "elric-first": {
+      id: "elric-first",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Halt. You're the new adventurer Rowan's been talking about? I'm Captain Elric Vale, head of Elderbrook's guard." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards are spread thin dealing with these goblin incursions. If you're half as capable as Rowan claims, we could use your help." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Come see me when you've proven yourself on the roads. I've got work that needs a steady hand." }
+      ],
+      onEnd: { flags: ["visitedElric"] }
+    },
     "elric-idle": {
       lines: [
         "Keep your eyes open out there. My patrols have been stretched thin.",
@@ -1058,7 +1067,7 @@ var Chapter1 = (function () {
           { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Be careful in those depths. The goblin chief answers to something he doesn't understand. And when you've dealt with him, find me. We have much to discuss." },
           { speaker: "", portrait: "", text: "Before you can respond, she slips into the crowd and vanishes.", end: true }
         ],
-        onEnd: { flags: ["eliraForeshadow"] }
+        onEnd: { flags: ["eliraForeshadow", "metElira"] }
       }
     },
     {

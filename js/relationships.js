@@ -20,14 +20,25 @@ var Relationships = (function () {
       portrait: "assets/portraits/mira.png",
       lovedGifts: ["wildflowers", "herbal-tea", "cave-herb"],
       likedGifts: ["moonstone", "health-potion", "mana-potion"],
+      dislikedGifts: ["iron-ingot", "fine-leather"],
       bonus: { intelligence: 2 },
       chatLines: [
         "I've been experimenting with a new kind of salve. It smells terrible, but it works wonders on burns!",
         "Did you know cave herbs glow faintly under moonlight? I find it absolutely fascinating.",
         "Sometimes I wonder what plants grow beyond the frontier. There's so much left to discover.",
         "My mother was an herbalist too. She taught me that every plant has a story to tell.",
-        "You're easy to talk to, you know that? Most adventurers just want their potions and leave."
+        "You're easy to talk to, you know that? Most adventurers just want their potions and leave.",
+        "I nearly blew up my workshop last week trying a new mixture. Don't worry, I replaced the wall.",
+        "The wildflowers near the river are blooming early this year. I wonder what's changed in the soil.",
+        "I've been cataloguing every herb within a day's walk of town. I'm up to forty-seven varieties.",
+        "Rowan keeps asking me to make something for his back pain. I keep telling him to stop lifting barrels.",
+        "There's a certain peace in grinding herbs. Repetitive, yes, but meditative."
       ],
+      contextualLines: {
+        completedMQ3: "I heard you cleared that goblin camp. Please tell me you didn't get poisoned. Let me check your eyes.",
+        completedMQ5: "The things you've told me about the deeper caves... I need to study those fungal samples.",
+        completedMQ8: "After everything that's happened, I want you to know: Elderbrook is safer because of you."
+      },
       giftReactions: {
         loved: [
           "Oh! These are beautiful! How did you know I love these?",
@@ -41,6 +52,10 @@ var Relationships = (function () {
         neutral: [
           "Oh, for me? Thank you, that's nice.",
           "That's... interesting! I'll find a use for it."
+        ],
+        disliked: [
+          "Oh... iron? That's more Bram's thing. But, um, thanks.",
+          "I appreciate the thought, but this isn't really my area."
         ]
       },
       milestoneDialogues: {
@@ -99,14 +114,25 @@ var Relationships = (function () {
       portrait: "assets/portraits/toma.png",
       lovedGifts: ["sweet-roll", "wildflowers", "old-book"],
       likedGifts: ["herbal-tea", "moonstone"],
+      dislikedGifts: ["iron-ingot", "fine-leather"],
       bonus: { dexterity: 2 },
       chatLines: [
         "I sorted the entire quest board by region today. Nobody noticed, but I feel great about it.",
         "Don't tell anyone, but sometimes I read the quest descriptions and imagine I'm the one going on adventures.",
         "My parents wanted me to be a merchant. I guess alphabetizing job postings is close enough?",
         "You ever wonder what's past the goblin cave? I bet there's a whole world out there waiting.",
-        "Thanks for stopping by. It gets quiet here between postings."
+        "Thanks for stopping by. It gets quiet here between postings.",
+        "I found a quest posting from ten years ago stuck behind the board. Someone wanted help finding a lost cat. I hope they found it.",
+        "Sometimes adventurers come back and don't even check off their quests. The filing system only works if you file things!",
+        "I tried to learn sword fighting once. Rowan was very polite about how bad I was.",
+        "Do you think quests will always need a board? Maybe someday they'll have, I don't know, magical message crystals.",
+        "I keep a tally of how many quests get completed each month. This month is a record, thanks to you."
       ],
+      contextualLines: {
+        completedMQ3: "Everyone's talking about what you did at the goblin camp. I may have bragged that I know you personally.",
+        completedMQ5: "I pinned your name on the board's 'Top Adventurers' list. Don't worry, I made it official-looking.",
+        completedMQ8: "I've started a special section on the board just for your accomplishments. It's getting crowded."
+      },
       giftReactions: {
         loved: [
           "A sweet roll! You remembered! These are my absolute favorite!",
@@ -120,6 +146,10 @@ var Relationships = (function () {
         neutral: [
           "That's kind of you. Thanks!",
           "Oh! Well, it's the thought that counts, right?"
+        ],
+        disliked: [
+          "Oh. An iron ingot. That's, uh... heavy. In every sense.",
+          "I'm more of a books-and-pastries person, but I appreciate the gesture!"
         ]
       },
       milestoneDialogues: {
@@ -178,14 +208,25 @@ var Relationships = (function () {
       portrait: "assets/portraits/elira.png",
       lovedGifts: ["old-book", "moonstone", "strange-sigil"],
       likedGifts: ["herbal-tea", "silver-ring"],
+      dislikedGifts: ["sweet-roll", "iron-ingot"],
       bonus: { intelligence: 1, dexterity: 1 },
       chatLines: [
         "The stars here are different from the ones I grew up under. Brighter, somehow.",
         "I've been studying the goblin markings. They remind me of something I saw in the far north, long ago.",
         "Most people find my silence unsettling. You seem... comfortable with it.",
         "There are ruins beneath this land. Older than the trees. Older than the rivers. I can feel them.",
-        "You ask good questions. That's rare in a world full of people who only want answers."
+        "You ask good questions. That's rare in a world full of people who only want answers.",
+        "I found a reference to Elderbrook in a text that's over three hundred years old. It was called something different then.",
+        "The sigils on the cave walls aren't goblin-made. They're far older. Someone put them there as a warning.",
+        "Don't mistake my silence for disinterest. I'm usually thinking. About many things. Including you.",
+        "I've been dreaming about the ruins again. The same corridor, the same locked door. It means something.",
+        "Knowledge without wisdom is dangerous. I've seen it destroy people. I try to remember that every day."
       ],
+      contextualLines: {
+        completedMQ3: "The goblin activity is connected to something deeper. I've seen similar patterns before, in the northern wastes.",
+        completedMQ5: "What you found in those caves confirms my suspicions. There's an older power at work here.",
+        completedMQ8: "You've uncovered more than you realize. When you're ready, I have theories I'd like to share."
+      },
       giftReactions: {
         loved: [
           "This is... remarkable. Where did you find this? I must study it further.",
@@ -199,6 +240,10 @@ var Relationships = (function () {
         neutral: [
           "An interesting choice. Thank you.",
           "You didn't need to, but I appreciate it."
+        ],
+        disliked: [
+          "A sweet roll? I... don't really have a taste for these. But thank you.",
+          "This isn't quite what I look for, but the thought is noted."
         ]
       },
       milestoneDialogues: {
@@ -257,14 +302,25 @@ var Relationships = (function () {
       portrait: "assets/portraits/bram.png",
       lovedGifts: ["iron-ingot", "fine-leather"],
       likedGifts: ["sweet-roll", "moonstone"],
+      dislikedGifts: ["wildflowers", "herbal-tea"],
       bonus: { attack: 2 },
       chatLines: [
         "People think smithing is just hitting metal. It's not. It's listening to the steel and knowing when it's ready.",
         "Made my first knife when I was eight. Cut myself on it immediately. Still have the scar.",
         "The best blade I ever forged was for a knight who never came back for it. Still sits in my workshop.",
         "Goblins don't maintain their weapons. That's why they break so easily. No respect for the craft.",
-        "You're alright, you know that? Not many people stick around to talk to the sweaty forge guy."
+        "You're alright, you know that? Not many people stick around to talk to the sweaty forge guy.",
+        "I temper every blade three times. Most smiths do it once. That's why my work lasts.",
+        "Had a customer try to haggle down a sword I spent forty hours on. I told him to go buy a stick.",
+        "The furnace needs new bellows. Again. I swear I go through them faster than anyone.",
+        "Ever held a blade fresh from the quench? There's a moment where it hums. That's how you know it's right.",
+        "Mira keeps asking me to make herb-drying racks. Fine work, but not exactly glorious smithing."
       ],
+      contextualLines: {
+        completedMQ3: "Heard you smashed through some goblins. How'd the gear hold up? Be honest.",
+        completedMQ5: "If you're going deeper into those caves, you'll need better steel. Come talk to me before you go.",
+        completedMQ8: "You've earned the right to commission something special from me. Say the word."
+      },
       giftReactions: {
         loved: [
           "Quality iron! Now that's a gift I can work with. You've got good taste.",
@@ -278,6 +334,10 @@ var Relationships = (function () {
         neutral: [
           "Oh. Thanks? I'll, uh, put it somewhere safe.",
           "Huh. Thoughtful. Not really my thing, but I appreciate it."
+        ],
+        disliked: [
+          "Flowers? What am I gonna do with flowers? ...Don't answer that.",
+          "Herbal tea? Do I look like a tea person to you?"
         ]
       },
       milestoneDialogues: {
@@ -336,14 +396,25 @@ var Relationships = (function () {
       portrait: "assets/portraits/harlan.png",
       lovedGifts: ["fine-leather", "iron-ingot", "silver-ring"],
       likedGifts: ["sweet-roll", "old-book"],
+      dislikedGifts: ["wildflowers", "cave-herb"],
       bonus: { defense: 2 },
       chatLines: [
         "In the army, they said armor is your second skin. I took that literally. Haven't stopped working with it since.",
         "I've seen more battles than birthdays at this point. Elderbrook is supposed to be my quiet retirement. So much for that.",
         "Every scar tells a story. Most of mine say the same thing: I didn't dodge fast enough.",
         "You want to survive out there? Move like the armor is part of you. Don't fight it.",
-        "You're tougher than you look. That's a compliment, by the way."
+        "You're tougher than you look. That's a compliment, by the way.",
+        "I keep the old army shield above my bed. Not for decoration. Habit.",
+        "Trained a recruit last week who held his sword backwards. Backwards. We have work to do.",
+        "The walls here are solid but the gatehouse needs reinforcing. I've told Elric twice.",
+        "Best armor I ever wore stopped an arrow meant for my heart. I retired it. Couldn't bear to melt it down.",
+        "Some nights I still wake up reaching for my weapon. Twenty years of service doesn't wash off easy."
       ],
+      contextualLines: {
+        completedMQ3: "Good work on that camp. Your form's improving, but watch your left flank next time.",
+        completedMQ5: "You've seen real combat now. The look in your eyes has changed. That's not a bad thing.",
+        completedMQ8: "You fight like someone who's found something worth protecting. That's the mark of a true warrior."
+      },
       giftReactions: {
         loved: [
           "Hmph. Fine quality. You've got a soldier's eye for materials. I approve.",
@@ -357,6 +428,10 @@ var Relationships = (function () {
         neutral: [
           "Well. It's... something. Thanks, I suppose.",
           "I've received worse. Thank you."
+        ],
+        disliked: [
+          "Flowers? I'm a soldier, not a florist. But... thanks.",
+          "Herbs? I suppose I could make a poultice if I get desperate."
         ]
       },
       milestoneDialogues: {
@@ -415,14 +490,25 @@ var Relationships = (function () {
       portrait: "assets/portraits/elric.png",
       lovedGifts: ["old-book", "sweet-roll", "silver-ring"],
       likedGifts: ["iron-ingot", "herbal-tea"],
+      dislikedGifts: ["cave-herb", "wildflowers"],
       bonus: { defense: 1, attack: 1 },
       chatLines: [
         "Another quiet patrol. I should be grateful, but the quiet makes me nervous these days.",
         "The men look to me for confidence. Some days I have to fake it. Don't tell them that.",
         "I joined the guard because I believed in protecting people. That hasn't changed, even if everything else has.",
         "Paperwork. Reports. Requisition forms. They never mention this part when you sign up.",
-        "Appreciate you checking in. It's good to know someone out there actually cares about the guard."
+        "Appreciate you checking in. It's good to know someone out there actually cares about the guard.",
+        "Lost two guards to 'better opportunities' in the capital last month. Can't compete with city wages.",
+        "I keep a map of every goblin sighting on my wall. The pins are getting closer to town.",
+        "My lieutenant thinks I work too hard. My lieutenant is right, but don't tell him I said that.",
+        "The council wants results but won't approve the budget for new equipment. Classic.",
+        "Sometimes I walk the walls at night alone. Old habit. The town looks peaceful from up there."
       ],
+      contextualLines: {
+        completedMQ3: "Your report on the goblin camp was thorough. My guards could learn something from you.",
+        completedMQ5: "I've increased patrols based on what you've found. Whatever is down there, we need to be ready.",
+        completedMQ8: "You've done what the entire guard couldn't. I owe you more than I can say."
+      },
       giftReactions: {
         loved: [
           "This is... very kind. You didn't have to. But I'm glad you did.",
@@ -436,6 +522,10 @@ var Relationships = (function () {
         neutral: [
           "That's kind. Thank you.",
           "I appreciate the thought behind it."
+        ],
+        disliked: [
+          "Cave herbs? I'm not sure what I'd do with these. But thank you.",
+          "Flowers are nice, I suppose, but I'm more of a practical gifts person."
         ]
       },
       milestoneDialogues: {
@@ -545,7 +635,25 @@ var Relationships = (function () {
     if (!rel || !cfg) return;
 
     rel.chatted = true;
-    var line = cfg.chatLines[Math.floor(Math.random() * cfg.chatLines.length)];
+
+    // Try contextual story-reactive line first
+    var line = null;
+    if (cfg.contextualLines) {
+      var ctxKeys = Object.keys(cfg.contextualLines);
+      for (var c = ctxKeys.length - 1; c >= 0; c--) {
+        if (Player.hasFlag(ctxKeys[c])) {
+          // 40% chance to use contextual line instead of generic
+          if (Math.random() < 0.4) {
+            line = cfg.contextualLines[ctxKeys[c]];
+          }
+          break;
+        }
+      }
+    }
+    if (!line) {
+      line = cfg.chatLines[Math.floor(Math.random() * cfg.chatLines.length)];
+    }
+
     var amount = 2 + Math.floor(Math.random() * 2); // +2 or +3
     addAffinity(npcId, amount);
 
@@ -570,6 +678,7 @@ var Relationships = (function () {
     if (!cfg) return "neutral";
     if (cfg.lovedGifts.indexOf(itemId) !== -1) return "loved";
     if (cfg.likedGifts.indexOf(itemId) !== -1) return "liked";
+    if (cfg.dislikedGifts && cfg.dislikedGifts.indexOf(itemId) !== -1) return "disliked";
     return "neutral";
   }
 
@@ -583,17 +692,21 @@ var Relationships = (function () {
 
     rel.gifted = true;
     var reaction = getGiftReaction(npcId, itemId);
-    var amount = reaction === "loved" ? 8 : (reaction === "liked" ? 5 : 2);
+    var amount = reaction === "loved" ? 8 : (reaction === "liked" ? 5 : (reaction === "disliked" ? -3 : 2));
     addAffinity(npcId, amount);
 
-    var lines = cfg.giftReactions[reaction];
+    var lines = cfg.giftReactions[reaction] || cfg.giftReactions.neutral;
     var line = lines[Math.floor(Math.random() * lines.length)];
 
     Dialogue.startDirect({
       nodes: [{ speaker: cfg.name, portrait: cfg.portrait, text: line }],
       onEnd: null
     }, function () {
-      UI.showMessage("+" + amount + " affinity with " + cfg.name + "!");
+      if (amount >= 0) {
+        UI.showMessage("+" + amount + " affinity with " + cfg.name + "!");
+      } else {
+        UI.showMessage(amount + " affinity with " + cfg.name + "...");
+      }
       checkMilestone(npcId, callback);
     });
   }
