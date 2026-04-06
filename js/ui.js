@@ -6,24 +6,6 @@ var UI = (function () {
   var messageTimeout = null;
   var pendingDialogueBg = null;
 
-  function buildHeartsHTML(affinity, max) {
-    var totalHearts = 5;
-    var perHeart = max / totalHearts;
-    var html = '<div class="rel-hearts">';
-    for (var i = 0; i < totalHearts; i++) {
-      var threshold = perHeart * i;
-      var fillPct = Math.min(100, Math.max(0, ((affinity - threshold) / perHeart) * 100));
-      html += '<div class="rel-heart">';
-      html += '<span class="rel-heart-empty">&#9829;</span>';
-      if (fillPct > 0) {
-        html += '<span class="rel-heart-fill" style="clip-path:inset(0 ' + (100 - fillPct) + '% 0 0)">&#9829;</span>';
-      }
-      html += '</div>';
-    }
-    html += '</div>';
-    return html;
-  }
-
   function setDialogueBackground(url) {
     pendingDialogueBg = url ? "url('" + url + "')" : null;
   }
@@ -446,7 +428,8 @@ var UI = (function () {
       html += '<div class="rel-info">';
       html += '<div class="rel-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</div>';
       html += '<div class="rel-level">' + levelName + '</div>';
-      html += buildHeartsHTML(rel.affinity, Relationships.MAX_AFFINITY);
+      html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
+      html += '<div class="rel-affinity">' + rel.affinity + ' / ' + Relationships.MAX_AFFINITY + '</div>';
       html += '</div></div>';
     }
 
@@ -483,7 +466,8 @@ var UI = (function () {
       html += '<div class="npc-menu-info">';
       html += '<h2 class="npc-menu-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</h2>';
       html += '<div class="rel-level">' + levelName + '</div>';
-      html += buildHeartsHTML(rel ? rel.affinity : 0, Relationships.MAX_AFFINITY);
+      html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
+      html += '<div class="rel-affinity">' + (rel ? rel.affinity : 0) + ' / ' + Relationships.MAX_AFFINITY + '</div>';
       html += '</div></div>';
     }
 
