@@ -543,31 +543,68 @@ button {
   z-index: 2;
   white-space: nowrap;
 }
-/* NPC portrait variant */
-.town-poi-npc {
-  padding: 0.3rem 0.6rem 0.4rem;
-  border-radius: 10px;
-  background: rgba(14, 17, 23, 0.75);
-  gap: 0.15rem;
+/* Full-portrait event NPCs in town */
+.town-npc {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 2;
+  transition: transform 0.25s, filter 0.25s;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
 }
-.poi-portrait {
-  width: 52px;
-  height: 52px;
+.town-npc:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(212, 164, 56, 0.5));
+}
+.town-npc-portrait {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   border: 2px solid var(--border);
   object-fit: cover;
-  transition: border-color 0.25s, transform 0.25s;
-  display: block;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-shadow: 0 0 10px rgba(212, 164, 56, 0.2);
 }
-.town-poi-npc:hover .poi-portrait {
+.town-npc:hover .town-npc-portrait {
   border-color: var(--accent-hover);
-  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(212, 164, 56, 0.4);
 }
-.town-poi-event .poi-portrait {
+.town-npc-name {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: Georgia, serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(14, 17, 23, 0.75);
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+/* Event NPC variant — purple glow */
+.town-npc-event .town-npc-portrait {
   border-color: #8b6fc0;
+  box-shadow: 0 0 10px rgba(140, 100, 220, 0.3);
+  animation: npcGlow 2.5s ease-in-out infinite;
 }
-.town-poi-event:hover .poi-portrait {
+.town-npc-event:hover .town-npc-portrait {
   border-color: #c4a6ff;
+  box-shadow: 0 0 16px rgba(140, 100, 220, 0.5);
+}
+.town-npc-event:hover {
+  filter: drop-shadow(0 4px 12px rgba(140, 100, 220, 0.6));
+}
+.town-npc-event .town-npc-name {
+  color: #c4a6ff;
+}
+@keyframes npcGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(140, 100, 220, 0.25); }
+  50% { box-shadow: 0 0 16px rgba(140, 100, 220, 0.5); }
 }
 .town-poi:hover {
   background: rgba(60, 50, 20, 0.92);
@@ -576,20 +613,6 @@ button {
   box-shadow: 0 4px 24px rgba(212, 164, 56, 0.35);
 }
 .town-poi-exit:hover { transform: translateX(-50%) translateY(-3px); }
-.town-poi-event {
-  border-color: #8b6fc0;
-  animation: eventPulse 2s ease-in-out infinite;
-}
-.town-poi-event .poi-name { color: #c4a6ff; }
-.town-poi-event:hover {
-  background: rgba(60, 30, 80, 0.92);
-  border-color: #c4a6ff;
-  box-shadow: 0 4px 24px rgba(140, 100, 220, 0.4);
-}
-@keyframes eventPulse {
-  0%, 100% { box-shadow: 0 0 6px rgba(140, 100, 220, 0.2); }
-  50% { box-shadow: 0 0 14px rgba(140, 100, 220, 0.5); }
-}
 .poi-name { display: block; color: var(--accent); font-weight: 700; font-size: 0.82rem; }
 .poi-sub { display: block; color: var(--text-muted); font-size: 0.68rem; font-weight: 400; margin-top: 0.1rem; }
 
@@ -1886,6 +1909,7 @@ button {
   .battle-portrait { width: 100px; }
   #player-portrait-box { aspect-ratio: 1/1; }
   .poi-portrait { width: 44px; height: 44px; }
+  .town-npc-portrait { width: 64px; height: 64px; }
 }
 
 @media (max-width: 600px) {
@@ -1903,6 +1927,7 @@ button {
   .ledger-page { margin-right: 32px; padding: 0.8rem; font-size: 0.82rem; }
   .ledger-stats-grid { grid-template-columns: 1fr; }
   .poi-portrait { width: 36px; height: 36px; }
+  .town-npc-portrait { width: 52px; height: 52px; }
   .poi-name { font-size: 0.72rem; }
   .poi-sub { font-size: 0.6rem; }
 }
