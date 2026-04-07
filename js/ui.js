@@ -427,10 +427,12 @@ var UI = (function () {
     // ── Building navigation (absolute on desktop, grid panel on mobile) ──
     html += '<div class="town-buildings">';
 
-    // Left side — aligned to left-side buildings in the art
+    // Left side
     html += '<button class="town-poi" style="top:5%;left:1%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
-    html += '<button class="town-poi" style="top:26%;left:1%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
-    html += '<button class="town-poi" style="top:15%;left:24%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
+    html += '<button class="town-poi" style="top:28%;left:8%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
+
+    // Center — peaked building behind the lamp post
+    html += '<button class="town-poi" style="top:8%;left:42%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
 
     // Right side — aligned to right-side buildings in the art
     html += '<button class="town-poi" style="top:3%;right:2%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
