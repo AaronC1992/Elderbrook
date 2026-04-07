@@ -864,7 +864,15 @@ var Chapter1 = (function () {
         "Every blade I forge tells a story. Yours is just beginning.",
         "A dull edge gets you killed faster than no edge at all.",
         "I once forged sixty swords in a single week. Supply contract for Elric's guards.",
-        "If the goblins keep raiding, I might have to start charging double."
+        "If the goblins keep raiding, I might have to start charging double.",
+        "Had a customer ask for a 'flaming sword' yesterday. I said sure, toss it in the fireplace. He didn't laugh.",
+        "You're back again? At this rate I should charge you rent for standing in my shop.",
+        "Someone asked me to forge a 'legendary weapon.' I asked for legendary payment. They left.",
+        "Every adventurer wants the biggest sword. Nobody asks about balance. Nobody asks about weight. Just 'make it bigger.'",
+        "Toma asked me to sharpen a letter opener. A letter opener. I'm a master smith.",
+        "I named this hammer. Her name is Diplomacy. Because she solves every problem eventually.",
+        "Had a dream about the perfect alloy last night. Woke up and forgot the ratios. Being a smith is suffering.",
+        "Mira keeps trying to enchant my anvil. I keep telling her it's already perfect. We've had this argument six times."
       ]
     },
     "harlan-idle": {
@@ -876,7 +884,15 @@ var Chapter1 = (function () {
         "I've seen what happens to adventurers who skip the armory. It's not pretty.",
         "Iron holds better than leather, but leather's lighter. Choose your poison.",
         "My grandfather forged armor for the old king's guard. The Stonevein name means something.",
-        "Check the joints and buckles. That's where cheap armor fails first."
+        "Check the joints and buckles. That's where cheap armor fails first.",
+        "Trained a new recruit today. Asked which end of the spear to hold. I'm not making that up.",
+        "Twenty years in the army and my back still hasn't forgiven me. Neither has my knee. Or my shoulder. List goes on.",
+        "A recruit once asked if he really needed a helmet. He doesn't ask questions anymore. Unrelated, of course.",
+        "You'd be amazed how many adventurers buy armor and then ask if it comes in a lighter color.",
+        "My retirement was supposed to be peaceful. Quiet village, no combat, maybe a garden. And yet here I am.",
+        "Elric asked me to train his guards. I told them to run laps. Three quit. The rest will survive.",
+        "People keep calling me 'grumpy.' I'm not grumpy. I'm experienced. There's a difference. A subtle one.",
+        "I once saw a man go into battle wearing a pot on his head. He's fine now. Mostly."
       ]
     },
     "mira-idle": {
@@ -888,7 +904,15 @@ var Chapter1 = (function () {
         "I'm working on a new antivenom formula. The goblin shamans use a nasty toxin.",
         "Did you know cave herbs can be brewed into both healing draughts and poisons? Alchemy is about intent.",
         "My mother was an alchemist too. She always said curiosity is the best ingredient.",
-        "There's a rare moonpetal that grows near the cave entrance. If you see one, I'd pay well for it."
+        "There's a rare moonpetal that grows near the cave entrance. If you see one, I'd pay well for it.",
+        "I made a potion that technically works as intended. The side effect is your hair turns blue for a week. Still working on that.",
+        "Good news: the new healing salve is twice as effective. Bad news: it smells like a wet goblin. Trade-offs.",
+        "Bram asked me to stop experimenting near his forge. Apparently 'minor explosions' are bad for metalwork. Apparently.",
+        "I accidentally made a potion of perfect hindsight once. Very useful. Completely useless. It's complicated.",
+        "My workshop wall has been replaced four times this year. That's actually an improvement over last year.",
+        "Every alchemist has an 'oops' shelf. Mine takes up a whole room. I'm very thorough in my mistakes.",
+        "Someone asked if my potions are 'all-natural.' Everything is natural if you think about it hard enough. Even explosions.",
+        "Note to self: do NOT mix fire salts with moonpetal extract. Again. The ceiling just dried out from last time."
       ]
     },
     "rowan-idle": {
@@ -900,7 +924,15 @@ var Chapter1 = (function () {
         "I've been Guildmaster for twelve years. These goblin raids are the worst I've seen.",
         "Don't forget to upgrade your gear. A stronger foe waits around every corner.",
         "The other frontier towns have gone quiet. That worries me more than the goblins.",
-        "You remind me of an adventurer I knew years ago. She had that same determination."
+        "You remind me of an adventurer I knew years ago. She had that same determination.",
+        "Being Guildmaster is mostly paperwork. Heroic, important, legendary paperwork. But still paperwork.",
+        "Every adventurer who walks through that door thinks they're the chosen one. To be fair, some of them are right.",
+        "Toma reorganized the quest board alphabetically again. Now nobody can find anything. But it looks very tidy.",
+        "I used to go on quests myself, you know. Now my greatest adventure is balancing the guild treasury.",
+        "I've written seven letters to the capital requesting backup. I've received seven politely worded rejections.",
+        "My back hurts, the budget's thin, and there are goblins everywhere. But at least the tea is good today.",
+        "An adventurer once asked me for a quest with 'no danger, great pay, and preferably indoors.' I gave them directions to the bakery.",
+        "Twelve years. Twelve years of adventurers tracking mud through my guild hall. I should've become a librarian."
       ]
     },
     "toma-idle": {
@@ -912,7 +944,15 @@ var Chapter1 = (function () {
         "I organize the quests by urgency. The red-marked ones are time-sensitive!",
         "Sometimes I wish I could go on an adventure too. But someone has to manage things here.",
         "The merchants are offering better bounties now that the roads are dangerous.",
-        "Rowan says you're making real progress. Keep it up!"
+        "Rowan says you're making real progress. Keep it up!",
+        "I've noticed a pattern: every quest starts with 'go here' and ends with 'kill that.' The in-between is where it gets interesting.",
+        "Filed a quest under 'miscellaneous' today. It was too weird for any other category. Involved a chicken.",
+        "Do you ever read the fine print on quest postings? 'Not responsible for injury, death, or encounters with the supernatural.' Standard stuff.",
+        "I keep a 'rejected quests' pile. Someone once posted a quest to find a more interesting quest. Philosophical, but not actionable.",
+        "I alphabetized the board again. Rowan said it was 'impressively unhelpful.' I'm choosing to focus on the 'impressive' part.",
+        "If I had a gold coin for every time someone ripped a posting off the board without reading it... well, I'd have enough to go on an adventure myself.",
+        "I started writing my own quest once. 'Fetch Toma a sweet roll from the bakery.' Nobody took it. I was offering twelve copper!",
+        "An adventurer once asked me if the quest board was 'interactive.' I said yes and handed him a quill. He seemed disappointed."
       ]
     },
     "elric-first": {
@@ -935,7 +975,15 @@ var Chapter1 = (function () {
         "There's something coordinating these goblins. I can feel it in my bones.",
         "I served in the border wars twenty years ago. This feels like the calm before a storm.",
         "If you find anything unusual out there, report it to me or Rowan immediately.",
-        "Stay sharp. The roads get more dangerous by the day."
+        "Stay sharp. The roads get more dangerous by the day.",
+        "Filed a request for twelve new guards. The council approved three. And a motivational pamphlet. Very helpful.",
+        "My guards are brave, loyal, and hopelessly outnumbered. I'd settle for just the outnumbered part changing.",
+        "The council suggested we 'resolve the goblin situation diplomatically.' I invited them to try. Oddly, no volunteers.",
+        "I've been captain for five years. My hair was brown when I started. Take from that what you will.",
+        "Someone left an anonymous complaint that I work too late. It was in my lieutenant's handwriting. He's not subtle.",
+        "I wrote a forty-page security proposal. The council read the summary. The summary of the summary.",
+        "Budget meeting tomorrow. I'd rather fight the goblins. At least they're honest about wanting to ruin my day.",
+        "Harlan offered to train my guards. Half of them came back stronger. The other half came back crying. Both outcomes are acceptable."
       ]
     },
     "elira-idle": {
@@ -947,7 +995,15 @@ var Chapter1 = (function () {
         "The goblins are pawns. The real question is who holds the board.",
         "Be careful what you disturb in those caves. Some things are buried for a reason.",
         "I sense a strength in you. You'll need it for what's coming.",
-        "I'll share more when the time is right. For now, trust your instincts."
+        "I'll share more when the time is right. For now, trust your instincts.",
+        "Yes, I know I'm being cryptic. It's not a personality flaw, it's a professional requirement.",
+        "I could explain everything right now, but where's the dramatic tension in that?",
+        "Toma asked if I could be 'less ominous' around the quest board. I told him I'd consider it. Ominously.",
+        "People keep asking why I wear a hood indoors. Atmosphere. The answer is atmosphere.",
+        "I tried being straightforward once. Nobody believed me. So here we are, back to riddles.",
+        "Bram asked what I actually do all day. I said 'I peer beyond the veil of reality.' He said 'so, nothing then.'",
+        "The ancient texts warn of a coming darkness. They also have excellent pie recipes. Scholars were versatile.",
+        "I've been the mysterious stranger in four different towns now. It's less glamorous than it sounds. The travel is exhausting."
       ]
     },
 
@@ -955,13 +1011,13 @@ var Chapter1 = (function () {
     "celebration": {
       id: "celebration",
       nodes: [
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "There you are! The whole town has been waiting for you. Come in, come in." },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "People of Elderbrook! Today we celebrate the hero who brought down the goblin threat and saved our roads, our livelihoods, and our future!" },
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Good steel and a steady hand. That's what I saw. Well fought." },
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "I brewed a special batch of festive cider for the occasion. You've more than earned a cup!" },
-        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards can patrol the roads safely again because of what you've done. Elderbrook salutes you." },
-        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "I've added a whole new page to the quest board just for your accomplishments. You're a legend!" },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Take this gold and supplies. You've earned everything this town can offer." },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "There you are! The whole town has been waiting for you. I was starting to worry you'd gotten lost. It's a small town. I don't know how, but adventurers find a way." },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "People of Elderbrook! Today we celebrate the hero who brought down the goblin threat and saved our roads, our livelihoods, and my sanity!" },
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Good steel and a steady hand. That's what I saw out there. Also, you owe me for repairs. But we'll discuss that later. This is your moment." },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "I brewed a special batch of festive cider for the occasion! Only mild side effects! I'm kidding. Mostly. Drink up!" },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards can patrol the roads safely again because of what you've done. Elderbrook salutes you. That's an official salute, by the way. I filed the paperwork." },
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "I've added a whole new page to the quest board just for your accomplishments! It's color-coded! With annotations! Nobody asked me to do that but I think you'll appreciate the effort!" },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Take this gold and supplies. You've earned everything this town can offer. Which, admittedly, isn't a lot. We're working on it." },
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "But don't rest too long. The sigil, the orders, Elira's warnings... something bigger is at work. When you're ready, we'll need to look beyond Elderbrook's borders." }
       ],
       onEnd: { flags: ["celebrationDone"], giveItems: ["greater-health-potion", "greater-health-potion", "mana-potion"] }
@@ -1001,39 +1057,39 @@ var Chapter1 = (function () {
     "cq1-complete": {
       id: "cq1-complete",
       nodes: [
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "This ore is good quality. I can work with this." },
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "My grandfather's anvil has sat cold for too long. Time to light the forge again." },
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Come back when you've found beast sinew and an enchanted shard. I've got a masterwork in mind." }
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Let me see that ore. Hmm... good weight, clean grain. You didn't just grab the first shiny rock you saw. I'm impressed." },
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "My grandfather's anvil has sat cold for too long. Time to light the forge again. She's been judging me." },
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Come back when you've found beast sinew and an enchanted shard. I've got a masterwork in mind. And by 'in mind' I mean I've been sketching it obsessively for three days." }
       ]
     },
     "cq2-complete": {
       id: "cq2-complete",
       nodes: [
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Beast sinew for flexibility, enchanted shard for the edge... perfect." },
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Give me a moment." },
-        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "There. A tempered blade worthy of the Ironhand name. And the forge stays lit, I'll be crafting enhanced gear from now on." }
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Beast sinew for flexibility, enchanted shard for the edge... perfect. Now stand back. And I mean it, last time someone watched me work they singed their eyebrows off." },
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Give me a moment. ...Right. Done. Don't look at me like that, some of us are just that good." },
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "There. A tempered blade worthy of the Ironhand name. And the forge stays lit. I'll be crafting enhanced gear from now on. Try not to break this one immediately." }
       ]
     },
     "cq3-complete": {
       id: "cq3-complete",
       nodes: [
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Shadow essence combined with cave herb extract... the reaction is beautiful." },
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "This could change everything. With more materials, I could produce antidotes and enhanced formulae." },
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Here, take these antidotes. You'll need them against those goblin shamans." }
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Shadow essence combined with cave herb extract... the reaction is — oh! Oh that's beautiful. And only slightly on fire. That's normal!" },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "This could change everything! With more materials, I could produce antidotes, enhanced formulae, maybe even — no. One breakthrough at a time. Bram's still upset about the last 'breakthrough.'" },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Here, take these antidotes. You'll need them against those goblin shamans. And if your tongue goes numb, that's just the antidote working. Probably." }
       ]
     },
     "cq4-complete": {
       id: "cq4-complete",
       nodes: [
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "This is enough to set up a proper production line! My lab is officially upgraded." },
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Take these supplies. And from now on, I'll have cleansing potions and enhanced brews in stock." }
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "This is enough to set up a proper production line! My lab is officially upgraded! I even wrote 'UPGRADED' on the door. Very official." },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Take these supplies. And from now on, I'll have cleansing potions and enhanced brews in stock. The workshop may not survive, but you certainly will!" }
       ]
     },
     "cq5-complete": {
       id: "cq5-complete",
       nodes: [
-        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "The wolf population along the roads is finally under control. Good work." },
-        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "But the Watch Post is still occupied. My guards won't patrol until it's cleared. Can you handle that too?" }
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "The wolf population along the roads is finally under control. My patrols are reporting significantly fewer 'screaming while running' incidents." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "But the Watch Post is still occupied. My guards won't patrol past it. Can't blame them, honestly. Can you handle that too?" }
       ]
     },
     "cq6-complete": {
@@ -1078,13 +1134,13 @@ var Chapter1 = (function () {
       dialogue: {
         id: "town-event-merchant",
         nodes: [
-          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Psst! You there! I've got rare wares from beyond the frontier. Interested?" },
-          { speaker: "", portrait: "", text: "A travelling merchant has set up near the gate.", choices: [
+          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Psst! You there! Yes, you, the one who looks like they have disposable income! I've got rare wares from beyond the frontier. Very rare. Extremely legitimate." },
+          { speaker: "", portrait: "", text: "A travelling merchant has set up near the gate. His smile is a little too wide.", choices: [
             { text: "Browse the wares.", next: 2, flags: ["merchantBrowsed"] },
             { text: "Not interested.", next: 3 }
           ]},
-          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "A keen eye! I've got goods you won't find in any local shop. Come find me at the market if you want to trade.", end: true },
-          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Your loss, friend. I'll be moving on soon.", end: true }
+          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "A discerning customer! I've got goods you won't find in any local shop. Mostly because local shops have 'standards' and 'regulations.' Come find me at the market!", end: true },
+          { speaker: "Traveling Merchant", portrait: "assets/portraits/traveler.png", text: "Your loss, friend! These deals won't last! Mainly because I need to leave before the next town's guard captain recognizes me!", end: true }
         ],
         onEnd: { flags: ["townEventMerchant"] }
       }
@@ -1102,13 +1158,14 @@ var Chapter1 = (function () {
       dialogue: {
         id: "town-event-bard",
         nodes: [
-          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "A hero walks among us! Let me sing of your deeds! The ballad of the goblin slayer!" },
-          { speaker: "", portrait: "", text: "A bard has heard of your adventures and composed a song.", choices: [
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "A hero walks among us! Stand back, everyone! Let me sing the tale of your deeds! I've been workshopping this one all week!" },
+          { speaker: "", portrait: "", text: "A bard has heard of your adventures and composed a song. He looks extremely proud of himself.", choices: [
             { text: "Listen to the song.", next: 2 },
-            { text: "Maybe later.", next: 3 }
+            { text: "Maybe later.", next: 4 }
           ]},
-          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "...and steel met fang, in the hollow dark! The hero stood where none would dare! A magnificent tale! Your reputation precedes you, friend.", end: true },
-          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "A humble performer respects your time. Perhaps our paths will cross again.", end: true }
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "Ahem! 'Steel met fang in the hollow dark, the hero stood where none would dare! With blade held high and purpose stark... and, um, really impressive hair!'" },
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "The last verse still needs work. Rhyming is harder than it looks. But the important thing is the emotion! You felt the emotion, right? ...Right?", end: true },
+          { speaker: "Wandering Bard", portrait: "assets/portraits/Bard.png", text: "Everybody's a critic. That's fine. The ballad will be here when you're ready. I might even fix the third verse by then.", end: true }
         ],
         onEnd: { flags: ["townEventBard"] }
       }
@@ -1230,7 +1287,7 @@ var Chapter1 = (function () {
         id: "town-event-festival",
         nodes: [
           { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "You haven't heard? We're preparing a harvest festival! The first one in two years, thanks to adventurers like you keeping the roads safe." },
-          { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "Mira's brewing festive cider, Bram's making commemorative daggers, even grumpy Harlan is smiling. Well, almost." },
+          { speaker: "Cheerful Villager", portrait: "assets/portraits/villager_female.png", text: "Mira's brewing festive cider, Bram's making commemorative daggers, even grumpy Harlan is smiling. Well, his frown is slightly less intense. For him, that's basically beaming." },
           { speaker: "", portrait: "", text: "The town feels alive with activity.", choices: [
             { text: "Sounds wonderful. I'll try not to miss it.", next: 3 },
             { text: "A festival? In these times?", next: 4 }

@@ -411,7 +411,7 @@ var UI = (function () {
     html += '<button class="town-poi town-poi-exit" style="bottom:5%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
 
     // Persistent town NPCs — full portrait
-    html += '<button class="town-npc" style="top:8%;right:28%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/elric.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
+    html += '<button class="town-npc" style="top:8%;right:28%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
 
     // Spawn event NPCs — show full portrait in town
     var p = Player.get();

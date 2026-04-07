@@ -33,7 +33,11 @@ var Relationships = (function () {
         "The wildflowers near the river are blooming early this year. I wonder what's changed in the soil.",
         "I've been cataloguing every herb within a day's walk of town. I'm up to forty-seven varieties.",
         "Rowan keeps asking me to make something for his back pain. I keep telling him to stop lifting barrels.",
-        "There's a certain peace in grinding herbs. Repetitive, yes, but meditative."
+        "There's a certain peace in grinding herbs. Repetitive, yes, but meditative.",
+        "I labeled all my potions after the last mix-up. Harlan was NOT happy about the hair growth tonic.",
+        "I told Bram I could make fireproof coating for his gloves. He asked how many workshops I'd destroyed testing it. Rude. Accurate, but rude.",
+        "A customer asked if my health potion had any side effects. I said 'continued living.' He didn't tip.",
+        "I keep a journal of every failed experiment. It's my thickest book. I prefer to think of it as thorough research."
       ],
       contextualLines: {
         chapterEndPrepared: "You told Rowan we all need to be ready. That's wise. I've been stockpiling extra supplies because of it.",
@@ -129,7 +133,11 @@ var Relationships = (function () {
         "Sometimes adventurers come back and don't even check off their quests. The filing system only works if you file things!",
         "I tried to learn sword fighting once. Rowan was very polite about how bad I was.",
         "Do you think quests will always need a board? Maybe someday they'll have, I don't know, magical message crystals.",
-        "I keep a tally of how many quests get completed each month. This month is a record, thanks to you."
+        "I keep a tally of how many quests get completed each month. This month is a record, thanks to you.",
+        "I made a pie chart of quest types. Mostly it's 'kill goblins.' The pie chart was not very exciting. But it was accurate.",
+        "Someone posted a quest that just said 'HELP' in huge letters. No details, no reward, no name. I filed it under 'concerning.'",
+        "I've started rating the quest handwriting. Yours is... legible. That puts you in the top three.",
+        "Rowan told me to take a day off. I organized my desk instead. It's basically the same thing, right?"
       ],
       contextualLines: {
         completedMQ3: "Everyone's talking about what you did at the goblin camp. I may have bragged that I know you personally.",
@@ -224,7 +232,11 @@ var Relationships = (function () {
         "The sigils on the cave walls aren't goblin-made. They're far older. Someone put them there as a warning.",
         "Don't mistake my silence for disinterest. I'm usually thinking. About many things. Including you.",
         "I've been dreaming about the ruins again. The same corridor, the same locked door. It means something.",
-        "Knowledge without wisdom is dangerous. I've seen it destroy people. I try to remember that every day."
+        "Knowledge without wisdom is dangerous. I've seen it destroy people. I try to remember that every day.",
+        "I realize I say 'when the time is right' quite often. In my defense, the timing is genuinely terrible right now.",
+        "Mira asked me to explain the sigil markings. I started at the beginning. Three hours later she told me there's such a thing as too much context.",
+        "I once tried to be forthcoming and direct. People said I was 'ruining the mystique.' You can't win.",
+        "The ancient texts are surprisingly petty. One scholar spent six pages insulting another's footnote formatting. Some things never change."
       ],
       contextualLines: {
         completedMQ3: "The goblin activity is connected to something deeper. I've seen similar patterns before, in the northern wastes.",
@@ -319,7 +331,11 @@ var Relationships = (function () {
         "Had a customer try to haggle down a sword I spent forty hours on. I told him to go buy a stick.",
         "The furnace needs new bellows. Again. I swear I go through them faster than anyone.",
         "Ever held a blade fresh from the quench? There's a moment where it hums. That's how you know it's right.",
-        "Mira keeps asking me to make herb-drying racks. Fine work, but not exactly glorious smithing."
+        "Mira keeps asking me to make herb-drying racks. Fine work, but not exactly glorious smithing.",
+        "Someone brought me a sword and asked me to make it 'more legendary.' I said 'go do something legendary with it.' Problem solved.",
+        "Toma ordered a custom quill holder. Shaped like a tiny sword. I put more effort into it than I'll ever admit.",
+        "Harlan critiques my blades and I critique his armor. It's how we say we respect each other. Don't tell him I said that.",
+        "An adventurer once returned a sword saying it was 'too sharp.' I'm still processing that complaint."
       ],
       contextualLines: {
         chapterEndBrave: "I heard what you said to Rowan. 'I'll face it.' That's the kind of talk I respect. Warrior spirit.",
@@ -415,7 +431,11 @@ var Relationships = (function () {
         "Trained a recruit last week who held his sword backwards. Backwards. We have work to do.",
         "The walls here are solid but the gatehouse needs reinforcing. I've told Elric twice.",
         "Best armor I ever wore stopped an arrow meant for my heart. I retired it. Couldn't bear to melt it down.",
-        "Some nights I still wake up reaching for my weapon. Twenty years of service doesn't wash off easy."
+        "Some nights I still wake up reaching for my weapon. Twenty years of service doesn't wash off easy.",
+        "Bram says I'm too hard on the recruits. The recruits are alive. You're welcome, Bram.",
+        "A young guard asked me what the secret to surviving combat is. I said 'don't get hit.' He expected something deeper. There isn't.",
+        "Mira offered me a 'relaxation tonic.' I drank it. Woke up fourteen hours later in Bram's chair. I don't relax well.",
+        "The council invited me to a 'team-building dinner.' I told them I build teams by making them run uphill in full plate. Invitation was rescinded."
       ],
       contextualLines: {
         completedMQ3: "Good work on that camp. Your form's improving, but watch your left flank next time.",
@@ -510,7 +530,11 @@ var Relationships = (function () {
         "I keep a map of every goblin sighting on my wall. The pins are getting closer to town.",
         "My lieutenant thinks I work too hard. My lieutenant is right, but don't tell him I said that.",
         "The council wants results but won't approve the budget for new equipment. Classic.",
-        "Sometimes I walk the walls at night alone. Old habit. The town looks peaceful from up there."
+        "Sometimes I walk the walls at night alone. Old habit. The town looks peaceful from up there.",
+        "I requested a budget increase for the third time. The council counter-offered with 'have you tried motivation?' I have. It doesn't stop goblin arrows.",
+        "Harlan offered to give my guards a 'pep talk.' Six of them requested transfers afterward. Very peppy.",
+        "Someone on the council suggested the goblins might respond to a sternly worded letter. I'm still waiting for the punchline.",
+        "The job posting for new guards says 'exciting opportunities in a dynamic environment.' Harlan wrote it. He has a dark sense of humor."
       ],
       contextualLines: {
         choiceTeamwork: "Rowan told me you suggested involving the guard when the goblins started organizing. That means a lot. Most adventurers prefer to work alone.",
