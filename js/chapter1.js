@@ -30,7 +30,7 @@ var Chapter1 = (function () {
     },
     elric: {
       id: "elric", name: "Captain Elric Vale",
-      portrait: "assets/portraits/elric.png",
+      portrait: "assets/portraits/Guard_captain.png",
       role: "Town Guard Captain", personality: "Overworked, honorable, suspicious of outsiders."
     },
     elira: {
@@ -1163,20 +1163,20 @@ var Chapter1 = (function () {
       repeatable: true,
       location: "town",
       npcName: "Injured Guard",
-      npcPortrait: "assets/portraits/elric.png",
+      npcPortrait: "assets/portraits/Guard-1.png",
       poiPosition: "top:55%;right:15%",
       poiSub: "Looks wounded",
       dialogue: {
         id: "town-event-guard",
         nodes: [
-          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "Ambushed... on the east road. Three of them came out of nowhere." },
-          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "The goblins are getting bolder. They hit our patrol just a mile from the gates. We barely got away." },
+          { speaker: "Injured Guard", portrait: "assets/portraits/Guard-1.png", text: "Ambushed... on the east road. Three of them came out of nowhere." },
+          { speaker: "Injured Guard", portrait: "assets/portraits/Guard-1.png", text: "The goblins are getting bolder. They hit our patrol just a mile from the gates. We barely got away." },
           { speaker: "", portrait: "", text: "The guard is bleeding from a gash on his arm.", choices: [
             { text: "Rest easy. I'll deal with the goblins.", next: 3 },
             { text: "Get to Mira's shop. She can patch you up.", next: 4 }
           ]},
-          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "Thank you, adventurer. Captain Elric will want to hear about this. Be careful out there.", end: true },
-          { speaker: "Injured Guard", portrait: "assets/portraits/elric.png", text: "Good thinking. I'll head there now. Watch yourself, they're not just scouts anymore, these ones fought like soldiers.", end: true }
+          { speaker: "Injured Guard", portrait: "assets/portraits/Guard-1.png", text: "Thank you, adventurer. Captain Elric will want to hear about this. Be careful out there.", end: true },
+          { speaker: "Injured Guard", portrait: "assets/portraits/Guard-1.png", text: "Good thinking. I'll head there now. Watch yourself, they're not just scouts anymore, these ones fought like soldiers.", end: true }
         ],
         onEnd: { flags: ["townEventGuard"] }
       }
