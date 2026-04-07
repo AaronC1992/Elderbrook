@@ -19,7 +19,7 @@ CORNER_MIN_RATIO = 0.6  # At least 60% of corner pixels must be "white"
 
 
 def has_white_background(img_path):
-    """Check if a PNG either lacks alpha or has white-ish corners."""
+    """Check if a PNG either lacks alpha or has white-ish background."""
     img = Image.open(img_path).convert("RGBA")
     w, h = img.size
     arr = np.array(img)
@@ -27,20 +27,18 @@ def has_white_background(img_path):
     # If image already has meaningful transparency, skip it
     alpha = arr[:, :, 3]
     transparent_ratio = np.sum(alpha < 240) / alpha.size
-    if transparent_ratio > 0.05:
+    if transparent_ratio > 0.01:
         return False
 
-    # Sample corner regions (10% of each dimension)
-    margin_x = max(1, w // 10)
-    margin_y = max(1, h // 10)
-    corners = np.concatenate([
-        arr[:margin_y, :margin_x, :3].reshape(-1, 3),        # top-left
-        arr[:margin_y, -margin_x:, :3].reshape(-1, 3),       # top-right
-        arr[-margin_y:, :margin_x, :3].reshape(-1, 3),       # bottom-left
-        arr[-margin_y:, -margin_x:, :3].reshape(-1, 3),      # bottom-right
-    ])
+    # Fully opaque images with no transparency are likely white-bg portraits
+    # Check overall brightness of edge pixels (top/bottom rows, left/right cols)
+    edge_top = arr[:max(1, h//20), :, :3].reshape(-1, 3)
+    edge_bot = arr[-max(1, h//20):, :, :3].reshape(-1, 3)
+    edge_left = arr[:, :max(1, w//20), :3].reshape(-1, 3)
+    edge_right = arr[:, -max(1, w//20):, :3].reshape(-1, 3)
+    edges = np.concatenate([edge_top, edge_bot, edge_left, edge_right])
 
-    white_pixels = np.all(corners > CORNER_THRESHOLD, axis=1)
+    white_pixels = np.all(edges > CORNER_THRESHOLD, axis=1)
     ratio = np.sum(white_pixels) / len(white_pixels)
     return ratio >= CORNER_MIN_RATIO
 
