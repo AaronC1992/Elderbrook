@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "openai": "^6.33.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   }
 }

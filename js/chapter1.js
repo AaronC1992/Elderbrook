@@ -149,6 +149,15 @@ var Chapter1 = (function () {
     completedCQ4: false, completedCQ5: false, completedCQ6: false,
     bramForgeUnlocked: false, miraLabUnlocked: false, elricPatrolRoute: false,
 
+    /* Combat tracking */
+    hasBeenDefeated: false,
+
+    /* Dungeon tracking */
+    enteredCave: false,
+
+    /* Merchant */
+    merchantBrowsed: false,
+
     /* Build / Difficulty */
     choseBuild: false,
 
@@ -269,7 +278,7 @@ var Chapter1 = (function () {
       description: "Return the chief's relic and goblin orders to Guildmaster Rowan.",
       giver: "rowan", turnIn: "rowan",
       objectives: [
-        { id: "return-relic", text: "Speak to Rowan in the Adventurers Guild", type: "flag", flag: "chapter1Complete" }
+        { id: "return-relic", text: "Speak to Rowan in the Adventurers Guild", type: "flag", flag: "recoveredRelic" }
       ],
       rewards: { xp: 300, gold: 200 },
       onComplete: ["completedMQ8", "chapter1Complete"],
