@@ -398,7 +398,7 @@ var UI = (function () {
     }
 
     // Persistent town NPCs — portraits in the cobblestone square
-    html += '<button class="town-npc" style="top:32%;left:52%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
+    html += '<button class="town-npc" style="top:48%;left:44%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
@@ -428,14 +428,14 @@ var UI = (function () {
     html += '<div class="town-buildings">';
 
     // Left side — aligned to left-side buildings in the art
-    html += '<button class="town-poi" style="top:4%;left:2%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
-    html += '<button class="town-poi" style="top:20%;left:2%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
-    html += '<button class="town-poi" style="top:30%;left:17%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
+    html += '<button class="town-poi" style="top:5%;left:1%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
+    html += '<button class="town-poi" style="top:26%;left:1%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
+    html += '<button class="town-poi" style="top:15%;left:24%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
 
     // Right side — aligned to right-side buildings in the art
-    html += '<button class="town-poi" style="top:4%;right:4%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
-    html += '<button class="town-poi" style="top:20%;right:7%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
-    html += '<button class="town-poi" style="top:30%;right:1%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
+    html += '<button class="town-poi" style="top:3%;right:2%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
+    html += '<button class="town-poi" style="top:18%;right:18%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
+    html += '<button class="town-poi" style="top:28%;right:0%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
 
     // Conditional POIs
     if (Player.hasFlag('metElira')) {
