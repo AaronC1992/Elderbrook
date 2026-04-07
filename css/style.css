@@ -659,6 +659,38 @@ button {
   z-index: 3;
   pointer-events: none;
 }
+.festival-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #c47a20, #e8a830);
+  color: #1a1207;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.8rem;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+  letter-spacing: 0.06em;
+  text-shadow: none;
+}
+.festival-banner {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  color: #f0d89a;
+  background: rgba(14, 17, 23, 0.75);
+  border: 1px solid rgba(212, 164, 56, 0.4);
+  border-radius: var(--radius);
+  padding: 0.3rem 1rem;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 3;
+  pointer-events: none;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
 .town-poi {
   position: absolute;
   display: flex;

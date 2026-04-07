@@ -16,6 +16,23 @@ var Battle = (function () {
   var lastVictoryData = null;
   var skillCooldowns = {};
 
+  var battleBackgrounds = {
+    "forest-road": "assets/backgrounds/battle-forest-road.png",
+    "goblin-trail": "assets/backgrounds/battle-goblin-trail.png",
+    "goblin-cave": "assets/backgrounds/battle-cave.png",
+    "watch-post": "assets/backgrounds/battle-watch-post.png",
+    "riverbank": "assets/backgrounds/battle-riverbank.png"
+  };
+
+  function setBattleBackground(areaId) {
+    var screen = document.getElementById("screen-battle");
+    if (!screen) return;
+    var bg = battleBackgrounds[areaId] || "";
+    screen.style.backgroundImage = bg ? "url('" + bg + "')" : "";
+    screen.style.backgroundSize = "cover";
+    screen.style.backgroundPosition = "center";
+  }
+
   var encounterTexts = [
     "A {name} appears!",
     "A {name} leaps out from the shadows!",
@@ -81,6 +98,7 @@ var Battle = (function () {
     isDungeonBattle = false;
     onVictoryCallback = callback || null;
     resetState();
+    setBattleBackground(areaId);
     renderBattle();
     UI.showScreen("battle");
 
@@ -123,6 +141,7 @@ var Battle = (function () {
     encounterMod = null;
     onVictoryCallback = callback || null;
     resetState();
+    setBattleBackground("goblin-cave");
     renderBattle();
     UI.showScreen("battle");
     addLog(enemies[0].name + " stands before you!");
@@ -152,6 +171,7 @@ var Battle = (function () {
     encounterMod = null;
     onVictoryCallback = callback || null;
     resetState();
+    setBattleBackground("goblin-cave");
     renderBattle();
     UI.showScreen("battle");
     if (enemies.length === 1) {

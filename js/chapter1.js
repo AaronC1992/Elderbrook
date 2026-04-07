@@ -108,6 +108,7 @@ var Chapter1 = (function () {
     visitedBram: false,
     visitedHarlan: false,
     visitedMira: false,
+    visitedElric: false,
     visitedQuestBoard: false,
 
     completedMQ1: false,
@@ -620,8 +621,8 @@ var Chapter1 = (function () {
           { text: "I'll handle it. Point me to the road.", next: 3, flags: ["choiceBrave"] },
           { text: "Sounds dangerous. What's the pay?", next: 4, flags: ["choicePractical"] }
         ]},
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Good. Defeat at least three goblin scouts and report back. The road has to be secured. Be careful out there." },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Fair enough. The guild pays for results, 40 gold and experience. Defeat at least three goblin scouts on the Forest Road. Be careful, they're nasty in packs." }
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Good. Defeat at least three goblin scouts and report back. The road has to be secured. Be careful out there.", end: true },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Fair enough. The guild pays for results, 40 gold and experience. Defeat at least three goblin scouts on the Forest Road. Be careful, they're nasty in packs.", end: true }
       ],
       onEnd: { flags: ["completedMQ1", "unlockedForestRoad", "acceptedMQ2"] }
     },
@@ -648,8 +649,8 @@ var Chapter1 = (function () {
           { text: "I'll track them down. Where are the tracks?", next: 3, flags: ["choiceIndependent"] },
           { text: "Should we get Elric's guards involved?", next: 4, flags: ["choiceTeamwork"] }
         ]},
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Scouts reported goblin tracks leading east. Follow the Goblin Trail, recover our supply crate, and see where it leads." },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Elric's guards are stretched thin already. You're the best we've got. Follow the Goblin Trail east and recover that supply crate. Be ready for a fight." }
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Scouts reported goblin tracks leading east. Follow the Goblin Trail, recover our supply crate, and see where it leads.", end: true },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Elric's guards are stretched thin already. You're the best we've got. Follow the Goblin Trail east and recover that supply crate. Be ready for a fight.", end: true }
       ],
       onEnd: { flags: ["completedMQ3", "unlockedGoblinTrail", "unlockedWatchPost", "acceptedMQ4"] }
     },
@@ -662,8 +663,8 @@ var Chapter1 = (function () {
           { text: "I'll clear it out. Every last one of them.", next: 3 },
           { text: "What should I expect in there?", next: 4 }
         ]},
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "That's the spirit. Clear the outer defenses and report back anything unusual. And take supplies, the cave won't be kind." },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Tougher goblins, guards, maybe a shaman. Tight quarters, no running. Clear the outer defenses first and report back. Stock up on potions before you go." }
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "That's the spirit. Clear the outer defenses and report back anything unusual. And take supplies, the cave won't be kind.", end: true },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Tougher goblins, guards, maybe a shaman. Tight quarters, no running. Clear the outer defenses first and report back. Stock up on potions before you go.", end: true }
       ],
       onEnd: { flags: ["completedMQ4", "unlockedGoblinCave", "acceptedMQ5"] }
     },
@@ -676,8 +677,8 @@ var Chapter1 = (function () {
           { text: "I found signs of something bigger down there. I'm going back in.", next: 3 },
           { text: "Do you think it's just goblins, or is something else involved?", next: 4 }
         ]},
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Good instincts. Push into the depths and find evidence. Symbols, orders, artifacts, anything that tells us who is really behind this." },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "I've been wondering that myself. Goblins don't stockpile or coordinate like this on their own. Find proof. Look for symbols, orders, anything unusual in the depths." }
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Good instincts. Push into the depths and find evidence. Symbols, orders, artifacts, anything that tells us who is really behind this.", end: true },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "I've been wondering that myself. Goblins don't stockpile or coordinate like this on their own. Find proof. Look for symbols, orders, anything unusual in the depths.", end: true }
       ],
       onEnd: { flags: ["completedMQ5", "acceptedMQ6"] }
     },
@@ -690,8 +691,8 @@ var Chapter1 = (function () {
           { text: "Whatever it means, the chief needs to go.", next: 3 },
           { text: "We should learn more about this sigil first.", next: 4 }
         ]},
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Agreed. Return to the cave depths. Find this goblin chief and end this. Elderbrook is counting on you." },
-        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "I'll look into it. But right now, the goblins won't stop until their chief falls. Get back in that cave and finish what you started. We'll study the sigil after." }
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Agreed. Return to the cave depths. Find this goblin chief and end this. Elderbrook is counting on you.", end: true },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "I'll look into it. But right now, the goblins won't stop until their chief falls. Get back in that cave and finish what you started. We'll study the sigil after.", end: true }
       ],
       onEnd: { flags: ["completedMQ6", "foundStrangeSigil", "acceptedMQ7"] }
     },
@@ -967,7 +968,7 @@ var Chapter1 = (function () {
           { text: "Then that's where we go next.", next: 5, flags: ["northernRuinsTease"] },
           { text: "How dangerous are we talking?", next: 6, flags: ["northernRuinsTease"] }
         ]},
-        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "When the time comes, yes. But not yet. The path to the Northern Ruins must be found first, and I need to finish translating the manuscripts." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "When the time comes, yes. But not yet. The path to the Northern Ruins must be found first, and I need to finish translating the manuscripts.", next: 7 },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "More dangerous than anything in that goblin cave. The Hollow of Echoes was sealed for a reason. But we don't have a choice. If we don't go to it, whatever's there will come to us." },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "For now, strengthen yourself. Build alliances. Prepare. The road north will test everything you've become." },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "When I've found the path, I'll come to you. Until then, be ready." }
@@ -1148,7 +1149,7 @@ var Chapter1 = (function () {
             { text: "Who are you? How do you know about the cave?", next: 3 },
             { text: "Are you following me?", next: 4 }
           ]},
-          { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Someone who's been watching these events unfold longer than you'd believe. That sigil you found, it's not goblin work. It's much older." },
+          { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Someone who's been watching these events unfold longer than you'd believe. That sigil you found, it's not goblin work. It's much older.", next: 5 },
           { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Let's just say our paths are intertwined, whether you know it yet or not. That sigil the goblins carry, it's a mark I've seen before." },
           { speaker: "Hooded Stranger", portrait: "assets/portraits/elira.png", text: "Be careful in those depths. The goblin chief answers to something he doesn't understand. And when you've dealt with him, find me. We have much to discuss." },
           { speaker: "", portrait: "", text: "Before you can respond, she slips into the crowd and vanishes.", end: true }
@@ -1251,7 +1252,7 @@ var Chapter1 = (function () {
             { text: "Who are you? What do you want?", next: 3 },
             { text: "You seem to know a lot about me.", next: 4 }
           ]},
-          { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "Nobody important. Just a traveler with an interest in... ancient things. That sigil the goblins carried? It's older than this village. Much older." },
+          { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "Nobody important. Just a traveler with an interest in... ancient things. That sigil the goblins carried? It's older than this village. Much older.", next: 5 },
           { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "I make it my business to know things. Especially about people who poke around in dark caves and find things they shouldn't." },
           { speaker: "Cloaked Figure", portrait: "assets/portraits/traveler.png", text: "A word of advice, adventurer. Not everything buried beneath the earth wants to stay buried. And not everyone searching for it has good intentions." },
           { speaker: "", portrait: "", text: "The figure turns and walks calmly into the crowd. By the time you follow, they're gone.", end: true }

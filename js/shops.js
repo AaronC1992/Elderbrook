@@ -44,7 +44,7 @@ var Shops = (function () {
       id: "merchant-shop",
       name: "Traveling Merchant",
       npc: "merchant",
-      background: "",
+      background: "assets/backgrounds/merchant-camp.png",
       stock: [
         "enchanted-shard", "moonstone", "silver-ring", "antidote", "smelling-salts",
         "greater-health-potion", "mana-potion", "old-book"

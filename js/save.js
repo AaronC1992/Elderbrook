@@ -99,6 +99,7 @@ var Save = (function () {
     if (data.activeBounty === undefined) data.activeBounty = null;
     if (data.bountyKills === undefined) data.bountyKills = 0;
     if (!data.completedBounties) data.completedBounties = [];
+    if (data.festivalStartDay === undefined) data.festivalStartDay = null;
 
     // Migrate relationships
     if (!data.relationships) {

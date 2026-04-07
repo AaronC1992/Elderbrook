@@ -384,15 +384,23 @@ var UI = (function () {
     var container = document.getElementById("town-content");
     if (!container) return;
 
-    var html = '<div class="town-title">Elderbrook</div>';
+    var festival = Player.isFestivalActive();
+    var html = '';
+
+    if (festival) {
+      html += '<div class="town-title">Elderbrook <span class="festival-badge">Harvest Festival</span></div>';
+      html += '<div class="festival-banner">The town is alive with music, lanterns, and the smell of fresh cider!</div>';
+    } else {
+      html += '<div class="town-title">Elderbrook</div>';
+    }
 
     // Place POIs near buildings in the background image
-    html += '<button class="town-poi" style="top:12%;left:3%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">Guildmaster Rowan</span></button>';
-    html += '<button class="town-poi" style="top:35%;left:18%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">Weapon Shop</span><span class="poi-sub">Bram Ironhand</span></button>';
-    html += '<button class="town-poi" style="top:18%;left:38%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">Harlan Stonevein</span></button>';
-    html += '<button class="town-poi" style="top:30%;right:5%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">Potion Shop</span><span class="poi-sub">Mira Voss</span></button>';
+    html += '<button class="town-poi" style="top:12%;left:3%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
+    html += '<button class="town-poi" style="top:35%;left:18%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
+    html += '<button class="town-poi" style="top:18%;left:38%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
+    html += '<button class="town-poi" style="top:30%;right:5%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
     html += '<button class="town-poi" style="top:55%;left:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
-    html += '<button class="town-poi" style="top:12%;right:3%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">Rest &amp; recover</span></button>';
+    html += '<button class="town-poi" style="top:12%;right:3%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
     if (Player.hasFlag('metElira')) {
       html += '<button class="town-poi" style="top:30%;right:22%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
     }

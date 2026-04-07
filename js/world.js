@@ -11,6 +11,15 @@ var World = (function () {
 
   function getNPCContext() { return currentNPCContext; }
 
+  function updateTownBackground() {
+    var screen = document.getElementById("screen-town");
+    if (!screen) return;
+    var bg = Player.isFestivalActive()
+      ? "assets/backgrounds/main-town-festival.png"
+      : "assets/backgrounds/main-town.png";
+    screen.style.backgroundImage = "url('" + bg + "')";
+  }
+
   function returnToNPCMenu() {
     if (currentNPCContext) {
       showNPCMenu(currentNPCContext.npcId, currentNPCContext);
@@ -34,6 +43,7 @@ var World = (function () {
         Dialogue.start("rowan-arrival", function () {
           // Roll event spawns for first visit
           p.eventSpawns = Chapter1.rollEventSpawns(p);
+          updateTownBackground();
           UI.showScreen("town");
           UI.renderTown();
         });
@@ -47,6 +57,7 @@ var World = (function () {
         UI.showScreen('build-select');
         return;
       }
+      updateTownBackground();
       UI.showScreen("town");
       UI.renderTown();
       return;
@@ -821,6 +832,11 @@ var World = (function () {
       if (eventId === "traveling-merchant" && Player.hasFlag("merchantBrowsed")) {
         openShop("merchant-shop");
         return;
+      }
+      // Special: festival-prep triggers the harvest festival
+      if (eventId === "festival-prep" && !Player.isFestivalActive()) {
+        Player.startFestival();
+        updateTownBackground();
       }
       UI.showScreen("town");
       UI.renderTown();

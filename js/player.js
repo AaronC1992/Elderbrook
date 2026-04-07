@@ -67,7 +67,8 @@ var Player = (function () {
       choiceHistory: {},            // { dialogueId: choiceIndex }
       settings: { textSpeed: "normal", soundEnabled: true },
       totalPlayTime: 0,             // seconds
-      townEventsSeen: []            // array of event ids already triggered
+      townEventsSeen: [],            // array of event ids already triggered
+      festivalStartDay: null         // day number when harvest festival began (lasts 15 days)
     };
   }
 
@@ -399,6 +400,17 @@ var Player = (function () {
 
   var SEASONS = ["spring", "summer", "autumn", "winter"];
   var DAYS_PER_SEASON = 14;
+  var FESTIVAL_DURATION = 15;
+
+  function isFestivalActive() {
+    if (!state || state.festivalStartDay == null) return false;
+    return (state.day - state.festivalStartDay) < FESTIVAL_DURATION;
+  }
+
+  function startFestival() {
+    if (!state) return;
+    state.festivalStartDay = state.day;
+  }
 
   function sleep() {
     if (!state) return;
@@ -536,6 +548,8 @@ var Player = (function () {
     recordChoice: recordChoice,
     getChoice: getChoice,
     getEquippedSetBonuses: getEquippedSetBonuses,
+    isFestivalActive: isFestivalActive,
+    startFestival: startFestival,
     getTimeOfDay: getTimeOfDay,
     getSeason: getSeason,
     getSeasonDay: getSeasonDay,

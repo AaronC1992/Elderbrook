@@ -89,7 +89,11 @@ var Dialogue = (function () {
       end();
       return;
     }
-    currentNode++;
+    if (typeof node.next === "number") {
+      currentNode = node.next;
+    } else {
+      currentNode++;
+    }
     if (currentNode >= currentDialogue.nodes.length) {
       end();
     } else {
