@@ -84,7 +84,7 @@ var Chapter1 = (function () {
     },
     "watch-post": {
       id: "watch-post", name: "Abandoned Watch Post",
-      description: "An old guard outpost, overrun and left to ruin.",
+      description: "Once the forward outpost of Elderbrook's guard, this watchtower was Captain Elric's first command post. The goblins overran it six months ago. Guard badges and old patrol logs still litter the ruins, a reminder of the soldiers who held the line.",
       background: "assets/backgrounds/watch-post.png",
       enemies: ["goblin-raider", "goblin-guard", "goblin-sneak", "bandit"],
       recommendedLevel: "Lv. 3-5",
@@ -157,7 +157,19 @@ var Chapter1 = (function () {
     townEventGuard: false, townEventChild: false, townEventFestival: false, townEventStranger: false,
 
     /* Elira chain quests */
-    completedCQ7: false, completedCQ8: false
+    completedCQ7: false, completedCQ8: false,
+
+    /* Epilogue / Post-chapter */
+    celebrationDone: false,
+    northernRuinsTease: false,
+
+    /* Early Elric quests */
+    completedSQ16: false, completedSQ17: false,
+
+    /* Dialogue branching */
+    choiceBrave: false, choicePractical: false,
+    choiceIndependent: false, choiceTeamwork: false,
+    chapterEndBrave: false, chapterEndPrepared: false
   };
 
   /* ── Quest Definitions ── */
@@ -434,7 +446,7 @@ var Chapter1 = (function () {
       rewards: { xp: 45, gold: 35 },
       onComplete: ["completedCQ1"],
       startsQuest: "cq2",
-      requireFlags: ["completedMQ3"]
+      requireFlags: ["completedMQ2"]
     },
     cq2: {
       id: "cq2", name: "Bram's Master Work", type: "chain",
@@ -522,6 +534,31 @@ var Chapter1 = (function () {
       rewards: { xp: 110, gold: 75, items: ["enchanted-shard", "greater-health-potion"] },
       onComplete: ["completedCQ8"],
       requireFlags: ["completedCQ7"]
+    },
+
+    /* --- Early Elric Quests --- */
+    sq16: {
+      id: "sq16", name: "Guard Duty", type: "side",
+      description: "Captain Elric needs help clearing wolves that have been ambushing guard patrols near the Forest Road.",
+      giver: "elric", turnIn: "elric",
+      objectives: [
+        { id: "wolves", text: "Defeat Wolves on the Forest Road", type: "kill", target: "wolf", required: 3 }
+      ],
+      rewards: { xp: 35, gold: 25, items: ["health-potion"] },
+      onComplete: ["completedSQ16"],
+      requireFlags: ["completedMQ1"]
+    },
+    sq17: {
+      id: "sq17", name: "Road Patrol", type: "side",
+      description: "Captain Elric wants the roads secured. Patrol the Forest Road and clear out goblin scouts harassing travelers.",
+      giver: "elric", turnIn: "elric",
+      objectives: [
+        { id: "scouts", text: "Defeat Goblin Scouts", type: "kill", target: "goblin-scout", required: 4 },
+        { id: "wolves2", text: "Defeat Wolves near the road", type: "kill", target: "wolf", required: 2 }
+      ],
+      rewards: { xp: 45, gold: 35 },
+      onComplete: ["completedSQ17"],
+      requireFlags: ["completedMQ2"]
     }
   };
 
@@ -560,7 +597,8 @@ var Chapter1 = (function () {
       nodes: [
         { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Oh! Hello there! I'm Mira, the town alchemist. Welcome to my little shop." },
         { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "I brew potions, salves, antidotes, all sorts of things. Health potions are essential if you're heading out to fight." },
-        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "I've noticed something strange about the goblins lately. They seem... organized. Almost like someone is directing them. But who would do such a thing?" }
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "I've noticed something strange about the goblins lately. They seem... organized. Almost like someone is directing them. But who would do such a thing?" },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "Oh, one more thing. I saw a hooded traveler by the edge of town the other day, studying the old ward markers. She had the look of a scholar. If you run into her, it might be worth a conversation." }
       ],
       onEnd: { flags: ["visitedMira"] }
     },
@@ -579,8 +617,8 @@ var Chapter1 = (function () {
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Good, you've met the key people in town. You'll need their services in the days ahead." },
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Now then, let me tell you what's been happening. Goblin scouts have been spotted along the Forest Road, harassing travelers and merchants." },
         { speaker: "", portrait: "", text: "What do you want to do about it?", choices: [
-          { text: "I'll handle it. Point me to the road.", next: 3 },
-          { text: "Sounds dangerous. What's the pay?", next: 4 }
+          { text: "I'll handle it. Point me to the road.", next: 3, flags: ["choiceBrave"] },
+          { text: "Sounds dangerous. What's the pay?", next: 4, flags: ["choicePractical"] }
         ]},
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Good. Defeat at least three goblin scouts and report back. The road has to be secured. Be careful out there." },
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Fair enough. The guild pays for results, 40 gold and experience. Defeat at least three goblin scouts on the Forest Road. Be careful, they're nasty in packs." }
@@ -607,8 +645,8 @@ var Chapter1 = (function () {
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Let me see that note... Iron tools, food stores, leather, rope... This is a supply list. The goblins aren't just raiding, they're stockpiling." },
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "This changes things. There must be a larger camp or nest where they're taking everything." },
         { speaker: "", portrait: "", text: "Where do we go from here?", choices: [
-          { text: "I'll track them down. Where are the tracks?", next: 3 },
-          { text: "Should we get Elric's guards involved?", next: 4 }
+          { text: "I'll track them down. Where are the tracks?", next: 3, flags: ["choiceIndependent"] },
+          { text: "Should we get Elric's guards involved?", next: 4, flags: ["choiceTeamwork"] }
         ]},
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Scouts reported goblin tracks leading east. Follow the Goblin Trail, recover our supply crate, and see where it leads." },
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Elric's guards are stretched thin already. You're the best we've got. Follow the Goblin Trail east and recover that supply crate. Be ready for a fight." }
@@ -680,14 +718,14 @@ var Chapter1 = (function () {
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "I have. And I've seen this sigil before. In the ruins to the north, and in texts older than Elderbrook itself." },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "If this mark has appeared here, then Elderbrook is only the beginning. Something ancient is stirring, and it's been using the goblins to prepare." },
         { speaker: "", portrait: "", text: "Something ancient...", choices: [
-          { text: "Whatever it is, I'll face it. Elderbrook is my home now.", next: 8 },
-          { text: "Then we need to be ready. All of us.", next: 8 }
+          { text: "Whatever it is, I'll face it. Elderbrook is my home now.", next: 8, flags: ["chapterEndBrave"] },
+          { text: "Then we need to be ready. All of us.", next: 8, flags: ["chapterEndPrepared"] }
         ]},
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Well said. You've proven yourself beyond measure. Elderbrook owes you a great debt." },
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Rest for now. When you're ready, we'll need to follow this map and uncover the truth. Whatever it takes." },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "I'll be in touch. This road is far from over." }
       ],
-      onEnd: { flags: ["chapter1Complete", "metElira"] }
+      onEnd: { flags: ["metElira"] }
     },
 
     /* --- Side Quest Turn-In Dialogues --- */
@@ -872,6 +910,8 @@ var Chapter1 = (function () {
       nodes: [
         { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Halt. You're the new adventurer Rowan's been talking about? I'm Captain Elric Vale, head of Elderbrook's guard." },
         { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards are spread thin dealing with these goblin incursions. If you're half as capable as Rowan claims, we could use your help." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Six months ago, the goblins overran our forward Watch Post east of town. It was my first command, built it with my own hands when I was just a lieutenant." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Good soldiers held that post. Now their badges lie in the dirt and goblins sleep where my guards once stood watch. Some day, I'll take it back." },
         { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Come see me when you've proven yourself on the roads. I've got work that needs a steady hand." }
       ],
       onEnd: { flags: ["visitedElric"] }
@@ -902,6 +942,52 @@ var Chapter1 = (function () {
     },
 
     /* --- Chain Quest Dialogues --- */
+    "celebration": {
+      id: "celebration",
+      nodes: [
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "There you are! The whole town has been waiting for you. Come in, come in." },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "People of Elderbrook! Today we celebrate the hero who brought down the goblin threat and saved our roads, our livelihoods, and our future!" },
+        { speaker: "Bram Ironhand", portrait: npcs.bram.portrait, text: "Good steel and a steady hand. That's what I saw. Well fought." },
+        { speaker: "Mira Voss", portrait: npcs.mira.portrait, text: "I brewed a special batch of festive cider for the occasion. You've more than earned a cup!" },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "My guards can patrol the roads safely again because of what you've done. Elderbrook salutes you." },
+        { speaker: "Toma Reed", portrait: npcs.toma.portrait, text: "I've added a whole new page to the quest board just for your accomplishments. You're a legend!" },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Take this gold and supplies. You've earned everything this town can offer." },
+        { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "But don't rest too long. The sigil, the orders, Elira's warnings... something bigger is at work. When you're ready, we'll need to look beyond Elderbrook's borders." }
+      ],
+      onEnd: { flags: ["celebrationDone"], giveItems: ["greater-health-potion", "greater-health-potion", "mana-potion"] }
+    },
+    "northern-ruins-tease": {
+      id: "northern-ruins-tease",
+      nodes: [
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Now that the immediate goblin threat is handled, I can tell you what I've been piecing together." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "The sigil from the cave, the markings on the orders, they all point to the same place: the Northern Ruins." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "An ancient complex, buried beneath the mountains north of here. The old texts call it the Hollow of Echoes." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Whatever controlled those goblins came from there. And whatever it is, it's still active." },
+        { speaker: "", portrait: "", text: "Elira's eyes are intense, burning with purpose.", choices: [
+          { text: "Then that's where we go next.", next: 5, flags: ["northernRuinsTease"] },
+          { text: "How dangerous are we talking?", next: 6, flags: ["northernRuinsTease"] }
+        ]},
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "When the time comes, yes. But not yet. The path to the Northern Ruins must be found first, and I need to finish translating the manuscripts." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "More dangerous than anything in that goblin cave. The Hollow of Echoes was sealed for a reason. But we don't have a choice. If we don't go to it, whatever's there will come to us." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "For now, strengthen yourself. Build alliances. Prepare. The road north will test everything you've become." },
+        { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "When I've found the path, I'll come to you. Until then, be ready." }
+      ],
+      onEnd: { flags: ["northernRuinsTease"] }
+    },
+    "sq16-complete": {
+      id: "sq16-complete",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Three wolves down. My patrol reported a much quieter road today. That's your doing." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Here's your payment. And... thank you. The guards were losing morale before you stepped in." }
+      ]
+    },
+    "sq17-complete": {
+      id: "sq17-complete",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Scouts and wolves cleared from the road. My patrols can actually complete their routes now." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "You've done more for road safety in a week than my undermanned guard has managed in months. Take this, you've earned it." }
+      ]
+    },
     "cq1-complete": {
       id: "cq1-complete",
       nodes: [
@@ -1047,7 +1133,7 @@ var Chapter1 = (function () {
       weight: 40,
       flag: "eliraForeshadow",
       repeatable: false,
-      requireFlag: "completedMQ5",
+      requireFlag: "completedMQ3",
       location: "town",
       npcName: "Hooded Stranger",
       npcPortrait: "assets/portraits/elira.png",
@@ -1195,8 +1281,38 @@ var Chapter1 = (function () {
     { id: "treasure-seeker", name: "Treasure Seeker", description: "Find a secret room in the dungeon." },
     { id: "errand-runner", name: "Errand Runner", description: "Complete 5 side quests." },
     { id: "town-hero", name: "Town Hero", description: "Complete all Chapter 1 side quests." },
-    { id: "town-regular", name: "Town Regular", description: "Experience 4 different town events." }
+    { id: "town-regular", name: "Town Regular", description: "Experience 4 different town events." },
+    { id: "class-rapport", name: "Class Rapport", description: "Reach Friend status with an NPC who prefers your build class." },
+    { id: "road-guardian", name: "Road Guardian", description: "Complete both of Elric's early patrol quests." },
+    { id: "prepared-hero", name: "Prepared Hero", description: "Complete the celebration and learn about the Northern Ruins." }
   ];
+
+  /* ── Post-Game Bounty Board ── */
+  var bountyTemplates = [
+    { target: "goblin-scout", targetName: "Goblin Scouts", count: 5, xp: 40, gold: 30
+    },
+    { target: "goblin-brute", targetName: "Goblin Brutes", count: 3, xp: 50, gold: 40 },
+    { target: "wolf", targetName: "Wolves", count: 4, xp: 35, gold: 25 },
+    { target: "goblin-raider", targetName: "Goblin Raiders", count: 4, xp: 45, gold: 35 },
+    { target: "bandit", targetName: "Bandits", count: 3, xp: 45, gold: 35 },
+    { target: "goblin-shaman", targetName: "Goblin Shamans", count: 2, xp: 60, gold: 50 }
+  ];
+
+  function rollDailyBounty(p) {
+    if (!p.storyFlags || !p.storyFlags.chapter1Complete) return null;
+    // One bounty per day, seeded by day number
+    var dayIndex = (p.day || 1) % bountyTemplates.length;
+    var tmpl = bountyTemplates[dayIndex];
+    return {
+      id: "bounty-" + tmpl.target,
+      name: "Bounty: " + tmpl.targetName,
+      type: "bounty",
+      description: "Hunt " + tmpl.count + " " + tmpl.targetName + " for the guild.",
+      target: tmpl.target,
+      count: tmpl.count,
+      rewards: { xp: tmpl.xp, gold: tmpl.gold }
+    };
+  }
 
   /* ── Public API ── */
   function getNPC(id) { return npcs[id] || null; }
@@ -1287,6 +1403,7 @@ var Chapter1 = (function () {
     rollTownEvent: rollTownEvent,
     rollEventSpawns: rollEventSpawns,
     getActiveEvents: getActiveEvents,
-    getTownEventById: getTownEventById
+    getTownEventById: getTownEventById,
+    rollDailyBounty: rollDailyBounty
   };
 })();

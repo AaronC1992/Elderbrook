@@ -63,6 +63,23 @@ var Inventory = (function () {
       html += '<div class="inv-item-actions">';
 
       if (item.slot) {
+        // Show stat comparison with currently equipped item
+        var equipped = p.equipped[item.slot] ? Items.get(p.equipped[item.slot]) : null;
+        var compParts = [];
+        var compStats = ['attack', 'defense', 'dexterity', 'intelligence'];
+        var compLabels = { attack: 'ATK', defense: 'DEF', dexterity: 'DEX', intelligence: 'INT' };
+        for (var cs = 0; cs < compStats.length; cs++) {
+          var sk = compStats[cs];
+          var newVal = item[sk] || 0;
+          var oldVal = equipped ? (equipped[sk] || 0) : 0;
+          var diff = newVal - oldVal;
+          if (diff !== 0) {
+            compParts.push('<span class="stat-' + (diff > 0 ? 'up' : 'down') + '">' + compLabels[sk] + ' ' + (diff > 0 ? '+' : '') + diff + '</span>');
+          }
+        }
+        if (compParts.length > 0) {
+          html += '<div class="inv-item-compare">' + compParts.join(' ') + '</div>';
+        }
         html += '<button class="btn btn-small" data-action="equip" data-item="' + item.id + '" data-index="' + i + '">Equip</button>';
       }
       if (item.type === "potion") {
@@ -106,6 +123,9 @@ var Inventory = (function () {
       Player.restoreMana(item.manaAmount);
       Audio.play("potionDrink");
       return { success: true, message: "Restored " + item.manaAmount + " MP." };
+    }
+    if (item.subtype === "cleanse") {
+      return { success: false, message: "Cleanse potions can only be used in combat." };
     }
     return { success: false, message: "Can't use that." };
   }

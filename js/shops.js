@@ -86,10 +86,14 @@ var Shops = (function () {
       stock = shop.upgradedStock;
     }
 
+    // Charm discount for display
+    var charmDiscount = p.charm > 1 ? Math.min(0.20, (p.charm - 1) * 0.02) : 0;
+
     for (var i = 0; i < stock.length; i++) {
       var item = Items.get(stock[i]);
       if (!item) continue;
-      var canBuy = (item.price && p.gold >= item.price);
+      var displayPrice = charmDiscount > 0 ? Math.max(1, Math.floor(item.price * (1 - charmDiscount))) : (item.price || 0);
+      var canBuy = (item.price && p.gold >= displayPrice);
       html += '<div class="shop-item">';
       html += '<div class="shop-item-info">';
       if (item.icon) html += '<img class="item-icon" src="' + item.icon + '" alt="' + item.name + '" onerror="this.style.display=\'none\'">';
@@ -124,7 +128,11 @@ var Shops = (function () {
       }
       html += '</div>';
 
-      html += '<div class="shop-item-price">' + (item.price || 0) + ' gold</div>';
+      if (charmDiscount > 0 && item.price) {
+        html += '<div class="shop-item-price"><span style="text-decoration:line-through;opacity:0.5">' + item.price + '</span> ' + displayPrice + ' gold</div>';
+      } else {
+        html += '<div class="shop-item-price">' + (item.price || 0) + ' gold</div>';
+      }
       html += '<button class="btn shop-buy-btn" data-action="buy" data-item="' + item.id + '" data-shop="' + shopId + '"' + (canBuy ? '' : ' disabled') + '>Buy</button>';
       html += '</div>';
     }
@@ -146,10 +154,13 @@ var Shops = (function () {
     if (!item || !item.price) return { success: false, message: "Invalid item." };
 
     var p = Player.get();
-    if (p.gold < item.price) return { success: false, message: "Not enough gold." };
+    // Charm discount: 2% per charm point above 1, max 20%
+    var discount = p.charm > 1 ? Math.min(0.20, (p.charm - 1) * 0.02) : 0;
+    var finalPrice = Math.max(1, Math.floor(item.price * (1 - discount)));
+    if (p.gold < finalPrice) return { success: false, message: "Not enough gold." };
     if (p.inventory.length >= Player.MAX_INVENTORY) return { success: false, message: "Inventory full." };
 
-    p.gold -= item.price;
+    p.gold -= finalPrice;
     Player.addItem(itemId);
     Audio.play("shopBuy");
     return { success: true, message: "Bought " + item.name + "!" };

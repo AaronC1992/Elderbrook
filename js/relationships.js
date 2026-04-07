@@ -22,6 +22,7 @@ var Relationships = (function () {
       likedGifts: ["moonstone", "health-potion", "mana-potion"],
       dislikedGifts: ["iron-ingot", "fine-leather"],
       bonus: { intelligence: 2 },
+      preferredClass: "mage",
       chatLines: [
         "I've been experimenting with a new kind of salve. It smells terrible, but it works wonders on burns!",
         "Did you know cave herbs glow faintly under moonlight? I find it absolutely fascinating.",
@@ -35,6 +36,7 @@ var Relationships = (function () {
         "There's a certain peace in grinding herbs. Repetitive, yes, but meditative."
       ],
       contextualLines: {
+        chapterEndPrepared: "You told Rowan we all need to be ready. That's wise. I've been stockpiling extra supplies because of it.",
         completedMQ3: "I heard you cleared that goblin camp. Please tell me you didn't get poisoned. Let me check your eyes.",
         completedMQ5: "The things you've told me about the deeper caves... I need to study those fungal samples.",
         completedMQ8: "After everything that's happened, I want you to know: Elderbrook is safer because of you."
@@ -105,7 +107,7 @@ var Relationships = (function () {
           { speaker: "Mira Voss", portrait: "assets/portraits/mira.png", text: "You know, I used to take walks like this alone. Always collecting samples, always working." },
           { speaker: "Mira Voss", portrait: "assets/portraits/mira.png", text: "This is much better. Thank you for tonight." }
         ],
-        onEnd: { addAffinity: { npc: "mira", amount: 8 } }
+        onEnd: { addAffinity: { npc: "mira", amount: 5 } }
       }
     },
 
@@ -116,6 +118,7 @@ var Relationships = (function () {
       likedGifts: ["herbal-tea", "moonstone"],
       dislikedGifts: ["iron-ingot", "fine-leather"],
       bonus: { dexterity: 2 },
+      preferredClass: "rogue",
       chatLines: [
         "I sorted the entire quest board by region today. Nobody noticed, but I feel great about it.",
         "Don't tell anyone, but sometimes I read the quest descriptions and imagine I'm the one going on adventures.",
@@ -199,7 +202,7 @@ var Relationships = (function () {
           { speaker: "Toma Reed", portrait: "assets/portraits/toma.png", text: "You know what I love about this town? On nights like this, you can hear the crickets over the walls. It's peaceful." },
           { speaker: "Toma Reed", portrait: "assets/portraits/toma.png", text: "This was the best evening I've had in... maybe ever. Thank you." }
         ],
-        onEnd: { addAffinity: { npc: "toma", amount: 8 } }
+        onEnd: { addAffinity: { npc: "toma", amount: 5 } }
       }
     },
 
@@ -210,6 +213,7 @@ var Relationships = (function () {
       likedGifts: ["herbal-tea", "silver-ring"],
       dislikedGifts: ["sweet-roll", "iron-ingot"],
       bonus: { intelligence: 1, dexterity: 1 },
+      preferredClass: "mage",
       chatLines: [
         "The stars here are different from the ones I grew up under. Brighter, somehow.",
         "I've been studying the goblin markings. They remind me of something I saw in the far north, long ago.",
@@ -293,7 +297,7 @@ var Relationships = (function () {
           { speaker: "Elira Ashfen", portrait: "assets/portraits/elira.png", text: "I've seen the sky from a hundred places. But somehow it looks different when I'm with you." },
           { speaker: "Elira Ashfen", portrait: "assets/portraits/elira.png", text: "Thank you for this. I had forgotten what peace feels like." }
         ],
-        onEnd: { addAffinity: { npc: "elira", amount: 8 } }
+        onEnd: { addAffinity: { npc: "elira", amount: 5 } }
       }
     },
 
@@ -304,6 +308,7 @@ var Relationships = (function () {
       likedGifts: ["sweet-roll", "moonstone"],
       dislikedGifts: ["wildflowers", "herbal-tea"],
       bonus: { attack: 2 },
+      preferredClass: "warrior",
       chatLines: [
         "People think smithing is just hitting metal. It's not. It's listening to the steel and knowing when it's ready.",
         "Made my first knife when I was eight. Cut myself on it immediately. Still have the scar.",
@@ -317,6 +322,7 @@ var Relationships = (function () {
         "Mira keeps asking me to make herb-drying racks. Fine work, but not exactly glorious smithing."
       ],
       contextualLines: {
+        chapterEndBrave: "I heard what you said to Rowan. 'I'll face it.' That's the kind of talk I respect. Warrior spirit.",
         completedMQ3: "Heard you smashed through some goblins. How'd the gear hold up? Be honest.",
         completedMQ5: "If you're going deeper into those caves, you'll need better steel. Come talk to me before you go.",
         completedMQ8: "You've earned the right to commission something special from me. Say the word."
@@ -387,7 +393,7 @@ var Relationships = (function () {
           { speaker: "Bram Ironhand", portrait: "assets/portraits/bram.png", text: "I built my life around things I could hold. Iron, steel, stone. But sitting here with you... this might be worth more than all of it." },
           { speaker: "Bram Ironhand", portrait: "assets/portraits/bram.png", text: "Good food, good company. A man could get used to this." }
         ],
-        onEnd: { addAffinity: { npc: "bram", amount: 8 } }
+        onEnd: { addAffinity: { npc: "bram", amount: 5 } }
       }
     },
 
@@ -398,6 +404,7 @@ var Relationships = (function () {
       likedGifts: ["sweet-roll", "old-book"],
       dislikedGifts: ["wildflowers", "cave-herb"],
       bonus: { defense: 2 },
+      preferredClass: "warrior",
       chatLines: [
         "In the army, they said armor is your second skin. I took that literally. Haven't stopped working with it since.",
         "I've seen more battles than birthdays at this point. Elderbrook is supposed to be my quiet retirement. So much for that.",
@@ -481,7 +488,7 @@ var Relationships = (function () {
           { speaker: "Harlan Stonevein", portrait: "assets/portraits/harlan.png", text: "I used to think peace was boring. Now I think peace is just... hard-earned quiet. And it's better shared." },
           { speaker: "Harlan Stonevein", portrait: "assets/portraits/harlan.png", text: "Thank you for dragging me out of the shop. I needed this more than I realized." }
         ],
-        onEnd: { addAffinity: { npc: "harlan", amount: 8 } }
+        onEnd: { addAffinity: { npc: "harlan", amount: 5 } }
       }
     },
 
@@ -492,6 +499,7 @@ var Relationships = (function () {
       likedGifts: ["iron-ingot", "herbal-tea"],
       dislikedGifts: ["cave-herb", "wildflowers"],
       bonus: { defense: 1, attack: 1 },
+      preferredClass: "warrior",
       chatLines: [
         "Another quiet patrol. I should be grateful, but the quiet makes me nervous these days.",
         "The men look to me for confidence. Some days I have to fake it. Don't tell them that.",
@@ -505,6 +513,7 @@ var Relationships = (function () {
         "Sometimes I walk the walls at night alone. Old habit. The town looks peaceful from up there."
       ],
       contextualLines: {
+        choiceTeamwork: "Rowan told me you suggested involving the guard when the goblins started organizing. That means a lot. Most adventurers prefer to work alone.",
         completedMQ3: "Your report on the goblin camp was thorough. My guards could learn something from you.",
         completedMQ5: "I've increased patrols based on what you've found. Whatever is down there, we need to be ready.",
         completedMQ8: "You've done what the entire guard couldn't. I owe you more than I can say."
@@ -575,7 +584,7 @@ var Relationships = (function () {
           { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "This is nice. Really nice. Just two people, a warm fire, and no emergencies." },
           { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I don't want this evening to end. But duty calls at dawn. Let's do this again soon." }
         ],
-        onEnd: { addAffinity: { npc: "elric", amount: 8 } }
+        onEnd: { addAffinity: { npc: "elric", amount: 5 } }
       }
     }
   };
@@ -640,11 +649,14 @@ var Relationships = (function () {
     var line = null;
     if (cfg.contextualLines) {
       var ctxKeys = Object.keys(cfg.contextualLines);
+      if (!rel.seenContextual) rel.seenContextual = {};
       for (var c = ctxKeys.length - 1; c >= 0; c--) {
         if (Player.hasFlag(ctxKeys[c])) {
-          // 40% chance to use contextual line instead of generic
-          if (Math.random() < 0.4) {
+          // 75% first time, 40% if already seen
+          var ctxChance = rel.seenContextual[ctxKeys[c]] ? 0.4 : 0.75;
+          if (Math.random() < ctxChance) {
             line = cfg.contextualLines[ctxKeys[c]];
+            rel.seenContextual[ctxKeys[c]] = true;
           }
           break;
         }
@@ -655,6 +667,15 @@ var Relationships = (function () {
     }
 
     var amount = 2 + Math.floor(Math.random() * 2); // +2 or +3
+    // Class preference bonus
+    if (cfg.preferredClass && Player.get() && Player.get().buildClass === cfg.preferredClass) {
+      amount += 1;
+    }
+    // Charm bonus: +1 affinity per 3 charm above base
+    var p = Player.get();
+    if (p && p.charm > 1) {
+      amount += Math.floor((p.charm - 1) / 3);
+    }
     addAffinity(npcId, amount);
 
     Dialogue.startDirect({
@@ -693,6 +714,17 @@ var Relationships = (function () {
     rel.gifted = true;
     var reaction = getGiftReaction(npcId, itemId);
     var amount = reaction === "loved" ? 8 : (reaction === "liked" ? 5 : (reaction === "disliked" ? -3 : 2));
+    // Class preference bonus
+    if (cfg.preferredClass && Player.get() && Player.get().buildClass === cfg.preferredClass && amount > 0) {
+      amount += 2;
+    }
+    // Charm bonus on positive gifts: +1 per 3 charm above base
+    if (amount > 0) {
+      var pc = Player.get();
+      if (pc && pc.charm > 1) {
+        amount += Math.floor((pc.charm - 1) / 3);
+      }
+    }
     addAffinity(npcId, amount);
 
     var lines = cfg.giftReactions[reaction] || cfg.giftReactions.neutral;
@@ -809,10 +841,16 @@ var Relationships = (function () {
     return result;
   }
 
+  function getClassPreference(npcId) {
+    var cfg = config[npcId];
+    return cfg ? (cfg.preferredClass || null) : null;
+  }
+
   return {
     LEVELS: LEVELS,
     MAX_AFFINITY: MAX_AFFINITY,
     getConfig: getConfig,
+    getClassPreference: getClassPreference,
     getRelData: getRelData,
     getLevelName: getLevelName,
     getLevelIndex: getLevelIndex,

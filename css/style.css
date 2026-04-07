@@ -865,6 +865,45 @@ button {
   width: 100%;
   max-width: 100%;
 }
+/* Encounter modifier banner */
+.encounter-mod-banner {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(180, 140, 60, 0.25);
+  border: 1px solid rgba(180, 140, 60, 0.5);
+  color: #e8d8a0;
+}
+.encounter-mod-ambush {
+  background: rgba(200, 60, 60, 0.3);
+  border-color: rgba(200, 60, 60, 0.6);
+  color: #ff9999;
+}
+.encounter-mod-tough {
+  background: rgba(160, 80, 40, 0.3);
+  border-color: rgba(160, 80, 40, 0.6);
+  color: #e0a060;
+}
+.encounter-mod-frenzied {
+  background: rgba(200, 50, 50, 0.3);
+  border-color: rgba(200, 50, 50, 0.6);
+  color: #ff8888;
+}
+.encounter-mod-weakened {
+  background: rgba(80, 140, 80, 0.25);
+  border-color: rgba(80, 140, 80, 0.5);
+  color: #a0d0a0;
+}
+.encounter-mod-cornered {
+  background: rgba(180, 100, 30, 0.3);
+  border-color: rgba(180, 100, 30, 0.6);
+  color: #f0c070;
+}
+
 .battle-scene {
   display: flex;
   justify-content: space-between;
@@ -1284,6 +1323,10 @@ button {
 }
 .rel-level { color: var(--text-muted); font-size: 0.72rem; }
 .rel-affinity { color: var(--text-muted); font-size: 0.68rem; }
+.npc-class-pref { color: var(--text-muted); font-size: 0.7rem; margin-top: 0.2rem; }
+.npc-class-pref.pref-match { color: var(--accent); font-weight: bold; }
+.respec-section { margin-top: 1rem; padding: 0.8rem; background: var(--bg-panel-alt); border-radius: var(--radius); text-align: center; }
+.respec-section h3 { font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--accent); }
 .partner-badge { color: var(--danger); font-size: 0.7rem; }
 .btn-date {
   background: rgba(100, 50, 50, 0.6);
@@ -1416,6 +1459,9 @@ button {
 }
 .inv-item-name { color: var(--text); font-size: 0.82rem; flex: 1; }
 .inv-item-actions { display: flex; gap: 0.2rem; }
+.inv-item-compare { font-size: 0.72rem; margin-bottom: 0.15rem; }
+.stat-up { color: #2d8a4e; font-weight: 600; margin-right: 0.3rem; }
+.stat-down { color: #a83232; font-weight: 600; margin-right: 0.3rem; }
 .inv-filter-bar {
   display: flex;
   gap: 0.3rem;
@@ -1902,13 +1948,30 @@ button {
   background: rgba(160,130,80,0.2);
   border-radius: 3px;
   margin-top: 0.2rem;
-  overflow: hidden;
+  position: relative;
 }
 .ledger-rel-fill {
   height: 100%;
   background: linear-gradient(90deg, #b89850, #d4a438);
   border-radius: 3px;
   transition: width 0.3s;
+}
+.rel-milestone-marker {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 10px;
+  background: rgba(60,40,20,0.4);
+  transform: translateX(-1px);
+}
+.rel-milestone-marker.reached {
+  background: #d4a438;
+}
+.ledger-rel-next {
+  font-size: 0.7rem;
+  color: #8a6830;
+  opacity: 0.7;
+  margin-top: 0.15rem;
 }
 
 /* ── Settings (inside ledger) ── */

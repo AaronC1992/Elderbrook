@@ -414,6 +414,11 @@ var Player = (function () {
     state.mp = state.maxMp;
     state.trainingDone = {};
     Relationships.resetDaily();
+    // Reset daily bounty if it changed
+    if (state.activeBounty) {
+      state.activeBounty = null;
+      state.bountyKills = 0;
+    }
   }
 
   function getSeason() {
@@ -484,6 +489,17 @@ var Player = (function () {
     return { success: true, gained: gain > 0, message: msgs[Math.floor(Math.random() * msgs.length)] };
   }
 
+  var RESPEC_COST = 100;
+
+  function respecBuild() {
+    if (!state || !state.buildClass) return { success: false, message: "You haven't chosen a build class yet." };
+    if (state.gold < RESPEC_COST) return { success: false, message: "Not enough gold. Respec costs " + RESPEC_COST + " gold." };
+    state.gold -= RESPEC_COST;
+    state.buildClass = null;
+    recalcStats();
+    return { success: true, message: "Your specialization has been reset. Choose a new path." };
+  }
+
   return {
     MAX_INVENTORY: MAX_INVENTORY,
     EQUIP_SLOTS: EQUIP_SLOTS,
@@ -527,6 +543,8 @@ var Player = (function () {
     spendEnergy: spendEnergy,
     sleep: sleep,
     trainStat: trainStat,
-    getTrainingCost: getTrainingCost
+    getTrainingCost: getTrainingCost,
+    respecBuild: respecBuild,
+    RESPEC_COST: RESPEC_COST
   };
 })();

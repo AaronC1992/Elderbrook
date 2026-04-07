@@ -312,6 +312,34 @@
         }
         break;
 
+      /* ── Bounties ── */
+      case "accept-bounty":
+        var bounty = Chapter1.rollDailyBounty(Player.get());
+        if (bounty) {
+          var pb = Player.get();
+          pb.activeBounty = bounty;
+          pb.bountyKills = 0;
+          Audio.play("buttonClick");
+          UI.showMessage("Bounty accepted: " + bounty.name);
+          UI.renderQuestBoard();
+        }
+        break;
+      case "turn-in-bounty":
+        var pb2 = Player.get();
+        if (pb2.activeBounty && pb2.bountyKills >= pb2.activeBounty.count) {
+          pb2.gold += pb2.activeBounty.rewards.gold;
+          Player.addXp(pb2.activeBounty.rewards.xp);
+          if (!pb2.completedBounties) pb2.completedBounties = [];
+          pb2.completedBounties.push(pb2.activeBounty.id + '-' + pb2.day);
+          Audio.play("questComplete");
+          UI.showMessage("Bounty complete! +" + pb2.activeBounty.rewards.xp + " XP, +" + pb2.activeBounty.rewards.gold + " gold");
+          pb2.activeBounty = null;
+          pb2.bountyKills = 0;
+          UI.updateHeader();
+          UI.renderQuestBoard();
+        }
+        break;
+
       /* ── Dialogue ── */
       case "dialogue-continue":
         Dialogue.advance();
@@ -457,6 +485,16 @@
           Audio.play('achievement');
           UI.showMessage('You chose the ' + build.charAt(0).toUpperCase() + build.slice(1) + ' path!');
           World.navigate('elderbrook');
+        }
+        break;
+      case "respec-build":
+        var respecResult = Player.respecBuild();
+        UI.showMessage(respecResult.message);
+        if (respecResult.success) {
+          UI.renderBuildSelect();
+          UI.showScreen('build-select');
+        } else {
+          UI.renderTraining();
         }
         break;
 

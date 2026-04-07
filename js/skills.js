@@ -39,8 +39,8 @@ var Skills = (function () {
     },
     {
       id: "meditate", name: "Meditate", type: "heal",
-      description: "Restore 15 MP.", unlockLevel: 7,
-      mpCost: 0, manaRestore: 15
+      description: "Restore 15 MP. (3-turn cooldown)", unlockLevel: 7,
+      mpCost: 0, manaRestore: 15, cooldown: 3
     },
     {
       id: "double-strike", name: "Double Strike", type: "attack",

@@ -99,7 +99,10 @@ var Quests = (function () {
     if (rewards.xp) leveled = Player.addXp(rewards.xp);
     if (rewards.items) {
       for (var r = 0; r < rewards.items.length; r++) {
-        Player.addItem(rewards.items[r]);
+        if (!Player.addItem(rewards.items[r])) {
+          UI.showMessage("Your inventory is full! Some quest rewards couldn't be picked up.");
+          break;
+        }
       }
     }
 

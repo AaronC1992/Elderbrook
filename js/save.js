@@ -95,6 +95,10 @@ var Save = (function () {
     if (!data.settings) data.settings = { textSpeed: "normal", soundEnabled: true };
     if (data.totalPlayTime === undefined) data.totalPlayTime = 0;
     if (!data.townEventsSeen) data.townEventsSeen = [];
+    if (data.herbsGathered === undefined) data.herbsGathered = 0;
+    if (data.activeBounty === undefined) data.activeBounty = null;
+    if (data.bountyKills === undefined) data.bountyKills = 0;
+    if (!data.completedBounties) data.completedBounties = [];
 
     // Migrate relationships
     if (!data.relationships) {
@@ -114,6 +118,7 @@ var Save = (function () {
         }
         if (data.relationships[relNPCs[r]].dated === undefined) data.relationships[relNPCs[r]].dated = false;
         if (!data.relationships[relNPCs[r]].milestones) data.relationships[relNPCs[r]].milestones = [];
+        if (!data.relationships[relNPCs[r]].seenContextual) data.relationships[relNPCs[r]].seenContextual = {};
       }
     }
 

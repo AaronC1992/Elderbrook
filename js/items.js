@@ -68,10 +68,11 @@ var Items = (function () {
     "verdant-staff":    { id: "verdant-staff",     name: "Verdant Staff",       type: "weapon", slot: "weapon", icon: "", attack: 6, intelligence: 4, price: 0, sellPrice: 40, tier: "rare", description: "A living staff wound with green vines. Pulses with nature's fury." },
 
     /* ── Goblin Slayer Set (set bonus) ── */
-    "goblin-slayer-helm":   { id: "goblin-slayer-helm",   name: "Goblin-Slayer Helm",   type: "armor", slot: "helmet",  icon: "", defense: 2, attack: 1, price: 0, sellPrice: 20, tier: "rare", setId: "goblin-slayer", setBonus: [{ pieces: 2, bonus: { attack: 1 } }, { pieces: 4, bonus: { attack: 2, defense: 2, maxHp: 10 } }], description: "Trophied helmet marking a goblin slayer." },
+    "goblin-slayer-helm":   { id: "goblin-slayer-helm",   name: "Goblin-Slayer Helm",   type: "armor", slot: "helmet",  icon: "", defense: 2, attack: 1, price: 0, sellPrice: 20, tier: "rare", setId: "goblin-slayer", setBonus: [{ pieces: 2, bonus: { attack: 1 } }, { pieces: 4, bonus: { attack: 2, defense: 2, maxHp: 10 } }, { pieces: 5, bonus: { attack: 3, defense: 3, maxHp: 15 } }], description: "Trophied helmet marking a goblin slayer." },
     "goblin-slayer-chest":  { id: "goblin-slayer-chest",  name: "Goblin-Slayer Chest",  type: "armor", slot: "chest",   icon: "", defense: 4, price: 0, sellPrice: 30, tier: "rare", setId: "goblin-slayer", description: "Chest armor fashioned from goblin war-plate." },
     "goblin-slayer-gloves": { id: "goblin-slayer-gloves", name: "Goblin-Slayer Gloves", type: "armor", slot: "gloves",  icon: "", defense: 2, dexterity: 1, price: 0, sellPrice: 15, tier: "rare", setId: "goblin-slayer", description: "Gauntlets lined with goblin-hide leather." },
     "goblin-slayer-bracers":{ id: "goblin-slayer-bracers",name: "Goblin-Slayer Bracers",type: "armor", slot: "bracers", icon: "", defense: 3, price: 0, sellPrice: 18, tier: "rare", setId: "goblin-slayer", description: "Wrist guards studded with goblin fangs." },
+    "goblin-slayer-greaves":{ id: "goblin-slayer-greaves",name: "Goblin-Slayer Greaves",type: "armor", slot: "legs",    icon: "", defense: 3, dexterity: 1, price: 0, sellPrice: 20, tier: "rare", setId: "goblin-slayer", description: "Leg guards forged from salvaged goblin iron." },
 
     /* ── Crafting Materials ── */
     "goblin-chieftain-crest": { id: "goblin-chieftain-crest", name: "Chieftain's Crest", type: "crafting", icon: "", sellPrice: 15, description: "A crudely forged badge of authority. Used in crafting." },

@@ -76,7 +76,9 @@ var Audio = (function () {
     achievement: function () { playSequence([{ freq: 659, duration: 0.08, type: "sine" }, { freq: 784, duration: 0.08, type: "sine" }, { freq: 1047, duration: 0.08, type: "sine" }, { freq: 1319, duration: 0.15, type: "sine" }]); },
     lowHp: function () { playSequence([{ freq: 200, duration: 0.15, type: "square" }, { freq: 180, duration: 0.2, type: "square" }]); },
     craft: function () { playSequence([{ freq: 300, duration: 0.06, type: "sawtooth" }, { freq: 400, duration: 0.06, type: "sawtooth" }, { freq: 600, duration: 0.1, type: "sawtooth" }]); },
-    secretFound: function () { playSequence([{ freq: 400, duration: 0.1, type: "sine" }, { freq: 500, duration: 0.1, type: "sine" }, { freq: 700, duration: 0.1, type: "sine" }, { freq: 900, duration: 0.15, type: "sine" }]); }
+    secretFound: function () { playSequence([{ freq: 400, duration: 0.1, type: "sine" }, { freq: 500, duration: 0.1, type: "sine" }, { freq: 700, duration: 0.1, type: "sine" }, { freq: 900, duration: 0.15, type: "sine" }]); },
+    gather: function () { playSequence([{ freq: 440, duration: 0.06, type: "sine" }, { freq: 550, duration: 0.08, type: "sine" }]); },
+    gatherRare: function () { playSequence([{ freq: 440, duration: 0.06, type: "sine" }, { freq: 660, duration: 0.06, type: "sine" }, { freq: 880, duration: 0.1, type: "sine" }]); }
   };
 
   function play(name) {

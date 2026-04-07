@@ -151,7 +151,10 @@ var World = (function () {
       return;
     }
 
-    // 55% herb, 10% rare find (gold/double herb), 25% enemy, 10% nothing
+    // Base rates: 55% herb, 10% rare, 25% enemy, 10% nothing
+    // Spring bonus: +10% to herb chance
+    var herbChance = 0.55;
+    if (Player.getSeason() === "spring") herbChance = 0.65;
     var roll = Math.random();
     var gatherTexts = [
       "You kneel by the water's edge and spot some useful herbs growing between the rocks.",
@@ -165,25 +168,44 @@ var World = (function () {
       "You wade through the shallows but come up empty.",
       "A fish splashes nearby, but there's nothing else of interest."
     ];
-    if (roll < 0.55) {
+    // Gathering progression: every 10 herbs gathered increases rare chance by 2%
+    var herbsGathered = Player.get().herbsGathered || 0;
+    var rareBonus = Math.floor(herbsGathered / 10) * 0.02;
+    var rareThreshold = herbChance + Math.min(0.20, 0.10 + rareBonus);
+
+    if (roll < herbChance) {
       if (Player.addItem(loc.gatherItem)) {
+        var p2 = Player.get();
+        p2.herbsGathered = (p2.herbsGathered || 0) + 1;
+        if (p2.herbsGathered >= 20 && Player.unlockAchievement("herbalist")) {
+          Audio.play("achievement");
+        }
+        Audio.play("gather");
         var item = Items.get(loc.gatherItem);
         UI.showMessage(gatherTexts[Math.floor(Math.random() * gatherTexts.length)] + " Found: " + (item ? item.name : loc.gatherItem));
       } else {
         UI.showMessage("Inventory full!");
       }
-    } else if (roll < 0.65) {
+    } else if (roll < rareThreshold) {
       // Rare find — bonus gold or double gather
       var rareRoll = Math.random();
       if (rareRoll < 0.5) {
         var bonus = Math.floor(Math.random() * 5) + 3;
         Player.get().gold += bonus;
         UI.updateHeader();
+        Audio.play("gatherRare");
         UI.showMessage("You notice something glinting in the mud — " + bonus + " gold!");
       } else {
         var item1 = Player.addItem(loc.gatherItem);
         var item2 = item1 ? Player.addItem(loc.gatherItem) : false;
+        var p3 = Player.get();
+        if (item1) p3.herbsGathered = (p3.herbsGathered || 0) + 1;
+        if (item2) p3.herbsGathered = (p3.herbsGathered || 0) + 1;
+        if (p3.herbsGathered >= 20 && Player.unlockAchievement("herbalist")) {
+          Audio.play("achievement");
+        }
         if (item1 && item2) {
+          Audio.play("gatherRare");
           UI.showMessage("Lucky find! You discover a dense cluster of herbs and gather two at once.");
         } else if (item1) {
           UI.showMessage("You find a nice cluster, but only have room for one more.");
@@ -512,7 +534,6 @@ var World = (function () {
     if (Quests.isActive("mq8") && Quests.checkObjectives("mq8")) {
       var result = Quests.turnIn("mq8");
       if (result) {
-        Player.setFlag("chapter1Complete");
         Audio.play("questComplete");
         Dialogue.start("chapter1-ending", function () {
           UI.renderChapterEnd();
@@ -534,6 +555,18 @@ var World = (function () {
         });
         return;
       }
+    }
+
+    // Post-chapter celebration
+    if (Player.hasFlag("chapter1Complete") && !Player.hasFlag("celebrationDone")) {
+      Player.get().gold += 100;
+      Dialogue.start("celebration", function () {
+        UI.showScreen("town");
+        UI.renderTown();
+        UI.showMessage("Celebration! +100 gold and supplies received!");
+        UI.updateHeader();
+      });
+      return;
     }
 
     // Default: idle Rowan dialogue
@@ -663,8 +696,32 @@ var World = (function () {
         return;
       }
     }
-    // Default: show NPC menu (same as other NPCs) for relationship interactions
+    // Check SQ16 turn-in (Guard Duty - early Elric)
     var elricMenuOptions = { background: "assets/backgrounds/watch-post.png" };
+    if (Quests.isActive("sq16") && Quests.checkObjectives("sq16")) {
+      var result = Quests.turnIn("sq16");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq16-complete", function () {
+          showNPCMenu("elric", elricMenuOptions);
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
+    // Check SQ17 turn-in (Road Patrol - early Elric)
+    if (Quests.isActive("sq17") && Quests.checkObjectives("sq17")) {
+      var result = Quests.turnIn("sq17");
+      if (result) {
+        Audio.play("questComplete");
+        Dialogue.start("sq17-complete", function () {
+          showNPCMenu("elric", elricMenuOptions);
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+        });
+        return;
+      }
+    }
+    // Default: show NPC menu for relationship interactions
     if (!Player.hasFlag("visitedElric")) {
       Dialogue.start("elric-first", function () {
         showNPCMenu("elric", elricMenuOptions);
@@ -701,6 +758,13 @@ var World = (function () {
         });
         return;
       }
+    }
+    // Northern Ruins post-game tease
+    if (Player.hasFlag("chapter1Complete") && Player.hasFlag("celebrationDone") && !Player.hasFlag("northernRuinsTease")) {
+      Dialogue.start("northern-ruins-tease", function () {
+        showNPCMenu("elira", { background: '' });
+      });
+      return;
     }
     showNPCMenu("elira", { background: '' });
   }
@@ -741,6 +805,17 @@ var World = (function () {
   function interactEvent(eventId) {
     var evt = Chapter1.getTownEventById(eventId);
     if (!evt) return;
+
+    // Track unique town events for Town Regular achievement
+    var p = Player.get();
+    if (!p.townEventsSeen) p.townEventsSeen = [];
+    if (p.townEventsSeen.indexOf(eventId) === -1) {
+      p.townEventsSeen.push(eventId);
+      if (p.townEventsSeen.length >= 4 && Player.unlockAchievement("town-regular")) {
+        Audio.play("achievement");
+      }
+    }
+
     Dialogue.startDirect(evt.dialogue, function () {
       // Special: merchant opens shop after browsing
       if (eventId === "traveling-merchant" && Player.hasFlag("merchantBrowsed")) {

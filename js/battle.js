@@ -14,6 +14,7 @@ var Battle = (function () {
   var encounterMod = null;
   var animating = false;
   var lastVictoryData = null;
+  var skillCooldowns = {};
 
   var encounterTexts = [
     "A {name} appears!",
@@ -129,25 +130,37 @@ var Battle = (function () {
   }
 
   function startDungeonEnemy(enemyId, callback) {
-    var template = Enemies.get(enemyId);
-    if (!template) return false;
-    var e = JSON.parse(JSON.stringify(template));
+    var ids = Array.isArray(enemyId) ? enemyId : [enemyId];
+    enemies = [];
+    for (var di = 0; di < ids.length; di++) {
+      var template = Enemies.get(ids[di]);
+      if (!template) continue;
+      var e = JSON.parse(JSON.stringify(template));
 
-    var diff = Player.getDifficultyMultiplier();
-    e.hp = Math.floor(e.hp * diff);
-    e.attack = Math.ceil(e.attack * diff);
+      var diff = Player.getDifficultyMultiplier();
+      e.hp = Math.floor(e.hp * diff);
+      e.attack = Math.ceil(e.attack * diff);
 
-    prepareEnemy(e);
-    enemies = [e];
+      prepareEnemy(e);
+      enemies.push(e);
+    }
+
+    if (enemies.length === 0) return false;
     targetIndex = 0;
-    isBossFight = !!e.isBoss;
+    isBossFight = !!enemies[0].isBoss;
     isDungeonBattle = true;
     encounterMod = null;
     onVictoryCallback = callback || null;
     resetState();
     renderBattle();
     UI.showScreen("battle");
-    addLog("A " + enemies[0].name + " blocks your path!");
+    if (enemies.length === 1) {
+      addLog("A " + enemies[0].name + " blocks your path!");
+    } else {
+      var names = [];
+      for (var n = 0; n < enemies.length; n++) names.push(enemies[n].name);
+      addLog("Enemies block your path: " + names.join(", ") + "!");
+    }
     return true;
   }
 
@@ -158,6 +171,7 @@ var Battle = (function () {
     turnCount = 0;
     bossPhaseIndex = 0;
     animating = false;
+    skillCooldowns = {};
   }
 
   /* ── Target Selection Helpers ── */
@@ -187,6 +201,11 @@ var Battle = (function () {
     addLog("You defeated " + e.name + "!");
     Player.recordKill(e.id);
     Quests.progressKill(e.id);
+    // Track bounty kills
+    var pb = Player.get();
+    if (pb.activeBounty && pb.activeBounty.target === e.id) {
+      pb.bountyKills = (pb.bountyKills || 0) + 1;
+    }
     autoSelectTarget();
   }
 
@@ -364,7 +383,20 @@ var Battle = (function () {
       addLog("Not enough MP!");
       return;
     }
+
+    // Cooldown check
+    if (skill.cooldown && skillCooldowns[skillId] && skillCooldowns[skillId] > turnCount) {
+      var turnsLeft = skillCooldowns[skillId] - turnCount;
+      addLog(skill.name + " is on cooldown for " + turnsLeft + " more turn" + (turnsLeft > 1 ? "s" : "") + ".");
+      return;
+    }
+
     p.mp -= skill.mpCost;
+
+    // Set cooldown if skill has one
+    if (skill.cooldown) {
+      skillCooldowns[skillId] = turnCount + skill.cooldown;
+    }
 
     // Track proficiency (#3)
     Player.trackSkillUse(skillId);
@@ -878,6 +910,11 @@ var Battle = (function () {
 
     var html = '';
 
+    // Encounter modifier banner
+    if (encounterMod && encounterMod.label) {
+      html += '<div class="encounter-mod-banner encounter-mod-' + encounterMod.id + '">' + encounterMod.label + '</div>';
+    }
+
     // Battle scene: player bottom-left, enemies top-right
     html += '<div class="battle-scene">';
 
@@ -1050,6 +1087,7 @@ var Battle = (function () {
     p.mp = Math.floor(p.maxMp * 0.3);
     var goldLoss = Math.floor(p.gold * 0.1);
     p.gold = Math.max(0, p.gold - goldLoss);
+    Player.setFlag("hasBeenDefeated");
     enemies = [];
     targetIndex = 0;
     onVictoryCallback = null;
@@ -1078,10 +1116,15 @@ var Battle = (function () {
     if (wolfKills >= 10 && Player.unlockAchievement("wolf-slayer")) {
       Audio.play("achievement");
     }
-    // Chief Slain
+    // Chief Slain + Unbroken
     for (var bi = 0; bi < enemies.length; bi++) {
-      if (enemies[bi].id === "goblin-chief-grisk" && Player.unlockAchievement("chief-slain")) {
-        Audio.play("achievement");
+      if (enemies[bi].id === "goblin-chief-grisk") {
+        if (Player.unlockAchievement("chief-slain")) {
+          Audio.play("achievement");
+        }
+        if (!Player.hasFlag("hasBeenDefeated") && Player.unlockAchievement("no-defeat")) {
+          Audio.play("achievement");
+        }
       }
     }
     // Bestiary discovery

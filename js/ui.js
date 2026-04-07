@@ -62,6 +62,12 @@ var UI = (function () {
     if (id !== "title" && id !== "create") {
       updateHeader();
     }
+    // Hide nav during immersive screens
+    var nav = document.getElementById("game-nav");
+    if (nav) {
+      var hideNav = (id === "battle" || id === "dungeon" || id === "dialogue");
+      nav.style.display = hideNav ? "none" : "";
+    }
   }
 
   function getScreen() { return currentScreen; }
@@ -316,6 +322,31 @@ var UI = (function () {
       }
     }
 
+    // Post-game daily bounty
+    var p = Player.get();
+    var bounty = Chapter1.rollDailyBounty(p);
+    if (bounty) {
+      var bountyActive = p.activeBounty && p.activeBounty.id === bounty.id;
+      var bountyComplete = p.completedBounties && p.completedBounties.indexOf(bounty.id + '-' + p.day) !== -1;
+      html += '<h3 style="margin-top:1rem;">Daily Bounty</h3>';
+      html += '<div class="quest-entry bounty-entry">';
+      html += '<div class="quest-name">' + bounty.name + '</div>';
+      html += '<div class="quest-desc">' + bounty.description + '</div>';
+      html += '<div class="quest-rewards">Rewards: ' + bounty.rewards.xp + ' XP, ' + bounty.rewards.gold + ' gold</div>';
+      if (bountyComplete) {
+        html += '<span class="bounty-done">Completed today</span>';
+      } else if (bountyActive) {
+        var prog = p.bountyKills || 0;
+        html += '<div class="quest-progress">' + prog + '/' + bounty.count + ' killed</div>';
+        if (prog >= bounty.count) {
+          html += '<button class="btn btn-small" data-action="turn-in-bounty">Turn In</button>';
+        }
+      } else {
+        html += '<button class="btn btn-small" data-action="accept-bounty">Accept</button>';
+      }
+      html += '</div>';
+    }
+
     container.innerHTML = html;
   }
 
@@ -470,6 +501,15 @@ var UI = (function () {
       html += '<div class="rel-level">' + levelName + '</div>';
       html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
       html += '<div class="rel-affinity">' + (rel ? rel.affinity : 0) + ' / ' + Relationships.MAX_AFFINITY + '</div>';
+
+      // Class preference display
+      var prefClass = Relationships.getClassPreference(npcId);
+      if (prefClass) {
+        var prefLabel = prefClass.charAt(0).toUpperCase() + prefClass.slice(1);
+        var isMatch = p && p.buildClass === prefClass;
+        html += '<div class="npc-class-pref' + (isMatch ? ' pref-match' : '') + '">Prefers: ' + prefLabel + (isMatch ? ' (You!)' : '') + '</div>';
+      }
+
       html += '</div></div>';
     }
 
@@ -812,6 +852,20 @@ var UI = (function () {
       html += '</div>';
     }
     html += '</div>';
+
+    // Respec build option
+    if (p.buildClass) {
+      html += '<div class="respec-section">';
+      html += '<h3>Respec Build</h3>';
+      html += '<p class="flavor">Reset your build class and choose a new path. Costs ' + Player.RESPEC_COST + ' gold.</p>';
+      if (p.gold >= Player.RESPEC_COST) {
+        html += '<button class="btn btn-small btn-primary" data-action="respec-build">Respec (' + Player.RESPEC_COST + 'g)</button>';
+      } else {
+        html += '<button class="btn btn-small" disabled>Not Enough Gold</button>';
+      }
+      html += '</div>';
+    }
+
     html += '<button class="btn" data-action="go-town">Back to Town</button>';
     container.innerHTML = html;
   }
@@ -1215,7 +1269,7 @@ var UI = (function () {
       var nextTierKills = tier === 1 ? 3 : tier === 2 ? 5 : tier === 3 ? 10 : 0;
       if (nextTierKills > 0) {
         var prevTier = tier === 1 ? 1 : tier === 2 ? 3 : 5;
-        var pct = Math.min(100, Math.round(((kills - prevTier) / (nextTierKills - prevTier)) * 100));
+        var pct = Math.max(0, Math.min(100, Math.round(((kills - prevTier) / (nextTierKills - prevTier)) * 100)));
         html += '<div class="ledger-creature-progress"><div class="ledger-creature-progress-fill" style="width:' + pct + '%"></div></div>';
       }
 
@@ -1271,7 +1325,24 @@ var UI = (function () {
       html += '<div class="ledger-rel-info">';
       html += '<div class="ledger-rel-name">' + cfg.name + (isPartner ? ' (Partner)' : '') + '</div>';
       html += '<div class="ledger-rel-level">' + levelName + ' &mdash; ' + rel.affinity + '/' + Relationships.MAX_AFFINITY + '</div>';
-      html += '<div class="ledger-rel-bar"><div class="ledger-rel-fill" style="width:' + pct + '%"></div></div>';
+      html += '<div class="ledger-rel-bar"><div class="ledger-rel-fill" style="width:' + pct + '%"></div>';
+      // Milestone markers at 15, 35, 55, 75
+      var milestones = [15, 35, 55, 75];
+      var milestoneNames = ['Acquaintance', 'Friend', 'Close Friend', 'Devoted'];
+      for (var m = 0; m < milestones.length; m++) {
+        var mPct = Math.floor((milestones[m] / Relationships.MAX_AFFINITY) * 100);
+        var reached = rel.affinity >= milestones[m] ? ' reached' : '';
+        html += '<div class="rel-milestone-marker' + reached + '" style="left:' + mPct + '%" title="' + milestoneNames[m] + ' (' + milestones[m] + ')"></div>';
+      }
+      html += '</div>';
+      // Next milestone hint
+      var nextMilestone = null;
+      for (var nm = 0; nm < milestones.length; nm++) {
+        if (rel.affinity < milestones[nm]) { nextMilestone = nm; break; }
+      }
+      if (nextMilestone !== null) {
+        html += '<div class="ledger-rel-next">Next: ' + milestoneNames[nextMilestone] + ' at ' + milestones[nextMilestone] + '</div>';
+      }
       html += '</div></div>';
     }
     return html;

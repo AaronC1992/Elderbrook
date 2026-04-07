@@ -124,6 +124,7 @@ var Enemies = (function () {
         { id: "health-potion", chance: 0.15 },
         { id: "iron-ore", chance: 0.10 },
         { id: "goblin-slayer-bracers", chance: 0.03 },
+        { id: "goblin-slayer-greaves", chance: 0.03 },
         { id: "moonpetal", chance: 0.05 }
       ],
       abilities: [
@@ -210,6 +211,7 @@ var Enemies = (function () {
         { id: "grisk-cleaver", chance: 0.30 },
         { id: "goblin-slayer-helm", chance: 0.20 },
         { id: "goblin-slayer-chest", chance: 0.20 },
+        { id: "goblin-slayer-greaves", chance: 0.20 },
         { id: "enchanted-shard", chance: 0.25 },
         { id: "shadow-essence", chance: 0.35 }
       ],
@@ -248,8 +250,10 @@ var Enemies = (function () {
     if (!template) return null;
     var e = JSON.parse(JSON.stringify(template));
 
+    var season = Player.getSeason();
+
     // Winter makes all enemies tougher — harsher conditions, desperate creatures
-    if (Player.getSeason() === "winter") {
+    if (season === "winter") {
       e.hp = Math.floor(e.hp * 1.2);
       e.attack += 2;
       e.defense += 1;
@@ -258,6 +262,27 @@ var Enemies = (function () {
         e.gold[0] = Math.floor(e.gold[0] * 1.2);
         e.gold[1] = Math.floor(e.gold[1] * 1.2);
       }
+    }
+
+    // Spring — creatures are sluggish from hibernation
+    if (season === "spring") {
+      e.defense = Math.max(0, e.defense - 1);
+      e.hp = Math.floor(e.hp * 0.9);
+    }
+
+    // Summer — creatures are bold and active
+    if (season === "summer") {
+      e.attack += 1;
+      e.xp = Math.floor(e.xp * 1.1);
+    }
+
+    // Autumn — creatures hoard resources before winter
+    if (season === "autumn") {
+      if (e.gold) {
+        e.gold[0] = Math.floor(e.gold[0] * 1.15);
+        e.gold[1] = Math.floor(e.gold[1] * 1.15);
+      }
+      e.xp = Math.floor(e.xp * 1.1);
     }
 
     return e;

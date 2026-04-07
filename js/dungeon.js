@@ -9,12 +9,12 @@ var Dungeon = (function () {
       rooms: [
         {
           id: 0, name: "Cave Entrance", type: "start",
-          description: "The mouth of the goblin cave. A foul stench drifts from the darkness ahead.",
+          description: "The mouth of the goblin cave yawns before you, reeking of smoke and rotting meat. Scratched into the rock beside the entrance is a crude warning sigil, not goblin-made, but far older. The goblins merely borrowed this place from whatever carved these tunnels long ago.",
           exits: [1]
         },
         {
           id: 1, name: "Outer Tunnels", type: "enemy",
-          description: "Narrow tunnels dimly lit by fungal growth. Goblins patrol here.",
+          description: "Narrow tunnels dimly lit by phosphorescent fungal growth. The walls bear two kinds of markings: crude goblin scratches and beneath them, smooth geometric lines carved with precision no goblin could manage. Someone built these tunnels. The goblins just moved in.",
           enemies: ["goblin-guard", "goblin-scout"],
           enemyCount: 2,
           exits: [2],
@@ -32,7 +32,7 @@ var Dungeon = (function () {
         },
         {
           id: 3, name: "Guard Room", type: "enemy",
-          description: "A wider cave room. Goblin guards stand watch over the deeper passages.",
+          description: "A wider cave room where goblin guards stand watch. Stolen weapons and shields line the walls in organized racks, an unusual level of discipline for goblins. A faded mural on the ceiling depicts a spiraling pattern that seems to pull at your eyes.",
           enemies: ["goblin-guard", "goblin-guard", "goblin-brute"],
           enemyCount: 2,
           exits: [4, 9]
@@ -45,7 +45,7 @@ var Dungeon = (function () {
         },
         {
           id: 5, name: "Shaman's Chamber", type: "enemy",
-          description: "Strange totems line the walls. A goblin shaman chants in the shadows.",
+          description: "Strange totems carved from bone and shadow stone line the walls. A goblin shaman chants in the shadows, surrounded by glowing sigils drawn in ash. The same spiraling mark from the guard room appears here, larger and more deliberate. This is where the goblins learned their dark loyalty.",
           enemies: ["goblin-shaman", "goblin-guard"],
           enemyCount: 2,
           specialLoot: [{ id: "strange-sigil", chance: 1.0, requireQuest: "mq6" }],
@@ -53,14 +53,14 @@ var Dungeon = (function () {
         },
         {
           id: 6, name: "War Room", type: "enemy",
-          description: "Maps and crude battle plans cover a stone table. The goblins were planning something big.",
+          description: "Maps and crude battle plans cover a stone table that predates the goblins by centuries. The goblins have overlaid their raid routes on top of older, more detailed cartography. Someone was planning something far larger than goblin raids.",
           enemies: ["goblin-brute", "goblin-guard", "goblin-archer"],
           enemyCount: 2,
           exits: [7]
         },
         {
           id: 7, name: "Chief's Throne", type: "boss",
-          description: "The deepest chamber. A crude throne sits atop a pile of stolen goods. Goblin Chief Grisk awaits.",
+          description: "The deepest chamber. A crude throne sits atop a pile of stolen goods, but behind it, the cave wall has been carved into an archway of ancient design. Symbols pulse faintly in the stone. Goblin Chief Grisk awaits, but even he seems small compared to whatever once ruled this place.",
           boss: "goblin-chief-grisk",
           exits: []
         },
@@ -104,6 +104,41 @@ var Dungeon = (function () {
     clearedRooms = {};
     dungeonLoot = {};
     roomHistory = [];
+
+    // First-time cave entry prompt
+    if (dungeonId === "goblin-cave" && !Player.hasFlag("enteredCave")) {
+      Player.setFlag("enteredCave");
+      Dialogue.startDirect({
+        nodes: [
+          { speaker: "", portrait: "", text: "The air turns cold and damp. The stench of goblins is overpowering. There's no turning back from here." },
+          { speaker: "", portrait: "", text: "You grip your weapon tighter and step into the darkness." }
+        ],
+        onEnd: null
+      }, function () {
+        renderRoom();
+        UI.showScreen("dungeon");
+      });
+      return true;
+    }
+
+    // Re-entry after defeating Grisk
+    if (dungeonId === "goblin-cave" && Player.hasFlag("defeatedGrisk")) {
+      // Pre-clear the boss room so the boss doesn't respawn
+      for (var ri = 0; ri < d.rooms.length; ri++) {
+        if (d.rooms[ri].type === "boss") clearedRooms[d.rooms[ri].id] = true;
+      }
+      Dialogue.startDirect({
+        nodes: [
+          { speaker: "", portrait: "", text: "The cave is quieter now, but goblins have already begun creeping back in. Remnants of the chief's forces still lurk in the tunnels." }
+        ],
+        onEnd: null
+      }, function () {
+        renderRoom();
+        UI.showScreen("dungeon");
+      });
+      return true;
+    }
+
     renderRoom();
     UI.showScreen("dungeon");
     return true;
@@ -245,11 +280,17 @@ var Dungeon = (function () {
     var room = currentDungeon.rooms[currentRoomIndex];
     if (!room || room.type !== "enemy" || clearedRooms[room.id]) return;
 
-    // Pick a random enemy from room's pool
+    // Pick enemies: 60% one, 30% two, 10% three (capped by pool size)
     var pool = room.enemies;
-    var pick = pool[Math.floor(Math.random() * pool.length)];
+    var countRoll = Math.random();
+    var count = countRoll < 0.60 ? 1 : (countRoll < 0.90 ? 2 : 3);
+    count = Math.min(count, pool.length);
+    var picks = [];
+    for (var ei = 0; ei < count; ei++) {
+      picks.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
 
-    Battle.startDungeonEnemy(pick, function () {
+    Battle.startDungeonEnemy(picks, function () {
       onRoomCleared();
     });
   }
@@ -280,11 +321,13 @@ var Dungeon = (function () {
 
       // Drop room loot (for enemy rooms with loot arrays)
       if (room.loot) {
+        var lootOverflow = false;
         for (var li = 0; li < room.loot.length; li++) {
           if (Math.random() < room.loot[li].chance) {
-            Player.addItem(room.loot[li].id);
+            if (!Player.addItem(room.loot[li].id)) lootOverflow = true;
           }
         }
+        if (lootOverflow) UI.showMessage("Inventory full! Some loot was left behind.");
       }
 
       // Drop special loot
@@ -293,7 +336,7 @@ var Dungeon = (function () {
           var sl = room.specialLoot[i];
           if (sl.requireQuest && !Quests.isActive(sl.requireQuest)) continue;
           if (Math.random() < sl.chance) {
-            Player.addItem(sl.id);
+            if (!Player.addItem(sl.id)) UI.showMessage("Inventory full! A special item was left behind.");
           }
         }
       }
