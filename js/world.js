@@ -843,6 +843,41 @@ var World = (function () {
     });
   }
 
+  /* ── Biscuit the Cat Quest ── */
+  function findBiscuit() {
+    var dialogue = {
+      id: "find-biscuit",
+      nodes: [
+        { speaker: "", portrait: "assets/portraits/biscuit-cat.png", text: "A flash of orange fur catches your eye near the gate. A small cat with a white spot on her nose blinks up at you and meows." },
+        { speaker: "", portrait: "assets/portraits/biscuit-cat.png", text: "This must be Biscuit! She purrs and rubs against your ankles as if she's been waiting for someone to notice her.", end: true }
+      ],
+      onEnd: { flags: ["foundBiscuit"] }
+    };
+    Dialogue.startDirect(dialogue, function () {
+      UI.showScreen("town");
+      UI.renderTown();
+    });
+  }
+
+  function returnBiscuit() {
+    var dialogue = {
+      id: "return-biscuit",
+      nodes: [
+        { speaker: "Lost Child", portrait: "assets/portraits/lost-child.png", text: "BISCUIT! You found her!" },
+        { speaker: "", portrait: "assets/portraits/biscuit-cat.png", text: "The cat leaps from your arms and nuzzles into the child's embrace, purring loud enough to rival a blacksmith's bellows." },
+        { speaker: "Lost Child", portrait: "assets/portraits/lost-child.png", text: "Thank you so so SO much! Mama gave me some coins to give to whoever found her. Here, take them!" },
+        { speaker: "", portrait: "", text: "The child hands you a small pouch of coins and runs off, clutching Biscuit tightly. You earned 20 gold!", end: true }
+      ],
+      onEnd: { flags: ["returnedBiscuit"] }
+    };
+    Dialogue.startDirect(dialogue, function () {
+      var p = Player.get();
+      p.gold += 20;
+      UI.showScreen("town");
+      UI.renderTown();
+    });
+  }
+
   return {
     navigate: navigate,
     explore: explore,
@@ -854,6 +889,8 @@ var World = (function () {
     visitElric: visitElric,
     visitElira: visitElira,
     interactEvent: interactEvent,
+    findBiscuit: findBiscuit,
+    returnBiscuit: returnBiscuit,
     getNPCContext: getNPCContext,
     returnToNPCMenu: returnToNPCMenu,
     npcOpenShop: npcOpenShop,

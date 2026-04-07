@@ -413,6 +413,16 @@ var UI = (function () {
     // Persistent town NPCs — full portrait
     html += '<button class="town-npc" style="top:8%;right:28%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
 
+    // Biscuit the cat — appears near the gate when looking, vanishes once found
+    if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
+      html += '<button class="town-npc town-npc-cat" style="bottom:14%;left:28%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="A familiar orange cat" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
+    }
+
+    // Lost child returns when you've found Biscuit
+    if (Player.hasFlag('foundBiscuit') && !Player.hasFlag('returnedBiscuit')) {
+      html += '<button class="town-npc town-npc-event" style="top:68%;left:25%" data-action="return-biscuit"><img class="town-npc-portrait" src="assets/portraits/lost-child.png" alt="Lost Child" onerror="this.style.display=\'none\'"><span class="town-npc-name">Lost Child</span></button>';
+    }
+
     // Spawn event NPCs — show full portrait in town
     var p = Player.get();
     var spawns = (p && p.eventSpawns) ? p.eventSpawns : [];

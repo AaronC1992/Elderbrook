@@ -156,6 +156,12 @@
       case "interact-event":
         World.interactEvent(btn.getAttribute("data-event"));
         break;
+      case "find-biscuit":
+        World.findBiscuit();
+        break;
+      case "return-biscuit":
+        World.returnBiscuit();
+        break;
       case "go-worldmap":
         UI.renderWorldMap();
         UI.showScreen("worldmap");

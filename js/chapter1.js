@@ -166,6 +166,9 @@ var Chapter1 = (function () {
     eliraForeshadow: false,
     townEventGuard: false, townEventChild: false, townEventFestival: false, townEventStranger: false,
 
+    /* Biscuit the cat quest */
+    lookingForBiscuit: false, foundBiscuit: false, returnedBiscuit: false,
+
     /* Elira chain quests */
     completedCQ7: false, completedCQ8: false,
 
@@ -1255,19 +1258,19 @@ var Chapter1 = (function () {
       repeatable: true,
       location: "town",
       npcName: "Lost Child",
-      npcPortrait: "assets/portraits/villager_female.png",
+      npcPortrait: "assets/portraits/lost-child.png",
       poiPosition: "top:68%;left:25%",
       poiSub: "Looking around",
       dialogue: {
         id: "town-event-child",
         nodes: [
-          { speaker: "Lost Child", portrait: "assets/portraits/villager_female.png", text: "Excuse me... have you seen my cat? She ran toward the front gate and I can't find her anywhere." },
+          { speaker: "Lost Child", portrait: "assets/portraits/lost-child.png", text: "Excuse me... have you seen my cat? She ran toward the front gate and I can't find her anywhere." },
           { speaker: "", portrait: "", text: "A small child looks up at you with tearful eyes.", choices: [
-            { text: "I'll keep an eye out for her. What does she look like?", next: 2 },
+            { text: "I'll keep an eye out for her. What does she look like?", next: 2, flags: ["lookingForBiscuit"] },
             { text: "I'm sure she'll come back on her own. Cats always do.", next: 3 }
           ]},
-          { speaker: "Lost Child", portrait: "assets/portraits/villager_female.png", text: "She's orange with a white spot on her nose! Her name is Biscuit. Thank you, you're really nice!", end: true },
-          { speaker: "Lost Child", portrait: "assets/portraits/villager_female.png", text: "I hope so. Mama says cats have nine lives, but I still worry about her.", end: true }
+          { speaker: "Lost Child", portrait: "assets/portraits/lost-child.png", text: "She's orange with a white spot on her nose! Her name is Biscuit. Thank you, you're really nice!", end: true },
+          { speaker: "Lost Child", portrait: "assets/portraits/lost-child.png", text: "I hope so. Mama says cats have nine lives, but I still worry about her.", end: true }
         ],
         onEnd: { flags: ["townEventChild"] }
       }

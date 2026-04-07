@@ -1,7 +1,7 @@
-/* relationships.js - Relationship building, gift-giving, and dating system */
+﻿/* relationships.js - Relationship building, gift-giving, and dating system */
 var Relationships = (function () {
 
-  /* ── Relationship Level Thresholds ── */
+  /* â”€â”€ Relationship Level Thresholds â”€â”€ */
   var LEVELS = [
     { name: "Stranger",          min: 0 },
     { name: "Acquaintance",      min: 15 },
@@ -13,7 +13,7 @@ var Relationships = (function () {
   var MILESTONES = [15, 35, 55, 75];
   var MAX_AFFINITY = 100;
 
-  /* ── NPC Relationship Config ── */
+  /* â”€â”€ NPC Relationship Config â”€â”€ */
   var config = {
     mira: {
       name: "Mira Voss",
@@ -514,7 +514,7 @@ var Relationships = (function () {
 
     elric: {
       name: "Captain Elric",
-      portrait: "assets/portraits/elric.png",
+      portrait: "assets/portraits/Guard_captain.png",
       lovedGifts: ["old-book", "sweet-roll", "silver-ring"],
       likedGifts: ["iron-ingot", "herbal-tea"],
       dislikedGifts: ["cave-herb", "wildflowers"],
@@ -564,56 +564,56 @@ var Relationships = (function () {
       milestoneDialogues: {
         15: {
           nodes: [
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I'll admit, when you first arrived, I didn't trust you. New face, unknown background. I'm suspicious by nature." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "But you've proven yourself. You've done more for this town in weeks than most do in years." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "Consider my suspicion officially withdrawn." }
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I'll admit, when you first arrived, I didn't trust you. New face, unknown background. I'm suspicious by nature." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "But you've proven yourself. You've done more for this town in weeks than most do in years." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "Consider my suspicion officially withdrawn." }
           ]
         },
         35: {
           nodes: [
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I wasn't always a captain. Started as a gate guard. Twelve hour shifts, standing in the rain." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "Worked my way up by never missing a shift and always volunteering for the hard jobs." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "The title is lonely, though. Everyone sees the rank. Not many see the person behind it." }
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I wasn't always a captain. Started as a gate guard. Twelve hour shifts, standing in the rain." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "Worked my way up by never missing a shift and always volunteering for the hard jobs." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "The title is lonely, though. Everyone sees the rank. Not many see the person behind it." }
           ]
         },
         55: {
           nodes: [
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I almost left Elderbrook last year. The politics, the underfunding, the feeling that nobody cares..." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I stayed because of the people. Rowan, Mira, even Bram in his grumpy way. And now you." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "You give me a reason to keep fighting for this town. I hope you know that." }
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I almost left Elderbrook last year. The politics, the underfunding, the feeling that nobody cares..." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I stayed because of the people. Rowan, Mira, even Bram in his grumpy way. And now you." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "You give me a reason to keep fighting for this town. I hope you know that." }
           ]
         },
         75: {
           nodes: [
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I've written this speech three times and thrown it away each time. So I'll just say it plainly." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "You're the first person who's made me feel like more than just a uniform and a title." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "When I'm with you, I remember who I was before all the duty and the stress. I remember what happiness feels like." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I've written this speech three times and thrown it away each time. So I'll just say it plainly." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "You're the first person who's made me feel like more than just a uniform and a title." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "When I'm with you, I remember who I was before all the duty and the stress. I remember what happiness feels like." },
             {
-              speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I'm not good at this. But I have to ask. Could there ever be something more between us?",
+              speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I'm not good at this. But I have to ask. Could there ever be something more between us?",
               choices: [
                 { text: "There already is, Elric. I've felt it for a while.", next: 4, flags: ["elricRomantic"] },
                 { text: "You're a wonderful person, but I only see you as a friend.", next: 6 }
               ]
             },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "You have no idea how long I've wanted to hear that." },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I'll protect this town, and I'll protect what we have. You have my word as a captain and as yours.", end: true },
-            { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I understand. And I respect it completely. Our friendship means the world to me. That won't change." }
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "You have no idea how long I've wanted to hear that." },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I'll protect this town, and I'll protect what we have. You have my word as a captain and as yours.", end: true },
+            { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I understand. And I respect it completely. Our friendship means the world to me. That won't change." }
           ]
         }
       },
       dateDialogue: {
         nodes: [
-          { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "Dinner? I... yes. Let me tell the lieutenant he has the watch tonight." },
-          { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I can't remember the last time I sat down for a meal without a report in my other hand." },
-          { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "This is nice. Really nice. Just two people, a warm fire, and no emergencies." },
-          { speaker: "Captain Elric", portrait: "assets/portraits/elric.png", text: "I don't want this evening to end. But duty calls at dawn. Let's do this again soon." }
+          { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "Dinner? I... yes. Let me tell the lieutenant he has the watch tonight." },
+          { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I can't remember the last time I sat down for a meal without a report in my other hand." },
+          { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "This is nice. Really nice. Just two people, a warm fire, and no emergencies." },
+          { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I don't want this evening to end. But duty calls at dawn. Let's do this again soon." }
         ],
         onEnd: { addAffinity: { npc: "elric", amount: 5 } }
       }
     }
   };
 
-  /* ── Helper Functions ── */
+  /* â”€â”€ Helper Functions â”€â”€ */
 
   function getConfig(npcId) {
     return config[npcId] || null;
@@ -655,7 +655,7 @@ var Relationships = (function () {
     return ids;
   }
 
-  /* ── Chat System ── */
+  /* â”€â”€ Chat System â”€â”€ */
 
   function canChat(npcId) {
     var rel = getRelData(npcId);
@@ -711,7 +711,7 @@ var Relationships = (function () {
     });
   }
 
-  /* ── Gift System ── */
+  /* â”€â”€ Gift System â”€â”€ */
 
   function canGift(npcId) {
     var rel = getRelData(npcId);
@@ -767,7 +767,7 @@ var Relationships = (function () {
     });
   }
 
-  /* ── Date System ── */
+  /* â”€â”€ Date System â”€â”€ */
 
   function canDate(npcId) {
     var rel = getRelData(npcId);
@@ -788,7 +788,7 @@ var Relationships = (function () {
     });
   }
 
-  /* ── Milestone System ── */
+  /* â”€â”€ Milestone System â”€â”€ */
 
   function getPendingMilestone(npcId) {
     var rel = getRelData(npcId);
@@ -823,7 +823,7 @@ var Relationships = (function () {
     });
   }
 
-  /* ── Daily Reset (called on inn rest) ── */
+  /* â”€â”€ Daily Reset (called on inn rest) â”€â”€ */
 
   function resetDaily() {
     var p = Player.get();
@@ -835,7 +835,7 @@ var Relationships = (function () {
     }
   }
 
-  /* ── Partner Bonus ── */
+  /* â”€â”€ Partner Bonus â”€â”€ */
 
   function getPartnerBonus() {
     var p = Player.get();
@@ -848,7 +848,7 @@ var Relationships = (function () {
     return null;
   }
 
-  /* ── Gift Inventory Helper ── */
+  /* â”€â”€ Gift Inventory Helper â”€â”€ */
 
   function getGiftableItems() {
     var p = Player.get();
