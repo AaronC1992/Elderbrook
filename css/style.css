@@ -645,6 +645,16 @@ button {
   width: 100%;
   height: 100%;
 }
+.town-square,
+.town-buildings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.town-square > *,
+.town-buildings > * {
+  pointer-events: auto;
+}
 .town-title {
   position: absolute;
   top: 3%;
@@ -2345,4 +2355,44 @@ button {
   .town-npc-portrait { height: 80px; }
   .poi-name { font-size: 0.72rem; }
   .poi-sub { font-size: 0.6rem; }
+
+  /* ── Mobile town: bottom-bar navigation ── */
+  #town-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .town-square {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .town-buildings {
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem;
+    padding: 0.5rem;
+    background: rgba(14, 17, 23, 0.92);
+    border-top: 2px solid rgba(212, 164, 56, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    max-height: 42%;
+    overflow-y: auto;
+    pointer-events: auto;
+    z-index: 5;
+  }
+  .town-buildings .town-poi {
+    position: static !important;
+    transform: none !important;
+    white-space: normal;
+    width: 100%;
+    text-align: center;
+    padding: 0.35rem 0.4rem;
+  }
+  .town-buildings .town-poi-exit {
+    grid-column: 1 / -1;
+  }
 }

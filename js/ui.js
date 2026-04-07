@@ -387,6 +387,9 @@ var UI = (function () {
     var festival = Player.isFestivalActive();
     var html = '';
 
+    // ── NPC / scene area (overlays the background image) ──
+    html += '<div class="town-square">';
+
     if (festival) {
       html += '<div class="town-title">Elderbrook <span class="festival-badge">Harvest Festival</span></div>';
       html += '<div class="festival-banner">The town is alive with music, lanterns, and the smell of fresh cider!</div>';
@@ -394,33 +397,17 @@ var UI = (function () {
       html += '<div class="town-title">Elderbrook</div>';
     }
 
-    // Place POIs near buildings in the background image
-    html += '<button class="town-poi" style="top:12%;left:3%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
-    html += '<button class="town-poi" style="top:35%;left:18%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
-    html += '<button class="town-poi" style="top:18%;left:38%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
-    html += '<button class="town-poi" style="top:30%;right:5%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
-    html += '<button class="town-poi" style="top:55%;left:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
-    html += '<button class="town-poi" style="top:12%;right:3%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
-    if (Player.hasFlag('metElira')) {
-      html += '<button class="town-poi" style="top:30%;right:22%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
-    }
-
-    if (Player.hasFlag('bramForgeUnlocked')) {
-      html += '<button class="town-poi" style="top:52%;left:20%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
-    }
-    html += '<button class="town-poi town-poi-exit" style="bottom:5%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
-
-    // Persistent town NPCs — full portrait
-    html += '<button class="town-npc" style="top:8%;right:28%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
+    // Persistent town NPCs — portraits in the cobblestone square
+    html += '<button class="town-npc" style="top:32%;left:52%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
-      html += '<button class="town-npc town-npc-cat" style="bottom:14%;left:28%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="A familiar orange cat" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
+      html += '<button class="town-npc town-npc-cat" style="bottom:14%;left:36%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="A familiar orange cat" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
     }
 
     // Lost child returns when you've found Biscuit
     if (Player.hasFlag('foundBiscuit') && !Player.hasFlag('returnedBiscuit')) {
-      html += '<button class="town-npc town-npc-event" style="top:68%;left:25%" data-action="return-biscuit"><img class="town-npc-portrait" src="assets/portraits/lost-child.png" alt="Lost Child" onerror="this.style.display=\'none\'"><span class="town-npc-name">Lost Child</span></button>';
+      html += '<button class="town-npc town-npc-event" style="top:55%;left:30%" data-action="return-biscuit"><img class="town-npc-portrait" src="assets/portraits/lost-child.png" alt="Lost Child" onerror="this.style.display=\'none\'"><span class="town-npc-name">Lost Child</span></button>';
     }
 
     // Spawn event NPCs — show full portrait in town
@@ -434,6 +421,34 @@ var UI = (function () {
       html += '<span class="town-npc-name">' + ev.npcName + '</span>';
       html += '</button>';
     }
+
+    html += '</div>'; // .town-square
+
+    // ── Building navigation (absolute on desktop, grid panel on mobile) ──
+    html += '<div class="town-buildings">';
+
+    // Left side — aligned to left-side buildings in the art
+    html += '<button class="town-poi" style="top:4%;left:2%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
+    html += '<button class="town-poi" style="top:20%;left:2%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
+    html += '<button class="town-poi" style="top:30%;left:17%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
+
+    // Right side — aligned to right-side buildings in the art
+    html += '<button class="town-poi" style="top:4%;right:4%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
+    html += '<button class="town-poi" style="top:20%;right:7%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
+    html += '<button class="town-poi" style="top:30%;right:1%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
+
+    // Conditional POIs
+    if (Player.hasFlag('metElira')) {
+      html += '<button class="town-poi" style="top:11%;left:11%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
+    }
+    if (Player.hasFlag('bramForgeUnlocked')) {
+      html += '<button class="town-poi" style="top:40%;left:3%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
+    }
+
+    // Exit
+    html += '<button class="town-poi town-poi-exit" style="bottom:3%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
+
+    html += '</div>'; // .town-buildings
 
     container.innerHTML = html;
   }
