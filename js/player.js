@@ -7,16 +7,16 @@ var Player = (function () {
 
   /* ── Class Definitions ── */
   var CLASS_DEFS = {
-    warrior:    { name: "Warrior",    base: null,       stats: { attack: 2, defense: 1 }, skill: "rallying-cry",      unlock: "level",    unlockFlag: null,               desc: "Masters of brute force and resilience." },
-    knight:     { name: "Knight",     base: "warrior",  stats: { attack: 1, defense: 3 }, skill: "guardians-shield",  unlock: "quest",    unlockFlag: "unlockedKnight",    desc: "Sworn protectors clad in heavy armor." },
-    berserker:  { name: "Berserker",  base: "warrior",  stats: { attack: 4, defense: -1 },skill: "frenzy",            unlock: "training", unlockFlag: "unlockedBerserker", desc: "Reckless fighters fueled by rage.", trainCost: 500 },
-    rogue:      { name: "Rogue",      base: null,       stats: { dexterity: 2, attack: 1 },skill: "smoke-bomb",       unlock: "level",    unlockFlag: null,               desc: "Swift and cunning, striking from the shadows." },
-    assassin:   { name: "Assassin",   base: "rogue",    stats: { dexterity: 2, attack: 2 },skill: "shadow-strike",    unlock: "quest",    unlockFlag: "unlockedAssassin",  desc: "Silent killers who exploit weakness." },
-    ranger:     { name: "Ranger",     base: "rogue",    stats: { dexterity: 3, intelligence: 1 },skill: "volley",     unlock: "training", unlockFlag: "unlockedRanger",    desc: "Expert marksmen at home in the wild.", trainCost: 500 },
-    mage:       { name: "Mage",       base: null,       stats: { intelligence: 2, maxMp: 10 },skill: "arcane-shield", unlock: "level",    unlockFlag: null,               desc: "Wielders of arcane power and knowledge." },
-    pyromancer: { name: "Pyromancer", base: "mage",     stats: { intelligence: 3, attack: 1 },skill: "inferno",       unlock: "quest",    unlockFlag: "unlockedPyromancer",desc: "Masters of destructive flame magic." },
-    cleric:     { name: "Cleric",     base: "mage",     stats: { intelligence: 1, defense: 1, maxHp: 15, maxMp: 10 },skill: "holy-light",unlock: "quest",    unlockFlag: "unlockedCleric",   desc: "Divine healers who mend body and spirit." },
-    paladin:    { name: "Paladin",    base: null,       stats: { attack: 2, defense: 2, intelligence: 1 },skill: "smite",unlock: "quest",    unlockFlag: "unlockedPaladin",  desc: "Holy warriors wielding faith and steel." }
+    warrior:    { name: "Warrior",    base: null,       stats: { attack: 2, defense: 1 }, skill: "rallying-cry",      unlock: "quest", unlockFlag: "unlockedWarrior",    desc: "Masters of brute force and resilience." },
+    knight:     { name: "Knight",     base: "warrior",  stats: { attack: 1, defense: 3 }, skill: "guardians-shield",  unlock: "quest", unlockFlag: "unlockedKnight",     desc: "Sworn protectors clad in heavy armor." },
+    berserker:  { name: "Berserker",  base: "warrior",  stats: { attack: 4, defense: -1 },skill: "frenzy",            unlock: "quest", unlockFlag: "unlockedBerserker",  desc: "Reckless fighters fueled by rage." },
+    rogue:      { name: "Rogue",      base: null,       stats: { dexterity: 2, attack: 1 },skill: "smoke-bomb",       unlock: "quest", unlockFlag: "unlockedRogue",      desc: "Swift and cunning, striking from the shadows." },
+    assassin:   { name: "Assassin",   base: "rogue",    stats: { dexterity: 2, attack: 2 },skill: "shadow-strike",    unlock: "quest", unlockFlag: "unlockedAssassin",   desc: "Silent killers who exploit weakness." },
+    ranger:     { name: "Ranger",     base: "rogue",    stats: { dexterity: 3, intelligence: 1 },skill: "volley",     unlock: "quest", unlockFlag: "unlockedRanger",     desc: "Expert marksmen at home in the wild." },
+    mage:       { name: "Mage",       base: null,       stats: { intelligence: 2, maxMp: 10 },skill: "arcane-shield", unlock: "quest", unlockFlag: "unlockedMage",       desc: "Wielders of arcane power and knowledge." },
+    pyromancer: { name: "Pyromancer", base: "mage",     stats: { intelligence: 3, attack: 1 },skill: "inferno",       unlock: "quest", unlockFlag: "unlockedPyromancer", desc: "Masters of destructive flame magic." },
+    cleric:     { name: "Cleric",     base: "mage",     stats: { intelligence: 1, defense: 1, maxHp: 15, maxMp: 10 },skill: "holy-light",unlock: "quest", unlockFlag: "unlockedCleric",    desc: "Divine healers who mend body and spirit." },
+    paladin:    { name: "Paladin",    base: null,       stats: { attack: 2, defense: 2, intelligence: 1 },skill: "smite",unlock: "quest", unlockFlag: "unlockedPaladin",   desc: "Holy warriors wielding faith and steel." }
   };
 
   var state = null;
@@ -537,19 +537,13 @@ var Player = (function () {
 
   var RESPEC_COST = 100;
 
+  function getBaseClass(classId) {
+    if (!classId || !CLASS_DEFS[classId]) return null;
+    return CLASS_DEFS[classId].base || classId;
+  }
+
   function respecBuild() {
-    if (!state || !state.buildClass) return { success: false, message: "You haven't chosen a build class yet." };
-    if (state.gold < RESPEC_COST) return { success: false, message: "Not enough gold. Respec costs " + RESPEC_COST + " gold." };
-    state.gold -= RESPEC_COST;
-    // Remove class skill
-    var def = CLASS_DEFS[state.buildClass];
-    if (def && def.skill && state.learnedSkills) {
-      var idx = state.learnedSkills.indexOf(def.skill);
-      if (idx !== -1) state.learnedSkills.splice(idx, 1);
-    }
-    state.buildClass = null;
-    recalcStats();
-    return { success: true, message: "Your specialization has been reset. Choose a new path." };
+    return { success: false, message: "Your class path is permanent and cannot be changed." };
   }
 
   /* ── Skill Purchase & Training ── */
@@ -683,6 +677,7 @@ var Player = (function () {
     getTrainingCost: getTrainingCost,
     respecBuild: respecBuild,
     RESPEC_COST: RESPEC_COST,
+    getBaseClass: getBaseClass,
     purchaseSkill: purchaseSkill,
     unlockQuestSkill: unlockQuestSkill,
     hasSkill: hasSkill,

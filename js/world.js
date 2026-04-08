@@ -51,11 +51,13 @@ var World = (function () {
       }
       // Roll event NPC spawns each time we enter town
       p.eventSpawns = Chapter1.rollEventSpawns(p);
-      // Prompt build class at level 3 (only once until they choose or skip)
-      if (p.level >= 3 && !p.buildClass && !Player.hasFlag('choseBuild') && !Player.hasFlag('seenBuildSelect')) {
-        Player.setFlag('seenBuildSelect');
-        UI.renderBuildSelect();
-        UI.showScreen('build-select');
+      // Hint about class mentors at level 3 (once)
+      if (p.level >= 3 && !p.buildClass && !Player.hasFlag('seenMentorHint')) {
+        Player.setFlag('seenMentorHint');
+        updateTownBackground();
+        UI.showScreen("town");
+        UI.renderTown();
+        UI.showMessage("You've grown stronger. Class mentors have appeared around town. Seek them out to choose your path.");
         return;
       }
       updateTownBackground();
@@ -832,6 +834,66 @@ var World = (function () {
     UI.showScreen("petshop");
   }
 
+  /* ── Class Mentor Visit ── */
+  function visitClassMentor(mentorId) {
+    var npc = Chapter1.getNPC(mentorId);
+    if (!npc) return;
+
+    // Map mentor NPC ID → class quest ID
+    var mentorQuestMap = {
+      varn: "cq-warrior", shade: "cq-rogue", theron: "cq-mage",
+      lysara: "cq-knight", grul: "cq-berserker", whisper: "cq-assassin",
+      fenn: "cq-ranger", cindra: "cq-pyromancer", maren: "cq-cleric",
+      cedric: "cq-paladin"
+    };
+    var questId = mentorQuestMap[mentorId];
+    if (!questId) return;
+
+    var metFlag = "met" + mentorId.charAt(0).toUpperCase() + mentorId.slice(1);
+
+    // Check for quest turn-in first
+    if (questId && Quests.isActive(questId) && Quests.checkObjectives(questId)) {
+      var result = Quests.turnIn(questId);
+      if (result) {
+        Audio.play("questComplete");
+        Save.autoSave();
+        Dialogue.start(questId + "-complete", function () {
+          UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
+          UI.updateHeader();
+          UI.updateSidebars();
+          World.navigate("elderbrook");
+        });
+        return;
+      }
+    }
+
+    // First meeting: dialogue offers quest
+    if (!Player.hasFlag(metFlag)) {
+      Dialogue.start(mentorId + "-first", function () {
+        UI.showMessage("New quest accepted!");
+        UI.updateHeader();
+        UI.updateSidebars();
+        UI.showScreen("town");
+        UI.renderTown();
+      });
+      return;
+    }
+
+    // Already met, quest in progress: idle dialogue
+    var idleKey = mentorId + "-idle";
+    if (Chapter1.getDialogue(idleKey)) {
+      Dialogue.start(idleKey, function () {
+        UI.showScreen("town");
+        UI.renderTown();
+      });
+      return;
+    }
+
+    // Fallback
+    UI.showScreen("town");
+    UI.renderTown();
+  }
+
   return {
     navigate: navigate,
     gather: gather,
@@ -845,6 +907,7 @@ var World = (function () {
     findBiscuit: findBiscuit,
     returnBiscuit: returnBiscuit,
     visitPetShop: visitPetShop,
+    visitClassMentor: visitClassMentor,
     getNPCContext: getNPCContext,
     returnToNPCMenu: returnToNPCMenu,
     npcOpenShop: npcOpenShop,

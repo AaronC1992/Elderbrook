@@ -137,7 +137,7 @@ var Dialogue = (function () {
     if (currentDialogue && currentDialogue.onEnd) {
       var actions = currentDialogue.onEnd;
       if (actions.flags) Player.setFlags(actions.flags);
-      if (actions.giveQuest) Quests.accept(actions.giveQuest);
+      if (actions.giveQuest || actions.quest) Quests.accept(actions.giveQuest || actions.quest);
       if (actions.giveItems) {
         for (var i = 0; i < actions.giveItems.length; i++) {
           Player.addItem(actions.giveItems[i]);
@@ -145,6 +145,28 @@ var Dialogue = (function () {
       }
       if (actions.addAffinity && typeof Relationships !== 'undefined') {
         Relationships.addAffinity(actions.addAffinity.npc, actions.addAffinity.amount);
+      }
+      if (actions.buildClass) {
+        var pb = Player.get();
+        var classDef = Player.CLASS_DEFS[actions.buildClass];
+        if (pb.buildClass && Player.CLASS_DEFS[pb.buildClass]) {
+          var oldSkill = Player.CLASS_DEFS[pb.buildClass].skill;
+          if (oldSkill && pb.learnedSkills) {
+            var osi = pb.learnedSkills.indexOf(oldSkill);
+            if (osi > -1) pb.learnedSkills.splice(osi, 1);
+          }
+        }
+        pb.buildClass = actions.buildClass;
+        Player.setFlag('choseBuild');
+        if (classDef && classDef.unlockFlag) Player.setFlag(classDef.unlockFlag);
+        if (classDef && classDef.skill) {
+          if (!pb.learnedSkills) pb.learnedSkills = [];
+          if (pb.learnedSkills.indexOf(classDef.skill) === -1) pb.learnedSkills.push(classDef.skill);
+        }
+        Player.recalcStats();
+        Audio.play('achievement');
+        var cName = classDef ? classDef.name : actions.buildClass;
+        UI.showMessage('You chose the ' + cName + ' path! Learned skill: ' + (classDef && classDef.skill ? Skills.get(classDef.skill).name : '') + '.');
       }
     }
 

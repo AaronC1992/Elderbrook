@@ -52,6 +52,57 @@ var Chapter1 = (function () {
       id: "fauna", name: "Fauna",
       portrait: "assets/portraits/pet-shop-keeper.png",
       role: "Pet Shop Owner", personality: "Gentle, animal-loving, earthy."
+    },
+    /* ── Class Mentor NPCs ── */
+    varn: {
+      id: "varn", name: "Varn the Ironclad",
+      portrait: "assets/portraits/varn.png",
+      role: "Warrior Mentor", personality: "Gruff, disciplined, commands respect."
+    },
+    shade: {
+      id: "shade", name: "Shade",
+      portrait: "assets/portraits/shade.png",
+      role: "Rogue Mentor", personality: "Quiet, calculating, speaks in riddles."
+    },
+    theron: {
+      id: "theron", name: "Sage Theron",
+      portrait: "assets/portraits/theron.png",
+      role: "Mage Mentor", personality: "Patient, eccentric, deeply knowledgeable."
+    },
+    lysara: {
+      id: "lysara", name: "Dame Lysara",
+      portrait: "assets/portraits/lysara.png",
+      role: "Knight Mentor", personality: "Noble, stern, unwavering sense of duty."
+    },
+    grul: {
+      id: "grul", name: "Grul",
+      portrait: "assets/portraits/grul.png",
+      role: "Berserker Mentor", personality: "Wild, unpredictable, fiercely loyal."
+    },
+    whisper: {
+      id: "whisper", name: "Whisper",
+      portrait: "assets/portraits/whisper.png",
+      role: "Assassin Mentor", personality: "Cold, precise, speaks only when necessary."
+    },
+    fenn: {
+      id: "fenn", name: "Warden Fenn",
+      portrait: "assets/portraits/fenn.png",
+      role: "Ranger Mentor", personality: "Stoic, observant, one with nature."
+    },
+    cindra: {
+      id: "cindra", name: "Cindra",
+      portrait: "assets/portraits/cindra.png",
+      role: "Pyromancer Mentor", personality: "Intense, passionate, dangerously curious."
+    },
+    maren: {
+      id: "maren", name: "Sister Maren",
+      portrait: "assets/portraits/maren.png",
+      role: "Cleric Mentor", personality: "Compassionate, serene, quietly powerful."
+    },
+    cedric: {
+      id: "cedric", name: "Sir Cedric",
+      portrait: "assets/portraits/cedric.png",
+      role: "Paladin Mentor", personality: "Righteous, solemn, radiates conviction."
     }
   };
 
@@ -189,10 +240,18 @@ var Chapter1 = (function () {
     unlockedMeditate: false, unlockedDoubleStrike: false,
 
     /* Class unlock flags */
+    unlockedWarrior: false, unlockedRogue: false, unlockedMage: false,
     unlockedKnight: false, unlockedBerserker: false,
     unlockedAssassin: false, unlockedRanger: false,
     unlockedPyromancer: false, unlockedCleric: false,
     unlockedPaladin: false,
+    seenMentorHint: false,
+
+    /* Class mentor met flags */
+    metVarn: false, metShade: false, metTheron: false,
+    metLysara: false, metGrul: false, metWhisper: false,
+    metFenn: false, metCindra: false, metMaren: false,
+    metCedric: false,
 
     /* Dialogue branching */
     choiceBrave: false, choicePractical: false,
@@ -618,68 +677,132 @@ var Chapter1 = (function () {
       requireFlags: ["completedMQ7"]
     },
 
-    /* --- Class Unlock Quests --- */
-    "sq-knight": {
-      id: "sq-knight", name: "The Knight's Oath", type: "side",
-      description: "Captain Elric sees potential in you. Prove your valor by defending the weak and standing firm against overwhelming odds.",
-      giver: "elric", turnIn: "elric",
+    /* --- Class Unlock Quests (type: "class" — not shown on quest board) --- */
+    "cq-warrior": {
+      id: "cq-warrior", name: "Trial of Steel", type: "class",
+      description: "Varn the Ironclad challenges you to prove your strength. Defeat beasts and gather iron to forge your warrior's resolve.",
+      giver: "varn", turnIn: "varn",
+      objectives: [
+        { id: "wolves", text: "Defeat Wolves", type: "kill", target: "wolf", required: 5 },
+        { id: "scouts", text: "Defeat Goblin Scouts", type: "kill", target: "goblin-scout", required: 4 },
+        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 2 }
+      ],
+      rewards: { xp: 100, gold: 50 },
+      onComplete: ["unlockedWarrior"],
+      requireFlags: []
+    },
+    "cq-rogue": {
+      id: "cq-rogue", name: "Shadow's Test", type: "class",
+      description: "Shade wants proof of your cunning. Hunt silently, strike swiftly, and bring trophies of your prey.",
+      giver: "shade", turnIn: "shade",
+      objectives: [
+        { id: "sneaks", text: "Defeat Goblin Sneaks", type: "kill", target: "goblin-sneak", required: 4 },
+        { id: "wolves", text: "Defeat Wolves", type: "kill", target: "wolf", required: 3 },
+        { id: "sinew", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 2 }
+      ],
+      rewards: { xp: 100, gold: 50 },
+      onComplete: ["unlockedRogue"],
+      requireFlags: []
+    },
+    "cq-mage": {
+      id: "cq-mage", name: "Arcane Awakening", type: "class",
+      description: "Sage Theron senses latent power within you. Gather reagents and prove your will against the wilds to awaken your arcane potential.",
+      giver: "theron", turnIn: "theron",
+      objectives: [
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal", required: 3 },
+        { id: "scouts", text: "Defeat Goblin Scouts", type: "kill", target: "goblin-scout", required: 3 },
+        { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 1 }
+      ],
+      rewards: { xp: 100, gold: 50 },
+      onComplete: ["unlockedMage"],
+      requireFlags: []
+    },
+    "cq-knight": {
+      id: "cq-knight", name: "The Knight's Oath", type: "class",
+      description: "Dame Lysara demands you prove your valor. Defend the weak, stand firm against overwhelming odds, and bring proof of your resolve.",
+      giver: "lysara", turnIn: "lysara",
       objectives: [
         { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 6 },
-        { id: "scouts", text: "Defeat Goblin Scouts", type: "kill", target: "goblin-scout", required: 8 },
-        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 5 }
+        { id: "guards", text: "Defeat Goblin Guards", type: "kill", target: "goblin-guard", required: 4 },
+        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 4 }
       ],
       rewards: { xp: 180, gold: 120 },
       onComplete: ["unlockedKnight"],
-      requireFlags: ["completedMQ5", "choseBuild"]
+      requireFlags: ["choseBuild", "completedMQ3"]
     },
-    "sq-assassin": {
-      id: "sq-assassin", name: "The Shadow Contract", type: "side",
-      description: "Bram has contacts in the underworld. A shadowy figure left a contract: eliminate key targets silently to prove your worth as an Assassin.",
-      giver: "bram", turnIn: "bram",
+    "cq-berserker": {
+      id: "cq-berserker", name: "Path of Fury", type: "class",
+      description: "Grul demands you prove your ferocity. Crush the strongest foes without hesitation and return drenched in victory.",
+      giver: "grul", turnIn: "grul",
       objectives: [
-        { id: "wolves", text: "Defeat Wolves", type: "kill", target: "wolf", required: 6 },
-        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 5 },
-        { id: "sinew", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 6 }
+        { id: "raiders", text: "Defeat Goblin Raiders", type: "kill", target: "goblin-raider", required: 8 },
+        { id: "packs", text: "Defeat Wolf Packs", type: "kill", target: "wolf-pack", required: 4 }
+      ],
+      rewards: { xp: 180, gold: 120 },
+      onComplete: ["unlockedBerserker"],
+      requireFlags: ["choseBuild", "completedMQ4"]
+    },
+    "cq-assassin": {
+      id: "cq-assassin", name: "The Silent Art", type: "class",
+      description: "Whisper has a contract. Eliminate targets with precision, collect proof of the kill, and return without a sound.",
+      giver: "whisper", turnIn: "whisper",
+      objectives: [
+        { id: "sneaks", text: "Defeat Goblin Sneaks", type: "kill", target: "goblin-sneak", required: 6 },
+        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 4 },
+        { id: "sinew", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 4 }
       ],
       rewards: { xp: 180, gold: 120 },
       onComplete: ["unlockedAssassin"],
-      requireFlags: ["completedMQ5", "choseBuild"]
+      requireFlags: ["choseBuild", "completedMQ4"]
     },
-    "sq-pyromancer": {
-      id: "sq-pyromancer", name: "Trial by Fire", type: "side",
-      description: "Mira discovered an ancient tome describing the pyromancer's art. She needs rare reagents and proof of your arcane mastery to help you unlock it.",
-      giver: "mira", turnIn: "mira",
+    "cq-ranger": {
+      id: "cq-ranger", name: "Warden's Trail", type: "class",
+      description: "Warden Fenn challenges you to master the wilds. Track dangerous quarry, gather from the land, and prove you belong in the forest.",
+      giver: "fenn", turnIn: "fenn",
+      objectives: [
+        { id: "archers", text: "Defeat Goblin Archers", type: "kill", target: "goblin-archer", required: 5 },
+        { id: "wolves", text: "Defeat Wolves", type: "kill", target: "wolf", required: 5 },
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal", required: 3 }
+      ],
+      rewards: { xp: 180, gold: 120 },
+      onComplete: ["unlockedRanger"],
+      requireFlags: ["choseBuild", "completedMQ3"]
+    },
+    "cq-pyromancer": {
+      id: "cq-pyromancer", name: "Trial by Fire", type: "class",
+      description: "Cindra demands mastery over volatile reagents and raw power. Gather arcane components and incinerate those who wield dark magic.",
+      giver: "cindra", turnIn: "cindra",
       objectives: [
         { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 6 },
         { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 4 },
-        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal-herb", required: 3 }
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal", required: 3 }
       ],
       rewards: { xp: 180, gold: 120 },
       onComplete: ["unlockedPyromancer"],
-      requireFlags: ["completedMQ5", "choseBuild"]
+      requireFlags: ["choseBuild", "completedMQ4"]
     },
-    "sq-cleric": {
-      id: "sq-cleric", name: "The Healer's Calling", type: "side",
-      description: "Elira senses a divine spark within you. Prove your compassion and strength by gathering sacred ingredients and clearing corruption from the land.",
-      giver: "elira", turnIn: "elira",
+    "cq-cleric": {
+      id: "cq-cleric", name: "The Healer's Calling", type: "class",
+      description: "Sister Maren believes in your divine potential. Gather sacred herbs, cleanse corrupted ground, and prove your compassion through strength.",
+      giver: "maren", turnIn: "maren",
       objectives: [
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal", required: 5 },
         { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 4 },
-        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal-herb", required: 5 },
         { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 3 }
       ],
       rewards: { xp: 180, gold: 120 },
       onComplete: ["unlockedCleric"],
-      requireFlags: ["completedMQ5", "choseBuild"]
+      requireFlags: ["choseBuild", "completedMQ3"]
     },
-    "sq-paladin": {
-      id: "sq-paladin", name: "The Paladin's Crucible", type: "side",
-      description: "Guildmaster Rowan speaks of an ancient order of holy warriors. To walk the Paladin's path, you must prove mastery of both blade and spirit.",
-      giver: "rowan", turnIn: "rowan",
+    "cq-paladin": {
+      id: "cq-paladin", name: "The Paladin's Crucible", type: "class",
+      description: "Sir Cedric speaks of an ancient order of holy warriors. To walk the Paladin's path, you must prove mastery of both blade and spirit.",
+      giver: "cedric", turnIn: "cedric",
       objectives: [
         { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 8 },
         { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 6 },
         { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 5 },
-        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal-herb", required: 4 }
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal", required: 4 }
       ],
       rewards: { xp: 250, gold: 200 },
       onComplete: ["unlockedPaladin"],
@@ -1230,6 +1353,282 @@ var Chapter1 = (function () {
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "The texts speak of a power that slumbered beneath these lands for centuries. The goblins were just the first to be touched by it." },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Whatever comes next will be far more dangerous than goblin raids. But at least now we know what we're dealing with." },
         { speaker: "Elira Ashfen", portrait: npcs.elira.portrait, text: "Keep this enchanted shard. You'll need it. And keep your eyes open, the signs are everywhere if you know where to look." }
+      ]
+    },
+
+    /* ── Class Mentor First Meeting Dialogues ── */
+    "varn-first": {
+      id: "varn-first",
+      nodes: [
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "You. Stop shuffling and stand up straight. I've seen scarecrows with better posture." },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "I'm Varn. I've trained soldiers, mercenaries, and one particularly stubborn mule. The mule was the fastest learner." },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "If you want to walk the Warrior's path, you'll need grit, steel, and iron in your blood. Not metaphorical iron. Actual iron ore. I'll explain." },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "Bring me proof you can handle yourself out there. Kill wolves, clear goblin scouts, and bring back iron ore. Then we'll talk about making you a warrior." }
+      ],
+      onEnd: { flags: ["metVarn"], quest: "cq-warrior" }
+    },
+    "shade-first": {
+      id: "shade-first",
+      nodes: [
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "...You noticed me. That's either impressive or I'm getting sloppy. Let's say impressive." },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "Most people walk right past this alley. But you looked. That tells me something about you." },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "The shadows aren't just for hiding. They're a way of life. Speed, precision, knowing when to strike and when to vanish." },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "If you want to learn, prove yourself. Hunt goblin sneaks, take down wolves, and bring me beast sinew. Then you'll earn the right to call yourself a Rogue." }
+      ],
+      onEnd: { flags: ["metShade"], quest: "cq-rogue" }
+    },
+    "theron-first": {
+      id: "theron-first",
+      nodes: [
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Mmm? Oh! A visitor. Apologies, I was deep in thought. Or possibly asleep. The lines blur at my age." },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "I am Theron, a student of the arcane. I came to Elderbrook following ley lines and ended up staying because Mira makes excellent tea." },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "I sense a flicker of arcane potential in you. Raw, untrained, like a candle trying to be a bonfire. Adorable." },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Gather moonpetal herbs, defeat a few goblin scouts to test your nerve, and find me a shadow essence. Do this, and I'll teach you to channel that spark into true magic." }
+      ],
+      onEnd: { flags: ["metTheron"], quest: "cq-mage" }
+    },
+    "lysara-first": {
+      id: "lysara-first",
+      nodes: [
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "Hail, warrior. I am Dame Lysara of the Order of the Silver Shield. I've heard tales of your exploits." },
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "A warrior fights with strength. A knight fights with purpose. The difference is what separates a soldier from a guardian." },
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "If you wish to take the Knight's Oath, you must first prove your valor. Face the strongest foes, hold your ground, and bring iron to forge your shield." },
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "Return to me when you've completed these trials. Only then will you be worthy of the oath." }
+      ],
+      onEnd: { flags: ["metLysara"], quest: "cq-knight" }
+    },
+    "grul-first": {
+      id: "grul-first",
+      nodes: [
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "You. Warrior. I smell battle on you. Good." },
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "Grul was outcast. Too wild, they said. Too dangerous. Grul says not wild enough." },
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "The berserker does not think. The berserker does not fear. The berserker becomes the storm." },
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "You want this power? Then prove you can unleash it. Crush goblin raiders. Tear through wolf packs. Bring Grul victory. Then Grul teaches." }
+      ],
+      onEnd: { flags: ["metGrul"], quest: "cq-berserker" }
+    },
+    "whisper-first": {
+      id: "whisper-first",
+      nodes: [
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "You move well for a rogue. But moving well and killing silently are very different arts." },
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "I have a contract. Targets that need to disappear. Quietly. Efficiently. Without drama." },
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "Complete this contract and I will teach you the assassin's way. Eliminate goblin sneaks, deal with their shamans, and bring proof of your kills." },
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "Fail, and we never had this conversation. Understood?" }
+      ],
+      onEnd: { flags: ["metWhisper"], quest: "cq-assassin" }
+    },
+    "fenn-first": {
+      id: "fenn-first",
+      nodes: [
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "The forest speaks, if you know how to listen. The wind carries warnings. The tracks tell stories." },
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "I am Fenn, Warden of these woods. Or what's left of them, after the goblins moved in." },
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "A rogue fights in shadows. A ranger commands the wilds. If you want to walk my path, prove you belong out there." },
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "Hunt goblin archers who threaten my forest, track wolves to their dens, and gather moonpetal before the goblins trample it all. Then return to me." }
+      ],
+      onEnd: { flags: ["metFenn"], quest: "cq-ranger" }
+    },
+    "cindra-first": {
+      id: "cindra-first",
+      nodes: [
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "Careful! Don't step on the — oh, it's fine. The scorch marks were already there. Mostly." },
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "I'm Cindra. Fire mage. Or 'dangerously irresponsible arsonist,' depending on who you ask. I prefer the first one." },
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "You've got the mind for magic, I can tell. But arcane shields and careful study? Boring. Fire is passion. Fire is power. Fire is FUN." },
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "Prove you can handle the heat. Destroy goblin shamans, gather shadow essence and moonpetal for reagents. Then I'll show you what real power looks like." }
+      ],
+      onEnd: { flags: ["metCindra"], quest: "cq-pyromancer" }
+    },
+    "maren-first": {
+      id: "maren-first",
+      nodes: [
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "Welcome, child. I am Sister Maren, a servant of the Light. I have been traveling, healing where I can." },
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "The arcane arts are powerful, but they are cold. The Light offers warmth, healing, and protection for those who serve with compassion." },
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "I sense the gift within you. If you wish to answer the divine calling, you must first prove your heart." },
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "Gather sacred moonpetal, stand against the goblin brutes who prey on the helpless, and bring shadow essence to be purified. Then your training begins." }
+      ],
+      onEnd: { flags: ["metMaren"], quest: "cq-cleric" }
+    },
+    "cedric-first": {
+      id: "cedric-first",
+      nodes: [
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "I have watched your journey with great interest, adventurer. You have proven yourself in battle and in spirit." },
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "I am Sir Cedric, last of the Order of the Radiant Dawn. Once, paladins defended these lands from the darkness. Now I am all that remains." },
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "The paladin's path demands mastery of both blade and faith. It is the hardest road, but also the most rewarding." },
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "Complete my crucible. Face the strongest foes, gather iron and moonpetal, and return to me. Then, and only then, will I pass on the sacred rites." }
+      ],
+      onEnd: { flags: ["metCedric"], quest: "cq-paladin" }
+    },
+
+    /* ── Class Quest Completion Dialogues ── */
+    "cq-warrior-complete": {
+      id: "cq-warrior-complete",
+      nodes: [
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "You're still standing. Good. Most don't make it this far without crying at least once." },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "You've got the makings of a warrior. Not a great one. Not yet. But the iron is there. I can work with iron." },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "From this day forward, you walk the Warrior's path. Stand tall, hit hard, and never back down." }
+      ],
+      onEnd: { buildClass: "warrior" }
+    },
+    "cq-rogue-complete": {
+      id: "cq-rogue-complete",
+      nodes: [
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "Clean work. No witnesses, no loose ends. You learn fast." },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "The shadow embraces those who respect it. Strike first, strike silent, and never be where they expect you." },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "Welcome to the shadows, Rogue. Try not to trip over anything on the way in." }
+      ],
+      onEnd: { buildClass: "rogue" }
+    },
+    "cq-mage-complete": {
+      id: "cq-mage-complete",
+      nodes: [
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Excellent! The reagents are pure, and your nerve held. That's more than I can say for my last three students. One of them set his own beard on fire." },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "I can feel your potential crystallizing. The arcane flows through you now, not just around you." },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Welcome to the path of the Mage. The universe is your library. Try not to knock over any shelves." }
+      ],
+      onEnd: { buildClass: "mage" }
+    },
+    "cq-knight-complete": {
+      id: "cq-knight-complete",
+      nodes: [
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "You stood your ground against overwhelming odds. You did not falter. You did not flee." },
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "Kneel. By the authority vested in me by the Order of the Silver Shield, I name you Knight." },
+        { speaker: "Dame Lysara", portrait: npcs.lysara.portrait, text: "Rise, Knight. Carry this honor with you always. Defend the weak, uphold justice, and never surrender." }
+      ],
+      onEnd: { buildClass: "knight" }
+    },
+    "cq-berserker-complete": {
+      id: "cq-berserker-complete",
+      nodes: [
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "HAHA! You fight like storm! Grul is pleased!" },
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "Grul sees the rage in you now. Not anger. Rage. Is different. Anger is weakness. Rage is power." },
+        { speaker: "Grul", portrait: npcs.grul.portrait, text: "You are Berserker now. Let nothing stand. Let nothing stop. BE THE STORM." }
+      ],
+      onEnd: { buildClass: "berserker" }
+    },
+    "cq-assassin-complete": {
+      id: "cq-assassin-complete",
+      nodes: [
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "The contract is fulfilled. Every target eliminated. No traces. Professional work." },
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "You have earned the title of Assassin. From this moment, you are a blade in the dark." },
+        { speaker: "Whisper", portrait: npcs.whisper.portrait, text: "Remember: the best kills are the ones nobody knows happened. Now go. We were never here." }
+      ],
+      onEnd: { buildClass: "assassin" }
+    },
+    "cq-ranger-complete": {
+      id: "cq-ranger-complete",
+      nodes: [
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "The forest accepted you. That is not something that can be taught or bought." },
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "You tracked, you hunted, you provided. The wilds are now your home and your weapon." },
+        { speaker: "Warden Fenn", portrait: npcs.fenn.portrait, text: "Walk the Ranger's path with pride. The forest will always guide you, if you listen." }
+      ],
+      onEnd: { buildClass: "ranger" }
+    },
+    "cq-pyromancer-complete": {
+      id: "cq-pyromancer-complete",
+      nodes: [
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "PERFECT! Look at these reagents! The shadow essence is practically vibrating with potential!" },
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "Now hold still while I — there! Feel that? That warmth in your chest? That's not indigestion. That's POWER." },
+        { speaker: "Cindra", portrait: npcs.cindra.portrait, text: "Welcome to the Pyromancer's path! Set things on fire responsibly! Or irresponsibly! I'm not your mother!" }
+      ],
+      onEnd: { buildClass: "pyromancer" }
+    },
+    "cq-cleric-complete": {
+      id: "cq-cleric-complete",
+      nodes: [
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "You gathered the sacred herbs, you stood against cruelty, and you brought the shadow essence for purification." },
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "The Light has answered. I can feel its warmth flowing through you now, child." },
+        { speaker: "Sister Maren", portrait: npcs.maren.portrait, text: "Go forth as a Cleric. Heal the wounded, protect the innocent, and carry the Light wherever darkness gathers." }
+      ],
+      onEnd: { buildClass: "cleric" }
+    },
+    "cq-paladin-complete": {
+      id: "cq-paladin-complete",
+      nodes: [
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "You have endured the crucible. Few have ever completed it. Fewer still survived with their spirit intact." },
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "By the sacred rites of the Order of the Radiant Dawn, I bestow upon you the title of Paladin." },
+        { speaker: "Sir Cedric", portrait: npcs.cedric.portrait, text: "You are the dawn in the darkness. Wield faith and steel as one. The Order lives again through you." }
+      ],
+      onEnd: { buildClass: "paladin" }
+    },
+
+    /* ── Class Mentor Idle Dialogues ── */
+    "varn-idle": {
+      lines: [
+        "Stand straighter. You're not a question mark, you're a warrior.",
+        "The training grounds are open if you need to work off some of that poor posture.",
+        "Every scar tells a story. Most of mine say 'I should have dodged.'",
+        "Discipline wins battles. Luck just keeps you alive long enough to learn discipline."
+      ]
+    },
+    "shade-idle": {
+      lines: [
+        "Stop looking for me. If I wanted to be found, you'd know.",
+        "The best blade is the one nobody sees coming.",
+        "Shadows don't judge. That's what I like about them.",
+        "Every lock has a key. Every guard has a blind spot. Every plan has a flaw."
+      ]
+    },
+    "theron-idle": {
+      lines: [
+        "I was just reading about dimensional rifts. Fascinating stuff. Terrifying, but fascinating.",
+        "Tea? No? Your loss. Mira's blend is extraordinary. Possibly magical. Definitely caffeinated.",
+        "The ley lines here are unusually active. Either something powerful is nearby, or I'm holding the map upside down again.",
+        "Knowledge is the greatest weapon. Second greatest is a very large fireball."
+      ]
+    },
+    "lysara-idle": {
+      lines: [
+        "A knight's armor is polished not for vanity, but for respect. Respect for the oath.",
+        "The Order of the Silver Shield once protected every town from here to the northern mountains.",
+        "Duty does not rest. Neither shall we.",
+        "Your form is improving. Keep training."
+      ]
+    },
+    "grul-idle": {
+      lines: [
+        "Grul is bored. Grul wants to fight something.",
+        "Town is too quiet. Makes Grul itchy.",
+        "You train today? Grul can spar. Grul promises to only break a few things.",
+        "The rage is always there. Control is what separates berserker from beast. Usually."
+      ]
+    },
+    "whisper-idle": {
+      lines: [
+        "You're being watched. Not by me. Well, also by me. But someone else too.",
+        "Information is currency. I'm quite wealthy.",
+        "Silence is an underrated skill. Most people talk too much. Present company included.",
+        "Every shadow has a story. Most of them end badly for someone."
+      ]
+    },
+    "fenn-idle": {
+      lines: [
+        "The forest is recovering, slowly. The goblins left deep scars.",
+        "Listen to the birds. When they go quiet, something dangerous is near.",
+        "I planted three saplings this morning. Small acts of restoration.",
+        "The wilds don't care about titles or gold. Only survival matters out there."
+      ]
+    },
+    "cindra-idle": {
+      lines: [
+        "I may have accidentally set fire to something again. Don't worry, it was just a bush. An already-dead bush.",
+        "Did you know shadow essence is mildly flammable? I found out the exciting way.",
+        "Sage Theron says I need to 'exercise restraint.' I exercised it right into a fireball. Same thing, really.",
+        "Some people meditate for inner peace. I just set things on fire. Much faster."
+      ]
+    },
+    "maren-idle": {
+      lines: [
+        "The Light shines on all who seek it. Even those who don't realize they're looking.",
+        "I healed a guardsman's broken arm today. He tried to pay me. I told him to pay it forward.",
+        "Prayer and medicine work hand in hand. One feeds the soul, the other keeps it housed.",
+        "There is strength in gentleness. Never forget that."
+      ]
+    },
+    "cedric-idle": {
+      lines: [
+        "The Order of the Radiant Dawn was once fifty strong. Now there are two of us.",
+        "Faith is not the absence of doubt. It is the choice to act despite it.",
+        "I keep my vigil because someone must. The darkness does not rest, and neither shall the dawn.",
+        "Your progress honors the Order. Continue to walk in the Light."
       ]
     }
   };

@@ -135,6 +135,12 @@ var Save = (function () {
         data.storyFlags[key] = defaults[key];
       }
     }
+
+    // Remove old class quests that no longer exist
+    var removedQuests = ["sq-knight", "sq-assassin", "sq-pyromancer", "sq-cleric", "sq-paladin"];
+    if (data.activeQuests) {
+      data.activeQuests = data.activeQuests.filter(function (q) { return removedQuests.indexOf(q) === -1; });
+    }
   }
 
   function migrateLegacy() {

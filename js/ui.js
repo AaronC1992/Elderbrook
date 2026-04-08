@@ -500,6 +500,50 @@ var UI = (function () {
     // Pet Shop
     html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-petshop"><span class="poi-name">Pet Emporium</span><span class="poi-sub">Fauna\'s creatures</span></button>';
 
+    // Class Mentor NPCs (conditional)
+    var p = Player.get();
+    var pLevel = p ? p.level : 1;
+    var pClass = p ? p.buildClass : null;
+    var pBase = pClass ? Player.getBaseClass(pClass) : null;
+
+    // Base class mentors: visible at level 3+ before choosing a class
+    if (pLevel >= 3 && !Player.hasFlag('choseBuild')) {
+      html += '<button class="town-npc town-npc-event" style="top:62%;left:12%" data-action="go-mentor" data-mentor="varn"><img class="town-npc-portrait" src="assets/portraits/varn.png" alt="Varn" onerror="this.style.display=\'none\'"><span class="town-npc-name">Varn the Ironclad</span></button>';
+      html += '<button class="town-npc town-npc-event" style="top:38%;left:28%" data-action="go-mentor" data-mentor="shade"><img class="town-npc-portrait" src="assets/portraits/shade.png" alt="Shade" onerror="this.style.display=\'none\'"><span class="town-npc-name">Shade</span></button>';
+      html += '<button class="town-npc town-npc-event" style="top:58%;right:22%" data-action="go-mentor" data-mentor="theron"><img class="town-npc-portrait" src="assets/portraits/theron.png" alt="Sage Theron" onerror="this.style.display=\'none\'"><span class="town-npc-name">Sage Theron</span></button>';
+    }
+
+    // Subclass mentors: visible after choosing parent base class
+    if (pBase === 'warrior') {
+      if (!Player.hasFlag('unlockedKnight') && Player.hasFlag('completedMQ3')) {
+        html += '<button class="town-npc town-npc-event" style="top:35%;left:35%" data-action="go-mentor" data-mentor="lysara"><img class="town-npc-portrait" src="assets/portraits/lysara.png" alt="Dame Lysara" onerror="this.style.display=\'none\'"><span class="town-npc-name">Dame Lysara</span></button>';
+      }
+      if (!Player.hasFlag('unlockedBerserker') && Player.hasFlag('completedMQ4')) {
+        html += '<button class="town-npc town-npc-event" style="top:65%;right:12%" data-action="go-mentor" data-mentor="grul"><img class="town-npc-portrait" src="assets/portraits/grul.png" alt="Grul" onerror="this.style.display=\'none\'"><span class="town-npc-name">Grul</span></button>';
+      }
+    }
+    if (pBase === 'rogue') {
+      if (!Player.hasFlag('unlockedAssassin') && Player.hasFlag('completedMQ4')) {
+        html += '<button class="town-npc town-npc-event" style="top:38%;left:20%" data-action="go-mentor" data-mentor="whisper"><img class="town-npc-portrait" src="assets/portraits/whisper.png" alt="Whisper" onerror="this.style.display=\'none\'"><span class="town-npc-name">Whisper</span></button>';
+      }
+      if (!Player.hasFlag('unlockedRanger') && Player.hasFlag('completedMQ3')) {
+        html += '<button class="town-npc town-npc-event" style="top:65%;left:35%" data-action="go-mentor" data-mentor="fenn"><img class="town-npc-portrait" src="assets/portraits/fenn.png" alt="Warden Fenn" onerror="this.style.display=\'none\'"><span class="town-npc-name">Warden Fenn</span></button>';
+      }
+    }
+    if (pBase === 'mage') {
+      if (!Player.hasFlag('unlockedPyromancer') && Player.hasFlag('completedMQ4')) {
+        html += '<button class="town-npc town-npc-event" style="top:62%;left:15%" data-action="go-mentor" data-mentor="cindra"><img class="town-npc-portrait" src="assets/portraits/cindra.png" alt="Cindra" onerror="this.style.display=\'none\'"><span class="town-npc-name">Cindra</span></button>';
+      }
+      if (!Player.hasFlag('unlockedCleric') && Player.hasFlag('completedMQ3')) {
+        html += '<button class="town-npc town-npc-event" style="top:35%;right:28%" data-action="go-mentor" data-mentor="maren"><img class="town-npc-portrait" src="assets/portraits/maren.png" alt="Sister Maren" onerror="this.style.display=\'none\'"><span class="town-npc-name">Sister Maren</span></button>';
+      }
+    }
+
+    // Paladin mentor: after MQ7 + any base class
+    if (Player.hasFlag('choseBuild') && Player.hasFlag('completedMQ7') && !Player.hasFlag('unlockedPaladin')) {
+      html += '<button class="town-npc town-npc-event" style="top:42%;left:48%" data-action="go-mentor" data-mentor="cedric"><img class="town-npc-portrait" src="assets/portraits/cedric.png" alt="Sir Cedric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Sir Cedric</span></button>';
+    }
+
     // Exit
     html += '<button class="town-poi town-poi-exit" style="bottom:3%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
 
@@ -808,11 +852,11 @@ var UI = (function () {
     var defs = Player.CLASS_DEFS;
     var currentClass = p ? p.buildClass : null;
 
-    var html = '<h2>Choose Your Specialization</h2>';
+    var html = '<h2>Class Paths</h2>';
     if (!currentClass) {
-      html += '<p>Choose a class path. Base classes are available now; subclasses unlock through quests and training.</p>';
+      html += '<p>Find class mentors around Elderbrook to begin your path. Talk to them to accept their trial.</p>';
     } else {
-      html += '<p>Current class: <strong>' + defs[currentClass].name + '</strong>. You may switch to an unlocked class or subclass.</p>';
+      html += '<p>Current class: <strong>' + defs[currentClass].name + '</strong>. Your class path is permanent.</p>';
     }
 
     // Group: base classes first, then subclasses
@@ -832,7 +876,7 @@ var UI = (function () {
       html += '<div class="build-grid">';
 
       // Base class card
-      html += buildClassCard(baseId, baseDef, p, currentClass, false);
+      html += buildClassCard(baseId, baseDef, p, currentClass, isClassLocked(baseId, baseDef, p));
 
       // Sub classes
       var subs = subClasses[baseId] || [];
@@ -858,14 +902,12 @@ var UI = (function () {
     }
     html += '</div></div>';
 
-    html += '<button class="btn" data-action="skip-build">Decide Later</button>';
+    html += '<button class="btn" data-action="go-town">Back to Town</button>';
     container.innerHTML = html;
   }
 
   function isClassLocked(classId, def, p) {
-    if (def.unlock === "level") return false;
-    if (def.unlock === "quest" && def.unlockFlag && p && p.storyFlags && p.storyFlags[def.unlockFlag]) return false;
-    if (def.unlock === "training" && def.unlockFlag && p && p.storyFlags && p.storyFlags[def.unlockFlag]) return false;
+    if (def.unlockFlag && p && p.storyFlags && p.storyFlags[def.unlockFlag]) return false;
     return true;
   }
 
@@ -881,13 +923,12 @@ var UI = (function () {
     if (skillDef) {
       html += '<div class="build-skill">Skill: <strong>' + skillDef.name + '</strong> &mdash; ' + skillDef.description + '</div>';
     }
-    if (locked) {
-      var lockMsg = def.unlock === "quest" ? "Complete a quest to unlock" : "Train at the Academy to unlock (" + (def.trainCost || 500) + "g)";
-      html += '<div class="build-lock-msg">' + lockMsg + '</div>';
-    } else if (isCurrent) {
+    if (isCurrent) {
       html += '<div class="build-current-msg">Current Class</div>';
+    } else if (locked) {
+      html += '<div class="build-lock-msg">Complete a mentor\'s quest to unlock</div>';
     } else {
-      html += '<button class="btn" data-action="choose-build" data-build="' + classId + '">Choose ' + def.name + '</button>';
+      html += '<div class="build-lock-msg">Unlocked</div>';
     }
     html += '</div>';
     return html;
@@ -1013,42 +1054,6 @@ var UI = (function () {
       html += '</div>';
     }
     html += '</div>';
-
-    // Respec build option
-    if (p.buildClass) {
-      html += '<div class="respec-section">';
-      html += '<h3>Respec Build</h3>';
-      html += '<p class="flavor">Reset your build class and choose a new path. Costs ' + Player.RESPEC_COST + ' gold.</p>';
-      if (p.gold >= Player.RESPEC_COST) {
-        html += '<button class="btn btn-small btn-primary" data-action="respec-build">Respec (' + Player.RESPEC_COST + 'g)</button>';
-      } else {
-        html += '<button class="btn btn-small" disabled>Not Enough Gold</button>';
-      }
-      html += '</div>';
-    }
-    if (Player.hasFlag('choseBuild')) {
-      html += '<button class="btn btn-small" data-action="open-build-select">Change Class</button>';
-    }
-
-    // Training-based class unlocks
-    var trainClasses = ["berserker", "ranger"];
-    for (var tc = 0; tc < trainClasses.length; tc++) {
-      var tcId = trainClasses[tc];
-      var tcDef = Player.CLASS_DEFS[tcId];
-      if (!tcDef || !tcDef.unlockFlag) continue;
-      if (p.storyFlags && p.storyFlags[tcDef.unlockFlag]) continue;
-      if (!Player.hasFlag('choseBuild')) continue;
-      var tcCost = tcDef.trainCost || 500;
-      html += '<div class="respec-section">';
-      html += '<h3>Unlock ' + tcDef.name + '</h3>';
-      html += '<p class="flavor">' + tcDef.desc + ' Train to unlock this class for ' + tcCost + ' gold.</p>';
-      if (p.gold >= tcCost) {
-        html += '<button class="btn btn-small btn-primary" data-action="train-unlock-class" data-class="' + tcId + '">Train (' + tcCost + 'g)</button>';
-      } else {
-        html += '<button class="btn btn-small" disabled>Not Enough Gold</button>';
-      }
-      html += '</div>';
-    }
 
     html += '<button class="btn" data-action="go-town">Back to Town</button>';
     container.innerHTML = html;
