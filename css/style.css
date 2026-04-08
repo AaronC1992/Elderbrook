@@ -774,7 +774,7 @@ button {
   transform: scale(1.15);
 }
 .town-npc-cat .town-npc-portrait {
-  height: 32px;
+  height: 40px;
 }
 .town-npc-cat .town-npc-name {
   display: none;
@@ -2455,6 +2455,118 @@ button {
 }
 @keyframes levelUpPulse {
   from { opacity: 0.7; transform: scale(1); }
+}
+
+/* ═══ PET SHOP & PET SYSTEM ═══ */
+.petshop-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.petshop-header .npc-portrait {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+}
+.pet-active-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 1rem;
+}
+.pet-mini-portrait {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.pet-card {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  transition: border-color 0.2s;
+}
+.pet-card:hover {
+  border-color: var(--accent);
+}
+.pet-card-active {
+  border-color: var(--accent);
+  background: rgba(218,165,32,0.1);
+}
+.pet-portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.pet-card-info {
+  flex: 1;
+  min-width: 0;
+}
+.pet-name {
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+.pet-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 0.3rem;
+}
+.pet-price {
+  font-size: 0.85rem;
+  color: #e8c840;
+  margin-bottom: 0.4rem;
+}
+/* Sidebar pet display */
+.sidebar-pet {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  margin-top: 0.3rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 4px;
+}
+.sidebar-pet-portrait {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.sidebar-pet-name {
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+/* Battle pet portrait */
+.battle-pet-portrait {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+  position: absolute;
+  bottom: -4px;
+  right: -8px;
+}
   to   { opacity: 1;   transform: scale(1.05); }
 }
 

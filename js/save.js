@@ -101,6 +101,8 @@ var Save = (function () {
     if (!data.completedBounties) data.completedBounties = [];
     if (data.festivalStartDay === undefined) data.festivalStartDay = null;
     if (!data.learnedSkills) data.learnedSkills = [];
+    if (data.activePet === undefined) data.activePet = null;
+    if (!data.ownedPets) data.ownedPets = [];
 
     // Migrate relationships
     if (!data.relationships) {

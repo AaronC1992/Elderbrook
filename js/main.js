@@ -162,6 +162,29 @@
       case "return-biscuit":
         World.returnBiscuit();
         break;
+      case "go-petshop":
+        World.visitPetShop();
+        break;
+      case "buy-pet":
+        var buyPetResult = Player.buyPet(btn.getAttribute("data-pet"));
+        UI.showMessage(buyPetResult.message);
+        UI.renderPetShop();
+        UI.updateHeader();
+        break;
+      case "set-pet":
+        Player.setPet(btn.getAttribute("data-pet"));
+        UI.renderPetShop();
+        UI.updateSidebars();
+        break;
+      case "remove-pet":
+        Player.removePet();
+        UI.renderPetShop();
+        UI.updateSidebars();
+        break;
+      case "merchant-pets":
+        UI.renderPetShop(Pets.getMerchantPets());
+        UI.showScreen("petshop");
+        break;
       case "go-worldmap":
         UI.renderWorldMap();
         UI.showScreen("worldmap");

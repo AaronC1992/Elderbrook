@@ -69,7 +69,9 @@ var Player = (function () {
       totalPlayTime: 0,             // seconds
       townEventsSeen: [],            // array of event ids already triggered
       festivalStartDay: null,        // day number when harvest festival began (lasts 15 days)
-      learnedSkills: []              // array of skill ids the player has purchased/unlocked
+      learnedSkills: [],             // array of skill ids the player has purchased/unlocked
+      activePet: null,               // pet id string or null
+      ownedPets: []                  // array of pet ids the player owns
     };
   }
 
@@ -161,6 +163,15 @@ var Player = (function () {
       if (bonus.dexterity) state.dexterity += bonus.dexterity;
       if (bonus.intelligence) state.intelligence += bonus.intelligence;
       if (bonus.maxHp) { state.maxHp += bonus.maxHp; state._transientMaxHp += bonus.maxHp; }
+    }
+
+    // Pet stat bonus
+    if (typeof Pets !== 'undefined') {
+      var petBonus = Pets.getActiveBonus();
+      if (petBonus.attack) state.attack += petBonus.attack;
+      if (petBonus.defense) state.defense += petBonus.defense;
+      if (petBonus.dexterity) state.dexterity += petBonus.dexterity;
+      if (petBonus.intelligence) state.intelligence += petBonus.intelligence;
     }
 
     // Partner relationship bonus
@@ -563,6 +574,38 @@ var Player = (function () {
     return { success: true, message: "Trained " + (sk ? sk.name : skillId) + "! Proficiency: " + stars + "/5 stars." };
   }
 
+  /* ── Pet Management ── */
+  function buyPet(petId) {
+    if (!state) return { success: false, message: "No player data." };
+    if (!state.ownedPets) state.ownedPets = [];
+    if (state.ownedPets.indexOf(petId) !== -1) return { success: false, message: "You already own this pet." };
+    var pet = Pets.get(petId);
+    if (!pet) return { success: false, message: "Pet not found." };
+    if (state.gold < pet.price) return { success: false, message: "Not enough gold. You need " + pet.price + " gold." };
+    state.gold -= pet.price;
+    state.ownedPets.push(petId);
+    if (!state.activePet) {
+      state.activePet = petId;
+      recalcStats();
+    }
+    return { success: true, message: "You adopted " + pet.name + "!" };
+  }
+
+  function setPet(petId) {
+    if (!state) return false;
+    if (!state.ownedPets || state.ownedPets.indexOf(petId) === -1) return false;
+    state.activePet = petId;
+    recalcStats();
+    return true;
+  }
+
+  function removePet() {
+    if (!state) return false;
+    state.activePet = null;
+    recalcStats();
+    return true;
+  }
+
   return {
     MAX_INVENTORY: MAX_INVENTORY,
     EQUIP_SLOTS: EQUIP_SLOTS,
@@ -614,6 +657,9 @@ var Player = (function () {
     purchaseSkill: purchaseSkill,
     unlockQuestSkill: unlockQuestSkill,
     hasSkill: hasSkill,
-    trainSkill: trainSkill
+    trainSkill: trainSkill,
+    buyPet: buyPet,
+    setPet: setPet,
+    removePet: removePet
   };
 })();

@@ -138,6 +138,20 @@ var Shops = (function () {
     }
 
     html += '</div>';
+
+    // Merchant has exotic pets too
+    if (shopId === "merchant-shop" && typeof Pets !== 'undefined') {
+      var merchantPets = Pets.getMerchantPets();
+      var hasUnowned = false;
+      var pState = Player.get();
+      for (var mp = 0; mp < merchantPets.length; mp++) {
+        if (!pState.ownedPets || pState.ownedPets.indexOf(merchantPets[mp].id) === -1) { hasUnowned = true; break; }
+      }
+      if (hasUnowned) {
+        html += '<button class="btn btn-primary" style="margin-top:0.5rem;" data-action="merchant-pets">Browse Exotic Pets</button>';
+      }
+    }
+
     if (container) container.innerHTML = html;
   }
 

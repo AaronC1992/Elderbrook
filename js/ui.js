@@ -133,6 +133,25 @@ var UI = (function () {
     setStat("stat-int", p.intelligence);
     setStat("stat-cha", p.charm || 1);
 
+    // Pet display
+    var petBox = document.getElementById("sidebar-pet");
+    if (petBox) {
+      if (p.activePet) {
+        var petData = Pets.get(p.activePet);
+        if (petData) {
+          petBox.style.display = "";
+          var petPortrait = document.getElementById("sidebar-pet-portrait");
+          var petName = document.getElementById("sidebar-pet-name");
+          if (petPortrait) petPortrait.src = petData.portrait;
+          if (petName) petName.textContent = petData.name;
+        } else {
+          petBox.style.display = "none";
+        }
+      } else {
+        petBox.style.display = "none";
+      }
+    }
+
     // Right: quest tracker
     var questContainer = document.getElementById("quest-tracker");
     if (questContainer) {
@@ -402,7 +421,7 @@ var UI = (function () {
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
-      html += '<button class="town-npc town-npc-cat" style="bottom:8%;right:6%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
+      html += '<button class="town-npc town-npc-cat" style="top:22%;right:18%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
     }
 
     // Lost child returns when you've found Biscuit
@@ -446,6 +465,9 @@ var UI = (function () {
     if (Player.hasFlag('bramForgeUnlocked')) {
       html += '<button class="town-poi" style="top:40%;left:3%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
     }
+
+    // Pet Shop
+    html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-petshop"><span class="poi-name">Pet Emporium</span><span class="poi-sub">Fauna\'s creatures</span></button>';
 
     // Exit
     html += '<button class="town-poi town-poi-exit" style="bottom:3%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
@@ -1015,6 +1037,86 @@ var UI = (function () {
     container.innerHTML = html;
   }
 
+  /* ── Pet Shop ── */
+  function renderPetShop(petList) {
+    var container = document.getElementById("petshop-content");
+    if (!container) return;
+    var p = Player.get();
+    if (!p) return;
+    if (!p.ownedPets) p.ownedPets = [];
+
+    var pets = petList || Pets.getShopPets();
+    var isShop = !petList;
+
+    var html = '<div class="petshop-header">';
+    html += '<img class="npc-portrait" src="assets/portraits/pet-shop-keeper.png" alt="Fauna" onerror="this.style.display=\'none\'">';
+    html += '<div><h2>' + (isShop ? "Fauna's Pet Emporium" : "Merchant Pets") + '</h2>';
+    html += '<p class="npc-dialogue">' + (isShop ? '"Every creature deserves a good home. Take a look around!"' : '"I\'ve picked up some rare companions on my travels..."') + '</p></div>';
+    html += '</div>';
+
+    // Active pet display
+    if (p.activePet) {
+      var active = Pets.get(p.activePet);
+      if (active) {
+        html += '<div class="pet-active-banner">';
+        html += '<img class="pet-mini-portrait" src="' + active.portrait + '" alt="' + active.name + '" onerror="this.style.display=\'none\'">';
+        html += '<span>Active companion: <strong>' + active.name + '</strong></span>';
+        html += '<button class="btn btn-small" data-action="remove-pet">Dismiss</button>';
+        html += '</div>';
+      }
+    }
+
+    // Owned pets roster
+    if (p.ownedPets.length > 0) {
+      html += '<h3>Your Companions</h3>';
+      html += '<div class="pet-grid">';
+      for (var o = 0; o < p.ownedPets.length; o++) {
+        var owned = Pets.get(p.ownedPets[o]);
+        if (!owned) continue;
+        var isActive = p.activePet === owned.id;
+        html += '<div class="pet-card' + (isActive ? ' pet-card-active' : '') + '">';
+        html += '<img class="pet-portrait" src="' + owned.portrait + '" alt="' + owned.name + '" onerror="this.style.display=\'none\'">';
+        html += '<div class="pet-card-info">';
+        html += '<div class="pet-name">' + owned.name + (isActive ? ' (Active)' : '') + '</div>';
+        html += '<div class="pet-desc">' + owned.description + '</div>';
+        if (!isActive) {
+          html += '<button class="btn btn-small btn-primary" data-action="set-pet" data-pet="' + owned.id + '">Set Active</button>';
+        }
+        html += '</div></div>';
+      }
+      html += '</div>';
+    }
+
+    // Pets for sale
+    html += '<h3>Pets for Sale</h3>';
+    html += '<div class="pet-grid">';
+    var anyForSale = false;
+    for (var i = 0; i < pets.length; i++) {
+      var pet = pets[i];
+      if (p.ownedPets.indexOf(pet.id) !== -1) continue;
+      anyForSale = true;
+      var canAfford = p.gold >= pet.price;
+      html += '<div class="pet-card">';
+      html += '<img class="pet-portrait" src="' + pet.portrait + '" alt="' + pet.name + '" onerror="this.style.display=\'none\'">';
+      html += '<div class="pet-card-info">';
+      html += '<div class="pet-name">' + pet.name + '</div>';
+      html += '<div class="pet-desc">' + pet.description + '</div>';
+      html += '<div class="pet-price">' + pet.price + ' gold</div>';
+      if (canAfford) {
+        html += '<button class="btn btn-small btn-primary" data-action="buy-pet" data-pet="' + pet.id + '">Adopt (' + pet.price + 'g)</button>';
+      } else {
+        html += '<button class="btn btn-small" disabled>Can\'t Afford</button>';
+      }
+      html += '</div></div>';
+    }
+    if (!anyForSale) {
+      html += '<p class="flavor">You\'ve adopted all available companions!</p>';
+    }
+    html += '</div>';
+    html += '<button class="btn" data-action="npc-back">Back</button>';
+    container.innerHTML = html;
+  }
+
   /* ══════════════════════════════════════════════════════════════
      LEDGER — Book-style tabbed overlay
      ══════════════════════════════════════════════════════════════ */
@@ -1518,6 +1620,7 @@ var UI = (function () {
     renderDifficultySelect: renderDifficultySelect,
     renderTraining: renderTraining,
     renderAcademy: renderAcademy,
+    renderPetShop: renderPetShop,
     renderLedger: renderLedger,
     showMessage: showMessage
   };

@@ -118,9 +118,15 @@ var Battle = (function () {
 
     // Ambush: enemies get a free turn
     if (enemies[0].ambush) {
-      addLog("You've been ambushed!");
-      Audio.play("ambush");
-      enemyTurn();
+      // Pet ambush protection
+      var ambushPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
+      if (ambushPassive && ambushPassive.type === "ambush-protect" && Math.random() < ambushPassive.chance) {
+        addLog(ambushPassive.message);
+      } else {
+        addLog("You've been ambushed!");
+        Audio.play("ambush");
+        enemyTurn();
+      }
     }
     return true;
   }
@@ -481,6 +487,14 @@ var Battle = (function () {
         if (target.hp <= 0) {
           handleEnemyDeath(targetIndex);
         }
+        // Pet extra-hit passive
+        var petPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
+        if (petPassive && petPassive.type === "extra-hit" && target.hp > 0 && Math.random() < petPassive.chance) {
+          var petDmg = Math.max(1, Math.floor(dmg * petPassive.damagePercent));
+          target.hp -= petDmg;
+          addLog(petPassive.message + " " + petDmg + " damage!");
+          if (target.hp <= 0) handleEnemyDeath(targetIndex);
+        }
         renderBattle();
         showFCT("battle-enemy-" + targetIndex, "-" + dmg, isCrit ? "crit" : "damage");
         checkBattleEnd() || enemyTurn();
@@ -692,6 +706,11 @@ var Battle = (function () {
       for (var ri = 0; ri < enemies.length; ri++) { if (enemies[ri].hp > 0) aliveCount++; }
       chance -= (aliveCount - 1) * 0.1;
     }
+    // Pet escape boost
+    var petPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
+    if (petPassive && petPassive.type === "escape-boost") {
+      chance += petPassive.bonusChance;
+    }
     if (Math.random() < chance) {
       addLog("You escaped!");
       Audio.play("runAway");
@@ -720,6 +739,15 @@ var Battle = (function () {
       // All enemies have acted — tick player effects
       tickPlayerEffects();
       tickBuffs(playerBuffs);
+      // Pet mana regen passive
+      var petPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
+      if (petPassive && petPassive.type === "mana-regen") {
+        var pp = Player.get();
+        if (pp.mp < pp.maxMp) {
+          Player.restoreMana(petPassive.amount);
+          addLog(petPassive.message + " +" + petPassive.amount + " MP.");
+        }
+      }
       renderBattle();
       checkBattleEnd();
       return;
@@ -1018,6 +1046,32 @@ var Battle = (function () {
       }
     }
 
+    // Pet gold-find and loot-find passives
+    var petPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
+    if (petPassive && petPassive.type === "gold-find" && petPassive.bonusGold) {
+      totalGold += petPassive.bonusGold;
+      addLog(petPassive.message + " +" + petPassive.bonusGold + " bonus gold!");
+    }
+    if (petPassive && petPassive.type === "loot-find") {
+      // Extra loot roll on each enemy
+      for (var li = 0; li < enemies.length; li++) {
+        var le = enemies[li];
+        if (le.loot) {
+          for (var ll = 0; ll < le.loot.length; ll++) {
+            var llt = le.loot[ll];
+            if (Math.random() < petPassive.chance) {
+              if (Player.addItem(llt.id)) {
+                var lItem = Items.get(llt.id);
+                drops.push(lItem ? lItem.name : llt.id);
+                addLog(petPassive.message);
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
     p.gold += totalGold;
     var leveled = Player.addXp(totalXp);
 
@@ -1100,6 +1154,13 @@ var Battle = (function () {
     }
     html += '<div class="battle-player' + playerStatusClasses + '" id="battle-player">';
     html += '<img class="battle-portrait" src="' + Player.getPortrait() + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">';
+    // Active pet portrait
+    if (p.activePet && typeof Pets !== 'undefined') {
+      var battlePet = Pets.get(p.activePet);
+      if (battlePet) {
+        html += '<img class="battle-pet-portrait" src="' + battlePet.portrait + '" alt="' + battlePet.name + '" onerror="this.style.display=\'none\'">';
+      }
+    }
     html += '<div class="battle-player-info">';
     html += '<div class="battle-name">' + p.name + ' (Lv.' + p.level + ')</div>';
     html += '<div class="battle-hp-bar"><div class="hp-fill player-hp" style="width:' + (p.hp / p.maxHp * 100) + '%"></div></div>';

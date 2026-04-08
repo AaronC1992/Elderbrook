@@ -878,6 +878,17 @@ var World = (function () {
     });
   }
 
+  function visitPetShop() {
+    var screen = document.getElementById("screen-petshop");
+    if (screen) {
+      screen.style.backgroundImage = "url('assets/backgrounds/main-town-pet-shop.png')";
+      screen.style.backgroundSize = "cover";
+      screen.style.backgroundPosition = "center";
+    }
+    UI.renderPetShop();
+    UI.showScreen("petshop");
+  }
+
   return {
     navigate: navigate,
     explore: explore,
@@ -891,6 +902,7 @@ var World = (function () {
     interactEvent: interactEvent,
     findBiscuit: findBiscuit,
     returnBiscuit: returnBiscuit,
+    visitPetShop: visitPetShop,
     getNPCContext: getNPCContext,
     returnToNPCMenu: returnToNPCMenu,
     npcOpenShop: npcOpenShop,

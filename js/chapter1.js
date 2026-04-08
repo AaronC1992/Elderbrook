@@ -47,6 +47,11 @@ var Chapter1 = (function () {
       id: "merchant", name: "Traveling Merchant",
       portrait: "assets/portraits/traveler.png",
       role: "Merchant", personality: "Shrewd, friendly, secretive."
+    },
+    fauna: {
+      id: "fauna", name: "Fauna",
+      portrait: "assets/portraits/pet-shop-keeper.png",
+      role: "Pet Shop Owner", personality: "Gentle, animal-loving, earthy."
     }
   };
 

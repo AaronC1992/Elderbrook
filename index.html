@@ -45,6 +45,10 @@
         <div class="stat-line"><span>DEX</span><span id="stat-dex">0</span></div>
         <div class="stat-line"><span>INT</span><span id="stat-int">0</span></div>
         <div class="stat-line"><span>CHA</span><span id="stat-cha">0</span></div>
+        <div id="sidebar-pet" class="sidebar-pet" style="display:none;">
+          <img id="sidebar-pet-portrait" class="sidebar-pet-portrait" src="" alt="Pet" />
+          <span id="sidebar-pet-name" class="sidebar-pet-name"></span>
+        </div>
         <div class="sidebar-btns">
           <button class="side-btn" data-action="open-ledger">Ledger</button>
           <button class="side-btn" data-action="open-inventory">Inventory</button>
@@ -251,6 +255,13 @@
           </div>
         </section>
 
+        <!-- Pet Shop -->
+        <section id="screen-petshop" class="screen">
+          <div class="panel">
+            <div id="petshop-content"></div>
+          </div>
+        </section>
+
         <!-- Chapter End -->
         <section id="screen-chapter-end" class="screen">
           <div id="chapter-end-content" class="panel" style="text-align:center;"></div>
@@ -335,6 +346,7 @@
       <button class="nav-btn" data-action="go-questboard">Quests</button>
       <button class="nav-btn" data-action="go-training">Train</button>
       <button class="nav-btn" data-action="go-academy">Academy</button>
+      <button class="nav-btn" data-action="go-petshop">Pets</button>
       <button class="nav-btn" data-action="go-worldmap">World Map</button>
       <button class="nav-btn nav-sleep" data-action="go-sleep">Sleep</button>
     </nav>
@@ -351,6 +363,7 @@
   <script src="js/skills.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/shops.js"></script>
+  <script src="js/pets.js"></script>
   <script src="js/quests.js"></script>
   <script src="js/dialogue.js"></script>
   <script src="js/relationships.js"></script>
