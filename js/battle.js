@@ -1080,6 +1080,9 @@ var Battle = (function () {
     var container = document.getElementById("battle-content");
     if (!container || enemies.length === 0) return;
 
+    // Keep sidebar HP/MP in sync during battle
+    if (typeof UI !== "undefined" && UI.updateSidebars) UI.updateSidebars();
+
     var html = '';
 
     // Encounter modifier banner
