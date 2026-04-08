@@ -71,7 +71,7 @@ var Enemies = (function () {
       ]
     },
     "wolf-pack": {
-      id: "wolf-pack", name: "Wolf Pack Leader", portrait: "assets/portraits/wolf-enemy.png",
+      id: "wolf-pack", name: "Wolf Pack Leader", portrait: "assets/portraits/wolf-pack-leader-enemy.png",
       hp: 25, attack: 5, defense: 2, xp: 16, gold: [3, 6],
       loot: [
         { id: "wolf-pelt", chance: 0.60 },
@@ -152,7 +152,7 @@ var Enemies = (function () {
 
     /* ── Winter Enemies ── */
     "snow-wolf": {
-      id: "snow-wolf", name: "Snow Wolf", portrait: "assets/portraits/Frostbitten fury of the snow wolf.png",
+      id: "snow-wolf", name: "Snow Wolf", portrait: "assets/portraits/frostbitten-snow-wolf.png",
       hp: 24, attack: 6, defense: 2, xp: 12, gold: [3, 7],
       loot: [
         { id: "wolf-pelt", chance: 0.50 },
@@ -165,7 +165,7 @@ var Enemies = (function () {
       ]
     },
     "frost-goblin": {
-      id: "frost-goblin", name: "Frost-bound Goblin", portrait: "assets/portraits/Frost-bound snow goblin warrior.png",
+      id: "frost-goblin", name: "Frost-bound Goblin", portrait: "assets/portraits/frost-bound-goblin.png",
       hp: 22, attack: 5, defense: 3, xp: 14, gold: [4, 8],
       loot: [
         { id: "goblin-fang", chance: 0.40 },
@@ -178,7 +178,7 @@ var Enemies = (function () {
       ]
     },
     "snow-bandit": {
-      id: "snow-bandit", name: "Frostbitten Bandit", portrait: "assets/portraits/Frostbitten bandit in a frigid stance.png",
+      id: "snow-bandit", name: "Frostbitten Bandit", portrait: "assets/portraits/frostbitten-bandit.png",
       hp: 26, attack: 7, defense: 3, xp: 18, gold: [6, 12],
       loot: [
         { id: "torn-cloth", chance: 0.35 },

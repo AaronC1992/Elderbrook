@@ -193,14 +193,6 @@
         World.navigate(btn.getAttribute("data-location"));
         break;
 
-      /* ── Area ── */
-      case "area-explore":
-        World.explore(btn.getAttribute("data-area"));
-        break;
-      case "area-gather":
-        World.gather(btn.getAttribute("data-area"));
-        break;
-
       /* ── Node Exploration ── */
       case "explore-fight":
         Exploration.fightEnemy(btn.getAttribute("data-enemy"), parseInt(btn.getAttribute("data-idx"), 10));

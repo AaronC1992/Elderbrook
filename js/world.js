@@ -92,68 +92,6 @@ var World = (function () {
     }
   }
 
-  function enterCombatArea(areaId, loc) {
-    var container = document.getElementById("area-content");
-    if (!container) return;
-
-    var areaScreen = document.getElementById("screen-area");
-    if (areaScreen && loc.background) {
-      areaScreen.style.backgroundImage = "url('" + loc.background + "')";
-    }
-
-    var html = '<div class="area-screen">';
-    html += '<h2>' + loc.name + '</h2>';
-    if (loc.recommendedLevel) html += '<p class="area-level">' + loc.recommendedLevel + '</p>';
-    html += '<p>' + loc.description + '</p>';
-    html += '<div class="area-actions">';
-    html += '<button class="btn" data-action="area-explore" data-area="' + areaId + '">Explore (Fight)</button>';
-    html += '<button class="btn" data-action="go-worldmap">Return to Map</button>';
-    html += '</div></div>';
-
-    container.innerHTML = html;
-    UI.showScreen("area");
-  }
-
-  function enterGatheringArea(areaId, loc) {
-    var container = document.getElementById("area-content");
-    if (!container) return;
-
-    var areaScreen = document.getElementById("screen-area");
-    if (areaScreen && loc.background) {
-      areaScreen.style.backgroundImage = "url('" + loc.background + "')";
-    }
-
-    var html = '<div class="area-screen">';
-    html += '<h2>' + loc.name + '</h2>';
-    if (loc.recommendedLevel) html += '<p class="area-level">' + loc.recommendedLevel + '</p>';
-    html += '<p>' + loc.description + '</p>';
-    html += '<div class="area-actions">';
-    html += '<button class="btn" data-action="area-gather" data-area="' + areaId + '">Gather Herbs</button>';
-    html += '<button class="btn" data-action="area-explore" data-area="' + areaId + '">Explore (Fight)</button>';
-    html += '<button class="btn" data-action="go-worldmap">Return to Map</button>';
-    html += '</div></div>';
-
-    container.innerHTML = html;
-    UI.showScreen("area");
-  }
-
-  function explore(areaId) {
-    if (!Player.spendEnergy(2)) {
-      UI.showMessage("You're too tired to explore. Sleep to restore energy.");
-      return;
-    }
-    Battle.start(areaId, function () {
-      // After battle victory, return to area
-      var loc = Chapter1.getLocation(areaId);
-      if (loc && loc.isGathering) {
-        enterGatheringArea(areaId, loc);
-      } else if (loc) {
-        enterCombatArea(areaId, loc);
-      }
-      UI.showScreen("area");
-    });
-  }
-
   function gather(areaId) {
     var loc = Chapter1.getLocation(areaId);
     if (!loc || !loc.gatherItem) return;
@@ -228,10 +166,13 @@ var World = (function () {
     } else if (roll < 0.90) {
       // Start combat directly — energy was already spent on the gather action
       Battle.start(areaId, function () {
-        var loc2 = Chapter1.getLocation(areaId);
-        if (loc2 && loc2.isGathering) enterGatheringArea(areaId, loc2);
-        else if (loc2) enterCombatArea(areaId, loc2);
-        UI.showScreen("area");
+        // Return to exploration node if active, otherwise world map
+        if (typeof Exploration !== 'undefined' && Exploration.getCurrentArea()) {
+          Exploration.renderNode();
+          UI.showScreen("explore");
+        } else {
+          World.navigate(areaId);
+        }
       });
       return;
     } else {
@@ -892,7 +833,6 @@ var World = (function () {
 
   return {
     navigate: navigate,
-    explore: explore,
     gather: gather,
     restAtInn: restAtInn,
     visitShop: visitShop,

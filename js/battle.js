@@ -1197,6 +1197,7 @@ var Battle = (function () {
     // Store reward data for the victory screen
     lastVictoryData = {
       enemyName: enemies.length === 1 ? enemies[0].name : enemies.length + " enemies",
+      enemyPortrait: enemies.length === 1 ? enemies[0].portrait : null,
       xp: totalXp,
       gold: totalGold,
       drops: drops,
@@ -1374,11 +1375,15 @@ var Battle = (function () {
     var container = document.getElementById("battle-content");
     if (!container) return;
     var html = container.innerHTML;
-    var d = lastVictoryData || { enemyName: "Enemy", xp: 0, gold: 0, drops: [], leveled: false, newLevel: 1 };
+    var d = lastVictoryData || { enemyName: "Enemy", enemyPortrait: null, xp: 0, gold: 0, drops: [], leveled: false, newLevel: 1 };
 
     html += '<div class="battle-result">';
     html += '<div class="victory-overlay">';
+    if (d.enemyPortrait) {
+      html += '<img class="victory-enemy-portrait" src="' + d.enemyPortrait + '" alt="' + d.enemyName + '" onerror="this.style.display=\'none\'" />';
+    }
     html += '<h3>Victory!</h3>';
+    html += '<div class="victory-enemy-name">' + d.enemyName + ' defeated</div>';
     html += '<div class="victory-rewards">';
     html += '<div class="victory-stat"><span class="victory-stat-value xp-value">+' + d.xp + '</span><span class="victory-stat-label">XP</span></div>';
     html += '<div class="victory-stat"><span class="victory-stat-value gold-value">+' + d.gold + '</span><span class="victory-stat-label">Gold</span></div>';

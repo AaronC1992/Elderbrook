@@ -233,6 +233,7 @@ var Exploration = (function () {
   var currentNode = 0;
   var activeChest = null;   // { spot, lootItem, gold } or null
   var defeatedEnemies = {}; // tracks defeated enemy indices per node within this exploration
+  var areaCompleted = false;
 
   // ── Public API ──
 
@@ -243,6 +244,7 @@ var Exploration = (function () {
     currentNode = 0;
     activeChest = null;
     defeatedEnemies = {};
+    areaCompleted = false;
     renderNode();
     return true;
   }
@@ -263,14 +265,31 @@ var Exploration = (function () {
     // Build node key for defeated tracking
     var nodeKey = currentArea + "-" + currentNode;
     var defeated = defeatedEnemies[nodeKey] || [];
+    var nodeCleared = defeated.length >= node.enemies.length;
 
     var html = '';
 
-    // ── Header bar ──
+    // ── Header bar with breadcrumb ──
     html += '<div class="explore-header">';
     html += '<span class="explore-area-name">' + node.name + '</span>';
+    html += '<div class="explore-breadcrumb">';
+    for (var bi = 0; bi < map.nodes.length; bi++) {
+      var bKey = currentArea + "-" + bi;
+      var bDefeated = defeatedEnemies[bKey] || [];
+      var bCleared = bDefeated.length >= map.nodes[bi].enemies.length;
+      var dotClass = "explore-dot";
+      if (bi === currentNode) dotClass += " explore-dot-current";
+      if (bCleared) dotClass += " explore-dot-cleared";
+      html += '<span class="' + dotClass + '"></span>';
+    }
+    html += '</div>';
     html += '<span class="explore-flavor">' + node.flavor + '</span>';
     html += '</div>';
+
+    // ── Node cleared badge ──
+    if (nodeCleared) {
+      html += '<div class="explore-cleared-badge">Area Cleared</div>';
+    }
 
     // ── Enemy portraits (clickable) ──
     for (var i = 0; i < node.enemies.length; i++) {
@@ -278,7 +297,11 @@ var Exploration = (function () {
       var en = node.enemies[i];
       var template = Enemies.get(en.id);
       if (!template) continue;
-      html += '<button class="explore-enemy" style="left:' + en.x + '%;top:' + en.y + '%" ';
+      // Danger indicator based on enemy tier
+      var dangerClass = "";
+      if (template.hp >= 28) dangerClass = " explore-enemy-hard";
+      else if (template.hp >= 20) dangerClass = " explore-enemy-mid";
+      html += '<button class="explore-enemy' + dangerClass + '" style="left:' + en.x + '%;top:' + en.y + '%" ';
       html += 'data-action="explore-fight" data-enemy="' + en.id + '" data-idx="' + i + '">';
       html += '<img class="explore-enemy-portrait" src="' + template.portrait + '" alt="' + template.name + '" onerror="this.style.display=\'none\'" />';
       html += '<span class="explore-enemy-name">' + template.name + '</span>';
@@ -389,6 +412,7 @@ var Exploration = (function () {
     if (targetIdx === undefined) return;
 
     currentNode = targetIdx;
+    checkAreaCompletion();
     renderNode();
   }
 
@@ -404,6 +428,7 @@ var Exploration = (function () {
       // Mark this enemy as defeated
       if (!defeatedEnemies[nodeKey]) defeatedEnemies[nodeKey] = [];
       defeatedEnemies[nodeKey].push(enemyIdx);
+      checkAreaCompletion();
       renderNode();
       UI.showScreen("explore");
     });
@@ -443,11 +468,37 @@ var Exploration = (function () {
     World.gather(currentArea);
   }
 
+  function checkAreaCompletion() {
+    if (areaCompleted) return;
+    var map = MAPS[currentArea];
+    if (!map) return;
+    for (var n = 0; n < map.nodes.length; n++) {
+      var key = currentArea + "-" + n;
+      var def = defeatedEnemies[key] || [];
+      if (def.length < map.nodes[n].enemies.length) return;
+    }
+    // All nodes cleared — award bonus
+    areaCompleted = true;
+    var AREA_REWARDS = {
+      "forest-road": { xp: 20, gold: 15 },
+      "goblin-trail": { xp: 30, gold: 20 },
+      "watch-post":   { xp: 35, gold: 25 },
+      "riverbank":    { xp: 15, gold: 10 }
+    };
+    var reward = AREA_REWARDS[currentArea] || { xp: 20, gold: 15 };
+    Player.addXp(reward.xp);
+    Player.get().gold += reward.gold;
+    UI.updateHeader();
+    UI.showMessage("Area fully cleared! Bonus: +" + reward.xp + " XP, +" + reward.gold + " gold.");
+    Audio.play("victory");
+  }
+
   function returnToMap() {
     currentArea = null;
     currentNode = 0;
     activeChest = null;
     defeatedEnemies = {};
+    areaCompleted = false;
     UI.renderWorldMap();
     UI.showScreen("worldmap");
   }
