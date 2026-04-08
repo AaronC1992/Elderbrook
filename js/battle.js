@@ -552,7 +552,7 @@ var Battle = (function () {
         checkBattleEnd() || enemyTurn();
       });
     } else if (skill.type === "heal") {
-      var healAmt = skill.healAmount + Math.max(0, (p.level - skill.unlockLevel)) * 3;
+      var healAmt = skill.healAmount + Math.max(0, p.level - 1) * 3;
       healAmt = Math.floor(healAmt * (1 + profBonus));
       animateCombat("player", "heal", function () {
         Player.heal(healAmt);
@@ -1165,13 +1165,17 @@ var Battle = (function () {
       html += '<button class="btn" data-action="battle-run"' + (isBossFight ? ' disabled' : '') + '>Run</button>';
 
       // Skills
-      var availSkills = Skills.getAvailable(p.level);
+      var availSkills = Skills.getAvailable(p.learnedSkills);
       if (availSkills.length > 0) {
         html += '<div class="battle-skills">';
         for (var s = 0; s < availSkills.length; s++) {
           var sk = availSkills[s];
-          var canUse = p.mp >= sk.mpCost;
-          html += '<button class="btn btn-small battle-skill-btn" data-action="battle-skill" data-skill="' + sk.id + '"' + (canUse ? '' : ' disabled') + ' title="' + sk.description + ' (MP: ' + sk.mpCost + ')">' + sk.name + '</button>';
+          var onCooldown = sk.cooldown && skillCooldowns[sk.id] && skillCooldowns[sk.id] > turnCount;
+          var cdLeft = onCooldown ? (skillCooldowns[sk.id] - turnCount) : 0;
+          var canUse = p.mp >= sk.mpCost && !onCooldown;
+          var label = sk.name + (onCooldown ? ' (' + cdLeft + ')' : '');
+          var tip = sk.description + ' (MP: ' + sk.mpCost + ')' + (onCooldown ? ' — Cooldown: ' + cdLeft + ' turn' + (cdLeft > 1 ? 's' : '') : '');
+          html += '<button class="btn btn-small battle-skill-btn" data-action="battle-skill" data-skill="' + sk.id + '"' + (canUse ? '' : ' disabled') + ' title="' + tip + '">' + label + '</button>';
         }
         html += '</div>';
       }

@@ -550,6 +550,33 @@
         if (UI.getScreen() === 'training') UI.renderTraining();
         else if (UI.getScreen() === 'academy') UI.renderAcademy();
         break;
+      case "purchase-skill":
+        var purchaseResult = Player.purchaseSkill(btn.getAttribute("data-skill"));
+        UI.showMessage(purchaseResult.message);
+        if (purchaseResult.success) Audio.play("shopBuy");
+        UI.updateHeader();
+        UI.updateSidebars();
+        if (UI.getScreen() === 'academy') UI.renderAcademy();
+        break;
+      case "train-skill":
+        var trainSkResult = Player.trainSkill(btn.getAttribute("data-skill"));
+        UI.showMessage(trainSkResult.message);
+        if (trainSkResult.success) Audio.play("buttonClick");
+        UI.updateHeader();
+        UI.updateSidebars();
+        if (UI.getScreen() === 'academy') UI.renderAcademy();
+        break;
+      case "learn-quest-skill":
+        var qSkillId = btn.getAttribute("data-skill");
+        if (Player.unlockQuestSkill(qSkillId)) {
+          var qSk = Skills.get(qSkillId);
+          UI.showMessage("You learned " + (qSk ? qSk.name : qSkillId) + "!");
+          Audio.play("shopBuy");
+        }
+        UI.updateHeader();
+        UI.updateSidebars();
+        if (UI.getScreen() === 'academy') UI.renderAcademy();
+        break;
     }
   });
 

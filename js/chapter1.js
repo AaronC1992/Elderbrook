@@ -179,6 +179,9 @@ var Chapter1 = (function () {
     /* Early Elric quests */
     completedSQ16: false, completedSQ17: false,
 
+    /* Skill unlock quests */
+    unlockedMeditate: false, unlockedDoubleStrike: false,
+
     /* Dialogue branching */
     choiceBrave: false, choicePractical: false,
     choiceIndependent: false, choiceTeamwork: false,
@@ -572,6 +575,35 @@ var Chapter1 = (function () {
       rewards: { xp: 45, gold: 35 },
       onComplete: ["completedSQ17"],
       requireFlags: ["completedMQ2"]
+    },
+
+    /* --- Skill Unlock Quests (tough, one-time) --- */
+    "sq-meditate": {
+      id: "sq-meditate", name: "The Monk's Trial", type: "side",
+      description: "A wandering monk has left a challenge at the Academy: defeat powerful foes to prove your discipline and learn the art of Meditation.",
+      giver: "elira", turnIn: "elira",
+      objectives: [
+        { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 5 },
+        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 4 },
+        { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 3 }
+      ],
+      rewards: { xp: 150, gold: 100 },
+      onComplete: ["unlockedMeditate"],
+      requireFlags: ["completedMQ6"]
+    },
+    "sq-double-strike": {
+      id: "sq-double-strike", name: "The Blademaster's Challenge", type: "side",
+      description: "Bram has heard of an ancient dual-strike technique. To learn it, you must prove your combat mastery by clearing the most dangerous creatures in the region.",
+      giver: "bram", turnIn: "bram",
+      objectives: [
+        { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 6 },
+        { id: "wolves", text: "Defeat Wolves", type: "kill", target: "wolf", required: 8 },
+        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 5 },
+        { id: "sinew", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 4 }
+      ],
+      rewards: { xp: 200, gold: 150 },
+      onComplete: ["unlockedDoubleStrike"],
+      requireFlags: ["completedMQ7"]
     }
   };
 

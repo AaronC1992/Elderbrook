@@ -762,6 +762,23 @@ button {
 .town-npc-event .town-npc-name {
   color: #c4a6ff;
 }
+/* Biscuit the cat — tiny and hidden */
+.town-npc-cat {
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  opacity: 0.6;
+  transition: opacity 0.4s, transform 0.25s;
+}
+.town-npc-cat:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+.town-npc-cat .town-npc-portrait {
+  height: 32px;
+}
+.town-npc-cat .town-npc-name {
+  display: none;
+}
 .town-poi:hover {
   background: rgba(60, 50, 20, 0.92);
   border-color: var(--accent-hover);
@@ -1384,6 +1401,11 @@ button {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 0.5rem;
   margin: 0.6rem 0;
+}
+.academy-grid > h3,
+.academy-grid > p {
+  grid-column: 1 / -1;
+  margin: 0;
 }
 .training-card, .academy-card {
   background: var(--bg-panel-alt);

@@ -68,7 +68,8 @@ var Player = (function () {
       settings: { textSpeed: "normal", soundEnabled: true },
       totalPlayTime: 0,             // seconds
       townEventsSeen: [],            // array of event ids already triggered
-      festivalStartDay: null         // day number when harvest festival began (lasts 15 days)
+      festivalStartDay: null,        // day number when harvest festival began (lasts 15 days)
+      learnedSkills: []              // array of skill ids the player has purchased/unlocked
     };
   }
 
@@ -512,6 +513,56 @@ var Player = (function () {
     return { success: true, message: "Your specialization has been reset. Choose a new path." };
   }
 
+  /* ── Skill Purchase & Training ── */
+  function purchaseSkill(skillId) {
+    if (!state) return { success: false, message: "No player data." };
+    if (!state.learnedSkills) state.learnedSkills = [];
+    if (state.learnedSkills.indexOf(skillId) !== -1) return { success: false, message: "You already know this skill." };
+
+    var sk = Skills.get(skillId);
+    if (!sk) return { success: false, message: "Skill not found." };
+    if (sk.questLocked) return { success: false, message: "This skill can only be learned by completing a special quest." };
+    if (state.gold < sk.cost) return { success: false, message: "Not enough gold. You need " + sk.cost + " gold." };
+
+    state.gold -= sk.cost;
+    state.learnedSkills.push(skillId);
+    return { success: true, message: "You learned " + sk.name + "!" };
+  }
+
+  function unlockQuestSkill(skillId) {
+    if (!state) return false;
+    if (!state.learnedSkills) state.learnedSkills = [];
+    if (state.learnedSkills.indexOf(skillId) !== -1) return false;
+    var sk = Skills.get(skillId);
+    if (!sk || !sk.questLocked) return false;
+    if (sk.unlockFlag && (!state.storyFlags || !state.storyFlags[sk.unlockFlag])) return false;
+    state.learnedSkills.push(skillId);
+    return true;
+  }
+
+  function hasSkill(skillId) {
+    if (!state || !state.learnedSkills) return false;
+    return state.learnedSkills.indexOf(skillId) !== -1;
+  }
+
+  function trainSkill(skillId) {
+    if (!state) return { success: false, message: "No player data." };
+    if (!hasSkill(skillId)) return { success: false, message: "You haven't learned this skill yet." };
+    var cost = Skills.getTrainCost(skillId);
+    if (state.gold < cost) return { success: false, message: "Not enough gold. Training costs " + cost + " gold." };
+    if (!spendEnergy(1)) return { success: false, message: "Not enough energy." };
+
+    state.gold -= cost;
+    // Grant 5 proficiency uses worth of progress
+    if (!state.skillProficiency) state.skillProficiency = {};
+    if (!state.skillProficiency[skillId]) state.skillProficiency[skillId] = 0;
+    state.skillProficiency[skillId] += 5;
+
+    var sk = Skills.get(skillId);
+    var stars = getSkillProficiencyStars(skillId);
+    return { success: true, message: "Trained " + (sk ? sk.name : skillId) + "! Proficiency: " + stars + "/5 stars." };
+  }
+
   return {
     MAX_INVENTORY: MAX_INVENTORY,
     EQUIP_SLOTS: EQUIP_SLOTS,
@@ -559,6 +610,10 @@ var Player = (function () {
     trainStat: trainStat,
     getTrainingCost: getTrainingCost,
     respecBuild: respecBuild,
-    RESPEC_COST: RESPEC_COST
+    RESPEC_COST: RESPEC_COST,
+    purchaseSkill: purchaseSkill,
+    unlockQuestSkill: unlockQuestSkill,
+    hasSkill: hasSkill,
+    trainSkill: trainSkill
   };
 })();

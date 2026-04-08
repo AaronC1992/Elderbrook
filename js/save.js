@@ -100,6 +100,7 @@ var Save = (function () {
     if (data.bountyKills === undefined) data.bountyKills = 0;
     if (!data.completedBounties) data.completedBounties = [];
     if (data.festivalStartDay === undefined) data.festivalStartDay = null;
+    if (!data.learnedSkills) data.learnedSkills = [];
 
     // Migrate relationships
     if (!data.relationships) {

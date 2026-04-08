@@ -211,7 +211,7 @@ var UI = (function () {
     html += '</div>';
 
     // Skills
-    var skills = Skills.getAvailable(p.level);
+    var skills = Skills.getAvailable(p.learnedSkills);
     if (skills.length > 0) {
       html += '<div class="char-skills"><h3>Skills</h3>';
       for (var s = 0; s < skills.length; s++) {
@@ -402,7 +402,7 @@ var UI = (function () {
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
-      html += '<button class="town-npc town-npc-cat" style="bottom:14%;left:36%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="A familiar orange cat" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
+      html += '<button class="town-npc town-npc-cat" style="bottom:8%;right:6%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
     }
 
     // Lost child returns when you've found Biscuit
@@ -936,20 +936,78 @@ var UI = (function () {
     }
     html += '</div>';
 
-    // Skill review (read-only info)
-    var skills = Skills.getAvailable(p.level);
-    if (skills.length > 0) {
-      html += '<div class="training-card">';
-      html += '<div class="training-icon">Scroll</div>';
-      html += '<h3>Skill Review</h3>';
-      html += '<p>Review your known techniques.</p>';
-      for (var s = 0; s < skills.length; s++) {
-        var prof = Player.getSkillProficiencyStars(skills[s].id);
-        var stars = '';
-        for (var st = 0; st < 5; st++) stars += st < prof ? '*' : '-';
-        html += '<div class="skill-entry">' + skills[s].name + ' [' + stars + ']</div>';
+    // Skill Purchase
+    var shopSkills = Skills.getShopSkills(p.learnedSkills);
+    if (shopSkills.length > 0) {
+      html += '<h3>Learn New Skills</h3>';
+      html += '<p class="flavor">Purchase skills to add them to your combat repertoire.</p>';
+      for (var s = 0; s < shopSkills.length; s++) {
+        var sk = shopSkills[s];
+        var tierLabel = sk.tier === 1 ? 'Basic' : (sk.tier === 2 ? 'Advanced' : 'Master');
+        html += '<div class="training-card">';
+        html += '<div class="training-icon">Scroll</div>';
+        html += '<h3>' + sk.name + ' <span class="skill-tier">[' + tierLabel + ']</span></h3>';
+        html += '<p>' + sk.description + '</p>';
+        html += '<div class="training-cost">Cost: ' + sk.cost + ' gold</div>';
+        if (p.gold >= sk.cost) {
+          html += '<button class="btn btn-small btn-primary" data-action="purchase-skill" data-skill="' + sk.id + '">Learn (' + sk.cost + 'g)</button>';
+        } else {
+          html += '<button class="btn btn-small" disabled>Can\'t Afford</button>';
+        }
+        html += '</div>';
       }
-      html += '</div>';
+    }
+
+    // Quest-locked skills
+    var questSkills = Skills.getQuestSkills(p.learnedSkills, p.storyFlags);
+    if (questSkills.length > 0) {
+      html += '<h3>Special Skills</h3>';
+      html += '<p class="flavor">These rare techniques can only be learned by completing special quests.</p>';
+      for (var qs = 0; qs < questSkills.length; qs++) {
+        var qsk = questSkills[qs];
+        html += '<div class="training-card' + (qsk.learned ? '' : ' crafting-unavailable') + '">';
+        html += '<div class="training-icon">Star</div>';
+        html += '<h3>' + qsk.skill.name + '</h3>';
+        if (qsk.learned) {
+          html += '<p>' + qsk.skill.description + '</p>';
+          html += '<div style="color:#6c6;">Learned</div>';
+        } else if (qsk.unlocked) {
+          html += '<p>' + qsk.skill.description + '</p>';
+          html += '<button class="btn btn-small btn-primary" data-action="learn-quest-skill" data-skill="' + qsk.skill.id + '">Learn</button>';
+        } else {
+          html += '<p class="locked-text">Complete a special quest to unlock this skill.</p>';
+        }
+        html += '</div>';
+      }
+    }
+
+    // Skill Training (train learned skills)
+    var learnedList = Skills.getAvailable(p.learnedSkills);
+    if (learnedList.length > 0) {
+      html += '<h3>Train Skills</h3>';
+      html += '<p class="flavor">Pay gold and energy to boost skill proficiency.</p>';
+      for (var ts = 0; ts < learnedList.length; ts++) {
+        var tsk = learnedList[ts];
+        var trainCost = Skills.getTrainCost(tsk.id);
+        var prof = Player.getSkillProficiencyStars(tsk.id);
+        var stars = '';
+        for (var st = 0; st < 5; st++) stars += st < prof ? '\u2605' : '\u2606';
+        html += '<div class="training-card">';
+        html += '<div class="training-icon">Crossed Swords</div>';
+        html += '<h3>' + tsk.name + ' <span class="ledger-skill-stars">' + stars + '</span></h3>';
+        html += '<p>' + tsk.description + '</p>';
+        html += '<div class="training-cost">Cost: ' + trainCost + ' gold + 1 EP</div>';
+        if (prof >= 5) {
+          html += '<button class="btn btn-small" disabled>Mastered</button>';
+        } else if (p.energy < 1) {
+          html += '<button class="btn btn-small" disabled>No Energy</button>';
+        } else if (p.gold < trainCost) {
+          html += '<button class="btn btn-small" disabled>Can\'t Afford</button>';
+        } else {
+          html += '<button class="btn btn-small btn-primary" data-action="train-skill" data-skill="' + tsk.id + '">Train (' + trainCost + 'g, 1 EP)</button>';
+        }
+        html += '</div>';
+      }
     }
 
     html += '</div>';
@@ -1088,7 +1146,7 @@ var UI = (function () {
     }
 
     // Skills
-    var skills = Skills.getAvailable(p.level);
+    var skills = Skills.getAvailable(p.learnedSkills);
     if (skills.length > 0) {
       html += '<h3>Known Skills</h3>';
       for (var s = 0; s < skills.length; s++) {
@@ -1160,13 +1218,14 @@ var UI = (function () {
 
     var allSkills = Skills.getAll();
     var html = '<h2>Skills Compendium</h2>';
-    html += '<p class="flavor">All learnable skills. New skills unlock as you level up.</p>';
+    html += '<p class="flavor">Skills are learned at the Academy for gold, or unlocked through special quests. Train them to increase proficiency.</p>';
 
     var typeLabels = { attack: "Attack", buff: "Buff", heal: "Heal", magic: "Magic" };
+    var tierLabels = { 1: "Basic", 2: "Advanced", 3: "Master" };
 
     for (var i = 0; i < allSkills.length; i++) {
       var sk = allSkills[i];
-      var known = p.level >= sk.unlockLevel;
+      var known = Player.hasSkill(sk.id);
       var prof = known ? Player.getSkillProficiencyStars(sk.id) : 0;
       var stars = '';
       for (var st = 0; st < 5; st++) stars += st < prof ? '\u2605' : '\u2606';
@@ -1174,7 +1233,7 @@ var UI = (function () {
       html += '<div class="ledger-skill-card' + (known ? '' : ' ledger-skill-locked') + '">';
       html += '<div class="ledger-skill-header">';
       html += '<span class="ledger-skill-name">' + sk.name + '</span>';
-      html += '<span class="ledger-skill-type">[' + (typeLabels[sk.type] || sk.type) + ']</span>';
+      html += '<span class="ledger-skill-type">[' + (typeLabels[sk.type] || sk.type) + '] [' + (tierLabels[sk.tier] || 'Tier ' + sk.tier) + ']</span>';
       html += '</div>';
 
       if (known) {
@@ -1191,13 +1250,17 @@ var UI = (function () {
         if (sk.appliesEffect) html += '<span>Effect: ' + sk.appliesEffect.type + (sk.appliesEffect.chance ? ' (' + Math.round(sk.appliesEffect.chance * 100) + '% chance)' : '') + '</span>';
         html += '</div>';
         html += '<div class="ledger-skill-tip">';
-        if (sk.type === 'attack') html += 'Proficiency increases damage. Use often to improve.';
-        else if (sk.type === 'magic') html += 'Scales with Intelligence instead of Attack. Proficiency boosts damage.';
-        else if (sk.type === 'heal') html += 'Healing scales with level above unlock. Proficiency improves recovery.';
+        if (sk.type === 'attack') html += 'Proficiency increases damage. Use often or train at the Academy.';
+        else if (sk.type === 'magic') html += 'Scales with Intelligence instead of Attack. Train at the Academy for faster mastery.';
+        else if (sk.type === 'heal') html += 'Healing scales with proficiency. Train to improve recovery.';
         else if (sk.type === 'buff') html += 'Activate before attacking for maximum effect.';
         html += '</div>';
       } else {
-        html += '<div class="ledger-skill-desc locked-text">Unlocks at Level ' + sk.unlockLevel + '</div>';
+        if (sk.questLocked) {
+          html += '<div class="ledger-skill-desc locked-text">Unlocked by completing a special quest.</div>';
+        } else {
+          html += '<div class="ledger-skill-desc locked-text">Available at the Academy for ' + sk.cost + ' gold.</div>';
+        }
       }
 
       html += '</div>';
