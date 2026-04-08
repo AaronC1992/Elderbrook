@@ -62,12 +62,98 @@ var UI = (function () {
     if (id !== "title" && id !== "create") {
       updateHeader();
     }
+    if (id === "create") {
+      renderCreateClassPaths();
+    }
     // Hide nav during immersive screens
     var nav = document.getElementById("game-nav");
     if (nav) {
       var hideNav = (id === "battle" || id === "dungeon" || id === "dialogue");
       nav.style.display = hideNav ? "none" : "";
     }
+  }
+
+  function renderCreateClassPaths() {
+    var container = document.getElementById("create-class-paths");
+    if (!container || !Player || !Player.CLASS_DEFS) return;
+
+    var defs = Player.CLASS_DEFS;
+    var statLabels = {
+      attack: "ATK",
+      defense: "DEF",
+      dexterity: "DEX",
+      intelligence: "INT",
+      maxHp: "Max HP",
+      maxMp: "Max MP"
+    };
+    var orderedIds = Object.keys(defs);
+    var subIdsByBase = {};
+    var groupedBaseIds = [];
+    var soloBaseIds = [];
+
+    function formatStats(stats) {
+      var parts = [];
+      var keys = Object.keys(stats || {});
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var value = stats[key];
+        if (!value) continue;
+        var sign = value > 0 ? "+" : "";
+        parts.push(sign + value + " " + (statLabels[key] || key));
+      }
+      return parts.join(", ");
+    }
+
+    function buildClassGroup(classId, subIds) {
+      var def = defs[classId];
+      var html = '<div class="create-class-group">';
+      html += '<div class="create-class-base">' + def.name + ' <span class="create-class-tag">Quest Line</span></div>';
+      html += '<div class="create-class-desc">' + def.desc + '</div>';
+      html += '<div class="create-class-stats">' + formatStats(def.stats) + '</div>';
+      if (subIds.length) {
+        html += '<div class="create-class-subs">';
+        for (var i = 0; i < subIds.length; i++) {
+          var subDef = defs[subIds[i]];
+          html += '<div class="create-class-sub">' + subDef.name + ' <span class="create-class-tag">Quest Line</span></div>';
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    for (var i = 0; i < orderedIds.length; i++) {
+      var id = orderedIds[i];
+      var def = defs[id];
+      if (def.base) {
+        if (!subIdsByBase[def.base]) subIdsByBase[def.base] = [];
+        subIdsByBase[def.base].push(id);
+      }
+    }
+
+    for (var j = 0; j < orderedIds.length; j++) {
+      var baseId = orderedIds[j];
+      var baseDef = defs[baseId];
+      if (baseDef.base) continue;
+      if ((subIdsByBase[baseId] || []).length) groupedBaseIds.push(baseId);
+      else soloBaseIds.push(baseId);
+    }
+
+    var html = '<h3>Class Paths</h3>';
+    html += '<p class="flavor">All classes and subclasses unlock through their own class quest lines.</p>';
+    html += '<div class="create-class-tree">';
+
+    for (var k = 0; k < groupedBaseIds.length; k++) {
+      var groupedBaseId = groupedBaseIds[k];
+      html += buildClassGroup(groupedBaseId, subIdsByBase[groupedBaseId] || []);
+    }
+
+    for (var s = 0; s < soloBaseIds.length; s++) {
+      html += buildClassGroup(soloBaseIds[s], []);
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
   }
 
   function getScreen() { return currentScreen; }
