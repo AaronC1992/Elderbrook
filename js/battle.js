@@ -231,9 +231,43 @@ var Battle = (function () {
 
   /* ── Combat Animation Helper ── */
 
-  function animateCombat(who, type, callback, enemyIdx) {
+  // Map ability/effect names to element types for visual effects
+  function getElement(opts) {
+    if (!opts) return "";
+    // Check explicit element
+    if (opts.element) return opts.element;
+    // Infer from ability name
+    var name = (opts.abilityName || "").toLowerCase();
+    if (name.indexOf("fire") !== -1 || name.indexOf("flame") !== -1 || name.indexOf("blaze") !== -1) return "fire";
+    if (name.indexOf("frost") !== -1 || name.indexOf("ice") !== -1 || name.indexOf("frozen") !== -1 || name.indexOf("blinding snow") !== -1) return "ice";
+    if (name.indexOf("lightning") !== -1 || name.indexOf("thunder") !== -1 || name.indexOf("shock") !== -1) return "lightning";
+    if (name.indexOf("poison") !== -1 || name.indexOf("venom") !== -1 || name.indexOf("hex") !== -1) return "poison";
+    if (name.indexOf("dark") !== -1 || name.indexOf("shadow") !== -1) return "dark";
+    // Infer from effect type
+    var eff = opts.effectType || "";
+    if (eff === "burn") return "fire";
+    if (eff === "stun" && (name.indexOf("frost") !== -1 || name.indexOf("frozen") !== -1 || name.indexOf("ice") !== -1)) return "ice";
+    if (eff === "poison") return "poison";
+    if (eff === "silence") return "dark";
+    if (eff === "fear") return "dark";
+    return "";
+  }
+
+  // Spawn an elemental overlay flash on a target element
+  function showElementOverlay(targetEl, element) {
+    if (!targetEl || !element) return;
+    var overlay = document.createElement("div");
+    overlay.className = "element-impact-overlay element-overlay-" + element;
+    targetEl.appendChild(overlay);
+    setTimeout(function () {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 550);
+  }
+
+  function animateCombat(who, type, callback, enemyIdx, opts) {
     // who: "player" or "enemy"
     // type: "melee", "magic", "heal", "buff", "miss", "dodge"
+    // opts: { element: "fire"|"ice"|"lightning"|"poison"|"dark", abilityName: "...", effectType: "..." }
     var attackerId, targetId;
     if (who === "player") {
       attackerId = "battle-player";
@@ -249,30 +283,72 @@ var Battle = (function () {
     if (!attackerEl) { if (callback) callback(); return; }
 
     animating = true;
+    var element = getElement(opts);
 
     if (type === "melee") {
-      var lungeClass = (who === "player") ? "anim-player-melee" : "anim-enemy-melee";
-      attackerEl.classList.add(lungeClass);
+      // Calculate travel distance from attacker to target
+      var travelX = 0;
+      if (attackerEl && targetEl) {
+        var aRect = attackerEl.getBoundingClientRect();
+        var tRect = targetEl.getBoundingClientRect();
+        // Player moves right toward enemies, enemies move left toward player
+        if (who === "player") {
+          travelX = (tRect.left + tRect.width / 2) - (aRect.left + aRect.width / 2) - 20;
+        } else {
+          travelX = (tRect.left + tRect.width / 2) - (aRect.left + aRect.width / 2) + 20;
+        }
+      }
+      attackerEl.style.setProperty("--travel-x", travelX + "px");
+      attackerEl.classList.add("anim-melee-travel");
+
+      // Hit shake on target at peak of travel (~40%)
       setTimeout(function () {
-        if (targetEl) targetEl.classList.add("anim-hit-shake");
-      }, 180);
+        if (targetEl) {
+          targetEl.classList.add("anim-hit-shake");
+          // Red flash overlay on hit
+          var flash = document.createElement("div");
+          flash.className = "damage-flash-overlay";
+          targetEl.appendChild(flash);
+          setTimeout(function () { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 400);
+        }
+      }, 230);
+
       setTimeout(function () {
-        attackerEl.classList.remove(lungeClass);
+        attackerEl.classList.remove("anim-melee-travel");
+        attackerEl.style.removeProperty("--travel-x");
         if (targetEl) targetEl.classList.remove("anim-hit-shake");
         animating = false;
         if (callback) callback();
-      }, 500);
+      }, 650);
+
     } else if (type === "magic") {
-      attackerEl.classList.add("anim-magic-cast");
+      // Elemental cast glow on attacker
+      var castClass = element ? "anim-" + element + "-cast" : "anim-magic-cast";
+      // Only fire and ice have custom cast; others fall back to generic
+      if (element !== "fire" && element !== "ice") castClass = "anim-magic-cast";
+      attackerEl.classList.add(castClass);
+
+      // Elemental impact on target
       setTimeout(function () {
-        if (targetEl) targetEl.classList.add("anim-magic-impact");
-      }, 200);
+        if (targetEl) {
+          var impactClass = element ? "anim-" + element + "-impact" : "anim-magic-impact";
+          targetEl.classList.add(impactClass);
+          targetEl._impactClass = impactClass;
+          // Elemental overlay flash
+          showElementOverlay(targetEl, element || "dark");
+        }
+      }, 220);
+
       setTimeout(function () {
-        attackerEl.classList.remove("anim-magic-cast");
-        if (targetEl) targetEl.classList.remove("anim-magic-impact");
+        attackerEl.classList.remove(castClass);
+        if (targetEl) {
+          targetEl.classList.remove(targetEl._impactClass || "anim-magic-impact");
+          delete targetEl._impactClass;
+        }
         animating = false;
         if (callback) callback();
-      }, 550);
+      }, 600);
+
     } else if (type === "heal" || type === "buff") {
       attackerEl.classList.add("anim-heal-glow");
       setTimeout(function () {
@@ -280,6 +356,7 @@ var Battle = (function () {
         animating = false;
         if (callback) callback();
       }, 500);
+
     } else if (type === "miss" || type === "dodge") {
       if (targetEl) targetEl.classList.add("anim-dodge");
       setTimeout(function () {
@@ -287,6 +364,7 @@ var Battle = (function () {
         animating = false;
         if (callback) callback();
       }, 400);
+
     } else {
       animating = false;
       if (callback) callback();
@@ -529,6 +607,7 @@ var Battle = (function () {
       }
 
       var animType = skill.type === "magic" ? "magic" : "melee";
+      var skillOpts = { abilityName: skill.name, effectType: skill.appliesEffect ? skill.appliesEffect.type : "" };
       animateCombat("player", animType, function () {
         target.hp -= totalDmg;
         addLog("You use " + skill.name + " dealing " + totalDmg + " damage!");
@@ -555,7 +634,7 @@ var Battle = (function () {
         renderBattle();
         showFCT("battle-enemy-" + targetIndex, "-" + totalDmg, "damage");
         checkBattleEnd() || enemyTurn();
-      });
+      }, undefined, skillOpts);
     } else {
       checkBattleEnd() || enemyTurn();
     }
@@ -693,13 +772,26 @@ var Battle = (function () {
     var enemyHitChance = Math.min(0.95, 0.70 + e.attack * 0.03);
     var action = determineEnemyAction(e, enemyHitChance);
 
-    // Pick animation type based on action
+    // Pick animation type and element based on action
     var animType = "melee";
+    var animOpts = null;
     if (action.type === "miss") animType = "melee";
     else if (action.type === "dodge") animType = "melee";
     else if (action.type === "buff-only") animType = "buff";
-    else if (action.type === "effect-only") animType = "magic";
-    else animType = "melee";
+    else if (action.type === "effect-only") {
+      animType = "magic";
+      var ab = action.ability;
+      animOpts = { abilityName: ab ? ab.name : "", effectType: action.effect ? action.effect.type : "" };
+    }
+    else if (action.type === "ability" && action.ability) {
+      var ab2 = action.ability;
+      if (ab2.multiplier) animType = "melee";
+      // If ability applies an effect, use magic animation instead
+      if (ab2.effect && !ab2.multiplier) animType = "magic";
+      if (ab2.effect || ab2.name) {
+        animOpts = { abilityName: ab2.name || "", effectType: ab2.effect ? ab2.effect.type : "" };
+      }
+    }
 
     // Small delay so player sees the turn transition
     setTimeout(function () {
@@ -709,7 +801,7 @@ var Battle = (function () {
         renderBattle();
         if (checkBattleEnd()) return;
         processEnemyQueue(queue, idx + 1);
-      }, ei);
+      }, ei, animOpts);
     }, 300);
   }
 
@@ -999,7 +1091,11 @@ var Battle = (function () {
     html += '<div class="battle-scene">';
 
     // Player (left side)
-    html += '<div class="battle-player" id="battle-player">';
+    var playerStatusClasses = '';
+    for (var psi = 0; psi < playerEffects.length; psi++) {
+      playerStatusClasses += ' status-visual-' + playerEffects[psi].type;
+    }
+    html += '<div class="battle-player' + playerStatusClasses + '" id="battle-player">';
     html += '<img class="battle-portrait" src="' + Player.getPortrait() + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">';
     html += '<div class="battle-player-info">';
     html += '<div class="battle-name">' + p.name + ' (Lv.' + p.level + ')</div>';
@@ -1024,6 +1120,12 @@ var Battle = (function () {
       var isDead = e.hp <= 0;
       var isTarget = (ei === targetIndex);
       var enemyClass = 'battle-enemy' + (isTarget ? ' battle-target-selected' : '') + (isDead ? ' battle-enemy-dead' : '');
+      // Add status visual classes for active effects
+      if (e.effects && e.effects.length > 0 && !isDead) {
+        for (var esi = 0; esi < e.effects.length; esi++) {
+          enemyClass += ' status-visual-' + e.effects[esi].type;
+        }
+      }
       html += '<div class="' + enemyClass + '" id="battle-enemy-' + ei + '"' + (!isDead ? ' data-action="battle-target" data-index="' + ei + '"' : '') + '>';
       html += '<img class="battle-portrait" src="' + (e.portrait || '') + '" alt="' + e.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="battle-enemy-info">';
