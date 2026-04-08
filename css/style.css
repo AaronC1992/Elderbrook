@@ -407,8 +407,15 @@ body {
 #game-container.mode-menu #game-nav {
   display: none;
 }
+#game-container.mode-menu {
+  grid-template-rows: 1fr;
+}
 #game-container.mode-menu #game-body {
   grid-template-columns: 1fr;
+  height: 100%;
+}
+#game-container.mode-menu #screen-container {
+  height: 100%;
 }
 
 /* ══════════════════════════════════════════════════════════════
