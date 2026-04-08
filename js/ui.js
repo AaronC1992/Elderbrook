@@ -100,7 +100,7 @@ var UI = (function () {
       var def = defs[classId];
       var skillName = getSkillName(def.skill);
       var html = '<div class="create-class-group">';
-      html += '<div class="create-class-base">' + def.name + ' <span class="create-class-tag">Quest Line</span></div>';
+        html += '<div class="create-class-base">' + def.name + '</div>';
       html += '<div class="create-class-desc">' + def.desc + '</div>';
       if (skillName) html += '<div class="create-class-stats">Special Skill: ' + skillName + '</div>';
       if (subIds.length) {
@@ -108,7 +108,7 @@ var UI = (function () {
         for (var i = 0; i < subIds.length; i++) {
           var subDef = defs[subIds[i]];
           var subSkillName = getSkillName(subDef.skill);
-          html += '<div class="create-class-sub">' + subDef.name + ' <span class="create-class-tag">Quest Line</span>' + (subSkillName ? ' - ' + subSkillName : '') + '</div>';
+            html += '<div class="create-class-sub">' + subDef.name + ' <span class="create-class-tag">Subclass</span>' + (subSkillName ? ' - ' + subSkillName : '') + '</div>';
         }
         html += '</div>';
       }
@@ -688,6 +688,8 @@ var UI = (function () {
     var container = document.getElementById("social-content");
     if (!container) return;
 
+    options = options || {};
+
     var cfg = Relationships.getConfig(npcId);
     var p = Player.get();
     var rel = p && p.relationships ? p.relationships[npcId] : null;
@@ -766,7 +768,11 @@ var UI = (function () {
       }
     }
 
-    html += '<button class="btn" data-action="go-town">Back to Town</button>';
+    if (options.returnToScene === 'shop' && options.shopId) {
+      html += '<button class="btn" data-action="npc-exit-menu">Back</button>';
+    } else {
+      html += '<button class="btn" data-action="go-town">Back to Town</button>';
+    }
     html += '</div>';
 
     // Daily reset hint

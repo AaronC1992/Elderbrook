@@ -1,11 +1,18 @@
 /* world.js - Navigation, area encounters, town interactions */
 var World = (function () {
 
-  var currentNPCContext = null; // { npcId, shopId, questBoard, background }
+  var currentNPCContext = null; // { npcId, shopId, questBoard, background, returnToScene }
 
   function showNPCMenu(npcId, options) {
-    currentNPCContext = { npcId: npcId, shopId: options.shopId || null, questBoard: options.questBoard || false, background: options.background || '' };
-    UI.renderNPCMenu(npcId, options);
+    options = options || {};
+    currentNPCContext = {
+      npcId: npcId,
+      shopId: options.shopId || null,
+      questBoard: options.questBoard || false,
+      background: options.background || '',
+      returnToScene: options.returnToScene || ''
+    };
+    UI.renderNPCMenu(npcId, currentNPCContext);
     UI.showScreen("social");
   }
 
@@ -26,6 +33,31 @@ var World = (function () {
     } else {
       navigate("elderbrook");
     }
+  }
+
+  function leaveNPCMenu() {
+    if (currentNPCContext && currentNPCContext.returnToScene === "shop" && currentNPCContext.shopId) {
+      showShopScene(currentNPCContext.shopId);
+      return;
+    }
+    navigate("elderbrook");
+  }
+
+  function showShopScene(shopId) {
+    var shop = Shops.getShop(shopId);
+    if (!shop) return;
+    Shops.renderShopScene(shopId);
+    UI.showScreen("shop");
+  }
+
+  function openShopNPCMenu(shopId) {
+    var shop = Shops.getShop(shopId);
+    if (!shop) return;
+    showNPCMenu(shop.npc, {
+      shopId: shopId,
+      background: shop.background || '',
+      returnToScene: "shop"
+    });
   }
 
   function navigate(locationId) {
@@ -217,7 +249,7 @@ var World = (function () {
 
     var npcId = shop.npc; // "bram", "harlan", "mira"
     var background = shop.background || '';
-    var menuOptions = { shopId: shopId, background: background };
+    var menuOptions = { shopId: shopId, background: background, returnToScene: "shop" };
 
     // Set shop background for any dialogue that fires
     if (shop.background) {
@@ -235,7 +267,7 @@ var World = (function () {
               Audio.play("questComplete");
               Save.autoSave();
               Dialogue.start(cqs[ci] + "-complete", function () {
-                showNPCMenu(npcId, menuOptions);
+                showShopScene(shopId);
               });
               return;
             }
@@ -251,7 +283,7 @@ var World = (function () {
               Audio.play("questComplete");
               Save.autoSave();
               Dialogue.start(mcqs[mi] + "-complete", function () {
-                showNPCMenu(npcId, menuOptions);
+                showShopScene(shopId);
               });
               return;
             }
@@ -268,7 +300,7 @@ var World = (function () {
         if (result) {
           Audio.play("questComplete");
           Dialogue.start("sq6-complete", function () {
-            showNPCMenu(npcId, menuOptions);
+            showShopScene(shopId);
             UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
           });
           return;
@@ -280,7 +312,7 @@ var World = (function () {
         if (result) {
           Audio.play("questComplete");
           Dialogue.start("sq3-complete", function () {
-            showNPCMenu(npcId, menuOptions);
+            showShopScene(shopId);
             UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
           });
           return;
@@ -292,7 +324,7 @@ var World = (function () {
         if (result) {
           Audio.play("questComplete");
           Dialogue.start("sq13-complete", function () {
-            showNPCMenu(npcId, menuOptions);
+            showShopScene(shopId);
             UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
           });
           return;
@@ -305,7 +337,7 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq1-complete", function () {
-              showNPCMenu(npcId, menuOptions);
+              showShopScene(shopId);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
             return;
@@ -316,7 +348,7 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq2-complete", function () {
-              showNPCMenu(npcId, menuOptions);
+              showShopScene(shopId);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
             return;
@@ -328,7 +360,7 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq11-complete", function () {
-              showNPCMenu(npcId, menuOptions);
+              showShopScene(shopId);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
             return;
@@ -340,7 +372,7 @@ var World = (function () {
           if (result) {
             Audio.play("questComplete");
             Dialogue.start("sq14-complete", function () {
-              showNPCMenu(npcId, menuOptions);
+              showShopScene(shopId);
               UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
             });
             return;
@@ -351,26 +383,26 @@ var World = (function () {
       // First visit dialogues → then NPC menu
       if (shop.npc === "bram" && !Player.hasFlag("visitedBram")) {
         Dialogue.start("bram-first", function () {
-          showNPCMenu(npcId, menuOptions);
+          showShopScene(shopId);
         });
         return;
       }
       if (shop.npc === "harlan" && !Player.hasFlag("visitedHarlan")) {
         Dialogue.start("harlan-first", function () {
-          showNPCMenu(npcId, menuOptions);
+          showShopScene(shopId);
         });
         return;
       }
       if (shop.npc === "mira" && !Player.hasFlag("visitedMira")) {
         Dialogue.start("mira-first", function () {
-          showNPCMenu(npcId, menuOptions);
+          showShopScene(shopId);
         });
         return;
       }
     }
 
-    // Default: show NPC menu
-    showNPCMenu(npcId, menuOptions);
+    // Default: show the room and wait for explicit NPC interaction.
+    showShopScene(shopId);
   }
 
   /* Opens shop with optional idle dialogue (called from NPC menu "Shop" button) */
@@ -870,9 +902,11 @@ var World = (function () {
     // First meeting: dialogue offers quest
     if (!Player.hasFlag(metFlag)) {
       Dialogue.start(mentorId + "-first", function () {
-        UI.showMessage("New quest accepted!");
         UI.updateHeader();
         UI.updateSidebars();
+        if (Quests.isActive(questId)) {
+          UI.showMessage("New quest accepted!");
+        }
         UI.showScreen("town");
         UI.renderTown();
       });
@@ -910,7 +944,9 @@ var World = (function () {
     visitClassMentor: visitClassMentor,
     getNPCContext: getNPCContext,
     returnToNPCMenu: returnToNPCMenu,
+    leaveNPCMenu: leaveNPCMenu,
     npcOpenShop: npcOpenShop,
+    openShopNPCMenu: openShopNPCMenu,
     npcOpenQuestBoard: npcOpenQuestBoard,
     npcChat: npcChat,
     npcGift: npcGift,

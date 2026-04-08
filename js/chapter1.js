@@ -1363,9 +1363,14 @@ var Chapter1 = (function () {
         { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "You. Stop shuffling and stand up straight. I've seen scarecrows with better posture." },
         { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "I'm Varn. I've trained soldiers, mercenaries, and one particularly stubborn mule. The mule was the fastest learner." },
         { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "If you want to walk the Warrior's path, you'll need grit, steel, and iron in your blood. Not metaphorical iron. Actual iron ore. I'll explain." },
-        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "Bring me proof you can handle yourself out there. Kill wolves, clear goblin scouts, and bring back iron ore. Then we'll talk about making you a warrior." }
-      ],
-      onEnd: { flags: ["metVarn"], quest: "cq-warrior" }
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "Bring me proof you can handle yourself out there. Kill wolves, clear goblin scouts, and bring back iron ore. Then we'll talk about making you a warrior." },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "Understand this before you answer: you can only choose one class path, and once that choice is made it is permanent. Do you want to start the Warrior quest line?", choices: [
+          { text: "Start the Warrior quest line.", flags: ["metVarn"], quest: "cq-warrior", next: 5 },
+          { text: "Not yet.", next: 6 }
+        ] },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "Good. Then stop gawking and get moving.", end: true },
+        { speaker: "Varn the Ironclad", portrait: npcs.varn.portrait, text: "Then come back when you're ready to commit.", end: true }
+      ]
     },
     "shade-first": {
       id: "shade-first",
@@ -1373,9 +1378,14 @@ var Chapter1 = (function () {
         { speaker: "Shade", portrait: npcs.shade.portrait, text: "...You noticed me. That's either impressive or I'm getting sloppy. Let's say impressive." },
         { speaker: "Shade", portrait: npcs.shade.portrait, text: "Most people walk right past this alley. But you looked. That tells me something about you." },
         { speaker: "Shade", portrait: npcs.shade.portrait, text: "The shadows aren't just for hiding. They're a way of life. Speed, precision, knowing when to strike and when to vanish." },
-        { speaker: "Shade", portrait: npcs.shade.portrait, text: "If you want to learn, prove yourself. Hunt goblin sneaks, take down wolves, and bring me beast sinew. Then you'll earn the right to call yourself a Rogue." }
-      ],
-      onEnd: { flags: ["metShade"], quest: "cq-rogue" }
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "If you want to learn, prove yourself. Hunt goblin sneaks, take down wolves, and bring me beast sinew. Then you'll earn the right to call yourself a Rogue." },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "One warning. You only get one class path, and when you choose it, that's permanent. Do you want to start the Rogue quest line?", choices: [
+          { text: "Start the Rogue quest line.", flags: ["metShade"], quest: "cq-rogue", next: 5 },
+          { text: "Not yet.", next: 6 }
+        ] },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "Good choice. Finish the contract and we'll see what you're made of.", end: true },
+        { speaker: "Shade", portrait: npcs.shade.portrait, text: "Take your time. The shadows will still be here when you're ready.", end: true }
+      ]
     },
     "theron-first": {
       id: "theron-first",
@@ -1383,9 +1393,14 @@ var Chapter1 = (function () {
         { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Mmm? Oh! A visitor. Apologies, I was deep in thought. Or possibly asleep. The lines blur at my age." },
         { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "I am Theron, a student of the arcane. I came to Elderbrook following ley lines and ended up staying because Mira makes excellent tea." },
         { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "I sense a flicker of arcane potential in you. Raw, untrained, like a candle trying to be a bonfire. Adorable." },
-        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Gather moonpetal herbs, defeat a few goblin scouts to test your nerve, and find me a shadow essence. Do this, and I'll teach you to channel that spark into true magic." }
-      ],
-      onEnd: { flags: ["metTheron"], quest: "cq-mage" }
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Gather moonpetal herbs, defeat a few goblin scouts to test your nerve, and find me a shadow essence. Do this, and I'll teach you to channel that spark into true magic." },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Now, an important warning before we begin: you may only choose one class path, and that choice is permanent. Would you like to start the Mage quest line?", choices: [
+          { text: "Start the Mage quest line.", flags: ["metTheron"], quest: "cq-mage", next: 5 },
+          { text: "Not yet.", next: 6 }
+        ] },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Splendid. Bring me what I asked for, and we'll turn that spark into something far more dangerous.", end: true },
+        { speaker: "Sage Theron", portrait: npcs.theron.portrait, text: "Quite all right. Life-changing decisions are best made with a reasonably awake mind.", end: true }
+      ]
     },
     "lysara-first": {
       id: "lysara-first",

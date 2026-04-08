@@ -123,6 +123,11 @@ var Dialogue = (function () {
       }
     }
 
+    // Grant quest from choice
+    if (choice.giveQuest || choice.quest) {
+      Quests.accept(choice.giveQuest || choice.quest);
+    }
+
     // Navigate to target node
     if (typeof choice.next === "number") {
       currentNode = choice.next;

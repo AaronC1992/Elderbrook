@@ -407,6 +407,9 @@
       case "npc-shop":
         World.npcOpenShop(btn.getAttribute("data-shop"));
         break;
+        case "shop-scene-interact":
+          World.openShopNPCMenu(btn.getAttribute("data-shop"));
+          break;
       case "npc-questboard":
         World.npcOpenQuestBoard();
         break;
@@ -425,6 +428,9 @@
       case "npc-back":
         World.returnToNPCMenu();
         break;
+        case "npc-exit-menu":
+          World.leaveNPCMenu();
+          break;
       case "open-relationships":
         UI.renderLedger("relationships");
         UI.showScreen("ledger");
