@@ -40,6 +40,10 @@ var World = (function () {
       showShopScene(currentNPCContext.shopId);
       return;
     }
+    if (currentNPCContext && currentNPCContext.returnToScene === "petshop") {
+      showPetShopScene();
+      return;
+    }
     navigate("elderbrook");
   }
 
@@ -57,6 +61,24 @@ var World = (function () {
       shopId: shopId,
       background: shop.background || '',
       returnToScene: "shop"
+    });
+  }
+
+  function showPetShopScene() {
+    var screen = document.getElementById("screen-petshop");
+    if (screen) {
+      screen.style.backgroundImage = "url('assets/backgrounds/main-town-pet-shop.png')";
+      screen.style.backgroundSize = "cover";
+      screen.style.backgroundPosition = "center";
+    }
+    UI.renderPetShop();
+    UI.showScreen("petshop");
+  }
+
+  function openPetShopNPCMenu() {
+    showNPCMenu("fauna", {
+      background: "assets/backgrounds/main-town-pet-shop.png",
+      returnToScene: "petshop"
     });
   }
 
@@ -757,6 +779,27 @@ var World = (function () {
     showNPCMenu("elira", { background: '' });
   }
 
+  function visitLiora() {
+    var lioraMenuOptions = { background: "assets/backgrounds/main-town.png" };
+    UI.setDialogueBackground("assets/backgrounds/main-town.png");
+
+    if (!Player.hasFlag("visitedLiora")) {
+      Dialogue.start("liora-first", function () {
+        showNPCMenu("liora", lioraMenuOptions);
+      });
+      return;
+    }
+
+    if (Chapter1.getDialogue("liora-idle")) {
+      Dialogue.start("liora-idle", function () {
+        showNPCMenu("liora", lioraMenuOptions);
+      });
+      return;
+    }
+
+    showNPCMenu("liora", lioraMenuOptions);
+  }
+
   /* ── NPC Menu Actions ── */
 
   function npcChat(npcId) {
@@ -856,14 +899,7 @@ var World = (function () {
   }
 
   function visitPetShop() {
-    var screen = document.getElementById("screen-petshop");
-    if (screen) {
-      screen.style.backgroundImage = "url('assets/backgrounds/main-town-pet-shop.png')";
-      screen.style.backgroundSize = "cover";
-      screen.style.backgroundPosition = "center";
-    }
-    UI.renderPetShop();
-    UI.showScreen("petshop");
+    showPetShopScene();
   }
 
   /* ── Class Mentor Visit ── */
@@ -936,6 +972,7 @@ var World = (function () {
     visitGuild: visitGuild,
     visitQuestBoard: visitQuestBoard,
     visitElric: visitElric,
+    visitLiora: visitLiora,
     visitElira: visitElira,
     interactEvent: interactEvent,
     findBiscuit: findBiscuit,
@@ -947,6 +984,7 @@ var World = (function () {
     leaveNPCMenu: leaveNPCMenu,
     npcOpenShop: npcOpenShop,
     openShopNPCMenu: openShopNPCMenu,
+    openPetShopNPCMenu: openPetShopNPCMenu,
     npcOpenQuestBoard: npcOpenQuestBoard,
     npcChat: npcChat,
     npcGift: npcGift,

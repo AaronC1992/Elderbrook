@@ -155,6 +155,9 @@
       case "go-elric":
         World.visitElric();
         break;
+      case "go-liora":
+        World.visitLiora();
+        break;
       case "go-elira":
         World.visitElira();
         break;
@@ -169,6 +172,9 @@
         break;
       case "go-petshop":
         World.visitPetShop();
+        break;
+      case "petshop-scene-interact":
+        World.openPetShopNPCMenu();
         break;
       case "buy-pet":
         var buyPetResult = Player.buyPet(btn.getAttribute("data-pet"));

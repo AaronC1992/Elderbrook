@@ -63,7 +63,9 @@ var Player = (function () {
         elira:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         bram:   { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         harlan: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
-        elric:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
+        elric:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        fauna:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        liora:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
       },
       /* ── Day / Time / Energy (SimGirl system) ── */
       day: 1,

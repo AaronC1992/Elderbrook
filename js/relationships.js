@@ -610,6 +610,184 @@ var Relationships = (function () {
         ],
         onEnd: { addAffinity: { npc: "elric", amount: 5 } }
       }
+    },
+
+    fauna: {
+      name: "Fauna",
+      portrait: "assets/portraits/pet-shop-keeper.png",
+      lovedGifts: ["wildflowers", "herbal-tea", "sweet-roll"],
+      likedGifts: ["moonstone", "old-book", "cave-herb"],
+      dislikedGifts: ["iron-ingot", "smelling-salts"],
+      bonus: { dexterity: 1, defense: 1, maxHp: 6 },
+      chatLines: [
+        "If an animal trusts you quickly, it usually means your heart is kinder than your reputation.",
+        "The fox kits always try to nap in the sunniest corner. Honestly, I can't blame them.",
+        "I grew up on the edge of the deepwood. You learn patience when every creature is deciding whether you're friend or threat.",
+        "Some people come in asking for the fiercest companion I have. I prefer the ones asking which pet needs the gentlest home.",
+        "This shop smells like cedar, hay, and a little bit of mischief. That's how I know it's a good day.",
+        "The barn owl watches everyone who enters. She has excellent judgment, so if she likes you, I probably will too.",
+        "I braid ribbons into the collars of the shy ones. It helps people notice how lovely they are.",
+        "You'd be surprised how often wounded strays find their way to my door before they trust anyone else in town."
+      ],
+      contextualLines: {
+        completedMQ3: "Word travels fast in Elderbrook. The creatures settled down after what you did at the goblin camp. They can tell when the danger eases.",
+        completedMQ5: "The animals were restless last night. Whatever you found out there... I think they felt it too.",
+        completedMQ8: "The town is breathing easier now. Even the shy little ones are coming out from under the blankets again."
+      },
+      giftReactions: {
+        loved: [
+          "These are perfect. You have a sweet instinct for what brings comfort.",
+          "You brought me exactly the sort of thing that makes this place feel warm. Thank you.",
+          "Oh, that's lovely. You've made both me and half the shop very happy."
+        ],
+        liked: [
+          "That's thoughtful of you. I'll treasure it.",
+          "You always bring a little more light with you, don't you?"
+        ],
+        neutral: [
+          "Thank you. That's kind of you.",
+          "That's sweet. I'll make room for it here."
+        ],
+        disliked: [
+          "Oh... that's a little harsher than what I usually keep around the animals, but thank you.",
+          "I appreciate the gesture, even if this one isn't really me."
+        ]
+      },
+      milestoneDialogues: {
+        15: {
+          nodes: [
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Most people see a pet shop. I see a place where frightened hearts learn they can feel safe again." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "You have that effect too, you know. The room softens a little when you walk in." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "I'm glad you've started stopping by for more than simple errands." }
+          ]
+        },
+        35: {
+          nodes: [
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "I used to travel with caravans, tending injured pack animals and any soul who needed a quiet word." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Elderbrook was the first place that ever felt worth staying in. You are part of that now." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "There's a steadiness in you I find myself leaning toward." }
+          ]
+        },
+        55: {
+          nodes: [
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Can I confess something? I notice the sound of your footsteps before I see you." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "The animals calm down when you're near. So do I, which is rarer than I'd like to admit." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "You've become very dear to me." }
+          ]
+        },
+        75: {
+          nodes: [
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "I've spent years teaching skittish creatures that love is safest when it's chosen freely." },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "So I'll ask plainly, with no tricks and no leash: would you let me be more to you than a friend?" },
+            {
+              speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Because I would like that very much.",
+              choices: [
+                { text: "Yes. I want that too.", next: 3, flags: ["faunaRomantic"] },
+                { text: "I care for you deeply, but only as a friend.", next: 5 }
+              ]
+            },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Then come here, darling. Let the whole shop see what happiness looks like.", end: true },
+            { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "I won't let awkwardness spoil what we have. You're still precious to me.", end: true }
+          ]
+        }
+      },
+      dateDialogue: {
+        nodes: [
+          { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "A little evening walk through town? I'd love that. Let me wash the fox pawprints off my skirt first." },
+          { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "The lantern light makes Elderbrook look softer at night. Almost like the whole place is exhaling." },
+          { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "I spend so much time caring for others that I forget how nice it feels to be looked after in return." },
+          { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Thank you for tonight. I was already fond of you. This certainly didn't help me be less so.", end: true }
+        ],
+        onEnd: { addAffinity: { npc: "fauna", amount: 5 } }
+      }
+    },
+
+    liora: {
+      name: "Liora Bloom",
+      portrait: "assets/portraits/liora.png",
+      lovedGifts: ["wildflowers", "silver-ring", "sweet-roll"],
+      likedGifts: ["herbal-tea", "old-book", "moonstone"],
+      dislikedGifts: ["iron-ingot", "smelling-salts"],
+      bonus: { dexterity: 1, intelligence: 1 },
+      preferredClass: "rogue",
+      chatLines: [
+        "I arrange the flowers by mood instead of color. It confuses Bram terribly, which is a bonus.",
+        "A market square needs something beautiful in it, otherwise it starts to feel like everyone is only hurrying through life.",
+        "I grew up with caravan traders. You learn to make a place feel welcoming very quickly when home is always moving.",
+        "People think flowers are delicate. They've clearly never seen a rose push up through stone.",
+        "You always arrive like you're carrying a storm. I don't mind. Storms make the air honest.",
+        "Children buy the brightest ribbons. Soldiers buy the smallest bouquets. Those details tell you everything about a town.",
+        "I've started setting aside the prettiest blossoms because I keep thinking you'd notice them too.",
+        "The square feels lighter when you stop to talk. That's not flirtation. Well. Not only flirtation."
+      ],
+      contextualLines: {
+        completedMQ3: "The whole square was buzzing after the goblin camp raid. People stood a little taller today because of you.",
+        completedMQ5: "You have that faraway look again. Whatever you found beyond town, don't carry it alone.",
+        completedMQ8: "Elderbrook finally sounds like itself again. Laughter, haggling, children underfoot. You gave that back to us."
+      },
+      giftReactions: {
+        loved: [
+          "Oh, this is lovely. You have a dangerously good instinct for charming me.",
+          "This is exactly the sort of gift that makes a person feel seen. Thank you.",
+          "You brought me beauty wrapped in kindness. That's hard to top."
+        ],
+        liked: [
+          "That's sweet of you. Truly.",
+          "You always seem to know how to brighten my day a little."
+        ],
+        neutral: [
+          "Thank you. That's thoughtful.",
+          "A kind gesture is always welcome here."
+        ],
+        disliked: [
+          "Oh... practical, certainly. Just not very romantic, is it?",
+          "I appreciate the thought, but this one's a little severe for my tastes."
+        ]
+      },
+      milestoneDialogues: {
+        15: {
+          nodes: [
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Most people come to my stall for ribbon or flowers. You come because you actually want to linger." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "I like that about you. It feels like you're choosing to breathe for a moment instead of rushing to the next fire." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "You make the square feel less crowded in the nicest possible way." }
+          ]
+        },
+        35: {
+          nodes: [
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "I wasn't born in Elderbrook. My family traveled with the trade roads, selling blooms, dyes, and little festival trinkets." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "I stayed because this town looked like it needed someone stubborn enough to keep beauty alive in hard times." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Lately, I think I stayed because somewhere along the way, I started hoping you'd stop by." }
+          ]
+        },
+        55: {
+          nodes: [
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Do you know what I admire most about you? It's not the heroics. It's the gentleness you still have left after all of it." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "You've seen ugliness and somehow still make room for kindness. That's rarer than courage, if you ask me." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "I think about you far more often than is sensible." }
+          ]
+        },
+        75: {
+          nodes: [
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "I've arranged this speech in my head a dozen times. Flowers first, then charm, then a graceful exit if I panic." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "But the truth is simpler: you've become very precious to me, and I don't want to pretend otherwise anymore." },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "So tell me honestly. May I love you out loud?", choices: [
+              { text: "Yes. Please do.", next: 3, flags: ["lioraRomantic"] },
+              { text: "I care for you, but only as a friend.", next: 5 }
+            ] },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Oh, thank the stars. I was aiming for poised and nearly landed on terrified.", end: true },
+            { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Then I will keep loving what we already are. Friendship is no small thing, and I won't treat it like one.", end: true }
+          ]
+        }
+      },
+      dateDialogue: {
+        nodes: [
+          { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "A quiet evening walk through the square after the market closes? That sounds perfect." },
+          { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "I like town best at this hour. The noise softens, the lanterns glow, and everything feels a little more possible." },
+          { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "You know, if you stood beside me every evening, I don't think I'd ever call this place lonely again." },
+          { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Thank you. Tonight felt like a pressed flower in a favorite book. Something worth keeping.", end: true }
+        ],
+        onEnd: { addAffinity: { npc: "liora", amount: 5 } }
+      }
     }
   };
 

@@ -516,6 +516,19 @@ var UI = (function () {
 
     var festival = Player.isFestivalActive();
     var html = '';
+    var townDirectoryHtml = '';
+
+    function addTownDirectoryButton(label, sub, action, extraAttrs, extraClass) {
+      var attrs = ' data-action="' + action + '"';
+      var key;
+      extraAttrs = extraAttrs || {};
+      for (key in extraAttrs) {
+        if (extraAttrs.hasOwnProperty(key)) {
+          attrs += ' ' + key + '="' + extraAttrs[key] + '"';
+        }
+      }
+      townDirectoryHtml += '<button class="town-directory-btn' + (extraClass ? ' ' + extraClass : '') + '"' + attrs + '><span class="poi-name">' + label + '</span><span class="poi-sub">' + sub + '</span></button>';
+    }
 
     // ── NPC / scene area (overlays the background image) ──
     html += '<div class="town-square">';
@@ -529,20 +542,23 @@ var UI = (function () {
 
     // Persistent town NPCs — portraits in the cobblestone square
     html += '<button class="town-npc" style="top:48%;left:44%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
+    html += '<button class="town-npc town-npc-event" style="top:51%;left:61%" data-action="go-liora"><img class="town-npc-portrait" src="assets/portraits/liora.png" alt="Liora Bloom" onerror="this.style.display=\'none\'"><span class="town-npc-name">Liora Bloom</span></button>';
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
       html += '<button class="town-npc town-npc-cat" style="top:22%;right:18%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
+      addTownDirectoryButton('Search for Biscuit', 'Missing cat near the gate', 'find-biscuit', null, 'town-directory-event');
     }
 
     // Lost child returns when you've found Biscuit
     if (Player.hasFlag('foundBiscuit') && !Player.hasFlag('returnedBiscuit')) {
       html += '<button class="town-npc town-npc-event" style="top:55%;left:30%" data-action="return-biscuit"><img class="town-npc-portrait" src="assets/portraits/lost-child.png" alt="Lost Child" onerror="this.style.display=\'none\'"><span class="town-npc-name">Lost Child</span></button>';
+      addTownDirectoryButton('Lost Child', 'Return Biscuit', 'return-biscuit', null, 'town-directory-event');
     }
 
     // Spawn event NPCs — show full portrait in town
-    var p = Player.get();
-    var spawns = (p && p.eventSpawns) ? p.eventSpawns : [];
+    var pTown = Player.get();
+    var spawns = (pTown && pTown.eventSpawns) ? pTown.eventSpawns : [];
     var events = Chapter1.getActiveEvents("town", spawns);
     for (var e = 0; e < events.length; e++) {
       var ev = events[e];
@@ -550,6 +566,7 @@ var UI = (function () {
       if (ev.npcPortrait) html += '<img class="town-npc-portrait" src="' + ev.npcPortrait + '" alt="' + ev.npcName + '" onerror="this.style.display=\'none\'">';
       html += '<span class="town-npc-name">' + ev.npcName + '</span>';
       html += '</button>';
+      addTownDirectoryButton(ev.npcName, ev.poiSub || 'Town event', 'interact-event', { 'data-event': ev.id }, 'town-directory-event');
     }
 
     html += '</div>'; // .town-square
@@ -559,26 +576,39 @@ var UI = (function () {
 
     // Left side
     html += '<button class="town-poi" style="top:5%;left:1%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
+    addTownDirectoryButton('The Hearthstone Inn', festival ? 'Packed with revelers' : 'Rest &amp; recover', 'go-inn');
     html += '<button class="town-poi" style="top:28%;left:8%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
+    addTownDirectoryButton(festival ? 'Bram\'s Festival Forge' : 'Weapon Shop', festival ? 'Commemorative blades' : 'Bram Ironhand', 'go-shop', { 'data-shop': 'weapon-shop' });
 
     // Center — peaked building behind the lamp post
     html += '<button class="town-poi" style="top:8%;left:42%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
+    addTownDirectoryButton('Adventurers Guild', festival ? 'Festive drinks inside' : 'Guildmaster Rowan', 'go-guild');
 
     // Right side — aligned to right-side buildings in the art
     html += '<button class="town-poi" style="top:3%;right:2%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
+    addTownDirectoryButton('Armor Shop', festival ? 'Harlan is almost smiling' : 'Harlan Stonevein', 'go-shop', { 'data-shop': 'armor-shop' });
     html += '<button class="town-poi" style="top:18%;right:18%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
+    addTownDirectoryButton(festival ? 'Mira\'s Cider Stand' : 'Potion Shop', festival ? 'Festive brews &amp; potions' : 'Mira Voss', 'go-shop', { 'data-shop': 'potion-shop' });
     html += '<button class="town-poi" style="top:28%;right:0%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
+    addTownDirectoryButton('Quest Board', 'Check for jobs', 'go-questboard');
+    html += '<button class="town-poi" style="top:44%;left:39%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">Captain Elric</span></button>';
+    addTownDirectoryButton('Guard Post', 'Captain Elric', 'go-elric');
+    html += '<button class="town-poi" style="top:52%;right:19%" data-action="go-liora"><span class="poi-name">Flower Stall</span><span class="poi-sub">Liora Bloom</span></button>';
+    addTownDirectoryButton('Flower Stall', 'Liora Bloom', 'go-liora');
 
     // Conditional POIs
     if (Player.hasFlag('metElira')) {
       html += '<button class="town-poi" style="top:11%;left:11%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
+      addTownDirectoryButton('Inn (Upstairs)', 'Visit Elira', 'go-elira');
     }
     if (Player.hasFlag('bramForgeUnlocked')) {
       html += '<button class="town-poi" style="top:40%;left:3%" data-action="open-crafting"><span class="poi-name">Bram\'s Forge</span><span class="poi-sub">Craft gear</span></button>';
+      addTownDirectoryButton('Bram\'s Forge', 'Craft gear', 'open-crafting');
     }
 
     // Pet Shop
     html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-petshop"><span class="poi-name">Pet Emporium</span><span class="poi-sub">Fauna\'s creatures</span></button>';
+    addTownDirectoryButton('Pet Emporium', 'Fauna\'s creatures', 'go-petshop');
 
     // Class Mentor NPCs (conditional)
     var p = Player.get();
@@ -591,41 +621,57 @@ var UI = (function () {
       html += '<button class="town-npc town-npc-event" style="top:62%;left:12%" data-action="go-mentor" data-mentor="varn"><img class="town-npc-portrait" src="assets/portraits/varn.png" alt="Varn" onerror="this.style.display=\'none\'"><span class="town-npc-name">Varn the Ironclad</span></button>';
       html += '<button class="town-npc town-npc-event" style="top:38%;left:28%" data-action="go-mentor" data-mentor="shade"><img class="town-npc-portrait" src="assets/portraits/shade.png" alt="Shade" onerror="this.style.display=\'none\'"><span class="town-npc-name">Shade</span></button>';
       html += '<button class="town-npc town-npc-event" style="top:58%;right:22%" data-action="go-mentor" data-mentor="theron"><img class="town-npc-portrait" src="assets/portraits/theron.png" alt="Sage Theron" onerror="this.style.display=\'none\'"><span class="town-npc-name">Sage Theron</span></button>';
+      addTownDirectoryButton('Varn the Ironclad', 'Warrior mentor', 'go-mentor', { 'data-mentor': 'varn' }, 'town-directory-mentor');
+      addTownDirectoryButton('Shade', 'Rogue mentor', 'go-mentor', { 'data-mentor': 'shade' }, 'town-directory-mentor');
+      addTownDirectoryButton('Sage Theron', 'Mage mentor', 'go-mentor', { 'data-mentor': 'theron' }, 'town-directory-mentor');
     }
 
     // Subclass mentors: visible after choosing parent base class
     if (pBase === 'warrior') {
       if (!Player.hasFlag('unlockedKnight') && Player.hasFlag('completedMQ3')) {
         html += '<button class="town-npc town-npc-event" style="top:35%;left:35%" data-action="go-mentor" data-mentor="lysara"><img class="town-npc-portrait" src="assets/portraits/lysara.png" alt="Dame Lysara" onerror="this.style.display=\'none\'"><span class="town-npc-name">Dame Lysara</span></button>';
+        addTownDirectoryButton('Dame Lysara', 'Knight mentor', 'go-mentor', { 'data-mentor': 'lysara' }, 'town-directory-mentor');
       }
       if (!Player.hasFlag('unlockedBerserker') && Player.hasFlag('completedMQ4')) {
         html += '<button class="town-npc town-npc-event" style="top:65%;right:12%" data-action="go-mentor" data-mentor="grul"><img class="town-npc-portrait" src="assets/portraits/grul.png" alt="Grul" onerror="this.style.display=\'none\'"><span class="town-npc-name">Grul</span></button>';
+        addTownDirectoryButton('Grul', 'Berserker mentor', 'go-mentor', { 'data-mentor': 'grul' }, 'town-directory-mentor');
       }
     }
     if (pBase === 'rogue') {
       if (!Player.hasFlag('unlockedAssassin') && Player.hasFlag('completedMQ4')) {
         html += '<button class="town-npc town-npc-event" style="top:38%;left:20%" data-action="go-mentor" data-mentor="whisper"><img class="town-npc-portrait" src="assets/portraits/whisper.png" alt="Whisper" onerror="this.style.display=\'none\'"><span class="town-npc-name">Whisper</span></button>';
+        addTownDirectoryButton('Whisper', 'Assassin mentor', 'go-mentor', { 'data-mentor': 'whisper' }, 'town-directory-mentor');
       }
       if (!Player.hasFlag('unlockedRanger') && Player.hasFlag('completedMQ3')) {
         html += '<button class="town-npc town-npc-event" style="top:65%;left:35%" data-action="go-mentor" data-mentor="fenn"><img class="town-npc-portrait" src="assets/portraits/fenn.png" alt="Warden Fenn" onerror="this.style.display=\'none\'"><span class="town-npc-name">Warden Fenn</span></button>';
+        addTownDirectoryButton('Warden Fenn', 'Ranger mentor', 'go-mentor', { 'data-mentor': 'fenn' }, 'town-directory-mentor');
       }
     }
     if (pBase === 'mage') {
       if (!Player.hasFlag('unlockedPyromancer') && Player.hasFlag('completedMQ4')) {
         html += '<button class="town-npc town-npc-event" style="top:62%;left:15%" data-action="go-mentor" data-mentor="cindra"><img class="town-npc-portrait" src="assets/portraits/cindra.png" alt="Cindra" onerror="this.style.display=\'none\'"><span class="town-npc-name">Cindra</span></button>';
+        addTownDirectoryButton('Cindra', 'Pyromancer mentor', 'go-mentor', { 'data-mentor': 'cindra' }, 'town-directory-mentor');
       }
       if (!Player.hasFlag('unlockedCleric') && Player.hasFlag('completedMQ3')) {
         html += '<button class="town-npc town-npc-event" style="top:35%;right:28%" data-action="go-mentor" data-mentor="maren"><img class="town-npc-portrait" src="assets/portraits/maren.png" alt="Sister Maren" onerror="this.style.display=\'none\'"><span class="town-npc-name">Sister Maren</span></button>';
+        addTownDirectoryButton('Sister Maren', 'Cleric mentor', 'go-mentor', { 'data-mentor': 'maren' }, 'town-directory-mentor');
       }
     }
 
     // Paladin mentor: after MQ7 + any base class
     if (Player.hasFlag('choseBuild') && Player.hasFlag('completedMQ7') && !Player.hasFlag('unlockedPaladin')) {
       html += '<button class="town-npc town-npc-event" style="top:42%;left:48%" data-action="go-mentor" data-mentor="cedric"><img class="town-npc-portrait" src="assets/portraits/cedric.png" alt="Sir Cedric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Sir Cedric</span></button>';
+      addTownDirectoryButton('Sir Cedric', 'Paladin mentor', 'go-mentor', { 'data-mentor': 'cedric' }, 'town-directory-mentor');
     }
 
     // Exit
     html += '<button class="town-poi town-poi-exit" style="bottom:3%;left:50%;transform:translateX(-50%)" data-action="go-worldmap"><span class="poi-name">World Map</span><span class="poi-sub">Leave town</span></button>';
+    addTownDirectoryButton('World Map', 'Leave town', 'go-worldmap', null, 'town-directory-exit');
+
+    html += '<div class="town-directory">';
+    html += '<div class="town-directory-title">Town Directory</div>';
+    html += '<div class="town-directory-grid">' + townDirectoryHtml + '</div>';
+    html += '</div>';
 
     html += '</div>'; // .town-buildings
 
@@ -768,7 +814,7 @@ var UI = (function () {
       }
     }
 
-    if (options.returnToScene === 'shop' && options.shopId) {
+    if ((options.returnToScene === 'shop' && options.shopId) || options.returnToScene === 'petshop') {
       html += '<button class="btn" data-action="npc-exit-menu">Back</button>';
     } else {
       html += '<button class="btn" data-action="go-town">Back to Town</button>';
@@ -1265,11 +1311,16 @@ var UI = (function () {
 
     var pets = petList || Pets.getShopPets();
     var isShop = !petList;
+    var npc = isShop ? Chapter1.getNPC("fauna") : Chapter1.getNPC("merchant");
 
     var html = '<div class="petshop-header">';
-    html += '<img class="npc-portrait" src="assets/portraits/pet-shop-keeper.png" alt="Fauna" onerror="this.style.display=\'none\'">';
-    html += '<div><h2>' + (isShop ? "Fauna's Pet Emporium" : "Merchant Pets") + '</h2>';
-    html += '<p class="npc-dialogue">' + (isShop ? '"Every creature deserves a good home. Take a look around!"' : '"I\'ve picked up some rare companions on my travels..."') + '</p></div>';
+    html += '<img class="npc-portrait' + (isShop ? ' is-interactive' : '') + '" src="' + (npc ? npc.portrait : '') + '" alt="' + (npc ? npc.name : '') + '"' + (isShop ? ' data-action="petshop-scene-interact" title="Talk to ' + (npc ? npc.name : 'Fauna') + '"' : '') + ' onerror="this.style.display=\'none\'">';
+    html += '<div><h2>' + (isShop ? "Fauna\'s Pet Emporium" : "Merchant Pets") + '</h2>';
+    html += '<p class="npc-dialogue">' + (isShop ? '"Every creature deserves a good home. Click on Fauna if you want to talk."' : '"I\'ve picked up some rare companions on my travels..."') + '</p>';
+    if (isShop) {
+      html += '<button class="btn btn-small" data-action="petshop-scene-interact">Talk to Fauna</button>';
+    }
+    html += '</div>';
     html += '</div>';
 
     // Active pet display
@@ -1331,7 +1382,7 @@ var UI = (function () {
       html += '<p class="flavor">You\'ve adopted all available companions!</p>';
     }
     html += '</div>';
-    html += '<button class="btn" data-action="npc-back">Back</button>';
+    html += '<button class="btn" data-action="go-town">Back</button>';
     container.innerHTML = html;
   }
 

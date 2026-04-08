@@ -921,6 +921,66 @@ button {
 .poi-name { display: block; color: var(--accent); font-weight: 700; font-size: 0.82rem; }
 .poi-sub { display: block; color: var(--text-muted); font-size: 0.68rem; font-weight: 400; margin-top: 0.1rem; }
 
+.town-directory {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  width: min(320px, 34vw);
+  max-height: 40%;
+  overflow-y: auto;
+  padding: 0.7rem;
+  background: rgba(14, 17, 23, 0.86);
+  border: 1px solid rgba(212, 164, 56, 0.28);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+  z-index: 4;
+}
+.town-directory-title {
+  margin-bottom: 0.55rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.town-directory-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+}
+.town-directory-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: rgba(24, 29, 38, 0.88);
+  color: var(--accent);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.town-directory-btn:hover {
+  background: rgba(60, 50, 20, 0.92);
+  border-color: var(--accent-hover);
+  transform: translateY(-2px);
+}
+.town-directory-btn .poi-name,
+.town-directory-btn .poi-sub {
+  text-align: left;
+}
+.town-directory-event .poi-name {
+  color: #c4a6ff;
+}
+.town-directory-mentor .poi-name {
+  color: #9fd6ff;
+}
+.town-directory-exit .poi-name {
+  color: #f1d588;
+}
+
 /* Scene text/info overlay on town */
 .town-scene-text {
   position: absolute;
@@ -2910,6 +2970,28 @@ button {
   }
   .town-buildings .town-poi-exit {
     grid-column: 1 / -1;
+  }
+  .town-directory {
+    position: static;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-height: none;
+    margin: 0.15rem 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    grid-column: 1 / -1;
+  }
+  .town-directory-title {
+    padding: 0 0.1rem;
+  }
+  .town-directory-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

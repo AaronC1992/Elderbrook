@@ -53,6 +53,11 @@ var Chapter1 = (function () {
       portrait: "assets/portraits/pet-shop-keeper.png",
       role: "Pet Shop Owner", personality: "Gentle, animal-loving, earthy."
     },
+    liora: {
+      id: "liora", name: "Liora Bloom",
+      portrait: "assets/portraits/liora.png",
+      role: "Florist", personality: "Warm, graceful, playful, and quietly perceptive."
+    },
     /* ── Class Mentor NPCs ── */
     varn: {
       id: "varn", name: "Varn the Ironclad",
@@ -166,6 +171,7 @@ var Chapter1 = (function () {
     visitedMira: false,
     visitedElric: false,
     visitedQuestBoard: false,
+    visitedLiora: false,
 
     completedMQ1: false,
     acceptedMQ2: false, completedMQ2: false,
@@ -199,6 +205,8 @@ var Chapter1 = (function () {
     bramRomantic: false,
     harlanRomantic: false,
     elricRomantic: false,
+    faunaRomantic: false,
+    lioraRomantic: false,
 
     /* NPC quest chains */
     completedCQ1: false, completedCQ2: false, completedCQ3: false,
@@ -1204,6 +1212,16 @@ var Chapter1 = (function () {
       ],
       onEnd: { flags: ["visitedElric"] }
     },
+    "liora-first": {
+      id: "liora-first",
+      nodes: [
+        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "Oh, a new face. Give me one second before you speak or I'll end up tying a bouquet with my order ledger again." },
+        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "I'm Liora. I run the flower stall by the square. Bouquets, ribbons, little tokens of luck... all the things that make a hard place feel gentler." },
+        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "You look like someone carrying quite a lot. Heroes usually do." },
+        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "Come by whenever you need a quiet word or something beautiful to remind you what you're fighting for." }
+      ],
+      onEnd: { flags: ["visitedLiora"] }
+    },
     "elric-idle": {
       lines: [
         "Keep your eyes open out there. My patrols have been stretched thin.",
@@ -1222,6 +1240,18 @@ var Chapter1 = (function () {
         "I wrote a forty-page security proposal. The council read the summary. The summary of the summary.",
         "Budget meeting tomorrow. I'd rather fight the goblins. At least they're honest about wanting to ruin my day.",
         "Harlan offered to train my guards. Half of them came back stronger. The other half came back crying. Both outcomes are acceptable."
+      ]
+    },
+    "liora-idle": {
+      lines: [
+        "Fresh flowers won't stop a goblin spear, but they do make the town worth defending.",
+        "The square feels lighter when you stop here. I hope that's true for you too, not just for me.",
+        "Children always pick the brightest ribbons. Adults go for the quiet colors. I wish more adults were brave.",
+        "I grew up on caravan roads. Learning how to make strangers feel welcome becomes second nature after a while.",
+        "If the world insists on being harsh, I intend to answer with beauty out of sheer stubbornness.",
+        "Fauna says the fox kits steal my ribbon scraps for bedding. I pretend to be annoyed. I'm not.",
+        "You're becoming my favorite part of the market day. That's either charming or dangerous. Possibly both.",
+        "A town can tell you what it needs by what it buys. Lately Elderbrook has been buying hope in every shape it can find."
       ]
     },
     "elira-idle": {
