@@ -191,6 +191,108 @@ var Battle = (function () {
     return true;
   }
 
+  function startExploration(areaId, enemyId, callback, isAmbush) {
+    var template = Enemies.get(enemyId);
+    if (!template) return false;
+
+    enemies = [];
+    encounterMod = Enemies.rollEncounterModifier();
+
+    // Primary enemy from the clicked portrait
+    var e = JSON.parse(JSON.stringify(template));
+
+    // Apply seasonal modifiers (same as getRandomForArea)
+    var season = Player.getSeason();
+    if (season === "winter") {
+      var winterSwaps = {"wolf":"snow-wolf","wolf-pack":"snow-wolf","goblin-scout":"frost-goblin","goblin-sneak":"frost-goblin","bandit":"snow-bandit"};
+      var swapped = winterSwaps[enemyId] ? Enemies.get(winterSwaps[enemyId]) : null;
+      if (swapped) { e = JSON.parse(JSON.stringify(swapped)); }
+      e.hp = Math.floor(e.hp * 1.2);
+      e.attack += 2;
+      e.defense += 1;
+      e.xp = Math.floor(e.xp * 1.25);
+      if (e.gold) { e.gold[0] = Math.floor(e.gold[0] * 1.2); e.gold[1] = Math.floor(e.gold[1] * 1.2); }
+    }
+    if (season === "spring") { e.defense = Math.max(0, e.defense - 1); e.hp = Math.floor(e.hp * 0.9); }
+    if (season === "summer") { e.attack += 1; e.xp = Math.floor(e.xp * 1.1); }
+    if (season === "autumn") {
+      if (e.gold) { e.gold[0] = Math.floor(e.gold[0] * 1.15); e.gold[1] = Math.floor(e.gold[1] * 1.15); }
+      e.xp = Math.floor(e.xp * 1.1);
+    }
+
+    // Apply encounter modifier
+    e = encounterMod.modify(e);
+
+    // Apply difficulty scaling
+    var diff = Player.getDifficultyMultiplier();
+    e.hp = Math.floor(e.hp * diff);
+    e.attack = Math.ceil(e.attack * diff);
+    var xpScale = diff <= 0.75 ? 1.25 : diff >= 1.35 ? 0.85 : 1.0;
+    e.xp = Math.floor(e.xp * xpScale);
+
+    // Elric patrol route
+    if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
+      e.hp = Math.floor(e.hp * 0.8);
+      e.attack = Math.max(1, e.attack - 1);
+    }
+
+    if (isAmbush) e.ambush = true;
+
+    prepareEnemy(e);
+    enemies.push(e);
+
+    // 30% chance of a second enemy from the area pool
+    if (Math.random() < 0.30) {
+      var e2 = Enemies.getRandomForArea(areaId);
+      if (e2) {
+        var diff2 = Player.getDifficultyMultiplier();
+        e2.hp = Math.floor(e2.hp * diff2);
+        e2.attack = Math.ceil(e2.attack * diff2);
+        e2.xp = Math.floor(e2.xp * xpScale);
+        if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
+          e2.hp = Math.floor(e2.hp * 0.8);
+          e2.attack = Math.max(1, e2.attack - 1);
+        }
+        prepareEnemy(e2);
+        enemies.push(e2);
+      }
+    }
+
+    targetIndex = 0;
+    isBossFight = false;
+    isDungeonBattle = false;
+    onVictoryCallback = callback || null;
+    resetState();
+    setBattleBackground(areaId);
+    renderBattle();
+    UI.showScreen("battle");
+
+    if (enemies.length === 1) {
+      var msg = encounterTexts[Math.floor(Math.random() * encounterTexts.length)].replace("{name}", enemies[0].name);
+      if (encounterMod && encounterMod.label) msg = encounterMod.label + " " + msg;
+      addLog(msg);
+    } else {
+      var names = [];
+      for (var n = 0; n < enemies.length; n++) names.push(enemies[n].name);
+      var multiMsg = multiEncounterTexts[Math.floor(Math.random() * multiEncounterTexts.length)];
+      addLog(multiMsg);
+      addLog("You face: " + names.join(", ") + "!");
+    }
+
+    // Ambush
+    if (isAmbush) {
+      var ambushPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
+      if (ambushPassive && ambushPassive.type === "ambush-protect" && Math.random() < ambushPassive.chance) {
+        addLog(ambushPassive.message);
+      } else {
+        addLog("You've been ambushed!");
+        Audio.play("ambush");
+        enemyTurn();
+      }
+    }
+    return true;
+  }
+
   function resetState() {
     battleLog = [];
     playerBuffs = [];
@@ -1395,6 +1497,7 @@ var Battle = (function () {
     start: start,
     startBoss: startBoss,
     startDungeonEnemy: startDungeonEnemy,
+    startExploration: startExploration,
     playerAttack: playerAttack,
     playerUseSkill: playerUseSkill,
     playerUsePotion: playerUsePotion,

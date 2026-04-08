@@ -2662,3 +2662,245 @@ button {
     grid-column: 1 / -1;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   EXPLORATION (DragonFable-style node navigation)
+   ══════════════════════════════════════════════════════════════ */
+#screen-explore {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+#explore-content {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#explore-content > * {
+  pointer-events: auto;
+}
+
+/* ── Header bar ── */
+.explore-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, rgba(14,17,23,0.88) 0%, rgba(14,17,23,0.4) 80%, transparent 100%);
+  padding: 0.6rem 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+.explore-area-name {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--accent);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+.explore-flavor {
+  font-size: 0.8rem;
+  color: rgba(232,226,214,0.7);
+  font-style: italic;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+/* ── Enemy portraits ── */
+.explore-enemy {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transition: transform 0.2s, filter 0.2s;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+  z-index: 5;
+}
+.explore-enemy:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+  filter: drop-shadow(0 6px 18px rgba(180,50,50,0.5));
+}
+.explore-enemy:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+.explore-enemy-portrait {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(180,50,50,0.7);
+  background: rgba(14,17,23,0.5);
+  transition: border-color 0.2s;
+}
+.explore-enemy:hover .explore-enemy-portrait {
+  border-color: #e04040;
+}
+.explore-enemy-name {
+  font-size: 0.72rem;
+  color: #fff;
+  background: rgba(14,17,23,0.7);
+  padding: 0.1rem 0.5rem;
+  border-radius: 8px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+  white-space: nowrap;
+}
+
+/* idle bob animation for enemies */
+.explore-enemy {
+  animation: enemyBob 3s ease-in-out infinite;
+}
+.explore-enemy:nth-child(2) { animation-delay: -1s; }
+.explore-enemy:nth-child(3) { animation-delay: -2s; }
+@keyframes enemyBob {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -6px; }
+}
+
+/* ── Navigation arrows ── */
+.explore-nav {
+  position: absolute;
+  bottom: 1rem;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+.explore-arrow {
+  background: rgba(14,17,23,0.75);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.explore-arrow:hover {
+  background: rgba(212,164,56,0.2);
+  transform: scale(1.1);
+}
+.explore-arrow-left { font-size: 1.6rem; padding: 0.4rem 1.2rem; }
+.explore-arrow-right { font-size: 1.6rem; padding: 0.4rem 1.2rem; }
+.explore-arrow-map {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.2rem;
+}
+
+/* ── Hidden chests ── */
+.explore-chest {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  z-index: 6;
+}
+.explore-chest-icon {
+  width: 40px;
+  height: 36px;
+  background: radial-gradient(ellipse at center, #8b6914 0%, #5a3e08 60%, #3a2505 100%);
+  border: 2px solid #a07818;
+  border-radius: 4px 4px 2px 2px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+  position: relative;
+  margin: 0 auto;
+}
+.explore-chest-icon::after {
+  content: '';
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #ffd700 0%, #d4a438 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(255,215,0,0.5);
+}
+.explore-chest-twinkle {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  animation: chestTwinkle 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.explore-chest-twinkle::before,
+.explore-chest-twinkle::after {
+  content: '';
+  position: absolute;
+  background: #ffd700;
+  border-radius: 50%;
+}
+.explore-chest-twinkle::before {
+  width: 6px; height: 6px;
+  top: 2px; left: 7px;
+  box-shadow: 0 0 8px 3px rgba(255,215,0,0.7);
+}
+.explore-chest-twinkle::after {
+  width: 4px; height: 4px;
+  top: 10px; left: 3px;
+  box-shadow: 0 0 6px 2px rgba(255,215,0,0.5);
+  animation-delay: 0.8s;
+}
+@keyframes chestTwinkle {
+  0%, 100% { opacity: 0; transform: translateX(-50%) scale(0.6); }
+  15% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+  30% { opacity: 0; transform: translateX(-50%) scale(0.6); }
+  50% { opacity: 0; }
+  65% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  80% { opacity: 0; transform: translateX(-50%) scale(0.6); }
+}
+.explore-chest:hover .explore-chest-icon {
+  border-color: #ffd700;
+  box-shadow: 0 0 12px 4px rgba(255,215,0,0.3);
+}
+
+/* ── Gather button (riverbank) ── */
+.explore-gather-btn {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(34,80,34,0.8);
+  border: 2px solid #6a9a3a;
+  color: #c8e6a0;
+  padding: 0.5rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.explore-gather-btn:hover {
+  background: rgba(50,110,50,0.9);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .explore-enemy-portrait { width: 70px; height: 70px; }
+  .explore-arrow { font-size: 1.1rem; padding: 0.4rem 0.8rem; }
+  .explore-area-name { font-size: 1rem; }
+}
+@media (max-width: 600px) {
+  .explore-enemy-portrait { width: 56px; height: 56px; }
+  .explore-enemy-name { font-size: 0.62rem; }
+  .explore-arrow { font-size: 0.9rem; padding: 0.3rem 0.6rem; }
+}

@@ -80,13 +80,14 @@ var World = (function () {
 
     // Gathering area
     if (loc.isGathering) {
-      enterGatheringArea(locationId, loc);
+      // Use exploration system for riverbank too
+      Exploration.enter(locationId);
       return;
     }
 
-    // Combat area
+    // Combat area — use DragonFable-style exploration
     if (loc.enemies && loc.enemies.length > 0) {
-      enterCombatArea(locationId, loc);
+      Exploration.enter(locationId);
       return;
     }
   }

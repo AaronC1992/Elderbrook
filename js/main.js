@@ -201,6 +201,23 @@
         World.gather(btn.getAttribute("data-area"));
         break;
 
+      /* ── Node Exploration ── */
+      case "explore-fight":
+        Exploration.fightEnemy(btn.getAttribute("data-enemy"), parseInt(btn.getAttribute("data-idx"), 10));
+        break;
+      case "explore-move":
+        Exploration.moveToNode(btn.getAttribute("data-dir"));
+        break;
+      case "explore-open-chest":
+        Exploration.openChest();
+        break;
+      case "explore-gather":
+        Exploration.gatherAtNode();
+        break;
+      case "explore-return-map":
+        Exploration.returnToMap();
+        break;
+
       /* ── Shop ── */
       case "buy":
         var buyResult = Shops.buy(btn.getAttribute("data-shop"), btn.getAttribute("data-item"));
