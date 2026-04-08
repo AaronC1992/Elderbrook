@@ -96,6 +96,11 @@
         return;
       }
       Player.create(name, selectedGender, selectedWeapon);
+      // Admin mode check
+      if (name.toLowerCase() === "admin") {
+        var ap = Player.get();
+        if (ap) ap.isAdmin = true;
+      }
       Audio.play("buttonClick");
       // Show lore intro instead of jumping straight to town
       introPageIndex = 0;
@@ -659,6 +664,105 @@
         UI.updateHeader();
         UI.updateSidebars();
         if (UI.getScreen() === 'academy') UI.renderAcademy();
+        break;
+
+      /* ── Admin Commands ── */
+      case "admin-cmd":
+        var ap = Player.get();
+        if (!ap || !ap.isAdmin) break;
+        var cmd = btn.getAttribute("data-cmd");
+        var val = btn.getAttribute("data-val");
+        switch (cmd) {
+          case "add-levels":
+            var lvls = parseInt(val, 10) || 1;
+            for (var li = 0; li < lvls; li++) {
+              ap.level++;
+              ap.unspentPoints += 3;
+            }
+            ap.xpToNext = Math.floor(80 * Math.pow(1.2, ap.level - 1));
+            Player.recalcStats();
+            UI.showMessage("Level set to " + ap.level);
+            break;
+          case "add-gold":
+            ap.gold += parseInt(val, 10) || 100;
+            UI.showMessage("Gold: " + ap.gold);
+            break;
+          case "full-heal":
+            ap.hp = ap.maxHp;
+            ap.mp = ap.maxMp;
+            UI.showMessage("Fully healed!");
+            break;
+          case "add-xp":
+            Player.addXp(parseInt(val, 10) || 100);
+            UI.showMessage("XP added!");
+            break;
+          case "add-points":
+            ap.unspentPoints += parseInt(val, 10) || 5;
+            UI.showMessage("Stat points: " + ap.unspentPoints);
+            break;
+          case "full-energy":
+            ap.energy = ap.maxEnergy;
+            UI.showMessage("Energy restored!");
+            break;
+          case "unlock-all-classes":
+            var cdefs = Player.CLASS_DEFS;
+            for (var ck in cdefs) {
+              if (cdefs.hasOwnProperty(ck) && cdefs[ck].unlockFlag) {
+                Player.setFlag(cdefs[ck].unlockFlag);
+              }
+            }
+            UI.showMessage("All classes unlocked!");
+            break;
+          case "learn-all-skills":
+            var allSk = Skills.getAll();
+            if (!ap.learnedSkills) ap.learnedSkills = [];
+            for (var si = 0; si < allSk.length; si++) {
+              if (ap.learnedSkills.indexOf(allSk[si].id) === -1) {
+                ap.learnedSkills.push(allSk[si].id);
+              }
+            }
+            UI.showMessage("All skills learned!");
+            break;
+          case "add-item":
+            ap.inventory.push(val);
+            UI.showMessage("Added " + val);
+            break;
+          case "complete-all-quests":
+            var allQDefs = Chapter1.getAllQuests();
+            for (var qk in allQDefs) {
+              if (allQDefs.hasOwnProperty(qk)) {
+                var qDef = allQDefs[qk];
+                var qid = qDef.id || qk;
+                var qIdx = ap.activeQuests.indexOf(qid);
+                if (qIdx > -1) ap.activeQuests.splice(qIdx, 1);
+                if (ap.completedQuests.indexOf(qid) === -1) ap.completedQuests.push(qid);
+                if (qDef.onComplete) {
+                  for (var oci = 0; oci < qDef.onComplete.length; oci++) {
+                    Player.setFlag(qDef.onComplete[oci]);
+                  }
+                }
+              }
+            }
+            UI.showMessage("All quests completed!");
+            break;
+          case "toggle-flag":
+            if (ap.storyFlags) {
+              ap.storyFlags[val] = !ap.storyFlags[val];
+              UI.showMessage(val + ": " + (ap.storyFlags[val] ? "ON" : "OFF"));
+            }
+            break;
+          case "teleport":
+            World.navigate(val);
+            return; // don't re-render ledger
+          case "advance-day":
+            var days = parseInt(val, 10) || 1;
+            for (var di = 0; di < days; di++) Player.sleep();
+            UI.showMessage("Advanced " + days + " day(s)");
+            break;
+        }
+        UI.updateHeader();
+        UI.updateSidebars();
+        if (UI.getScreen() === 'ledger') UI.renderLedger('admin');
         break;
     }
   });

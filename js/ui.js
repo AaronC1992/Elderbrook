@@ -1263,6 +1263,9 @@ var UI = (function () {
     tab = tab || currentLedgerTab || "quests";
     currentLedgerTab = tab;
 
+    var p = Player.get();
+    var isAdmin = p && p.isAdmin;
+
     // Render tabs
     var tabsEl = document.getElementById("ledger-tabs");
     if (tabsEl) {
@@ -1270,6 +1273,9 @@ var UI = (function () {
       for (var t = 0; t < ledgerTabs.length; t++) {
         var lt = ledgerTabs[t];
         th += '<button class="ledger-tab' + (lt.id === tab ? ' active' : '') + '" data-action="ledger-tab" data-tab="' + lt.id + '">' + lt.label + '</button>';
+      }
+      if (isAdmin) {
+        th += '<button class="ledger-tab ledger-tab-admin' + (tab === 'admin' ? ' active' : '') + '" data-action="ledger-tab" data-tab="admin">Admin</button>';
       }
       tabsEl.innerHTML = th;
     }
@@ -1288,6 +1294,7 @@ var UI = (function () {
       case "achievements":  html = renderLedgerAchievements(); break;
       case "relationships": html = renderLedgerRelationships(); break;
       case "settings":      html = renderLedgerSettings(); break;
+      case "admin":         html = isAdmin ? renderLedgerAdmin() : ''; break;
     }
     pageEl.innerHTML = html;
   }
@@ -1768,6 +1775,117 @@ var UI = (function () {
     html += '<div style="display:flex;gap:0.5rem;margin-top:0.4rem;">';
     html += '<button class="ledger-btn" data-action="save-game">Save Game</button>';
     html += '<button class="ledger-btn" data-action="load-game-menu">Load Game</button>';
+    html += '</div>';
+
+    return html;
+  }
+
+  /* ── Admin Panel ── */
+  function renderLedgerAdmin() {
+    var p = Player.get();
+    if (!p || !p.isAdmin) return '<p>Access denied.</p>';
+
+    var html = '<h2 class="ledger-section-title">Admin Controls</h2>';
+
+    // Player Stats
+    html += '<div class="admin-section">';
+    html += '<h3>Player Stats</h3>';
+    html += '<div class="admin-row">';
+    html += '<label>Level: <strong>' + p.level + '</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="1">+1 Lv</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="5">+5 Lv</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="10">+10 Lv</button>';
+    html += '</div>';
+    html += '<div class="admin-row">';
+    html += '<label>Gold: <strong>' + p.gold + '</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="100">+100g</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="1000">+1000g</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="10000">+10000g</button>';
+    html += '</div>';
+    html += '<div class="admin-row">';
+    html += '<label>HP: ' + p.hp + '/' + p.maxHp + ' | MP: ' + p.mp + '/' + p.maxMp + '</label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="full-heal">Full Heal</button>';
+    html += '</div>';
+    html += '<div class="admin-row">';
+    html += '<label>XP: ' + p.xp + '/' + p.xpToNext + '</label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-xp" data-val="100">+100 XP</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-xp" data-val="1000">+1000 XP</button>';
+    html += '</div>';
+    html += '<div class="admin-row">';
+    html += '<label>Stat Points: <strong>' + p.unspentPoints + '</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-points" data-val="5">+5 pts</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-points" data-val="20">+20 pts</button>';
+    html += '</div>';
+    html += '<div class="admin-row">';
+    html += '<label>Energy: ' + p.energy + '/' + p.maxEnergy + '</label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="full-energy">Max Energy</button>';
+    html += '</div>';
+    html += '</div>';
+
+    // Classes
+    html += '<div class="admin-section">';
+    html += '<h3>Unlock All Classes</h3>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="unlock-all-classes">Unlock All</button>';
+    html += '</div>';
+
+    // Skills
+    html += '<div class="admin-section">';
+    html += '<h3>Learn All Skills</h3>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="learn-all-skills">Learn All</button>';
+    html += '</div>';
+
+    // Items
+    html += '<div class="admin-section">';
+    html += '<h3>Add Items</h3>';
+    html += '<div class="admin-item-grid">';
+    var allItems = Items.getAll();
+    for (var iid in allItems) {
+      if (allItems.hasOwnProperty(iid)) {
+        var itm = allItems[iid];
+        html += '<button class="btn btn-small admin-item-btn" data-action="admin-cmd" data-cmd="add-item" data-val="' + iid + '" title="' + (itm.description || '') + '">' + itm.name + '</button>';
+      }
+    }
+    html += '</div>';
+    html += '</div>';
+
+    // Story Flags
+    html += '<div class="admin-section">';
+    html += '<h3>Story Flags</h3>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="complete-all-quests">Complete All Quests</button>';
+    html += '<div class="admin-flags">';
+    if (p.storyFlags) {
+      var flagKeys = Object.keys(p.storyFlags);
+      for (var f = 0; f < flagKeys.length; f++) {
+        var fk = flagKeys[f];
+        var fv = p.storyFlags[fk];
+        html += '<div class="admin-flag">';
+        html += '<span class="admin-flag-name">' + fk + '</span>';
+        html += '<button class="btn btn-small ' + (fv ? 'btn-active' : '') + '" data-action="admin-cmd" data-cmd="toggle-flag" data-val="' + fk + '">' + (fv ? 'ON' : 'OFF') + '</button>';
+        html += '</div>';
+      }
+    }
+    html += '</div>';
+    html += '</div>';
+
+    // Teleport
+    html += '<div class="admin-section">';
+    html += '<h3>Teleport</h3>';
+    html += '<div class="admin-row">';
+    var areas = ["elderbrook", "forest-edge", "deep-woods", "goblin-territory"];
+    for (var a = 0; a < areas.length; a++) {
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="teleport" data-val="' + areas[a] + '">' + areas[a] + '</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    // Day/Time
+    html += '<div class="admin-section">';
+    html += '<h3>Time</h3>';
+    html += '<div class="admin-row">';
+    html += '<label>Day: ' + p.day + ' | Season: ' + p.season + '</label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day">+1 Day</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day" data-val="7">+7 Days</button>';
+    html += '</div>';
     html += '</div>';
 
     return html;

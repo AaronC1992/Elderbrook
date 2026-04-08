@@ -104,6 +104,7 @@ var Save = (function () {
     if (data.activePet === undefined) data.activePet = null;
     if (!data.ownedPets) data.ownedPets = [];
     if (data.trackedQuest === undefined) data.trackedQuest = null;
+    if (data.isAdmin === undefined) data.isAdmin = false;
 
     // Migrate relationships
     if (!data.relationships) {

@@ -86,7 +86,8 @@ var Player = (function () {
       festivalStartDay: null,        // day number when harvest festival began (lasts 15 days)
       learnedSkills: [],             // array of skill ids the player has purchased/unlocked
       activePet: null,               // pet id string or null
-      ownedPets: []                  // array of pet ids the player owns
+      ownedPets: [],                 // array of pet ids the player owns
+      isAdmin: false                 // admin mode flag
     };
   }
 
