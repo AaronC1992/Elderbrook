@@ -295,6 +295,41 @@ var Battle = (function () {
 
   /* ── Player Actions ── */
 
+  /**
+   * Show Floating Combat Text over a battle combatant.
+   * @param {string} targetId - DOM id of the combatant element (e.g. "battle-player", "battle-enemy-0")
+   * @param {string} text - The text to display (e.g. "-12", "MISS", "+8")
+   * @param {string} type - CSS modifier: damage|crit|miss|dodge|heal|mana|effect|buff|status|xp|gold
+   */
+  function showFCT(targetId, text, type) {
+    var layer = document.getElementById("fct-layer");
+    var target = document.getElementById(targetId);
+    if (!layer || !target) return;
+
+    var screen = document.getElementById("screen-battle");
+    var screenRect = screen.getBoundingClientRect();
+    var targetRect = target.getBoundingClientRect();
+
+    var el = document.createElement("div");
+    el.className = "fct fct-" + (type || "damage");
+    el.textContent = text;
+
+    // position centered over the target portrait, with slight random x offset
+    var cx = (targetRect.left + targetRect.width / 2) - screenRect.left;
+    var cy = (targetRect.top + targetRect.height * 0.3) - screenRect.top;
+    var offsetX = (Math.random() - 0.5) * 30;
+    el.style.left = (cx + offsetX) + "px";
+    el.style.top = cy + "px";
+    el.style.transform = "translateX(-50%)";
+
+    layer.appendChild(el);
+
+    // Remove after animation completes
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 1050);
+  }
+
   function playerAttack() {
     if (enemies.length === 0 || animating) return;
 
@@ -333,6 +368,7 @@ var Battle = (function () {
       addLog("Your attack misses!");
       Audio.play("miss");
       animateCombat("player", "miss", function () {
+        showFCT("battle-enemy-" + targetIndex, "MISS", "miss");
         enemyTurn();
       });
       return;
@@ -345,6 +381,7 @@ var Battle = (function () {
         addLog("The " + target.name + " dodges your attack!");
         Audio.play("miss");
         renderBattle();
+        showFCT("battle-enemy-" + targetIndex, "DODGE", "dodge");
         checkBattleEnd() || enemyTurn();
       });
     } else {
@@ -367,6 +404,7 @@ var Battle = (function () {
           handleEnemyDeath(targetIndex);
         }
         renderBattle();
+        showFCT("battle-enemy-" + targetIndex, "-" + dmg, isCrit ? "crit" : "damage");
         checkBattleEnd() || enemyTurn();
       });
     }
@@ -432,6 +470,7 @@ var Battle = (function () {
         addLog("You meditate and restore " + manaAmt + " MP.");
         Audio.play("heal");
         renderBattle();
+        showFCT("battle-player", "+" + manaAmt + " MP", "mana");
         checkBattleEnd() || enemyTurn();
       });
     } else if (skill.type === "heal") {
@@ -442,6 +481,7 @@ var Battle = (function () {
         addLog("You use " + skill.name + " and restore " + healAmt + " HP.");
         Audio.play("heal");
         renderBattle();
+        showFCT("battle-player", "+" + healAmt, "heal");
         checkBattleEnd() || enemyTurn();
       });
     } else if (skill.type === "buff") {
@@ -455,6 +495,7 @@ var Battle = (function () {
         }
         Audio.play("heal");
         renderBattle();
+        showFCT("battle-player", skill.name, "buff");
         checkBattleEnd() || enemyTurn();
       });
     } else if (skill.type === "attack" || skill.type === "magic") {
@@ -468,6 +509,7 @@ var Battle = (function () {
         Audio.play("miss");
         animateCombat("player", "miss", function () {
           renderBattle();
+          showFCT("battle-enemy-" + targetIndex, "MISS", "miss");
           checkBattleEnd() || enemyTurn();
         });
         return;
@@ -499,16 +541,19 @@ var Battle = (function () {
             target.effects.push({ type: "stun", turns: eff.turns });
             addLog(target.name + " is stunned!");
             Audio.play("statusStun");
+            showFCT("battle-enemy-" + targetIndex, "STUNNED", "status");
           } else if (eff.type === "poison") {
             target.effects.push({ type: "poison", damage: eff.damage, turns: eff.turns });
             addLog(target.name + " is poisoned!");
             Audio.play("statusPoison");
+            showFCT("battle-enemy-" + targetIndex, "POISONED", "status");
           }
         }
         if (target.hp <= 0) {
           handleEnemyDeath(targetIndex);
         }
         renderBattle();
+        showFCT("battle-enemy-" + targetIndex, "-" + totalDmg, "damage");
         checkBattleEnd() || enemyTurn();
       });
     } else {
@@ -527,9 +572,11 @@ var Battle = (function () {
     if (item.subtype === "health") {
       Player.heal(item.healAmount);
       addLog("You drink " + item.name + " and restore " + item.healAmount + " HP.");
+      showFCT("battle-player", "+" + item.healAmount, "heal");
     } else if (item.subtype === "mana") {
       Player.restoreMana(item.manaAmount);
       addLog("You drink " + item.name + " and restore " + item.manaAmount + " MP.");
+      showFCT("battle-player", "+" + item.manaAmount + " MP", "mana");
     } else if (item.subtype === "cleanse") {
       // Remove negative effects
       for (var c = playerEffects.length - 1; c >= 0; c--) {
@@ -539,6 +586,7 @@ var Battle = (function () {
         }
       }
       addLog("You use " + item.name + " and cleanse all negative effects!");
+      showFCT("battle-player", "CLEANSED", "buff");
     }
     Audio.play("potionDrink");
     renderBattle();
@@ -602,7 +650,7 @@ var Battle = (function () {
     var e = enemies[ei];
 
     // Tick this enemy's status effects
-    tickEffects(e.effects, e, true);
+    tickEffects(e.effects, e, true, ei);
 
     // Check if enemy died from DOT
     if (e.hp <= 0) {
@@ -723,26 +771,32 @@ var Battle = (function () {
     if (action.type === "miss") {
       addLog(e.name + "'s attack misses!");
       Audio.play("miss");
+      showFCT("battle-player", "MISS", "miss");
     } else if (action.type === "dodge") {
       addLog("You dodge " + e.name + "'s attack!");
       Audio.play("miss");
+      showFCT("battle-player", "DODGE", "dodge");
     } else if (action.type === "hit") {
       Player.takeDamage(action.damage);
       addLog(e.name + " attacks for " + action.damage + " damage.");
       Audio.play("enemyHit");
+      showFCT("battle-player", "-" + action.damage, "damage");
     } else if (action.type === "ability" || action.type === "buff-only" || action.type === "effect-only") {
       var ab = action.ability;
       if (ab.multiplier) {
         if (action.missed) {
           addLog(e.name + "'s " + ab.name + " misses!");
           Audio.play("miss");
+          showFCT("battle-player", "MISS", "miss");
         } else if (action.dodged) {
           addLog("You dodge " + e.name + "'s " + ab.name + "!");
           Audio.play("miss");
+          showFCT("battle-player", "DODGE", "dodge");
         } else if (action.damage > 0) {
           Player.takeDamage(action.damage);
           addLog(e.name + " uses " + ab.name + " for " + action.damage + " damage!");
           Audio.play("enemyHit");
+          showFCT("battle-player", "-" + action.damage, "damage");
         }
       }
       if (action.buff) {
@@ -770,6 +824,7 @@ var Battle = (function () {
       weakness: " weakens your resolve!"
     };
     addLog(sourceName + (messages[type] || " afflicts you with " + type + "!"));
+    showFCT("battle-player", type.toUpperCase(), "status");
     var sounds = {
       poison: "statusPoison", bleed: "statusBleed", burn: "statusBurn",
       stun: "statusStun", fear: "statusFear", silence: "statusSilence", weakness: "statusWeakness"
@@ -777,13 +832,14 @@ var Battle = (function () {
     Audio.play(sounds[type] || "statusPoison");
   }
 
-  function tickEffects(effects, target, isEnemy) {
+  function tickEffects(effects, target, isEnemy, enemyIdx) {
     for (var i = effects.length - 1; i >= 0; i--) {
       var e = effects[i];
       if ((e.type === "poison" || e.type === "bleed" || e.type === "burn") && e.damage) {
         target.hp -= e.damage;
         if (isEnemy) {
           addLog(target.name + " takes " + e.damage + " " + e.type + " damage.");
+          showFCT("battle-enemy-" + (enemyIdx || 0), "-" + e.damage, "effect");
         }
       }
       e.turns--;
@@ -797,6 +853,7 @@ var Battle = (function () {
       if ((e.type === "poison" || e.type === "bleed" || e.type === "burn") && e.damage) {
         Player.takeDamage(e.damage);
         addLog("You take " + e.damage + " " + e.type + " damage.");
+        showFCT("battle-player", "-" + e.damage, "effect");
       }
       e.turns--;
       if (e.turns <= 0) playerEffects.splice(i, 1);
@@ -910,6 +967,9 @@ var Battle = (function () {
   }
 
   function endBattle(won) {
+    // Clear floating combat text
+    var fctLayer = document.getElementById("fct-layer");
+    if (fctLayer) fctLayer.innerHTML = "";
     var cb = onVictoryCallback;
     enemies = [];
     targetIndex = 0;
@@ -984,9 +1044,9 @@ var Battle = (function () {
 
     html += '</div>'; // end battle-scene
 
-    // Battle log
+    // Battle log (minimal — FCT is primary feedback)
     html += '<div class="battle-log">';
-    var logStart = Math.max(0, battleLog.length - 6);
+    var logStart = Math.max(0, battleLog.length - 3);
     for (var b = logStart; b < battleLog.length; b++) {
       html += '<div>' + battleLog[b] + '</div>';
     }

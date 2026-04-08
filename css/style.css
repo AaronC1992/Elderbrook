@@ -1033,12 +1033,13 @@ button {
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.4rem 0.6rem;
-  max-height: 100px;
+  padding: 0.25rem 0.5rem;
+  max-height: 54px;
   overflow-y: auto;
-  font-size: 0.78rem;
-  line-height: 1.4;
-  margin: 0.4rem 0;
+  font-size: 0.68rem;
+  line-height: 1.3;
+  margin: 0.3rem 0;
+  opacity: 0.7;
 }
 .battle-log-entry { color: var(--text-muted); padding: 0.1rem 0; }
 .battle-log-entry:last-child { color: var(--text); }
@@ -1175,6 +1176,42 @@ button {
   pointer-events: none;
   animation: damage-flash 0.35s ease-out forwards;
   border-radius: var(--radius);
+}
+
+/* ── Floating Combat Text (FCT) ── */
+#fct-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+}
+.fct {
+  position: absolute;
+  pointer-events: none;
+  font-weight: 800;
+  font-size: 1.3rem;
+  text-shadow: 0 0 4px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.7);
+  white-space: nowrap;
+  animation: fct-float 1s ease-out forwards;
+  z-index: 25;
+}
+.fct-damage { color: #ff4444; }
+.fct-crit { color: #ffd700; font-size: 1.6rem; }
+.fct-miss { color: #999; font-style: italic; font-size: 1rem; }
+.fct-dodge { color: #aaa; font-style: italic; font-size: 1rem; }
+.fct-heal { color: #44dd66; }
+.fct-mana { color: #5599ff; }
+.fct-effect { color: #cc66ff; }
+.fct-buff { color: #44ccdd; font-size: 1rem; }
+.fct-status { color: #ff8844; font-size: 0.95rem; }
+.fct-xp { color: #ffd700; font-size: 1.1rem; }
+.fct-gold { color: #f0c040; font-size: 1.1rem; }
+
+@keyframes fct-float {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  20%  { opacity: 1; transform: translateY(-12px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-48px) scale(0.9); }
 }
 
 /* ── Dungeon ── */
