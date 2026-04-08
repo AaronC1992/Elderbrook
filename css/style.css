@@ -2667,7 +2667,6 @@ button {
    EXPLORATION (DragonFable-style node navigation)
    ══════════════════════════════════════════════════════════════ */
 #screen-explore {
-  position: relative;
   background-size: cover;
   background-position: center;
   overflow: hidden;
