@@ -2802,10 +2802,11 @@ button {
 }
 .explore-enemy-portrait {
   width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(180,50,50,0.7);
+  height: auto;
+  max-height: 130px;
+  border-radius: 8px;
+  object-fit: contain;
+  border: 2px solid rgba(180,50,50,0.7);
   background: rgba(14,17,23,0.5);
   transition: border-color 0.2s;
 }
@@ -3046,12 +3047,12 @@ button {
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .explore-enemy-portrait { width: 70px; height: 70px; }
+  .explore-enemy-portrait { width: 70px; max-height: 100px; }
   .explore-arrow { font-size: 1.1rem; padding: 0.4rem 0.8rem; }
   .explore-area-name { font-size: 1rem; }
 }
 @media (max-width: 600px) {
-  .explore-enemy-portrait { width: 56px; height: 56px; }
+  .explore-enemy-portrait { width: 56px; max-height: 80px; }
   .explore-enemy-name { font-size: 0.62rem; }
   .explore-arrow { font-size: 0.9rem; padding: 0.3rem 0.6rem; }
 }

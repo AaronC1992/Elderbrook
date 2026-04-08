@@ -41,9 +41,10 @@ const backgrounds = [
   {
     filename: "explore-bandit-clearing.png",
     prompt:
-      "A small forest clearing with remnants of a bandit camp. A dead campfire with scattered logs for seats, " +
-      "a torn canvas lean-to shelter, scattered empty crates and rope. The surrounding trees are scratched " +
-      "with crude markings. Late afternoon light filtering through the tree line. " + STYLE,
+      "A shadowy forest clearing where bandits once camped. Charred remains of a campfire in the center, " +
+      "a few overturned barrels, a torn burlap sack, and a rough wooden table with scattered playing cards. " +
+      "Thick oaks and elms surrounding the clearing with dense undergrowth. Warm golden-hour light " +
+      "breaking through the canopy. Moody, earthy tones, deep greens and browns. " + STYLE,
   },
   {
     filename: "explore-rocky-pass.png",

@@ -348,9 +348,9 @@ var Exploration = (function () {
   }
 
   function rollChest() {
-    // 20% chance per node entry, only one chest per exploration run
+    // 8% chance per node entry, only one chest per exploration run
     if (activeChest) return;
-    if (Math.random() > 0.20) return;
+    if (Math.random() > 0.08) return;
 
     var lootTable = CHEST_LOOT[currentArea];
     var goldRange = CHEST_GOLD[currentArea];
@@ -477,20 +477,8 @@ var Exploration = (function () {
       var def = defeatedEnemies[key] || [];
       if (def.length < map.nodes[n].enemies.length) return;
     }
-    // All nodes cleared — award bonus
+    // All nodes cleared
     areaCompleted = true;
-    var AREA_REWARDS = {
-      "forest-road": { xp: 20, gold: 15 },
-      "goblin-trail": { xp: 30, gold: 20 },
-      "watch-post":   { xp: 35, gold: 25 },
-      "riverbank":    { xp: 15, gold: 10 }
-    };
-    var reward = AREA_REWARDS[currentArea] || { xp: 20, gold: 15 };
-    Player.addXp(reward.xp);
-    Player.get().gold += reward.gold;
-    UI.updateHeader();
-    UI.showMessage("Area fully cleared! Bonus: +" + reward.xp + " XP, +" + reward.gold + " gold.");
-    Audio.play("victory");
   }
 
   function returnToMap() {
