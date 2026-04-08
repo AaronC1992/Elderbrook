@@ -349,6 +349,15 @@
           UI.updateHeader();
         }
         break;
+      case "track-quest":
+        Quests.setTracked(btn.getAttribute("data-quest"));
+        if (UI.getScreen() === 'ledger') UI.renderLedger('quests');
+        UI.updateHeader();
+        break;
+      case "open-ledger-quests":
+        UI.renderLedger("quests");
+        UI.showScreen("ledger");
+        break;
 
       /* ── Bounties ── */
       case "accept-bounty":

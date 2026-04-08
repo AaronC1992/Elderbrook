@@ -38,6 +38,7 @@ var Player = (function () {
       questProgress: {},
       activeQuests: [],
       completedQuests: [],
+      trackedQuest: null,
       currentArea: "elderbrook",
       hasEnteredTown: false,
       eventSpawns: [],

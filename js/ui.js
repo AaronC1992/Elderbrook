@@ -152,32 +152,59 @@ var UI = (function () {
       }
     }
 
-    // Right: quest tracker
+    // Right: quest tracker — show tracked quest with full detail
     var questContainer = document.getElementById("quest-tracker");
     if (questContainer) {
-      var activeQ = Quests.getActive();
+      var tracked = Quests.getTrackedOrNext();
       var qhtml = "";
-      if (activeQ.length === 0) {
+      if (!tracked) {
         qhtml += '<div class="quest-tracker-empty">No active quests</div>';
       } else {
-        for (var qi = 0; qi < activeQ.length; qi++) {
-          var q = activeQ[qi];
-          var ready = Quests.checkObjectives(q.id);
-          qhtml += '<div class="quest-tracker-item' + (ready ? ' quest-tracker-ready' : '') + '" data-action="toggle-quest-detail" data-quest="' + q.id + '">';
-          qhtml += '<div class="quest-tracker-name">' + q.name + '</div>';
-          qhtml += '<div class="quest-tracker-detail" id="quest-detail-' + q.id + '" style="display:none">';
-          qhtml += '<div class="quest-tracker-desc">' + q.description + '</div>';
-          for (var oj = 0; oj < q.objectives.length; oj++) {
-            qhtml += '<div class="quest-tracker-obj">' + Quests.getObjectiveStatus(q.id, oj) + '</div>';
-          }
-          if (ready) {
+        var ready = Quests.checkObjectives(tracked.id);
+        qhtml += '<div class="quest-tracker-active' + (ready ? ' quest-tracker-ready' : '') + '">';
+        qhtml += '<div class="quest-tracker-type">' + (tracked.type === "main" ? "Main Quest" : "Side Quest") + '</div>';
+        qhtml += '<div class="quest-tracker-name">' + tracked.name + '</div>';
+        qhtml += '<div class="quest-tracker-objectives">';
+        for (var oj = 0; oj < tracked.objectives.length; oj++) {
+          var objDone = isObjectiveComplete(tracked.id, oj);
+          qhtml += '<div class="quest-tracker-obj' + (objDone ? ' quest-obj-done' : '') + '">';
+          qhtml += (objDone ? '&#10003; ' : '&#9679; ') + Quests.getObjectiveStatus(tracked.id, oj);
+          qhtml += '</div>';
+        }
+        qhtml += '</div>';
+        if (ready) {
+          var turnInInfo = Quests.getTurnInInfo(tracked.id);
+          if (turnInInfo) {
+            qhtml += '<div class="quest-tracker-turnin">Turn in to<br><strong>' + turnInInfo.npcName + '</strong><br><span class="quest-tracker-location">' + turnInInfo.location + '</span></div>';
+          } else {
             qhtml += '<div class="quest-tracker-status">Ready to turn in</div>';
           }
-          qhtml += '</div></div>';
+        }
+        qhtml += '</div>';
+
+        // Show count of other active quests
+        var activeQ = Quests.getActive();
+        if (activeQ.length > 1) {
+          qhtml += '<div class="quest-tracker-more" data-action="open-ledger-quests">' + (activeQ.length - 1) + ' more quest' + (activeQ.length > 2 ? 's' : '') + ' in Ledger</div>';
         }
       }
       questContainer.innerHTML = qhtml;
     }
+  }
+
+  function isObjectiveComplete(questId, objIndex) {
+    var def = Chapter1.getQuest(questId);
+    if (!def || !def.objectives[objIndex]) return false;
+    var obj = def.objectives[objIndex];
+    if (obj.type === "kill") {
+      var prog = (Player.get().questProgress[questId] && Player.get().questProgress[questId][obj.id]) || 0;
+      return prog >= obj.required;
+    } else if (obj.type === "collect") {
+      return Player.countItem(obj.item) >= obj.required;
+    } else if (obj.type === "flag") {
+      return Player.hasFlag(obj.flag);
+    }
+    return false;
   }
 
   function setBar(id, val, max) {
@@ -1169,6 +1196,8 @@ var UI = (function () {
   function renderLedgerQuests() {
     var active = Quests.getActive();
     var p = Player.get();
+    var tracked = Quests.getTrackedOrNext();
+    var trackedId = tracked ? tracked.id : null;
     var html = '<h2>Quest Journal</h2>';
 
     if (active.length === 0 && (!p || p.completedQuests.length === 0)) {
@@ -1176,22 +1205,24 @@ var UI = (function () {
       return html;
     }
 
-    // Active quests
-    if (active.length > 0) {
-      html += '<h3>Active Quests</h3>';
-      for (var i = 0; i < active.length; i++) {
-        var q = active[i];
-        var complete = Quests.checkObjectives(q.id);
-        html += '<div class="ledger-quest' + (complete ? ' quest-ready' : '') + '">';
-        html += '<div class="ledger-quest-name">' + q.name + '<span class="ledger-quest-type"> [' + q.type + ']</span></div>';
-        html += '<div class="ledger-quest-desc">' + q.description + '</div>';
-        for (var j = 0; j < q.objectives.length; j++) {
-          html += '<div class="ledger-quest-obj">' + Quests.getObjectiveStatus(q.id, j) + '</div>';
-        }
-        if (complete) {
-          html += '<button class="ledger-btn" data-action="turn-in-quest" data-quest="' + q.id + '">Turn In</button>';
-        }
-        html += '</div>';
+    // Active quests - separate main and side
+    var mainQuests = [];
+    var sideQuests = [];
+    for (var a = 0; a < active.length; a++) {
+      if (active[a].type === "main") mainQuests.push(active[a]);
+      else sideQuests.push(active[a]);
+    }
+
+    if (mainQuests.length > 0) {
+      html += '<h3>Main Quests</h3>';
+      for (var m = 0; m < mainQuests.length; m++) {
+        html += renderLedgerQuestEntry(mainQuests[m], trackedId);
+      }
+    }
+    if (sideQuests.length > 0) {
+      html += '<h3>Side Quests</h3>';
+      for (var s = 0; s < sideQuests.length; s++) {
+        html += renderLedgerQuestEntry(sideQuests[s], trackedId);
       }
     }
 
@@ -1208,6 +1239,51 @@ var UI = (function () {
       }
     }
     return html;
+  }
+
+  function renderLedgerQuestEntry(q, trackedId) {
+    var complete = Quests.checkObjectives(q.id);
+    var isTracked = q.id === trackedId;
+    var html = '<div class="ledger-quest' + (complete ? ' quest-ready' : '') + (isTracked ? ' quest-tracked' : '') + '">';
+    html += '<div class="ledger-quest-header">';
+    html += '<div class="ledger-quest-name">' + q.name + '<span class="ledger-quest-type"> [' + q.type + ']</span></div>';
+    if (isTracked) {
+      html += '<span class="ledger-quest-tracking">Tracking</span>';
+    } else {
+      html += '<button class="ledger-btn-small" data-action="track-quest" data-quest="' + q.id + '">Track</button>';
+    }
+    html += '</div>';
+    html += '<div class="ledger-quest-desc">' + q.description + '</div>';
+    for (var j = 0; j < q.objectives.length; j++) {
+      var objStatus = Quests.getObjectiveStatus(q.id, j);
+      var objDone = isObjectiveDone(q.id, j);
+      html += '<div class="ledger-quest-obj' + (objDone ? ' obj-done' : '') + '">' + objStatus + '</div>';
+    }
+    if (complete) {
+      var turnInInfo = Quests.getTurnInInfo(q.id);
+      if (turnInInfo) {
+        html += '<div class="ledger-quest-turnin">Turn in to ' + turnInInfo.npcName + ' at the ' + turnInInfo.location + '</div>';
+      }
+      html += '<button class="ledger-btn" data-action="turn-in-quest" data-quest="' + q.id + '">Turn In</button>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function isObjectiveDone(questId, objIndex) {
+    var def = Chapter1.getQuest(questId);
+    if (!def || !def.objectives[objIndex]) return false;
+    var obj = def.objectives[objIndex];
+    if (obj.type === "kill") {
+      var p = Player.get();
+      var progress = (p.questProgress[questId] && p.questProgress[questId][obj.id]) || 0;
+      return progress >= obj.required;
+    } else if (obj.type === "collect") {
+      return Player.countItem(obj.item) >= obj.required;
+    } else if (obj.type === "flag") {
+      return Player.hasFlag(obj.flag);
+    }
+    return false;
   }
 
   /* ── Character Page ── */

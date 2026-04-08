@@ -213,53 +213,127 @@ body {
   text-align: center;
   padding: 0.5rem 0;
 }
-.quest-tracker-item {
-  padding: 0.35rem 0.3rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: background 0.15s, border-color 0.15s;
+.quest-tracker-active {
+  padding: 0.3rem;
+  border-left: 2px solid var(--accent);
+  transition: border-color 0.2s;
 }
-.quest-tracker-item:hover {
-  background: rgba(212, 164, 56, 0.06);
-  border-left-color: var(--accent);
-}
-.quest-tracker-ready {
+.quest-tracker-active.quest-tracker-ready {
   border-left-color: var(--heal);
 }
-.quest-tracker-ready:hover {
-  border-left-color: var(--heal);
+.quest-tracker-type {
+  font-size: 0.65rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.1rem;
 }
 .quest-tracker-name {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text);
+  margin-bottom: 0.3rem;
 }
 .quest-tracker-ready .quest-tracker-name {
   color: var(--heal);
 }
-.quest-tracker-detail {
-  margin-top: 0.25rem;
-  padding-left: 0.3rem;
-}
-.quest-tracker-desc {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  margin-bottom: 0.2rem;
-  line-height: 1.4;
+.quest-tracker-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 .quest-tracker-obj {
   font-size: 0.7rem;
   color: var(--text);
-  padding: 0.1rem 0;
-  padding-left: 0.4rem;
+  padding: 0.12rem 0 0.12rem 0.3rem;
   border-left: 1px solid rgba(255,255,255,0.08);
+  line-height: 1.35;
+}
+.quest-tracker-obj.quest-obj-done {
+  color: var(--heal);
+  border-left-color: var(--heal);
+  opacity: 0.7;
+}
+.quest-tracker-turnin {
+  font-size: 0.72rem;
+  color: var(--heal);
+  text-align: center;
+  margin-top: 0.4rem;
+  padding: 0.35rem;
+  background: rgba(68, 221, 68, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(68, 221, 68, 0.15);
+  line-height: 1.4;
+}
+.quest-tracker-location {
+  color: var(--accent);
+  font-size: 0.68rem;
 }
 .quest-tracker-status {
   font-size: 0.7rem;
   color: var(--heal);
   font-weight: 600;
   margin-top: 0.15rem;
+}
+.quest-tracker-more {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.35rem 0 0.1rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.quest-tracker-more:hover {
+  color: var(--accent);
+}
+
+/* ── Ledger quest tracking styles ── */
+.ledger-quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ledger-quest-tracking {
+  font-size: 0.68rem;
+  color: var(--accent);
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.ledger-btn-small {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.ledger-btn-small:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.quest-tracked {
+  border-left: 2px solid var(--accent);
+}
+.ledger-quest-obj.obj-done {
+  color: var(--heal);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+.ledger-quest-turnin {
+  font-size: 0.75rem;
+  color: var(--heal);
+  margin-top: 0.3rem;
+  padding: 0.25rem 0.4rem;
+  background: rgba(68, 221, 68, 0.08);
+  border-radius: 4px;
+  border: 1px solid rgba(68, 221, 68, 0.12);
 }
 
 /* ── CENTER: Screens ── */

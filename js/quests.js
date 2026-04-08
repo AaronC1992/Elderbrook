@@ -175,6 +175,52 @@ var Quests = (function () {
     return result;
   }
 
+  /* Set the tracked quest shown in the sidebar */
+  function setTracked(questId) {
+    var p = Player.get();
+    p.trackedQuest = questId;
+  }
+
+  /* Get the tracked quest, or auto-pick the next logical one */
+  function getTrackedOrNext() {
+    var p = Player.get();
+    // If tracked quest is still active, use it
+    if (p.trackedQuest && p.activeQuests.indexOf(p.trackedQuest) !== -1) {
+      return Chapter1.getQuest(p.trackedQuest);
+    }
+    // Otherwise pick first active main quest, then first side quest
+    var firstMain = null;
+    var firstSide = null;
+    for (var i = 0; i < p.activeQuests.length; i++) {
+      var def = Chapter1.getQuest(p.activeQuests[i]);
+      if (!def) continue;
+      if (def.type === "main" && !firstMain) firstMain = def;
+      if (def.type === "side" && !firstSide) firstSide = def;
+    }
+    return firstMain || firstSide || null;
+  }
+
+  /* Get NPC turn-in info for a quest */
+  function getTurnInInfo(questId) {
+    var def = Chapter1.getQuest(questId);
+    if (!def || !def.turnIn) return null;
+    var npc = Chapter1.getNPC(def.turnIn);
+    if (!npc) return null;
+    // Map NPC ids to locations
+    var npcLocations = {
+      rowan: "Adventurers Guild",
+      bram: "Weapon Shop",
+      harlan: "Armor Shop",
+      mira: "Potion Shop",
+      toma: "Quest Board",
+      elric: "Watch Post"
+    };
+    return {
+      npcName: npc.name,
+      location: npcLocations[def.turnIn] || "Town"
+    };
+  }
+
   return {
     accept: accept,
     isActive: isActive,
@@ -184,6 +230,9 @@ var Quests = (function () {
     turnIn: turnIn,
     getObjectiveStatus: getObjectiveStatus,
     getAvailable: getAvailable,
-    getActive: getActive
+    getActive: getActive,
+    setTracked: setTracked,
+    getTrackedOrNext: getTrackedOrNext,
+    getTurnInInfo: getTurnInInfo
   };
 })();
