@@ -691,9 +691,11 @@ var Relationships = (function () {
     }
 
     var amount = 2 + Math.floor(Math.random() * 2); // +2 or +3
-    // Class preference bonus
-    if (cfg.preferredClass && Player.get() && Player.get().buildClass === cfg.preferredClass) {
-      amount += 1;
+    // Class preference bonus (subclasses match their parent)
+    if (cfg.preferredClass && Player.get()) {
+      var bc = Player.get().buildClass;
+      var def = Player.CLASS_DEFS && Player.CLASS_DEFS[bc];
+      if (bc === cfg.preferredClass || (def && def.base === cfg.preferredClass)) amount += 1;
     }
     // Charm bonus: +1 affinity per 3 charm above base
     var p = Player.get();
@@ -738,9 +740,11 @@ var Relationships = (function () {
     rel.gifted = true;
     var reaction = getGiftReaction(npcId, itemId);
     var amount = reaction === "loved" ? 8 : (reaction === "liked" ? 5 : (reaction === "disliked" ? -3 : 2));
-    // Class preference bonus
-    if (cfg.preferredClass && Player.get() && Player.get().buildClass === cfg.preferredClass && amount > 0) {
-      amount += 2;
+    // Class preference bonus (subclasses match their parent)
+    if (cfg.preferredClass && Player.get() && amount > 0) {
+      var bc2 = Player.get().buildClass;
+      var def2 = Player.CLASS_DEFS && Player.CLASS_DEFS[bc2];
+      if (bc2 === cfg.preferredClass || (def2 && def2.base === cfg.preferredClass)) amount += 2;
     }
     // Charm bonus on positive gifts: +1 per 3 charm above base
     if (amount > 0) {

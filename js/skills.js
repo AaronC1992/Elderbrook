@@ -61,6 +61,68 @@ var Skills = (function () {
       unlockQuest: "sq-double-strike",
       description: "Hits twice at 0.8x damage each.",
       mpCost: 8, hits: 2, damageMultiplier: 0.8
+    },
+
+    /* ── Class Skills (granted automatically when choosing a class) ── */
+    {
+      id: "rallying-cry", name: "Rallying Cry", type: "buff", tier: 2,
+      cost: 0, classSkill: "warrior",
+      description: "Boosts attack by 3 for 3 turns. Warrior class skill.",
+      mpCost: 5, buffType: "attack", buffAmount: 3, buffDuration: 3
+    },
+    {
+      id: "guardians-shield", name: "Guardian's Shield", type: "buff", tier: 3,
+      cost: 0, classSkill: "knight",
+      description: "Boosts defense by 4 for 3 turns. Knight class skill.",
+      mpCost: 6, buffType: "defense", buffAmount: 4, buffDuration: 3
+    },
+    {
+      id: "frenzy", name: "Frenzy", type: "attack", tier: 3,
+      cost: 0, classSkill: "berserker",
+      description: "Hits twice at 1.0x damage. Berserker class skill.",
+      mpCost: 7, hits: 2, damageMultiplier: 1.0
+    },
+    {
+      id: "smoke-bomb", name: "Smoke Bomb", type: "buff", tier: 2,
+      cost: 0, classSkill: "rogue",
+      description: "Increases evasion by 30 for 2 turns. Rogue class skill.",
+      mpCost: 4, buffType: "evasion", buffAmount: 30, buffDuration: 2
+    },
+    {
+      id: "shadow-strike", name: "Shadow Strike", type: "attack", tier: 3,
+      cost: 0, classSkill: "assassin",
+      description: "Deals 1.8x damage and poisons. Assassin class skill.",
+      mpCost: 8, damageMultiplier: 1.8, appliesEffect: { type: "poison", damage: 4, turns: 3 }
+    },
+    {
+      id: "volley", name: "Volley", type: "attack", tier: 3,
+      cost: 0, classSkill: "ranger",
+      description: "Hits 3 times at 0.6x damage each. Ranger class skill.",
+      mpCost: 9, hits: 3, damageMultiplier: 0.6
+    },
+    {
+      id: "arcane-shield", name: "Arcane Shield", type: "buff", tier: 2,
+      cost: 0, classSkill: "mage",
+      description: "Boosts defense by 3 for 2 turns. Mage class skill.",
+      mpCost: 5, buffType: "defense", buffAmount: 3, buffDuration: 2
+    },
+    {
+      id: "inferno", name: "Inferno", type: "magic", tier: 3,
+      cost: 0, classSkill: "pyromancer",
+      description: "Deals 1.6x magic damage and burns. Pyromancer class skill.",
+      mpCost: 10, damageMultiplier: 1.6, intScaling: true, appliesEffect: { type: "poison", damage: 5, turns: 2 }
+    },
+    {
+      id: "holy-light", name: "Holy Light", type: "heal", tier: 3,
+      cost: 0, classSkill: "cleric",
+      description: "Restores 25 HP. Cleric class skill.",
+      mpCost: 8, healAmount: 25, cooldown: 2
+    },
+    {
+      id: "smite", name: "Smite", type: "magic", tier: 3,
+      cost: 0, classSkill: "paladin",
+      description: "Deals 1.5x magic damage scaling with INT. Paladin class skill.",
+      mpCost: 9, damageMultiplier: 1.5, intScaling: true
     }
   ];
 
@@ -82,6 +144,7 @@ var Skills = (function () {
     var available = [];
     for (var i = 0; i < skills.length; i++) {
       if (skills[i].questLocked) continue;
+      if (skills[i].classSkill) continue;
       if (learnedSkills.indexOf(skills[i].id) !== -1) continue;
       available.push(skills[i]);
     }

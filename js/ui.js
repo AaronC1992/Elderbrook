@@ -52,7 +52,7 @@ var UI = (function () {
     // Toggle menu mode (hides sidebars/nav on title & create)
     var gc = document.getElementById("game-container");
     if (gc) {
-      if (id === "title" || id === "create") {
+      if (id === "title" || id === "create" || id === "intro") {
         gc.classList.add("mode-menu");
       } else {
         gc.classList.remove("mode-menu");
@@ -120,7 +120,11 @@ var UI = (function () {
     var levelEl = document.getElementById("sidebar-level");
     if (portrait) portrait.src = Player.getPortrait();
     if (nameEl) nameEl.textContent = p.name;
-    if (levelEl) levelEl.textContent = "Lv." + p.level + (p.buildClass ? " " + p.buildClass.charAt(0).toUpperCase() + p.buildClass.slice(1) : "");
+    if (levelEl) {
+      var className = "";
+      if (p.buildClass && Player.CLASS_DEFS[p.buildClass]) className = " " + Player.CLASS_DEFS[p.buildClass].name;
+      levelEl.textContent = "Lv." + p.level + className;
+    }
 
     // Bars
     setBar("bar-hp", p.hp, p.maxHp);   setStat("stat-hp", p.hp + "/" + p.maxHp);
@@ -590,7 +594,9 @@ var UI = (function () {
       var prefClass = Relationships.getClassPreference(npcId);
       if (prefClass) {
         var prefLabel = prefClass.charAt(0).toUpperCase() + prefClass.slice(1);
-        var isMatch = p && p.buildClass === prefClass;
+        var bc = p ? p.buildClass : null;
+        var cdef = bc && Player.CLASS_DEFS ? Player.CLASS_DEFS[bc] : null;
+        var isMatch = bc === prefClass || (cdef && cdef.base === prefClass);
         html += '<div class="npc-class-pref' + (isMatch ? ' pref-match' : '') + '">Prefers: ' + prefLabel + (isMatch ? ' (You!)' : '') + '</div>';
       }
 
@@ -798,33 +804,104 @@ var UI = (function () {
     var container = document.getElementById("build-select-content");
     if (!container) return;
 
+    var p = Player.get();
+    var defs = Player.CLASS_DEFS;
+    var currentClass = p ? p.buildClass : null;
+
     var html = '<h2>Choose Your Specialization</h2>';
-    html += '<p>You have reached Level 3! Choose a build to gain permanent stat bonuses.</p>';
+    if (!currentClass) {
+      html += '<p>Choose a class path. Base classes are available now; subclasses unlock through quests and training.</p>';
+    } else {
+      html += '<p>Current class: <strong>' + defs[currentClass].name + '</strong>. You may switch to an unlocked class or subclass.</p>';
+    }
+
+    // Group: base classes first, then subclasses
+    var baseClasses = ["warrior", "rogue", "mage"];
+    var subClasses = {
+      warrior: ["knight", "berserker"],
+      rogue: ["assassin", "ranger"],
+      mage: ["pyromancer", "cleric"]
+    };
+    var special = ["paladin"];
+
+    for (var b = 0; b < baseClasses.length; b++) {
+      var baseId = baseClasses[b];
+      var baseDef = defs[baseId];
+      html += '<div class="class-group">';
+      html += '<h3 class="class-group-title">' + baseDef.name + ' Path</h3>';
+      html += '<div class="build-grid">';
+
+      // Base class card
+      html += buildClassCard(baseId, baseDef, p, currentClass, false);
+
+      // Sub classes
+      var subs = subClasses[baseId] || [];
+      for (var s = 0; s < subs.length; s++) {
+        var subId = subs[s];
+        var subDef = defs[subId];
+        var locked = isClassLocked(subId, subDef, p);
+        html += buildClassCard(subId, subDef, p, currentClass, locked);
+      }
+
+      html += '</div></div>';
+    }
+
+    // Special classes
+    html += '<div class="class-group">';
+    html += '<h3 class="class-group-title">Special</h3>';
     html += '<div class="build-grid">';
+    for (var sp = 0; sp < special.length; sp++) {
+      var spId = special[sp];
+      var spDef = defs[spId];
+      var spLocked = isClassLocked(spId, spDef, p);
+      html += buildClassCard(spId, spDef, p, currentClass, spLocked);
+    }
+    html += '</div></div>';
 
-    html += '<div class="build-card">';
-    html += '<h3>Warrior</h3>';
-    html += '<p>+2 Attack, +1 Defense</p>';
-    html += '<p>Masters of brute force and resilience.</p>';
-    html += '<button class="btn" data-action="choose-build" data-build="warrior">Choose Warrior</button>';
-    html += '</div>';
-
-    html += '<div class="build-card">';
-    html += '<h3>Rogue</h3>';
-    html += '<p>+2 Dexterity, +1 Attack</p>';
-    html += '<p>Swift and cunning, striking from the shadows.</p>';
-    html += '<button class="btn" data-action="choose-build" data-build="rogue">Choose Rogue</button>';
-    html += '</div>';
-
-    html += '<div class="build-card">';
-    html += '<h3>Mage</h3>';
-    html += '<p>+2 Intelligence, +10 Max MP</p>';
-    html += '<p>Wielders of arcane power and knowledge.</p>';
-    html += '<button class="btn" data-action="choose-build" data-build="mage">Choose Mage</button>';
-    html += '</div>';
-
-    html += '</div>';
+    html += '<button class="btn" data-action="skip-build">Decide Later</button>';
     container.innerHTML = html;
+  }
+
+  function isClassLocked(classId, def, p) {
+    if (def.unlock === "level") return false;
+    if (def.unlock === "quest" && def.unlockFlag && p && p.storyFlags && p.storyFlags[def.unlockFlag]) return false;
+    if (def.unlock === "training" && def.unlockFlag && p && p.storyFlags && p.storyFlags[def.unlockFlag]) return false;
+    return true;
+  }
+
+  function buildClassCard(classId, def, p, currentClass, locked) {
+    var isCurrent = currentClass === classId;
+    var statsText = formatClassStats(def.stats);
+    var skillDef = Skills.get(def.skill);
+    var html = '<div class="build-card' + (locked ? ' build-locked' : '') + (isCurrent ? ' build-current' : '') + '">';
+    html += '<h3>' + def.name + '</h3>';
+    if (def.base) html += '<div class="build-subclass-tag">Subclass of ' + (Player.CLASS_DEFS[def.base] ? Player.CLASS_DEFS[def.base].name : def.base) + '</div>';
+    html += '<p class="build-stats">' + statsText + '</p>';
+    html += '<p class="build-desc">' + def.desc + '</p>';
+    if (skillDef) {
+      html += '<div class="build-skill">Skill: <strong>' + skillDef.name + '</strong> &mdash; ' + skillDef.description + '</div>';
+    }
+    if (locked) {
+      var lockMsg = def.unlock === "quest" ? "Complete a quest to unlock" : "Train at the Academy to unlock (" + (def.trainCost || 500) + "g)";
+      html += '<div class="build-lock-msg">' + lockMsg + '</div>';
+    } else if (isCurrent) {
+      html += '<div class="build-current-msg">Current Class</div>';
+    } else {
+      html += '<button class="btn" data-action="choose-build" data-build="' + classId + '">Choose ' + def.name + '</button>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function formatClassStats(stats) {
+    var parts = [];
+    if (stats.attack) parts.push((stats.attack > 0 ? '+' : '') + stats.attack + ' ATK');
+    if (stats.defense) parts.push((stats.defense > 0 ? '+' : '') + stats.defense + ' DEF');
+    if (stats.dexterity) parts.push('+' + stats.dexterity + ' DEX');
+    if (stats.intelligence) parts.push('+' + stats.intelligence + ' INT');
+    if (stats.maxHp) parts.push('+' + stats.maxHp + ' Max HP');
+    if (stats.maxMp) parts.push('+' + stats.maxMp + ' Max MP');
+    return parts.join(', ');
   }
 
   /* ── Save Slot Selection ── */
@@ -944,6 +1021,29 @@ var UI = (function () {
       html += '<p class="flavor">Reset your build class and choose a new path. Costs ' + Player.RESPEC_COST + ' gold.</p>';
       if (p.gold >= Player.RESPEC_COST) {
         html += '<button class="btn btn-small btn-primary" data-action="respec-build">Respec (' + Player.RESPEC_COST + 'g)</button>';
+      } else {
+        html += '<button class="btn btn-small" disabled>Not Enough Gold</button>';
+      }
+      html += '</div>';
+    }
+    if (Player.hasFlag('choseBuild')) {
+      html += '<button class="btn btn-small" data-action="open-build-select">Change Class</button>';
+    }
+
+    // Training-based class unlocks
+    var trainClasses = ["berserker", "ranger"];
+    for (var tc = 0; tc < trainClasses.length; tc++) {
+      var tcId = trainClasses[tc];
+      var tcDef = Player.CLASS_DEFS[tcId];
+      if (!tcDef || !tcDef.unlockFlag) continue;
+      if (p.storyFlags && p.storyFlags[tcDef.unlockFlag]) continue;
+      if (!Player.hasFlag('choseBuild')) continue;
+      var tcCost = tcDef.trainCost || 500;
+      html += '<div class="respec-section">';
+      html += '<h3>Unlock ' + tcDef.name + '</h3>';
+      html += '<p class="flavor">' + tcDef.desc + ' Train to unlock this class for ' + tcCost + ' gold.</p>';
+      if (p.gold >= tcCost) {
+        html += '<button class="btn btn-small btn-primary" data-action="train-unlock-class" data-class="' + tcId + '">Train (' + tcCost + 'g)</button>';
       } else {
         html += '<button class="btn btn-small" disabled>Not Enough Gold</button>';
       }
@@ -1292,7 +1392,8 @@ var UI = (function () {
     if (!p) return '<p>No character data.</p>';
 
     var html = '<h2>Character Sheet</h2>';
-    html += '<h3>' + p.name + (p.buildClass ? ' &mdash; ' + p.buildClass.charAt(0).toUpperCase() + p.buildClass.slice(1) : '') + '</h3>';
+    var className = p.buildClass && Player.CLASS_DEFS[p.buildClass] ? Player.CLASS_DEFS[p.buildClass].name : '';
+    html += '<h3>' + p.name + (className ? ' &mdash; ' + className : '') + '</h3>';
 
     // Core stats
     html += '<div class="ledger-stats-grid">';

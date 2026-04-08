@@ -400,7 +400,8 @@ body {
 }
 .nav-sleep:hover { background: rgba(90, 70, 20, 0.95); }
 
-/* Hide sidebars + nav on title/create (full-screen overlay) */
+/* Hide sidebars + nav + header on title/create/intro (full-screen overlay) */
+#game-container.mode-menu #game-header,
 #game-container.mode-menu #sidebar-stats,
 #game-container.mode-menu #sidebar-quests,
 #game-container.mode-menu #game-nav {
@@ -1792,9 +1793,17 @@ button {
 .bestiary-stats.locked-text { font-style: italic; opacity: 0.6; }
 
 /* ── Build Select ── */
+.class-group { margin-bottom: 1rem; }
+.class-group-title {
+  color: var(--accent);
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.2rem;
+}
 .build-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 0.5rem;
 }
 .build-card {
@@ -1803,9 +1812,19 @@ button {
   border-radius: var(--radius);
   padding: 0.8rem;
   text-align: center;
+  transition: border-color 0.2s;
 }
+.build-card:hover:not(.build-locked) { border-color: var(--accent); }
+.build-card.build-locked { opacity: 0.5; }
+.build-card.build-current { border-color: var(--accent); box-shadow: 0 0 8px rgba(205,175,100,0.3); }
 .build-card h3 { color: var(--accent); margin-bottom: 0.3rem; }
 .build-card p { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 0.3rem; }
+.build-subclass-tag { font-size: 0.7rem; color: var(--text-muted); opacity: 0.7; margin-bottom: 0.3rem; }
+.build-stats { color: #8fc98f; font-weight: 600; font-size: 0.82rem; }
+.build-desc { font-style: italic; }
+.build-skill { font-size: 0.75rem; color: var(--text-muted); margin: 0.3rem 0; background: rgba(0,0,0,0.2); padding: 0.3rem; border-radius: 4px; }
+.build-lock-msg { font-size: 0.72rem; color: #d4a030; font-style: italic; margin-top: 0.3rem; }
+.build-current-msg { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-top: 0.3rem; }
 
 /* ── Save Slots ── */
 .save-slots { display: flex; flex-direction: column; gap: 0.4rem; }

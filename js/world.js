@@ -51,8 +51,9 @@ var World = (function () {
       }
       // Roll event NPC spawns each time we enter town
       p.eventSpawns = Chapter1.rollEventSpawns(p);
-      // Prompt build class at level 3
-      if (p.level >= 3 && !p.buildClass && !Player.hasFlag('choseBuild')) {
+      // Prompt build class at level 3 (only once until they choose or skip)
+      if (p.level >= 3 && !p.buildClass && !Player.hasFlag('choseBuild') && !Player.hasFlag('seenBuildSelect')) {
+        Player.setFlag('seenBuildSelect');
         UI.renderBuildSelect();
         UI.showScreen('build-select');
         return;

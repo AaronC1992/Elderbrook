@@ -165,6 +165,7 @@ var Chapter1 = (function () {
 
     /* Build / Difficulty */
     choseBuild: false,
+    seenBuildSelect: false,
 
     /* Town events */
     townEventMerchant: false, townEventBard: false, townEventRumor: false,
@@ -186,6 +187,12 @@ var Chapter1 = (function () {
 
     /* Skill unlock quests */
     unlockedMeditate: false, unlockedDoubleStrike: false,
+
+    /* Class unlock flags */
+    unlockedKnight: false, unlockedBerserker: false,
+    unlockedAssassin: false, unlockedRanger: false,
+    unlockedPyromancer: false, unlockedCleric: false,
+    unlockedPaladin: false,
 
     /* Dialogue branching */
     choiceBrave: false, choicePractical: false,
@@ -609,6 +616,74 @@ var Chapter1 = (function () {
       rewards: { xp: 200, gold: 150 },
       onComplete: ["unlockedDoubleStrike"],
       requireFlags: ["completedMQ7"]
+    },
+
+    /* --- Class Unlock Quests --- */
+    "sq-knight": {
+      id: "sq-knight", name: "The Knight's Oath", type: "side",
+      description: "Captain Elric sees potential in you. Prove your valor by defending the weak and standing firm against overwhelming odds.",
+      giver: "elric", turnIn: "elric",
+      objectives: [
+        { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 6 },
+        { id: "scouts", text: "Defeat Goblin Scouts", type: "kill", target: "goblin-scout", required: 8 },
+        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 5 }
+      ],
+      rewards: { xp: 180, gold: 120 },
+      onComplete: ["unlockedKnight"],
+      requireFlags: ["completedMQ5", "choseBuild"]
+    },
+    "sq-assassin": {
+      id: "sq-assassin", name: "The Shadow Contract", type: "side",
+      description: "Bram has contacts in the underworld. A shadowy figure left a contract: eliminate key targets silently to prove your worth as an Assassin.",
+      giver: "bram", turnIn: "bram",
+      objectives: [
+        { id: "wolves", text: "Defeat Wolves", type: "kill", target: "wolf", required: 6 },
+        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 5 },
+        { id: "sinew", text: "Collect Beast Sinew", type: "collect", item: "beast-sinew", required: 6 }
+      ],
+      rewards: { xp: 180, gold: 120 },
+      onComplete: ["unlockedAssassin"],
+      requireFlags: ["completedMQ5", "choseBuild"]
+    },
+    "sq-pyromancer": {
+      id: "sq-pyromancer", name: "Trial by Fire", type: "side",
+      description: "Mira discovered an ancient tome describing the pyromancer's art. She needs rare reagents and proof of your arcane mastery to help you unlock it.",
+      giver: "mira", turnIn: "mira",
+      objectives: [
+        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 6 },
+        { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 4 },
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal-herb", required: 3 }
+      ],
+      rewards: { xp: 180, gold: 120 },
+      onComplete: ["unlockedPyromancer"],
+      requireFlags: ["completedMQ5", "choseBuild"]
+    },
+    "sq-cleric": {
+      id: "sq-cleric", name: "The Healer's Calling", type: "side",
+      description: "Elira senses a divine spark within you. Prove your compassion and strength by gathering sacred ingredients and clearing corruption from the land.",
+      giver: "elira", turnIn: "elira",
+      objectives: [
+        { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 4 },
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal-herb", required: 5 },
+        { id: "essence", text: "Collect Shadow Essence", type: "collect", item: "shadow-essence", required: 3 }
+      ],
+      rewards: { xp: 180, gold: 120 },
+      onComplete: ["unlockedCleric"],
+      requireFlags: ["completedMQ5", "choseBuild"]
+    },
+    "sq-paladin": {
+      id: "sq-paladin", name: "The Paladin's Crucible", type: "side",
+      description: "Guildmaster Rowan speaks of an ancient order of holy warriors. To walk the Paladin's path, you must prove mastery of both blade and spirit.",
+      giver: "rowan", turnIn: "rowan",
+      objectives: [
+        { id: "brutes", text: "Defeat Goblin Brutes", type: "kill", target: "goblin-brute", required: 8 },
+        { id: "shamans", text: "Defeat Goblin Shamans", type: "kill", target: "goblin-shaman", required: 6 },
+        { id: "ore", text: "Collect Iron Ore", type: "collect", item: "iron-ore", required: 5 },
+        { id: "herbs", text: "Collect Moonpetal Herb", type: "collect", item: "moonpetal-herb", required: 4 }
+      ],
+      rewards: { xp: 250, gold: 200 },
+      onComplete: ["unlockedPaladin"],
+      requireFlags: ["completedMQ7", "choseBuild"]
     }
   };
 

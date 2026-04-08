@@ -526,12 +526,50 @@
         var build = btn.getAttribute('data-build');
         var pb = Player.get();
         if (pb) {
+          var classDef = Player.CLASS_DEFS[build];
+          // Remove old class skill if switching
+          if (pb.buildClass && Player.CLASS_DEFS[pb.buildClass]) {
+            var oldSkill = Player.CLASS_DEFS[pb.buildClass].skill;
+            if (oldSkill && pb.learnedSkills) {
+              var osi = pb.learnedSkills.indexOf(oldSkill);
+              if (osi > -1) pb.learnedSkills.splice(osi, 1);
+            }
+          }
           pb.buildClass = build;
           Player.setFlag('choseBuild');
+          // Grant class skill
+          if (classDef && classDef.skill) {
+            if (!pb.learnedSkills) pb.learnedSkills = [];
+            if (pb.learnedSkills.indexOf(classDef.skill) === -1) {
+              pb.learnedSkills.push(classDef.skill);
+            }
+          }
           Player.recalcStats();
           Audio.play('achievement');
-          UI.showMessage('You chose the ' + build.charAt(0).toUpperCase() + build.slice(1) + ' path!');
+          var cName = classDef ? classDef.name : build;
+          UI.showMessage('You chose the ' + cName + ' path! Learned skill: ' + (classDef && classDef.skill ? Skills.get(classDef.skill).name : '') + '.');
           World.navigate('elderbrook');
+        }
+        break;
+      case "skip-build":
+        World.navigate('elderbrook');
+        break;
+      case "train-unlock-class":
+        var trainClassId = btn.getAttribute('data-class');
+        var tDef = Player.CLASS_DEFS[trainClassId];
+        var tp = Player.get();
+        if (tDef && tp) {
+          var tCost = tDef.trainCost || 500;
+          if (tp.gold < tCost) {
+            UI.showMessage("Not enough gold. Training costs " + tCost + " gold.");
+          } else {
+            tp.gold -= tCost;
+            Player.setFlag(tDef.unlockFlag);
+            Audio.play('achievement');
+            UI.showMessage(tDef.name + ' class unlocked! Visit the Specialization screen to choose it.');
+            UI.updateHeader();
+            UI.renderTraining();
+          }
         }
         break;
       case "respec-build":
@@ -543,6 +581,10 @@
         } else {
           UI.renderTraining();
         }
+        break;
+      case "open-build-select":
+        UI.renderBuildSelect();
+        UI.showScreen('build-select');
         break;
 
       /* ── Crafting ── */

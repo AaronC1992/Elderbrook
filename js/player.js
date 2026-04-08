@@ -5,6 +5,20 @@ var Player = (function () {
   var EQUIP_SLOTS = ["weapon", "helmet", "chest", "legs", "gloves", "bracers"];
   var BASE_STATS = { hp: 50, maxHp: 50, mp: 20, maxMp: 20, attack: 2, defense: 1, dexterity: 1, intelligence: 1 };
 
+  /* ── Class Definitions ── */
+  var CLASS_DEFS = {
+    warrior:    { name: "Warrior",    base: null,       stats: { attack: 2, defense: 1 }, skill: "rallying-cry",      unlock: "level",    unlockFlag: null,               desc: "Masters of brute force and resilience." },
+    knight:     { name: "Knight",     base: "warrior",  stats: { attack: 1, defense: 3 }, skill: "guardians-shield",  unlock: "quest",    unlockFlag: "unlockedKnight",    desc: "Sworn protectors clad in heavy armor." },
+    berserker:  { name: "Berserker",  base: "warrior",  stats: { attack: 4, defense: -1 },skill: "frenzy",            unlock: "training", unlockFlag: "unlockedBerserker", desc: "Reckless fighters fueled by rage.", trainCost: 500 },
+    rogue:      { name: "Rogue",      base: null,       stats: { dexterity: 2, attack: 1 },skill: "smoke-bomb",       unlock: "level",    unlockFlag: null,               desc: "Swift and cunning, striking from the shadows." },
+    assassin:   { name: "Assassin",   base: "rogue",    stats: { dexterity: 2, attack: 2 },skill: "shadow-strike",    unlock: "quest",    unlockFlag: "unlockedAssassin",  desc: "Silent killers who exploit weakness." },
+    ranger:     { name: "Ranger",     base: "rogue",    stats: { dexterity: 3, intelligence: 1 },skill: "volley",     unlock: "training", unlockFlag: "unlockedRanger",    desc: "Expert marksmen at home in the wild.", trainCost: 500 },
+    mage:       { name: "Mage",       base: null,       stats: { intelligence: 2, maxMp: 10 },skill: "arcane-shield", unlock: "level",    unlockFlag: null,               desc: "Wielders of arcane power and knowledge." },
+    pyromancer: { name: "Pyromancer", base: "mage",     stats: { intelligence: 3, attack: 1 },skill: "inferno",       unlock: "quest",    unlockFlag: "unlockedPyromancer",desc: "Masters of destructive flame magic." },
+    cleric:     { name: "Cleric",     base: "mage",     stats: { intelligence: 1, defense: 1, maxHp: 15, maxMp: 10 },skill: "holy-light",unlock: "quest",    unlockFlag: "unlockedCleric",   desc: "Divine healers who mend body and spirit." },
+    paladin:    { name: "Paladin",    base: null,       stats: { attack: 2, defense: 2, intelligence: 1 },skill: "smite",unlock: "quest",    unlockFlag: "unlockedPaladin",  desc: "Holy warriors wielding faith and steel." }
+  };
+
   var state = null;
 
   function defaultState() {
@@ -147,13 +161,15 @@ var Player = (function () {
       state.intelligence += state.bonusStats.intelligence;
     }
 
-    // Build class bonus (from Lv3 specialization)
-    if (state.buildClass === "warrior") {
-      state.attack += 2; state.defense += 1;
-    } else if (state.buildClass === "rogue") {
-      state.dexterity += 2; state.attack += 1;
-    } else if (state.buildClass === "mage") {
-      state.intelligence += 2; state.maxMp += 10; state._transientMaxMp += 10;
+    // Build class bonus
+    if (state.buildClass && CLASS_DEFS[state.buildClass]) {
+      var cs = CLASS_DEFS[state.buildClass].stats;
+      if (cs.attack) state.attack += cs.attack;
+      if (cs.defense) state.defense += cs.defense;
+      if (cs.dexterity) state.dexterity += cs.dexterity;
+      if (cs.intelligence) state.intelligence += cs.intelligence;
+      if (cs.maxMp) { state.maxMp += cs.maxMp; state._transientMaxMp += cs.maxMp; }
+      if (cs.maxHp) { state.maxHp += cs.maxHp; state._transientMaxHp += cs.maxHp; }
     }
 
     // Set bonus detection
@@ -392,9 +408,8 @@ var Player = (function () {
 
   function getPortrait() {
     var prefix = state.gender === "female" ? "female" : "male";
-    var classMap = { warrior: "warrior", rogue: "ranger", mage: "mage" };
-    if (state.buildClass && classMap[state.buildClass]) {
-      return "assets/portraits/" + prefix + "_player_" + classMap[state.buildClass] + ".png";
+    if (state.buildClass && CLASS_DEFS[state.buildClass]) {
+      return "assets/portraits/" + prefix + "_player_" + state.buildClass + ".png";
     }
     return "assets/portraits/" + prefix + "-player.png";
   }
@@ -525,6 +540,12 @@ var Player = (function () {
     if (!state || !state.buildClass) return { success: false, message: "You haven't chosen a build class yet." };
     if (state.gold < RESPEC_COST) return { success: false, message: "Not enough gold. Respec costs " + RESPEC_COST + " gold." };
     state.gold -= RESPEC_COST;
+    // Remove class skill
+    var def = CLASS_DEFS[state.buildClass];
+    if (def && def.skill && state.learnedSkills) {
+      var idx = state.learnedSkills.indexOf(def.skill);
+      if (idx !== -1) state.learnedSkills.splice(idx, 1);
+    }
     state.buildClass = null;
     recalcStats();
     return { success: true, message: "Your specialization has been reset. Choose a new path." };
@@ -615,6 +636,7 @@ var Player = (function () {
   return {
     MAX_INVENTORY: MAX_INVENTORY,
     EQUIP_SLOTS: EQUIP_SLOTS,
+    CLASS_DEFS: CLASS_DEFS,
     create: create,
     get: get,
     set: set,
