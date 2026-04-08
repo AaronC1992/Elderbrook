@@ -136,6 +136,7 @@ var Player = (function () {
     var lvlBonus = state.level - 1;
     state.attack += Math.floor(lvlBonus * 0.5);
     state.defense += Math.floor(lvlBonus * 0.3);
+    state.intelligence += Math.floor(lvlBonus * 0.3);
 
     // Add allocated bonus stats
     if (state.bonusStats) {
@@ -462,7 +463,7 @@ var Player = (function () {
       var key = statId === 'strength' ? 'attack' : statId;
       level = state.bonusStats[key] || 0;
     }
-    return 25 * Math.pow(2, level);
+    return 30 * (level + 1);
   }
 
   function trainStat(statId) {

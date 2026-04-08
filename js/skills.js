@@ -21,8 +21,8 @@ var Skills = (function () {
     {
       id: "first-aid", name: "First Aid", type: "heal", tier: 1,
       cost: TIER_COSTS[1],
-      description: "Restore 12 HP.",
-      mpCost: 5, healAmount: 12
+      description: "Restore 12 HP. (2-turn cooldown)",
+      mpCost: 5, healAmount: 12, cooldown: 2
     },
     {
       id: "venom-slash", name: "Venom Slash", type: "attack", tier: 2,
@@ -45,8 +45,8 @@ var Skills = (function () {
     {
       id: "shield-bash", name: "Shield Bash", type: "attack", tier: 3,
       cost: TIER_COSTS[3],
-      description: "Deals 1.3x damage and has 30% chance to stun.",
-      mpCost: 6, damageMultiplier: 1.3, appliesEffect: { type: "stun", chance: 0.30, turns: 1 }
+      description: "Deals 1.3x damage and has 30% chance to stun. (2-turn cooldown)",
+      mpCost: 6, damageMultiplier: 1.3, cooldown: 2, appliesEffect: { type: "stun", chance: 0.30, turns: 1 }
     },
     {
       id: "meditate", name: "Meditate", type: "heal", tier: 3,

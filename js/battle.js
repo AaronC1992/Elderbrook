@@ -79,7 +79,8 @@ var Battle = (function () {
       var diff = Player.getDifficultyMultiplier();
       e.hp = Math.floor(e.hp * diff);
       e.attack = Math.ceil(e.attack * diff);
-      e.xp = Math.floor(e.xp * (2 - diff)); // easier = more xp
+      var xpScale = diff <= 0.75 ? 1.25 : diff >= 1.35 ? 0.85 : 1.0;
+      e.xp = Math.floor(e.xp * xpScale);
 
       // Elric patrol route: weaken enemies on patrolled roads
       if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
@@ -444,7 +445,7 @@ var Battle = (function () {
     }
 
     var def = target.defense + getBuffTotal(target.buffs, "defense");
-    var baseDmg = Math.max(1, atk - def + Math.floor(Math.random() * 3));
+    var baseDmg = Math.max(1, Math.floor(atk * atk / (atk + def)) + Math.floor(Math.random() * 3));
 
     // Accuracy check: base 75% + 2% per DEX, capped at 98%
     var hitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
@@ -616,7 +617,7 @@ var Battle = (function () {
       var totalDmg = 0;
 
       for (var h = 0; h < hits; h++) {
-        var dmg = Math.max(1, Math.floor((atk - def) * skill.damageMultiplier * (1 + profBonus)) + Math.floor(Math.random() * 3));
+        var dmg = Math.max(1, Math.floor(atk * atk / (atk + def) * skill.damageMultiplier * (1 + profBonus)) + Math.floor(Math.random() * 3));
         totalDmg += dmg;
       }
 
@@ -847,7 +848,7 @@ var Battle = (function () {
             } else {
               var atk = e.attack + getBuffTotal(e.buffs, "attack");
               var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
-              var dmg = Math.max(1, Math.floor((atk - def) * ab.multiplier) + Math.floor(Math.random() * 2));
+              var dmg = Math.max(1, Math.floor(atk * atk / (atk + def) * ab.multiplier) + Math.floor(Math.random() * 2));
               var evasion = getBuffTotal(playerBuffs, "evasion");
               if (evasion > 0 && Math.random() * 100 < evasion) {
                 result.dodged = true;
@@ -875,7 +876,7 @@ var Battle = (function () {
 
     var atk = e.attack + getBuffTotal(e.buffs, "attack");
     var def = Player.getTotalDefense() + getBuffTotal(playerBuffs, "defense");
-    var dmg = Math.max(1, atk - def + Math.floor(Math.random() * 2));
+    var dmg = Math.max(1, Math.floor(atk * atk / (atk + def)) + Math.floor(Math.random() * 2));
 
     var evasion = getBuffTotal(playerBuffs, "evasion");
     var dexDodge = Player.get().dexterity * 1.5;
