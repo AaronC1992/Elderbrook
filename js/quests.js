@@ -110,6 +110,7 @@ var Quests = (function () {
     p.activeQuests.splice(idx, 1);
     p.completedQuests.push(questId);
     delete p.questProgress[questId];
+    if (p.trackedQuest === questId) p.trackedQuest = null;
 
     // Set completion flags
     if (def.onComplete) {
@@ -213,7 +214,8 @@ var Quests = (function () {
       harlan: "Armor Shop",
       mira: "Potion Shop",
       toma: "Quest Board",
-      elric: "Watch Post"
+      elric: "Town (Guard Post)",
+      elira: "Edge of Town"
     };
     return {
       npcName: npc.name,

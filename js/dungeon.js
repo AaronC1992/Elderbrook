@@ -356,9 +356,10 @@ var Dungeon = (function () {
     if (room.loot) {
       for (var i = 0; i < room.loot.length; i++) {
         if (Math.random() < room.loot[i].chance) {
-          Player.addItem(room.loot[i].id);
-          var item = Items.get(room.loot[i].id);
-          found.push(item ? item.name : room.loot[i].id);
+          if (Player.addItem(room.loot[i].id)) {
+            var item = Items.get(room.loot[i].id);
+            found.push(item ? item.name : room.loot[i].id);
+          }
         }
       }
     }

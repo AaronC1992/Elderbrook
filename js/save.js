@@ -103,6 +103,7 @@ var Save = (function () {
     if (!data.learnedSkills) data.learnedSkills = [];
     if (data.activePet === undefined) data.activePet = null;
     if (!data.ownedPets) data.ownedPets = [];
+    if (data.trackedQuest === undefined) data.trackedQuest = null;
 
     // Migrate relationships
     if (!data.relationships) {

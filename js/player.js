@@ -186,6 +186,10 @@ var Player = (function () {
         if (partner.bonus.intelligence) state.intelligence += partner.bonus.intelligence;
       }
     }
+
+    // Clamp current HP/MP to new max
+    if (state.hp > state.maxHp) state.hp = state.maxHp;
+    if (state.mp > state.maxMp) state.mp = state.maxMp;
   }
 
   function getEquippedSetBonuses() {

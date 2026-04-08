@@ -1226,7 +1226,10 @@ var Battle = (function () {
     onVictoryCallback = null;
     if (cb && won) {
       cb();
-    } else if (!won && !isDungeonBattle) {
+    } else if (!won && isDungeonBattle) {
+      Dungeon.renderRoom();
+      UI.showScreen("dungeon");
+    } else if (!won) {
       World.navigate("elderbrook");
     }
   }
