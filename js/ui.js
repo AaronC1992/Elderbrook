@@ -91,30 +91,24 @@ var UI = (function () {
     var groupedBaseIds = [];
     var soloBaseIds = [];
 
-    function formatStats(stats) {
-      var parts = [];
-      var keys = Object.keys(stats || {});
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        var value = stats[key];
-        if (!value) continue;
-        var sign = value > 0 ? "+" : "";
-        parts.push(sign + value + " " + (statLabels[key] || key));
-      }
-      return parts.join(", ");
+    function getSkillName(skillId) {
+      var skillDef = skillId ? Skills.get(skillId) : null;
+      return skillDef ? skillDef.name : null;
     }
 
     function buildClassGroup(classId, subIds) {
       var def = defs[classId];
+      var skillName = getSkillName(def.skill);
       var html = '<div class="create-class-group">';
       html += '<div class="create-class-base">' + def.name + ' <span class="create-class-tag">Quest Line</span></div>';
       html += '<div class="create-class-desc">' + def.desc + '</div>';
-      html += '<div class="create-class-stats">' + formatStats(def.stats) + '</div>';
+      if (skillName) html += '<div class="create-class-stats">Special Skill: ' + skillName + '</div>';
       if (subIds.length) {
         html += '<div class="create-class-subs">';
         for (var i = 0; i < subIds.length; i++) {
           var subDef = defs[subIds[i]];
-          html += '<div class="create-class-sub">' + subDef.name + ' <span class="create-class-tag">Quest Line</span></div>';
+          var subSkillName = getSkillName(subDef.skill);
+          html += '<div class="create-class-sub">' + subDef.name + ' <span class="create-class-tag">Quest Line</span>' + (subSkillName ? ' - ' + subSkillName : '') + '</div>';
         }
         html += '</div>';
       }
