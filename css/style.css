@@ -1033,6 +1033,11 @@ button {
   object-position: bottom center;
   filter: drop-shadow(0 4px 24px rgba(0,0,0,0.7));
 }
+#dialogue-portrait-area .portrait-bust-crop {
+  max-height: 55%;
+  object-fit: cover;
+  object-position: top center;
+}
 .dialogue-box {
   position: absolute;
   bottom: 0;

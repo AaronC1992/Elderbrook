@@ -49,7 +49,7 @@ var Dialogue = (function () {
     var portraitArea = document.getElementById("dialogue-portrait-area");
     if (portraitArea) {
       if (node.portrait) {
-        portraitArea.innerHTML = '<img class="dialogue-portrait" src="' + node.portrait + '" alt="' + (node.speaker || '') + '" onerror="this.style.display=\'none\'">';
+        portraitArea.innerHTML = '<img class="dialogue-portrait portrait-bust-crop" src="' + node.portrait + '" alt="' + (node.speaker || '') + '" onerror="this.style.display=\'none\'">';
       } else {
         portraitArea.innerHTML = '';
       }
