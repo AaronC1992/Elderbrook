@@ -55,10 +55,13 @@ var Dialogue = (function () {
       }
     }
 
-    // Speaker name and text in the bottom box
+    // Speaker name tag (floating above the box)
     if (node.speaker) {
-      html += '<div class="dialogue-speaker">' + node.speaker + '</div>';
+      html += '<div class="dialogue-speaker-tag">' + node.speaker + '</div>';
     }
+
+    // Text body
+    html += '<div class="dialogue-text-body">';
     html += '<div class="dialogue-text" id="dialogue-typewriter"></div>';
 
     // Choices or continue button + skip
@@ -77,6 +80,7 @@ var Dialogue = (function () {
     }
     html += '<button class="btn btn-secondary dialogue-skip-btn" data-action="dialogue-skip">Skip</button>';
     html += '</div>';
+    html += '</div>'; /* close dialogue-text-body */
 
     container.innerHTML = html;
     startTypewriter(node.text);
