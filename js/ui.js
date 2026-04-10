@@ -1343,15 +1343,9 @@ var UI = (function () {
     var isShop = !petList;
     var npc = isShop ? Chapter1.getNPC("fauna") : Chapter1.getNPC("merchant");
 
-    var html = '<div class="petshop-header">';
-    html += '<img class="npc-portrait' + (isShop ? ' is-interactive' : '') + '" src="' + (npc ? npc.portrait : '') + '" alt="' + (npc ? npc.name : '') + '"' + (isShop ? ' data-action="petshop-scene-interact" title="Talk to ' + (npc ? npc.name : 'Fauna') + '"' : '') + ' onerror="this.style.display=\'none\'">';
-    html += '<div><h2>' + (isShop ? "Fauna\'s Pet Emporium" : "Merchant Pets") + '</h2>';
-    html += '<p class="npc-dialogue">' + (isShop ? '"Every creature deserves a good home. Click on Fauna if you want to talk."' : '"I\'ve picked up some rare companions on my travels..."') + '</p>';
-    if (isShop) {
-      html += '<button class="btn btn-small" data-action="petshop-scene-interact">Talk to Fauna</button>';
-    }
-    html += '</div>';
-    html += '</div>';
+    var html = '';
+
+    html += '<h2 style="color:var(--accent);margin-bottom:0.6rem;">' + (isShop ? "Fauna\'s Pet Emporium" : "Merchant Pets") + '</h2>';
 
     // Active pet display
     if (p.activePet) {

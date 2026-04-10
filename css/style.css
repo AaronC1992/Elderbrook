@@ -940,13 +940,83 @@ button {
 }
 
 /* ── Shop ── */
-.shop-panel { max-width: 100%; }
+.shop-panel { max-width: 100%; position: relative; z-index: 5; }
 .shop-header {
   display: flex;
   align-items: center;
   gap: 0.8rem;
   margin-bottom: 0.6rem;
 }
+
+/* Full-body NPC in shop scene */
+.shop-npc-area {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+.shop-npc-fullbody {
+  max-height: 90%;
+  width: auto;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
+  pointer-events: auto;
+}
+.shop-npc-fullbody.is-interactive {
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+.shop-npc-fullbody.is-interactive:hover {
+  filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(212, 164, 56, 0.5));
+  transform: scale(1.02);
+}
+
+/* Scene mode: hide shop panel content, show only NPC + name + back */
+#screen-shop.shop-scene-mode .shop-panel {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+#screen-shop.shop-scene-mode .shop-header {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+}
+#screen-shop.shop-scene-mode .shop-header h2 {
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.35);
+  border-radius: 10px;
+  padding: 0.5rem 1.2rem;
+  color: var(--accent);
+  font-size: 1.1rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+#screen-shop.shop-scene-mode .shop-grid { display: none; }
+#screen-shop.shop-scene-mode .btn-back {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.35);
+  border-radius: 10px;
+  padding: 0.45rem 1.2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Inventory mode: hide NPC area */
+#screen-shop:not(.shop-scene-mode) .shop-npc-area { display: none; }
+
+/* Legacy circle portrait (NPC menu, pet shop header, etc.) */
 .npc-portrait {
   width: 70px;
   height: 70px;
@@ -967,30 +1037,6 @@ button {
 }
 .npc-dialogue { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
 .shop-grid { display: flex; flex-direction: column; gap: 0.4rem; }
-.shop-entry-card {
-  margin-top: 0.8rem;
-  min-height: 180px;
-  display: flex;
-  align-items: flex-end;
-}
-.shop-entry-copy {
-  max-width: 380px;
-  background: rgba(14, 17, 23, 0.84);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.9rem 1rem;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
-}
-.shop-entry-copy h3 {
-  margin-bottom: 0.45rem;
-  color: var(--accent);
-}
-.shop-entry-copy p {
-  margin: 0;
-}
-.shop-entry-copy p + p {
-  margin-top: 0.55rem;
-}
 .shop-item {
   display: flex;
   align-items: center;

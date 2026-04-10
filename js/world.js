@@ -71,6 +71,12 @@ var World = (function () {
       screen.style.backgroundSize = "cover";
       screen.style.backgroundPosition = "center";
     }
+    // Show full-body NPC
+    var npcArea = document.getElementById("petshop-npc-area");
+    var fauna = Chapter1.getNPC("fauna");
+    if (npcArea && fauna && fauna.portrait) {
+      npcArea.innerHTML = '<img class="shop-npc-fullbody is-interactive" src="' + fauna.portrait + '" alt="' + fauna.name + '" data-action="petshop-scene-interact" title="Talk to ' + fauna.name + '" onerror="this.style.display=\'none\'">';
+    }
     UI.renderPetShop();
     UI.showScreen("petshop");
   }

@@ -64,29 +64,26 @@ var Shops = (function () {
     }
 
     var npc = Chapter1.getNPC(shop.npc);
-    var npcPortrait = document.getElementById("shop-npc-portrait");
-    var npcName = document.getElementById("shop-npc-name");
+    var npcArea = document.getElementById("shop-npc-area");
     var shopTitle = document.getElementById("shop-title");
     var backBtn = shopScreen ? shopScreen.querySelector(".btn-back") : null;
 
     if (shopTitle) shopTitle.textContent = shop.name;
-    if (npcPortrait) {
-      npcPortrait.src = npc ? npc.portrait : "";
-      npcPortrait.alt = npc ? npc.name : "Shopkeep";
-      npcPortrait.onerror = function () { this.style.display = "none"; };
-      npcPortrait.style.display = "";
-      npcPortrait.classList.toggle("is-interactive", !!interactivePortrait);
-      if (interactivePortrait) {
-        npcPortrait.setAttribute("data-action", "shop-scene-interact");
-        npcPortrait.setAttribute("data-shop", shopId);
-        npcPortrait.setAttribute("title", "Talk to " + (npc ? npc.name : "the shopkeeper"));
+
+    // Full-body NPC portrait in the scene
+    if (npcArea) {
+      if (npc && npc.portrait) {
+        var img = '<img class="shop-npc-fullbody' + (interactivePortrait ? ' is-interactive' : '') + '" src="' + npc.portrait + '" alt="' + npc.name + '" onerror="this.style.display=\'none\'"';
+        if (interactivePortrait) {
+          img += ' data-action="shop-scene-interact" data-shop="' + shopId + '" title="Talk to ' + npc.name + '"';
+        }
+        img += '>';
+        npcArea.innerHTML = img;
       } else {
-        npcPortrait.removeAttribute("data-action");
-        npcPortrait.removeAttribute("data-shop");
-        npcPortrait.removeAttribute("title");
+        npcArea.innerHTML = '';
       }
     }
-    if (npcName) npcName.textContent = npc ? npc.name : "";
+
     if (backBtn) {
       backBtn.setAttribute("data-action", interactivePortrait ? "go-town" : "npc-back");
       backBtn.textContent = interactivePortrait ? "< Town" : "Back";
@@ -97,25 +94,22 @@ var Shops = (function () {
     var shop = shops[shopId];
     if (!shop) return;
 
+    var shopScreen = document.getElementById("screen-shop");
+    if (shopScreen) shopScreen.classList.add("shop-scene-mode");
+
     applyShopScreenChrome(shopId, true);
 
     var container = document.getElementById("shop-inventory");
     if (!container) return;
-
-    var npc = Chapter1.getNPC(shop.npc);
-    var html = '<div class="shop-entry-card">';
-    html += '<div class="shop-entry-copy">';
-    html += '<h3>' + shop.name + '</h3>';
-    html += '<p>Take a look around, then click ' + (npc ? npc.name : 'the shopkeeper') + ' when you want to talk.</p>';
-    html += '<p class="flavor">Use the back arrow to head straight to town.</p>';
-    html += '</div>';
-    html += '</div>';
-    container.innerHTML = html;
+    container.innerHTML = '';
   }
 
   function renderShop(shopId) {
     var shop = shops[shopId];
     if (!shop) return;
+
+    var shopScreen = document.getElementById("screen-shop");
+    if (shopScreen) shopScreen.classList.remove("shop-scene-mode");
 
     applyShopScreenChrome(shopId, false);
 
