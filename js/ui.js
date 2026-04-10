@@ -570,12 +570,19 @@ var UI = (function () {
     }
 
     // Persistent town NPCs — portraits in the cobblestone square
-    html += '<button class="town-npc" style="top:48%;left:44%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
+    // Elric leaves town when on escort missions
+    var elricAway = (Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) ||
+                    (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
+    if (!elricAway) {
+      html += '<button class="town-npc" style="top:48%;left:44%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
+    }
     html += '<button class="town-npc town-npc-event" style="top:51%;left:61%" data-action="go-liora"><img class="town-npc-portrait" src="assets/portraits/liora.png" alt="Liora Bloom" onerror="this.style.display=\'none\'"><span class="town-npc-name">Liora Bloom</span></button>';
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
       html += '<button class="town-npc town-npc-cat" style="top:22%;right:18%" data-action="find-biscuit"><img class="town-npc-portrait" src="assets/portraits/biscuit-cat.png" alt="" onerror="this.style.display=\'none\'"><span class="town-npc-name">???</span></button>';
+      // Lost child stays in town while you search (reactive dialogue)
+      html += '<button class="town-npc town-npc-event" style="top:68%;left:25%" data-action="check-on-child"><img class="town-npc-portrait" src="assets/portraits/lost-child.png" alt="Lost Child" onerror="this.style.display=\'none\'"><span class="town-npc-name">Lost Child</span></button>';
     }
 
     // Lost child returns when you've found Biscuit
@@ -605,13 +612,18 @@ var UI = (function () {
     html += '<button class="town-poi" style="top:28%;left:8%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
 
     // Center — peaked building behind the lamp post
-    html += '<button class="town-poi" style="top:8%;left:42%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + (festival ? 'Festive drinks inside' : 'Guildmaster Rowan') + '</span></button>';
+    var guildSub = 'Guildmaster Rowan';
+    if (festival) guildSub = 'Festive drinks inside';
+    else if (Player.hasFlag('defeatedGrisk')) guildSub = 'Rowan has news';
+    else if (Player.hasFlag('acceptedMQ7')) guildSub = 'Rowan is anxious';
+    else if (Player.hasFlag('unlockedGoblinCave')) guildSub = 'Rowan awaits your report';
+    html += '<button class="town-poi" style="top:8%;left:42%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + guildSub + '</span></button>';
 
     // Right side — aligned to right-side buildings in the art
     html += '<button class="town-poi" style="top:3%;right:2%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
     html += '<button class="town-poi" style="top:18%;right:18%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
     html += '<button class="town-poi" style="top:28%;right:0%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
-    html += '<button class="town-poi" style="top:44%;left:39%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">Captain Elric</span></button>';
+    html += '<button class="town-poi" style="top:44%;left:39%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">' + (elricAway ? 'Elric is in the field' : (Player.hasFlag('defeatedGrisk') ? 'Captain Elric — At ease' : 'Captain Elric')) + '</span></button>';
     html += '<button class="town-poi" style="top:52%;right:19%" data-action="go-liora"><span class="poi-name">Flower Stall</span><span class="poi-sub">Liora Bloom</span></button>';
 
     // Conditional POIs

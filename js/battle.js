@@ -1,4 +1,4 @@
-/* battle.js - Turn-based combat system for Chapter 1 (multi-enemy support) */
+/* battle.js - Turn-based combat system for Chapter 1 (multi-enemy support + companion) */
 var Battle = (function () {
 
   var enemies = [];       // array of enemy objects, each gets .buffs, .effects, .maxHp
@@ -9,12 +9,14 @@ var Battle = (function () {
   var isBossFight = false;
   var isDungeonBattle = false;
   var onVictoryCallback = null;
+  var onCompanionDeathCallback = null;
   var turnCount = 0;
   var bossPhaseIndex = 0;
   var encounterMod = null;
   var animating = false;
   var lastVictoryData = null;
   var skillCooldowns = {};
+  var companion = null;   // { name, hp, maxHp, attack, defense, portrait, abilities, buffs, effects }
 
   var battleBackgrounds = {
     "forest-road": "assets/backgrounds/battle-forest-road.png",
@@ -293,6 +295,173 @@ var Battle = (function () {
     return true;
   }
 
+  /* ── Companion Battle Functions ── */
+
+  function setCompanion(companionDef, onDeathCb) {
+    if (!companionDef) return;
+    companion = {
+      name: companionDef.name,
+      hp: companionDef.hp,
+      maxHp: companionDef.hp,
+      attack: companionDef.attack,
+      defense: companionDef.defense,
+      portrait: companionDef.portrait || "",
+      abilities: companionDef.abilities || [],
+      buffs: [],
+      effects: []
+    };
+    onCompanionDeathCallback = onDeathCb || null;
+  }
+
+  function startWithCompanion(areaId, companionDef, callback, onCompanionDeath) {
+    var result = start(areaId, callback);
+    if (result) setCompanion(companionDef, onCompanionDeath);
+    renderBattle();
+    if (companion) addLog(companion.name + " fights alongside you!");
+    return result;
+  }
+
+  function startBossWithCompanion(enemyId, companionDef, callback, onCompanionDeath) {
+    var result = startBoss(enemyId, callback);
+    if (result) setCompanion(companionDef, onCompanionDeath);
+    renderBattle();
+    if (companion) addLog(companion.name + " stands beside you for this fight!");
+    return result;
+  }
+
+  function startDungeonEnemyWithCompanion(enemyId, companionDef, callback, onCompanionDeath) {
+    var result = startDungeonEnemy(enemyId, callback);
+    if (result) setCompanion(companionDef, onCompanionDeath);
+    renderBattle();
+    if (companion) addLog(companion.name + " fights alongside you!");
+    return result;
+  }
+
+  function startExplorationWithCompanion(areaId, enemyId, companionDef, callback, onCompanionDeath, isAmbush) {
+    startExploration(areaId, enemyId, callback, isAmbush);
+    setCompanion(companionDef, onCompanionDeath);
+    renderBattle();
+    if (companion) addLog(companion.name + " fights alongside you!");
+  }
+
+  function companionTurn(callback) {
+    if (!companion || companion.hp <= 0) { if (callback) callback(); return; }
+
+    // Tick companion effects (poison, burn, bleed)
+    tickEffects(companion.effects, companion, false, 0);
+    if (companion.hp <= 0) {
+      handleCompanionDeath();
+      if (callback) callback();
+      return;
+    }
+
+    // Stun check
+    var stunIdx = findEffect(companion.effects, "stun");
+    if (stunIdx !== -1) {
+      addLog(companion.name + " is stunned and can't act!");
+      tickBuffs(companion.buffs);
+      if (callback) callback();
+      return;
+    }
+
+    // Pick target: lowest HP living enemy
+    var bestIdx = -1;
+    var bestHp = Infinity;
+    for (var i = 0; i < enemies.length; i++) {
+      if (enemies[i].hp > 0 && enemies[i].hp < bestHp) {
+        bestHp = enemies[i].hp;
+        bestIdx = i;
+      }
+    }
+    if (bestIdx === -1) { if (callback) callback(); return; }
+
+    var target = enemies[bestIdx];
+    var atk = companion.attack + getBuffTotal(companion.buffs, "attack");
+    var def = target.defense + getBuffTotal(target.buffs, "defense");
+    var baseDmg = Math.max(1, Math.floor(atk * atk / (atk + def)) + Math.floor(Math.random() * 3));
+
+    // Try ability first (30% chance per ability)
+    var usedAbility = false;
+    if (companion.abilities && companion.abilities.length > 0) {
+      for (var a = 0; a < companion.abilities.length; a++) {
+        var ab = companion.abilities[a];
+        if (Math.random() < ab.chance) {
+          usedAbility = true;
+          var abilityDmg = Math.max(1, Math.floor(baseDmg * (ab.multiplier || 1)));
+          animateCombat("player", "melee", function () {
+            target.hp -= abilityDmg;
+            addLog(companion.name + " uses " + ab.name + " on " + target.name + " for " + abilityDmg + " damage!");
+            Audio.play("swordHit");
+            if (ab.effect && target.hp > 0) {
+              target.effects.push({ type: ab.effect.type, damage: ab.effect.damage || 0, turns: ab.effect.turns });
+              addLog(target.name + " is " + ab.effect.type + "ed!");
+            }
+            if (target.hp <= 0) handleEnemyDeath(bestIdx);
+            showFCT("battle-enemy-" + bestIdx, "-" + abilityDmg, "damage");
+            tickBuffs(companion.buffs);
+            renderBattle();
+            if (callback) callback();
+          });
+          break;
+        }
+      }
+    }
+
+    if (!usedAbility) {
+      // Normal attack with 85% hit chance
+      if (Math.random() > 0.85) {
+        addLog(companion.name + "'s attack misses!");
+        Audio.play("miss");
+        showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
+        tickBuffs(companion.buffs);
+        if (callback) callback();
+      } else {
+        var isCrit = Math.random() < 0.08;
+        var dmg = isCrit ? Math.floor(baseDmg * 1.5) : baseDmg;
+        animateCombat("player", "melee", function () {
+          target.hp -= dmg;
+          if (isCrit) {
+            addLog(companion.name + " lands a critical hit on " + target.name + " for " + dmg + " damage!");
+          } else {
+            addLog(companion.name + " strikes " + target.name + " for " + dmg + " damage.");
+          }
+          Audio.play("swordHit");
+          if (target.hp <= 0) handleEnemyDeath(bestIdx);
+          showFCT("battle-enemy-" + bestIdx, "-" + dmg, isCrit ? "crit" : "damage");
+          tickBuffs(companion.buffs);
+          renderBattle();
+          if (callback) callback();
+        });
+      }
+    }
+  }
+
+  function companionTakeDamage(damage) {
+    if (!companion) return;
+    companion.hp -= damage;
+    if (companion.hp <= 0) {
+      companion.hp = 0;
+      handleCompanionDeath();
+    }
+  }
+
+  function handleCompanionDeath() {
+    if (!companion) return;
+    addLog(companion.name + " has fallen!");
+    Audio.play("defeat");
+    showFCT("battle-companion", companion.name + " FALLEN", "damage");
+    if (onCompanionDeathCallback) {
+      // Quest failure — end battle
+      setTimeout(function () {
+        onCompanionDeathCallback();
+        enemies = [];
+        companion = null;
+        onVictoryCallback = null;
+        onCompanionDeathCallback = null;
+      }, 800);
+    }
+  }
+
   function resetState() {
     battleLog = [];
     playerBuffs = [];
@@ -301,6 +470,8 @@ var Battle = (function () {
     bossPhaseIndex = 0;
     animating = false;
     skillCooldowns = {};
+    companion = null;
+    onCompanionDeathCallback = null;
   }
 
   /* ── Target Selection Helpers ── */
@@ -826,10 +997,22 @@ var Battle = (function () {
     }
   }
 
-  /* ── Enemy Turn (multi-enemy sequential) ── */
+  /* ── Enemy Turn (multi-enemy sequential, companion acts first) ── */
 
   function enemyTurn() {
     turnCount++;
+    // Companion acts before enemies
+    if (companion && companion.hp > 0 && !allEnemiesDead()) {
+      companionTurn(function () {
+        if (allEnemiesDead()) { victory(); return; }
+        runEnemyPhase();
+      });
+    } else {
+      runEnemyPhase();
+    }
+  }
+
+  function runEnemyPhase() {
     var turnQueue = [];
     for (var i = 0; i < enemies.length; i++) {
       if (enemies[i].hp > 0) turnQueue.push(i);
@@ -991,35 +1174,58 @@ var Battle = (function () {
   }
 
   function applyEnemyAction(action, e) {
+    // 35% chance enemy targets companion instead of player (if alive)
+    var targetCompanion = companion && companion.hp > 0 && Math.random() < 0.35;
+    var targetLabel = targetCompanion ? companion.name : "you";
+    var fctTarget = targetCompanion ? "battle-companion" : "battle-player";
+
     if (action.type === "miss") {
       addLog(e.name + "'s attack misses!");
       Audio.play("miss");
-      showFCT("battle-player", "MISS", "miss");
+      showFCT(fctTarget, "MISS", "miss");
     } else if (action.type === "dodge") {
-      addLog("You dodge " + e.name + "'s attack!");
+      if (targetCompanion) {
+        addLog(companion.name + " dodges " + e.name + "'s attack!");
+      } else {
+        addLog("You dodge " + e.name + "'s attack!");
+      }
       Audio.play("miss");
-      showFCT("battle-player", "DODGE", "dodge");
+      showFCT(fctTarget, "DODGE", "dodge");
     } else if (action.type === "hit") {
-      Player.takeDamage(action.damage);
-      addLog(e.name + " attacks for " + action.damage + " damage.");
+      if (targetCompanion) {
+        companionTakeDamage(action.damage);
+        addLog(e.name + " attacks " + companion.name + " for " + action.damage + " damage.");
+      } else {
+        Player.takeDamage(action.damage);
+        addLog(e.name + " attacks for " + action.damage + " damage.");
+      }
       Audio.play("enemyHit");
-      showFCT("battle-player", "-" + action.damage, "damage");
+      showFCT(fctTarget, "-" + action.damage, "damage");
     } else if (action.type === "ability" || action.type === "buff-only" || action.type === "effect-only") {
       var ab = action.ability;
       if (ab.multiplier) {
         if (action.missed) {
           addLog(e.name + "'s " + ab.name + " misses!");
           Audio.play("miss");
-          showFCT("battle-player", "MISS", "miss");
+          showFCT(fctTarget, "MISS", "miss");
         } else if (action.dodged) {
-          addLog("You dodge " + e.name + "'s " + ab.name + "!");
+          if (targetCompanion) {
+            addLog(companion.name + " dodges " + e.name + "'s " + ab.name + "!");
+          } else {
+            addLog("You dodge " + e.name + "'s " + ab.name + "!");
+          }
           Audio.play("miss");
-          showFCT("battle-player", "DODGE", "dodge");
+          showFCT(fctTarget, "DODGE", "dodge");
         } else if (action.damage > 0) {
-          Player.takeDamage(action.damage);
-          addLog(e.name + " uses " + ab.name + " for " + action.damage + " damage!");
+          if (targetCompanion) {
+            companionTakeDamage(action.damage);
+            addLog(e.name + " uses " + ab.name + " on " + companion.name + " for " + action.damage + " damage!");
+          } else {
+            Player.takeDamage(action.damage);
+            addLog(e.name + " uses " + ab.name + " for " + action.damage + " damage!");
+          }
           Audio.play("enemyHit");
-          showFCT("battle-player", "-" + action.damage, "damage");
+          showFCT(fctTarget, "-" + action.damage, "damage");
         }
       }
       if (action.buff) {
@@ -1027,7 +1233,13 @@ var Battle = (function () {
         addLog(e.name + " uses " + ab.name + "!");
       }
       if (action.effect) {
-        applyEnemyEffect(action.effect, e.name);
+        if (targetCompanion && companion && companion.hp > 0) {
+          companion.effects.push({ type: action.effect.type, damage: action.effect.damage || 0, turns: action.effect.turns });
+          addLog(e.name + " afflicts " + companion.name + " with " + action.effect.type + "!");
+          showFCT("battle-companion", action.effect.type.toUpperCase(), "status");
+        } else {
+          applyEnemyEffect(action.effect, e.name);
+        }
       }
     }
   }
@@ -1254,7 +1466,10 @@ var Battle = (function () {
     // Battle scene: player bottom-left, enemies top-right
     html += '<div class="battle-scene">';
 
-    // Player (left side)
+    // Player side (left)
+    html += '<div class="battle-allies-group">';
+
+    // Player
     var playerStatusClasses = '';
     for (var psi = 0; psi < playerEffects.length; psi++) {
       playerStatusClasses += ' status-visual-' + playerEffects[psi].type;
@@ -1283,6 +1498,30 @@ var Battle = (function () {
       html += '</div>';
     }
     html += '</div></div>';
+
+    // Companion (left side, below player)
+    if (companion && companion.hp > 0) {
+      var compStatusClasses = '';
+      for (var csi = 0; csi < companion.effects.length; csi++) {
+        compStatusClasses += ' status-visual-' + companion.effects[csi].type;
+      }
+      html += '<div class="battle-companion' + compStatusClasses + '" id="battle-companion">';
+      html += '<img class="battle-portrait" src="' + (companion.portrait || '') + '" alt="' + companion.name + '" onerror="this.style.display=\'none\'">';
+      html += '<div class="battle-companion-info">';
+      html += '<div class="battle-name">' + companion.name + ' (Ally)</div>';
+      html += '<div class="battle-hp-bar"><div class="hp-fill companion-hp" style="width:' + (companion.hp / companion.maxHp * 100) + '%"></div></div>';
+      html += '<div class="battle-hp-text">HP: ' + companion.hp + '/' + companion.maxHp + '</div>';
+      if (companion.effects.length > 0) {
+        html += '<div class="battle-effects">';
+        for (var ce = 0; ce < companion.effects.length; ce++) {
+          html += '<span class="effect-tag effect-' + companion.effects[ce].type + '">' + companion.effects[ce].type + ' (' + companion.effects[ce].turns + ')</span>';
+        }
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
+
+    html += '</div>'; // end battle-allies-group
 
     // Enemies (right side)
     html += '<div class="battle-enemies-group">';
@@ -1506,6 +1745,10 @@ var Battle = (function () {
     startBoss: startBoss,
     startDungeonEnemy: startDungeonEnemy,
     startExploration: startExploration,
+    startWithCompanion: startWithCompanion,
+    startBossWithCompanion: startBossWithCompanion,
+    startDungeonEnemyWithCompanion: startDungeonEnemyWithCompanion,
+    startExplorationWithCompanion: startExplorationWithCompanion,
     playerAttack: playerAttack,
     playerUseSkill: playerUseSkill,
     playerUsePotion: playerUsePotion,
@@ -1514,6 +1757,7 @@ var Battle = (function () {
     reviveAtTown: reviveAtTown,
     renderBattle: renderBattle,
     getEnemy: getEnemy,
-    selectTarget: selectTarget
+    selectTarget: selectTarget,
+    getCompanion: function() { return companion; }
   };
 })();

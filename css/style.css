@@ -1141,6 +1141,12 @@ button {
   gap: 1rem;
   min-height: 200px;
 }
+.battle-allies-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
 .battle-combatant {
   display: flex;
   flex-direction: column;
@@ -1199,6 +1205,26 @@ button {
 }
 .battle-player .battle-portrait {
   width: 130px;
+}
+.battle-companion {
+  text-align: center;
+  margin-top: 0.3rem;
+}
+.battle-companion .battle-portrait {
+  width: 100px;
+  opacity: 0.95;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+}
+.battle-companion-info {
+  font-size: 0.8rem;
+}
+.battle-companion .battle-name {
+  color: var(--heal);
+  font-size: 0.78rem;
+}
+.companion-hp {
+  background: var(--heal);
 }
 .battle-hp-bar {
   width: 120px;
@@ -1277,7 +1303,7 @@ button {
 .loot-list { margin: 0.5rem 0; font-size: 0.85rem; }
 
 /* ── Combat Animations ── */
-.battle-enemy, .battle-player {
+.battle-enemy, .battle-player, .battle-companion {
   position: relative;
   transition: transform 0.05s ease;
 }

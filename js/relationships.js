@@ -42,7 +42,10 @@ var Relationships = (function () {
       contextualLines: {
         chapterEndPrepared: "You told Rowan we all need to be ready. That's wise. I've been stockpiling extra supplies because of it.",
         completedMQ3: "I heard you cleared that goblin camp. Please tell me you didn't get poisoned. Let me check your eyes.",
+        elricJoinedMQ4: "Elric went with you? He hasn't left the guard post in months. You must have made quite an impression on him.",
+        completedMQ4: "The trail sounds horrible. Please come see me if you have any wounds that need treating. Both of you.",
         completedMQ5: "The things you've told me about the deeper caves... I need to study those fungal samples.",
+        completedMQ7: "You and Elric took down the goblin chief together? The whole town is talking about it. Even Harlan cracked a smile.",
         completedMQ8: "After everything that's happened, I want you to know: Elderbrook is safer because of you."
       },
       giftReactions: {
@@ -141,7 +144,10 @@ var Relationships = (function () {
       ],
       contextualLines: {
         completedMQ3: "Everyone's talking about what you did at the goblin camp. I may have bragged that I know you personally.",
+        elricJoinedMQ4: "The quest board's been buzzing since you and Captain Elric headed out together. People feel braver just hearing about it.",
+        completedMQ4: "I had to add a whole new section to the board for Goblin Trail reports. Most of them are about you.",
         completedMQ5: "I pinned your name on the board's 'Top Adventurers' list. Don't worry, I made it official-looking.",
+        defeatedGrisk: "I've updated the records three times today. 'Goblin Chief Grisk: DEFEATED.' Feels really good to write.",
         completedMQ8: "I've started a special section on the board just for your accomplishments. It's getting crowded."
       },
       giftReactions: {
@@ -340,7 +346,9 @@ var Relationships = (function () {
       contextualLines: {
         chapterEndBrave: "I heard what you said to Rowan. 'I'll face it.' That's the kind of talk I respect. Warrior spirit.",
         completedMQ3: "Heard you smashed through some goblins. How'd the gear hold up? Be honest.",
+        elricJoinedMQ4: "Elric's out there with you? Good. That man's been cooped up at the guard post too long. Keep my blades sharp and him alive.",
         completedMQ5: "If you're going deeper into those caves, you'll need better steel. Come talk to me before you go.",
+        defeatedGrisk: "You brought down a goblin chief. With Elric at your side, no less. That's the kind of story they'll tell in this shop for years.",
         completedMQ8: "You've earned the right to commission something special from me. Say the word."
       },
       giftReactions: {
@@ -539,7 +547,11 @@ var Relationships = (function () {
       contextualLines: {
         choiceTeamwork: "Rowan told me you suggested involving the guard when the goblins started organizing. That means a lot. Most adventurers prefer to work alone.",
         completedMQ3: "Your report on the goblin camp was thorough. My guards could learn something from you.",
+        elricJoinedMQ4: "Good to be back. Fighting alongside you out there was... different. It reminded me why I became a guard in the first place.",
+        completedMQ4: "That trail was worse than I expected. But we made it through together. That counts for something.",
         completedMQ5: "I've increased patrols based on what you've found. Whatever is down there, we need to be ready.",
+        completedMQ7: "We did it. Grisk is finished. I won't forget standing beside you when the blades came out. Not many people I'd trust to watch my back like that.",
+        defeatedGrisk: "The men can breathe again. You gave them that. You gave me that.",
         completedMQ8: "You've done what the entire guard couldn't. I owe you more than I can say."
       },
       giftReactions: {
@@ -722,7 +734,10 @@ var Relationships = (function () {
       ],
       contextualLines: {
         completedMQ3: "The whole square was buzzing after the goblin camp raid. People stood a little taller today because of you.",
+        elricJoinedMQ4: "I saw Captain Elric heading out of town in full armor. He never does that. Be careful out there, both of you.",
+        completedMQ4: "You came back in one piece. I was worried. The flowers seemed to droop all morning. Maybe they were worried too.",
         completedMQ5: "You have that faraway look again. Whatever you found beyond town, don't carry it alone.",
+        defeatedGrisk: "The town feels different today. Lighter. Like something heavy has been lifted. I think that's because of you.",
         completedMQ8: "Elderbrook finally sounds like itself again. Laughter, haggling, children underfoot. You gave that back to us."
       },
       giftReactions: {

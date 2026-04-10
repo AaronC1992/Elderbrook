@@ -649,6 +649,15 @@ var World = (function () {
   }
 
   function visitElric() {
+    // Elric is away on escort missions
+    var elricAway = (Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) ||
+                    (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
+    if (elricAway) {
+      var awayMsg = Player.hasFlag("acceptedMQ7") ? "Captain Elric has gone ahead to the Goblin Cave. He's waiting for you at the boss chamber." : "Captain Elric is patrolling the Goblin Trail. Meet him there.";
+      UI.showMessage(awayMsg);
+      return;
+    }
+
     // Set guard post background for dialogue
     UI.setDialogueBackground("assets/backgrounds/watch-post.png");
 
@@ -865,6 +874,26 @@ var World = (function () {
   }
 
   /* ── Biscuit the Cat Quest ── */
+  function checkOnChild() {
+    var lines = [
+      "Have you found Biscuit yet? She's orange with a white spot on her nose... please find her!",
+      "I keep looking but I can't see her anywhere... did you check near the gate?",
+      "You're still looking, right? Please don't give up on her!",
+      "Biscuit likes warm places and hiding in small spaces. Maybe she's near the gate?"
+    ];
+    var line = lines[Math.floor(Math.random() * lines.length)];
+    var dialogue = {
+      id: "check-on-child",
+      nodes: [
+        { speaker: "Lost Child", portrait: "assets/portraits/lost-child.png", text: line, end: true }
+      ]
+    };
+    Dialogue.startDirect(dialogue, function () {
+      UI.showScreen("town");
+      UI.renderTown();
+    });
+  }
+
   function findBiscuit() {
     var dialogue = {
       id: "find-biscuit",
@@ -976,6 +1005,7 @@ var World = (function () {
     visitLiora: visitLiora,
     visitElira: visitElira,
     interactEvent: interactEvent,
+    checkOnChild: checkOnChild,
     findBiscuit: findBiscuit,
     returnBiscuit: returnBiscuit,
     visitPetShop: visitPetShop,

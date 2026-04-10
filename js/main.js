@@ -164,6 +164,9 @@
       case "interact-event":
         World.interactEvent(btn.getAttribute("data-event"));
         break;
+      case "check-on-child":
+        World.checkOnChild();
+        break;
       case "find-biscuit":
         World.findBiscuit();
         break;

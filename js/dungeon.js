@@ -305,11 +305,54 @@ var Dungeon = (function () {
     var room = currentDungeon.rooms[currentRoomIndex];
     if (!room || room.type !== "boss" || clearedRooms[room.id]) return;
 
-    Battle.startBoss(room.boss, function () {
+    var bossCallback = function () {
       clearedRooms[room.id] = true;
       UI.showScreen("dungeon");
       renderRoom();
-    });
+    };
+
+    // Elric joins for the Grisk boss fight during MQ7
+    if (room.boss === "goblin-chief-grisk" && Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7")) {
+      if (!Player.hasFlag("elricJoinedMQ7")) {
+        // Show join dialogue first, then start boss fight with companion
+        Dialogue.start("elric-mq7-join", function() {
+          var elricDef = Chapter1.getCompanion("elric");
+          if (elricDef) {
+            // Buff Elric slightly for boss fight
+            elricDef.hp = 60;
+            elricDef.maxHp = 60;
+            elricDef.attack = 10;
+            elricDef.defense = 6;
+            Battle.startBossWithCompanion(room.boss, elricDef, bossCallback, function() {
+              Dialogue.start("elric-companion-died", function() {
+                UI.showScreen("dungeon");
+                renderRoom();
+              });
+            });
+          } else {
+            Battle.startBoss(room.boss, bossCallback);
+          }
+        });
+        return;
+      }
+      // Already joined flag set (re-attempt after failure)
+      var elricDef = Chapter1.getCompanion("elric");
+      if (elricDef) {
+        elricDef.hp = 60;
+        elricDef.maxHp = 60;
+        elricDef.attack = 10;
+        elricDef.defense = 6;
+        Battle.startBossWithCompanion(room.boss, elricDef, bossCallback, function() {
+          Dialogue.start("elric-companion-died", function() {
+            UI.showScreen("dungeon");
+            renderRoom();
+          });
+        });
+        return;
+      }
+    }
+
+    Battle.startBoss(room.boss, bossCallback);
   }
 
   function onRoomCleared() {

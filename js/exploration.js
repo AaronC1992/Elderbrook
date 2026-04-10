@@ -246,6 +246,12 @@ var Exploration = (function () {
     defeatedEnemies = {};
     areaCompleted = false;
     renderNode();
+
+    // Companion story triggers on area entry
+    if (areaId === "goblin-trail" && Player.hasFlag("acceptedMQ4") && !Player.hasFlag("completedMQ4") && !Player.hasFlag("elricJoinedMQ4")) {
+      Dialogue.start("elric-mq4-join");
+    }
+
     return true;
   }
 
@@ -423,15 +429,29 @@ var Exploration = (function () {
     }
 
     var nodeKey = currentArea + "-" + currentNode;
-
-    Battle.startExploration(currentArea, enemyId, function () {
-      // Mark this enemy as defeated
+    var victoryCallback = function () {
       if (!defeatedEnemies[nodeKey]) defeatedEnemies[nodeKey] = [];
       defeatedEnemies[nodeKey].push(enemyIdx);
       checkAreaCompletion();
       renderNode();
       UI.showScreen("explore");
-    });
+    };
+
+    // Companion: Elric joins on goblin-trail during MQ4
+    if (currentArea === "goblin-trail" && Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) {
+      var elricDef = Chapter1.getCompanion("elric");
+      if (elricDef) {
+        Battle.startExplorationWithCompanion(currentArea, enemyId, elricDef, victoryCallback, function() {
+          Dialogue.start("elric-companion-died", function() {
+            UI.showScreen("explore");
+            renderNode();
+          });
+        });
+        return;
+      }
+    }
+
+    Battle.startExploration(currentArea, enemyId, victoryCallback);
   }
 
   function triggerAmbush() {
@@ -455,12 +475,28 @@ var Exploration = (function () {
 
     if (!Player.spendEnergy(2)) return;
 
-    Battle.startExploration(currentArea, enemyId, function () {
+    var ambushCallback = function () {
       if (!defeatedEnemies[nodeKey]) defeatedEnemies[nodeKey] = [];
       defeatedEnemies[nodeKey].push(enemyIdx);
       renderNode();
       UI.showScreen("explore");
-    }, true); // true = ambush flag
+    };
+
+    // Companion: Elric joins on goblin-trail during MQ4
+    if (currentArea === "goblin-trail" && Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) {
+      var elricDef = Chapter1.getCompanion("elric");
+      if (elricDef) {
+        Battle.startExplorationWithCompanion(currentArea, enemyId, elricDef, ambushCallback, function() {
+          Dialogue.start("elric-companion-died", function() {
+            UI.showScreen("explore");
+            renderNode();
+          });
+        }, true);
+        return;
+      }
+    }
+
+    Battle.startExploration(currentArea, enemyId, ambushCallback, true); // true = ambush flag
   }
 
   function gatherAtNode() {

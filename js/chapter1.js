@@ -111,6 +111,20 @@ var Chapter1 = (function () {
     }
   };
 
+  /* ── Companion Definitions (for escort / story battles) ── */
+  var companions = {
+    elric: {
+      name: "Captain Elric",
+      hp: 50, maxHp: 50,
+      attack: 8, defense: 5,
+      portrait: "assets/portraits/Guard_captain.png",
+      abilities: [
+        { name: "Shield Bash", chance: 0.25, multiplier: 1.4, effect: { type: "stun", turns: 1 } },
+        { name: "Guard Strike", chance: 0.15, multiplier: 1.2 }
+      ]
+    }
+  };
+
   /* ── Location Definitions ── */
   var locations = {
     elderbrook: {
@@ -192,6 +206,10 @@ var Chapter1 = (function () {
     recoveredRelic: false,
     metElira: false,
     chapter1Complete: false,
+
+    /* Companion flags */
+    elricJoinedMQ4: false,
+    elricJoinedMQ7: false,
 
     foundSupplyNote: false,
     recoveredCrate: false,
@@ -922,6 +940,46 @@ var Chapter1 = (function () {
         { speaker: "Guildmaster Rowan", portrait: npcs.rowan.portrait, text: "Tougher goblins, guards, maybe a shaman. Tight quarters, no running. Clear the outer defenses first and report back. Stock up on potions before you go.", end: true }
       ],
       onEnd: { flags: ["completedMQ4", "unlockedGoblinCave", "acceptedMQ5"] }
+    },
+    "elric-mq4-join": {
+      id: "elric-mq4-join",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Hold it. Rowan told me you'd be heading this way. The Goblin Trail is no place to go alone." },
+        { speaker: "", portrait: "", text: "You stare at the armed captain blocking the path.", choices: [
+          { text: "I can handle myself, Captain.", next: 2 },
+          { text: "Glad for the company. Let's move.", next: 3 }
+        ]},
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "I'm sure you can. But these goblins are organized, and I've lost good scouts on this trail. You watch my back, I'll watch yours. That's an order.", next: 3 },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Good. Stay sharp, keep your weapon ready, and don't wander off the path. I'll take point.", end: true }
+      ],
+      onEnd: { flags: ["elricJoinedMQ4"] }
+    },
+    "elric-mq4-return": {
+      id: "elric-mq4-return",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Still in one piece? Good. Let's keep moving. These goblins won't clear themselves.", end: true }
+      ]
+    },
+    "elric-mq7-join": {
+      id: "elric-mq7-join",
+      nodes: [
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "This is it. The chief's chamber. I can hear him in there." },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "I've lost men to these goblins. I'm not sitting this one out." },
+        { speaker: "", portrait: "", text: "Elric draws his sword and sets his stance.", choices: [
+          { text: "Together, then. Let's finish this.", next: 3 },
+          { text: "Stay behind me. I'll draw his attention.", next: 4 }
+        ]},
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Together. On your signal.", end: true },
+        { speaker: "Captain Elric Vale", portrait: npcs.elric.portrait, text: "Brave. But I'm not the type to hide. I'll flank him while you hold the front. Let's go.", end: true }
+      ],
+      onEnd: { flags: ["elricJoinedMQ7"] }
+    },
+    "elric-companion-died": {
+      id: "elric-companion-died",
+      nodes: [
+        { speaker: "", portrait: "", text: "Captain Elric collapses, his armor clattering against the stone. The goblins close in around you." },
+        { speaker: "", portrait: "", text: "Without Elric, the mission cannot continue. You must retreat and try again.", end: true }
+      ]
     },
     "rowan-mq5-complete": {
       id: "rowan-mq5-complete",
@@ -1812,6 +1870,7 @@ var Chapter1 = (function () {
       weight: 12,
       flag: "townEventChild",
       repeatable: true,
+      hideIfFlag: "lookingForBiscuit",
       location: "town",
       npcName: "Lost Child",
       npcPortrait: "assets/portraits/lost-child.png",
@@ -1964,6 +2023,7 @@ var Chapter1 = (function () {
       var ev = townEvents[i];
       if (!ev.repeatable && p.storyFlags[ev.flag]) continue;
       if (ev.requireFlag && !p.storyFlags[ev.requireFlag]) continue;
+      if (ev.hideIfFlag && p.storyFlags[ev.hideIfFlag]) continue;
       available.push(ev);
     }
     if (available.length === 0) return null;
@@ -1987,6 +2047,7 @@ var Chapter1 = (function () {
       var ev = townEvents[i];
       if (!ev.repeatable && p.storyFlags[ev.flag]) continue;
       if (ev.requireFlag && !p.storyFlags[ev.requireFlag]) continue;
+      if (ev.hideIfFlag && p.storyFlags[ev.hideIfFlag]) continue;
       // Weighted chance: weight out of 100
       if (Math.random() * 100 < ev.weight) {
         spawned.push(ev.id);
@@ -2226,6 +2287,7 @@ var Chapter1 = (function () {
     rollDailyBounty: rollDailyBounty,
     boardQuestTemplates: boardQuestTemplates,
     getBoardQuestTemplate: getBoardQuestTemplate,
-    rollDailyBoardQuests: rollDailyBoardQuests
+    rollDailyBoardQuests: rollDailyBoardQuests,
+    getCompanion: function(id) { return companions[id] ? JSON.parse(JSON.stringify(companions[id])) : null; }
   };
 })();
