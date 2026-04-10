@@ -94,6 +94,7 @@ var World = (function () {
       // Show first-time arrival dialogue
       if (!p.hasEnteredTown) {
         p.hasEnteredTown = true;
+        UI.setDialogueBackground("assets/backgrounds/main-town-adventurers-guild.png");
         Dialogue.start("rowan-arrival", function () {
           // Roll event spawns for first visit
           p.eventSpawns = Chapter1.rollEventSpawns(p);

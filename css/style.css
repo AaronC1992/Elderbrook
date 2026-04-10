@@ -874,7 +874,7 @@ button {
 }
 .town-npc-portrait {
   width: auto;
-  height: 120px;
+  height: 200px;
   object-fit: contain;
   display: block;
 }
@@ -1027,14 +1027,14 @@ button {
   z-index: 1;
 }
 #dialogue-portrait-area img {
-  max-height: 80%;
+  max-height: 90%;
   width: auto;
   object-fit: contain;
   object-position: bottom center;
   filter: drop-shadow(0 4px 24px rgba(0,0,0,0.7));
 }
 #dialogue-portrait-area .portrait-bust-crop {
-  max-height: 55%;
+  max-height: 75%;
   object-fit: cover;
   object-position: top center;
 }
@@ -2933,7 +2933,7 @@ button {
   .battle-enemies-group .battle-hp-bar { width: 80px; }
   .battle-player .battle-portrait { width: 100px; }
   #player-portrait-box { aspect-ratio: 1/1; }
-  .town-npc-portrait { height: 100px; }
+  .town-npc-portrait { height: 160px; }
 }
 
 @media (max-width: 600px) {
@@ -2950,7 +2950,7 @@ button {
   .ledger-tab { font-size: 0.58rem; padding: 6px 2px; }
   .ledger-page { margin-right: 32px; padding: 0.8rem; font-size: 0.82rem; }
   .ledger-stats-grid { grid-template-columns: 1fr; }
-  .town-npc-portrait { height: 80px; }
+  .town-npc-portrait { height: 130px; }
   .poi-name { font-size: 0.72rem; }
   .poi-sub { font-size: 0.6rem; }
 
