@@ -338,10 +338,11 @@ var Battle = (function () {
   }
 
   function startExplorationWithCompanion(areaId, enemyId, companionDef, callback, onCompanionDeath, isAmbush) {
-    startExploration(areaId, enemyId, callback, isAmbush);
-    setCompanion(companionDef, onCompanionDeath);
+    var result = startExploration(areaId, enemyId, callback, isAmbush);
+    if (result) setCompanion(companionDef, onCompanionDeath);
     renderBattle();
     if (companion) addLog(companion.name + " fights alongside you!");
+    return result;
   }
 
   function companionTurn(callback) {
@@ -410,11 +411,13 @@ var Battle = (function () {
     if (!usedAbility) {
       // Normal attack with 85% hit chance
       if (Math.random() > 0.85) {
-        addLog(companion.name + "'s attack misses!");
-        Audio.play("miss");
-        showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
-        tickBuffs(companion.buffs);
-        if (callback) callback();
+        animateCombat("player", "miss", function () {
+          addLog(companion.name + "'s attack misses!");
+          Audio.play("miss");
+          showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
+          tickBuffs(companion.buffs);
+          if (callback) callback();
+        });
       } else {
         var isCrit = Math.random() < 0.08;
         var dmg = isCrit ? Math.floor(baseDmg * 1.5) : baseDmg;
@@ -459,6 +462,11 @@ var Battle = (function () {
         onVictoryCallback = null;
         onCompanionDeathCallback = null;
       }, 800);
+    } else {
+      // No quest callback — companion simply falls, battle continues solo
+      companion = null;
+      onCompanionDeathCallback = null;
+      renderBattle();
     }
   }
 
@@ -1275,6 +1283,9 @@ var Battle = (function () {
         if (isEnemy) {
           addLog(target.name + " takes " + e.damage + " " + e.type + " damage.");
           showFCT("battle-enemy-" + (enemyIdx || 0), "-" + e.damage, "effect");
+        } else if (target === companion) {
+          addLog(target.name + " takes " + e.damage + " " + e.type + " damage.");
+          showFCT("battle-companion", "-" + e.damage, "effect");
         }
       }
       e.turns--;

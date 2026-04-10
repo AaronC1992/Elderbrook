@@ -2062,6 +2062,7 @@ var Chapter1 = (function () {
     for (var i = 0; i < townEvents.length; i++) {
       var ev = townEvents[i];
       if (ev.location === location && spawnedIds.indexOf(ev.id) !== -1) {
+        if (ev.hideIfFlag && Player.hasFlag(ev.hideIfFlag)) continue;
         results.push(ev);
       }
     }

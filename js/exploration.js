@@ -248,8 +248,12 @@ var Exploration = (function () {
     renderNode();
 
     // Companion story triggers on area entry
-    if (areaId === "goblin-trail" && Player.hasFlag("acceptedMQ4") && !Player.hasFlag("completedMQ4") && !Player.hasFlag("elricJoinedMQ4")) {
-      Dialogue.start("elric-mq4-join");
+    if (areaId === "goblin-trail" && Player.hasFlag("acceptedMQ4") && !Player.hasFlag("completedMQ4")) {
+      if (!Player.hasFlag("elricJoinedMQ4")) {
+        Dialogue.start("elric-mq4-join");
+      } else {
+        Dialogue.start("elric-mq4-return");
+      }
     }
 
     return true;
