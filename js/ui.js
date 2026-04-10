@@ -403,6 +403,10 @@ var UI = (function () {
         }
         html += '</div>';
         if (complete) {
+          var turnInInfo = Quests.getTurnInInfo(q.id);
+          if (turnInInfo) {
+            html += '<div class="quest-turnin-hint">Turn in to ' + turnInInfo.npcName + ' at the ' + turnInInfo.location + '</div>';
+          }
           html += '<button class="btn btn-small" data-action="turn-in-quest" data-quest="' + q.id + '">Turn In</button>';
         }
         html += '</div>';
@@ -429,6 +433,7 @@ var UI = (function () {
     // Flag visit
     Player.setFlag("visitedQuestBoard");
 
+    var p = Player.get();
     var available = Quests.getAvailable();
     var sideQuests = [];
     for (var i = 0; i < available.length; i++) {
@@ -436,9 +441,10 @@ var UI = (function () {
     }
 
     var html = '<h2>Quest Board</h2>';
-    if (sideQuests.length === 0) {
-      html += '<p>No jobs posted at the moment. Check back later.</p>';
-    } else {
+
+    // ── Side Quests (story-based, one-time) ──
+    if (sideQuests.length > 0) {
+      html += '<h3>Side Quests</h3>';
       for (var q = 0; q < sideQuests.length; q++) {
         var quest = sideQuests[q];
         html += '<div class="quest-entry">';
@@ -452,8 +458,44 @@ var UI = (function () {
       }
     }
 
+    // ── Daily Board Quests (rotating hunt/gather) ──
+    var boardSlots = Chapter1.rollDailyBoardQuests(p);
+    if (boardSlots.length > 0) {
+      html += '<h3 style="margin-top:1rem;">Daily Jobs <span class="quest-type">(refreshes each day)</span></h3>';
+      for (var b = 0; b < boardSlots.length; b++) {
+        var slot = boardSlots[b];
+        var bDef = Chapter1.getBoardQuestTemplate(slot.id);
+        if (!bDef) continue;
+        var bActive = p.activeQuests.indexOf(slot.id) !== -1;
+        var tierLabel = bDef.tier === 1 ? 'Tier 1' : (bDef.tier === 2 ? 'Tier 2' : 'Tier 3');
+        html += '<div class="quest-entry' + (bActive ? ' quest-active-board' : '') + '">';
+        html += '<div class="quest-name">' + bDef.name + ' <span class="quest-type">[' + tierLabel + ']</span></div>';
+        html += '<div class="quest-desc">' + bDef.description + '</div>';
+        html += '<div class="quest-rewards">Rewards: ' + bDef.rewards.xp + ' XP';
+        if (bDef.rewards.gold) html += ', ' + bDef.rewards.gold + ' gold';
+        html += '</div>';
+        if (bActive) {
+          // Show progress
+          for (var bo = 0; bo < bDef.objectives.length; bo++) {
+            html += '<div class="quest-obj">' + Quests.getObjectiveStatus(slot.id, bo) + '</div>';
+          }
+          if (Quests.checkObjectives(slot.id)) {
+            html += '<button class="btn btn-small" data-action="turn-in-quest" data-quest="' + slot.id + '">Turn In</button>';
+          } else {
+            html += '<span class="quest-type">In Progress</span>';
+          }
+        } else {
+          html += '<button class="btn btn-small" data-action="accept-quest" data-quest="' + slot.id + '">Accept</button>';
+        }
+        html += '</div>';
+      }
+    }
+
+    if (sideQuests.length === 0 && boardSlots.length === 0) {
+      html += '<p>No jobs posted at the moment. Check back later.</p>';
+    }
+
     // Post-game daily bounty
-    var p = Player.get();
     var bounty = Chapter1.rollDailyBounty(p);
     if (bounty) {
       var bountyActive = p.activeBounty && p.activeBounty.id === bounty.id;
@@ -828,6 +870,25 @@ var UI = (function () {
     messageTimeout = setTimeout(function () {
       el.classList.remove("visible");
     }, 3000);
+  }
+
+  var seasonTimeout = null;
+  function showSeasonBanner(season) {
+    var el = document.getElementById("season-banner");
+    if (!el) return;
+    var seasonNames = { spring: "Spring", summer: "Summer", autumn: "Autumn", winter: "Winter" };
+    var seasonFlavors = {
+      spring: "The frost melts and new life stirs.",
+      summer: "The sun blazes and the land is warm.",
+      autumn: "Leaves turn gold and the harvest begins.",
+      winter: "A chill descends over Elderbrook."
+    };
+    el.innerHTML = 'The Season Has Changed<br><strong>' + (seasonNames[season] || season) + '</strong><div class="season-sub">' + (seasonFlavors[season] || '') + '</div>';
+    el.classList.add("visible");
+    if (seasonTimeout) clearTimeout(seasonTimeout);
+    seasonTimeout = setTimeout(function () {
+      el.classList.remove("visible");
+    }, 4000);
   }
 
   /* ── Settings Screen ── */
@@ -2016,6 +2077,7 @@ var UI = (function () {
     renderAcademy: renderAcademy,
     renderPetShop: renderPetShop,
     renderLedger: renderLedger,
-    showMessage: showMessage
+    showMessage: showMessage,
+    showSeasonBanner: showSeasonBanner
   };
 })();

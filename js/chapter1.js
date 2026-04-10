@@ -1945,7 +1945,7 @@ var Chapter1 = (function () {
   function getAllNPCs() { return npcs; }
   function getLocation(id) { return locations[id] || null; }
   function getAllLocations() { return locations; }
-  function getQuest(id) { return quests[id] || null; }
+  function getQuest(id) { return quests[id] || getBoardQuestTemplate(id) || null; }
   function getAllQuests() { return quests; }
   function getDialogue(id) { return dialogues[id] || null; }
   function getDefaultFlags() { return JSON.parse(JSON.stringify(defaultFlags)); }
@@ -2014,6 +2014,199 @@ var Chapter1 = (function () {
     return null;
   }
 
+  /* ── Daily Board Quest Templates (30 variations) ── */
+  var boardQuestTemplates = [
+    // --- Hunt quests (Tier 1 — early game) ---
+    { id: "bq-wolf-cull", name: "Wolf Cull", description: "Thin the wolf packs near the Forest Road.",
+      objectives: [{ type: "kill", id: "k-wolf", target: "wolf", required: 4, text: "Defeat wolves" }],
+      rewards: { xp: 30, gold: 20 }, tier: 1 },
+    { id: "bq-goblin-sweep", name: "Goblin Sweep", description: "Clear goblin scouts from the Forest Road.",
+      objectives: [{ type: "kill", id: "k-gs", target: "goblin-scout", required: 5, text: "Defeat goblin scouts" }],
+      rewards: { xp: 35, gold: 25 }, tier: 1 },
+    { id: "bq-sneak-hunt", name: "Sneak Hunt", description: "Hunt down the sneaky goblins lurking in the undergrowth.",
+      objectives: [{ type: "kill", id: "k-gsn", target: "goblin-sneak", required: 4, text: "Defeat goblin sneaks" }],
+      rewards: { xp: 35, gold: 25 }, tier: 1 },
+    { id: "bq-road-patrol", name: "Road Safety", description: "Patrol the Forest Road and remove threats.",
+      objectives: [{ type: "kill", id: "k-wolf2", target: "wolf", required: 3, text: "Defeat wolves" }, { type: "kill", id: "k-gs2", target: "goblin-scout", required: 3, text: "Defeat goblin scouts" }],
+      rewards: { xp: 40, gold: 30 }, tier: 1 },
+    { id: "bq-bandit-warning", name: "Bandit Warning", description: "Bandits have been spotted on the roads. Teach them a lesson.",
+      objectives: [{ type: "kill", id: "k-ban", target: "bandit", required: 3, text: "Defeat bandits" }],
+      rewards: { xp: 40, gold: 30 }, tier: 1 },
+    // --- Hunt quests (Tier 2 — mid game) ---
+    { id: "bq-raider-purge", name: "Raider Purge", description: "Goblin raiders are ambushing traders on the Goblin Trail.",
+      objectives: [{ type: "kill", id: "k-gr", target: "goblin-raider", required: 5, text: "Defeat goblin raiders" }],
+      rewards: { xp: 50, gold: 40 }, tier: 2 },
+    { id: "bq-archer-nest", name: "Archer Nest", description: "Goblin archers have set up positions along the trail. Clear them.",
+      objectives: [{ type: "kill", id: "k-ga", target: "goblin-archer", required: 4, text: "Defeat goblin archers" }],
+      rewards: { xp: 50, gold: 35 }, tier: 2 },
+    { id: "bq-pack-leader", name: "Pack Leader", description: "Wolf pack leaders are emboldening the beasts. Take them down.",
+      objectives: [{ type: "kill", id: "k-wp", target: "wolf-pack", required: 3, text: "Defeat wolf pack leaders" }],
+      rewards: { xp: 55, gold: 40 }, tier: 2 },
+    { id: "bq-trail-sweep", name: "Trail Sweep", description: "The Goblin Trail is crawling with foes. Clean it up.",
+      objectives: [{ type: "kill", id: "k-gr2", target: "goblin-raider", required: 3, text: "Defeat goblin raiders" }, { type: "kill", id: "k-ga2", target: "goblin-archer", required: 3, text: "Defeat goblin archers" }],
+      rewards: { xp: 60, gold: 45 }, tier: 2 },
+    { id: "bq-highwaymen", name: "Highwaymen", description: "Bandits and wolves are terrorising the roads together.",
+      objectives: [{ type: "kill", id: "k-ban2", target: "bandit", required: 3, text: "Defeat bandits" }, { type: "kill", id: "k-wolf3", target: "wolf", required: 3, text: "Defeat wolves" }],
+      rewards: { xp: 55, gold: 40 }, tier: 2 },
+    // --- Hunt quests (Tier 3 — late game) ---
+    { id: "bq-brute-force", name: "Brute Force", description: "Goblin brutes are massing near the cave entrance.",
+      objectives: [{ type: "kill", id: "k-gb", target: "goblin-brute", required: 3, text: "Defeat goblin brutes" }],
+      rewards: { xp: 70, gold: 55 }, tier: 3 },
+    { id: "bq-shaman-silence", name: "Silence the Shamans", description: "Goblin shamans are casting dark rituals. Stop them.",
+      objectives: [{ type: "kill", id: "k-gsh", target: "goblin-shaman", required: 3, text: "Defeat goblin shamans" }],
+      rewards: { xp: 70, gold: 50 }, tier: 3 },
+    { id: "bq-cave-guard", name: "Cave Guard Duty", description: "Goblin guards are reinforcing their tunnels. Push them back.",
+      objectives: [{ type: "kill", id: "k-gg", target: "goblin-guard", required: 4, text: "Defeat goblin guards" }],
+      rewards: { xp: 65, gold: 50 }, tier: 3 },
+    { id: "bq-den-cleanout", name: "Den Cleanout", description: "Clear the strongest goblins from the cave approaches.",
+      objectives: [{ type: "kill", id: "k-gb2", target: "goblin-brute", required: 2, text: "Defeat goblin brutes" }, { type: "kill", id: "k-gsh2", target: "goblin-shaman", required: 2, text: "Defeat goblin shamans" }],
+      rewards: { xp: 80, gold: 60 }, tier: 3 },
+    { id: "bq-elite-patrol", name: "Elite Patrol", description: "The guild needs an experienced hand clearing the dangerous areas.",
+      objectives: [{ type: "kill", id: "k-gg2", target: "goblin-guard", required: 3, text: "Defeat goblin guards" }, { type: "kill", id: "k-gb3", target: "goblin-brute", required: 2, text: "Defeat goblin brutes" }],
+      rewards: { xp: 85, gold: 65 }, tier: 3 },
+    // --- Gather quests (Tier 1) ---
+    { id: "bq-herb-run", name: "Herb Run", description: "Mira needs cave herbs for her potion stocks.",
+      objectives: [{ type: "collect", id: "c-ch", item: "cave-herb", required: 4, text: "Collect cave herbs" }],
+      rewards: { xp: 25, gold: 20 }, tier: 1 },
+    { id: "bq-pelt-delivery", name: "Pelt Delivery", description: "The tanner needs wolf pelts for new leather goods.",
+      objectives: [{ type: "collect", id: "c-wp", item: "wolf-pelt", required: 3, text: "Collect wolf pelts" }],
+      rewards: { xp: 30, gold: 25 }, tier: 1 },
+    { id: "bq-fang-bounty", name: "Fang Bounty", description: "Goblin fangs are used in alchemical ingredients. Collect some.",
+      objectives: [{ type: "collect", id: "c-gf", item: "goblin-fang", required: 5, text: "Collect goblin fangs" }],
+      rewards: { xp: 25, gold: 20 }, tier: 1 },
+    { id: "bq-scrap-haul", name: "Scrap Haul", description: "Bram can reforge goblin scrap into usable iron.",
+      objectives: [{ type: "collect", id: "c-gs", item: "goblin-scrap", required: 4, text: "Collect goblin scrap" }],
+      rewards: { xp: 30, gold: 20 }, tier: 1 },
+    { id: "bq-torn-cloth", name: "Cloth Scraps", description: "The tailor needs torn cloth for bandage materials.",
+      objectives: [{ type: "collect", id: "c-tc", item: "torn-cloth", required: 5, text: "Collect torn cloth" }],
+      rewards: { xp: 20, gold: 15 }, tier: 1 },
+    // --- Gather quests (Tier 2) ---
+    { id: "bq-ore-supply", name: "Ore Supply", description: "Harlan's forge needs more iron ore. Bring some from the field.",
+      objectives: [{ type: "collect", id: "c-io", item: "iron-ore", required: 3, text: "Collect iron ore" }],
+      rewards: { xp: 40, gold: 35 }, tier: 2 },
+    { id: "bq-sinew-stock", name: "Sinew Stock", description: "Bowstrings and bindings need tough beast sinew.",
+      objectives: [{ type: "collect", id: "c-bs", item: "beast-sinew", required: 3, text: "Collect beast sinew" }],
+      rewards: { xp: 40, gold: 30 }, tier: 2 },
+    { id: "bq-mixed-supplies", name: "Mixed Supplies", description: "The guild stockroom is running low. A little of everything helps.",
+      objectives: [{ type: "collect", id: "c-ch2", item: "cave-herb", required: 3, text: "Collect cave herbs" }, { type: "collect", id: "c-wp2", item: "wolf-pelt", required: 2, text: "Collect wolf pelts" }],
+      rewards: { xp: 45, gold: 35 }, tier: 2 },
+    { id: "bq-petal-search", name: "Moonpetal Search", description: "Rare moonpetals bloom on dangerous ground. Find some for the academy.",
+      objectives: [{ type: "collect", id: "c-mp", item: "moonpetal", required: 2, text: "Collect moonpetals" }],
+      rewards: { xp: 50, gold: 40 }, tier: 2 },
+    { id: "bq-scrap-forge", name: "Forge Fuel", description: "Bram needs scrap metal and sinew for a special project.",
+      objectives: [{ type: "collect", id: "c-gs2", item: "goblin-scrap", required: 3, text: "Collect goblin scrap" }, { type: "collect", id: "c-bs2", item: "beast-sinew", required: 2, text: "Collect beast sinew" }],
+      rewards: { xp: 45, gold: 35 }, tier: 2 },
+    // --- Gather quests (Tier 3) ---
+    { id: "bq-shadow-harvest", name: "Shadow Harvest", description: "Shadow essence seeps from dark places. Collect it carefully.",
+      objectives: [{ type: "collect", id: "c-se", item: "shadow-essence", required: 3, text: "Collect shadow essence" }],
+      rewards: { xp: 60, gold: 50 }, tier: 3 },
+    { id: "bq-shard-hunt", name: "Shard Hunt", description: "Enchanted shards are rare and powerful. The academy pays well for them.",
+      objectives: [{ type: "collect", id: "c-es", item: "enchanted-shard", required: 2, text: "Collect enchanted shards" }],
+      rewards: { xp: 65, gold: 55 }, tier: 3 },
+    { id: "bq-alchemist-order", name: "Alchemist's Order", description: "A large order for potions means Mira needs rare ingredients.",
+      objectives: [{ type: "collect", id: "c-se2", item: "shadow-essence", required: 2, text: "Collect shadow essence" }, { type: "collect", id: "c-mp2", item: "moonpetal", required: 2, text: "Collect moonpetals" }],
+      rewards: { xp: 70, gold: 55 }, tier: 3 },
+    // --- Mixed hunt + gather (all tiers) ---
+    { id: "bq-hunter-gather", name: "Hunter-Gatherer", description: "Kill wolves and skin them for pelts.",
+      objectives: [{ type: "kill", id: "k-wolf4", target: "wolf", required: 3, text: "Defeat wolves" }, { type: "collect", id: "c-wp3", item: "wolf-pelt", required: 3, text: "Collect wolf pelts" }],
+      rewards: { xp: 40, gold: 30 }, tier: 1 },
+    { id: "bq-armed-forager", name: "Armed Foraging", description: "The riverbank is dangerous. Fight through goblins and gather herbs.",
+      objectives: [{ type: "kill", id: "k-gs3", target: "goblin-scout", required: 3, text: "Defeat goblin scouts" }, { type: "collect", id: "c-ch3", item: "cave-herb", required: 3, text: "Collect cave herbs" }],
+      rewards: { xp: 40, gold: 30 }, tier: 1 },
+    { id: "bq-war-materials", name: "War Materials", description: "The garrison needs iron and the goblins cleared to get it.",
+      objectives: [{ type: "kill", id: "k-gr3", target: "goblin-raider", required: 4, text: "Defeat goblin raiders" }, { type: "collect", id: "c-io2", item: "iron-ore", required: 2, text: "Collect iron ore" }],
+      rewards: { xp: 55, gold: 45 }, tier: 2 },
+    { id: "bq-dark-expedition", name: "Dark Expedition", description: "Delve into dangerous territory for shadowy reagents.",
+      objectives: [{ type: "kill", id: "k-gsh3", target: "goblin-shaman", required: 2, text: "Defeat goblin shamans" }, { type: "collect", id: "c-se3", item: "shadow-essence", required: 2, text: "Collect shadow essence" }],
+      rewards: { xp: 75, gold: 55 }, tier: 3 }
+  ];
+
+  function getBoardQuestTemplate(id) {
+    for (var i = 0; i < boardQuestTemplates.length; i++) {
+      if (boardQuestTemplates[i].id === id) {
+        var t = boardQuestTemplates[i];
+        // Return with quest system fields so it works like a regular quest
+        return {
+          id: t.id, name: t.name, description: t.description,
+          objectives: t.objectives, rewards: t.rewards,
+          type: "board", turnIn: "toma", tier: t.tier
+        };
+      }
+    }
+    return null;
+  }
+
+  /* Deterministic daily board quest selection using day as seed */
+  function rollDailyBoardQuests(p) {
+    if (!p) return [];
+    var day = p.day || 1;
+    var level = p.level || 1;
+    var completedBoard = p.completedBoardQuests || [];
+
+    // Determine which tiers are available based on player level
+    var maxTier = 1;
+    if (level >= 3) maxTier = 2;
+    if (level >= 5) maxTier = 3;
+
+    // Filter templates by available tiers
+    var pool = [];
+    for (var i = 0; i < boardQuestTemplates.length; i++) {
+      if (boardQuestTemplates[i].tier <= maxTier) pool.push(boardQuestTemplates[i]);
+    }
+
+    // Simple seeded pseudo-random: day-based deterministic selection
+    // Each day adds 1 quest to the board (carried from previous days)
+    // Board holds max 5 quests; oldest rotate off when full
+    var board = p.boardQuests || [];
+
+    // Clean up any quests the player already completed or accepted
+    var active = p.activeQuests || [];
+    var cleaned = [];
+    for (var c = 0; c < board.length; c++) {
+      if (completedBoard.indexOf(board[c].id + "-" + board[c].day) === -1 &&
+          active.indexOf(board[c].id) === -1) {
+        cleaned.push(board[c]);
+      }
+    }
+
+    // Only add a new quest if it's a new day since the last board refresh
+    var lastBoardDay = p.lastBoardDay || 0;
+    if (day > lastBoardDay && pool.length > 0) {
+      // Deterministic pick based on day number
+      var seed = day * 7 + 13;
+      var pickIdx = seed % pool.length;
+      var template = pool[pickIdx];
+
+      // Avoid duplicates on the current board
+      var onBoard = false;
+      for (var d = 0; d < cleaned.length; d++) {
+        if (cleaned[d].id === template.id) { onBoard = true; break; }
+      }
+      if (onBoard) {
+        // Try next templates until we find one not on the board
+        for (var t = 1; t < pool.length; t++) {
+          var altIdx = (pickIdx + t) % pool.length;
+          var found = false;
+          for (var dd = 0; dd < cleaned.length; dd++) {
+            if (cleaned[dd].id === pool[altIdx].id) { found = true; break; }
+          }
+          if (!found) { template = pool[altIdx]; break; }
+        }
+      }
+
+      cleaned.push({ id: template.id, day: day });
+      p.lastBoardDay = day;
+    }
+
+    // Cap at 5 — remove oldest (first in array)
+    while (cleaned.length > 5) {
+      cleaned.shift();
+    }
+
+    p.boardQuests = cleaned;
+    return cleaned;
+  }
+
   return {
     getNPC: getNPC,
     getAllNPCs: getAllNPCs,
@@ -2030,6 +2223,9 @@ var Chapter1 = (function () {
     rollEventSpawns: rollEventSpawns,
     getActiveEvents: getActiveEvents,
     getTownEventById: getTownEventById,
-    rollDailyBounty: rollDailyBounty
+    rollDailyBounty: rollDailyBounty,
+    boardQuestTemplates: boardQuestTemplates,
+    getBoardQuestTemplate: getBoardQuestTemplate,
+    rollDailyBoardQuests: rollDailyBoardQuests
   };
 })();

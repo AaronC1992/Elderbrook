@@ -170,7 +170,12 @@ var Dungeon = (function () {
     if (room.type === "start") {
       html += '<p>You stand at the entrance. Steel yourself and proceed.</p>';
     } else if (room.type === "enemy" && !isCleared) {
+      var fights = clearedRooms[room.id + "_fights"] || 0;
+      var total = room.enemyCount || 1;
       html += '<p class="room-warning">Enemies lurk ahead!</p>';
+      if (fights > 0) {
+        html += '<p class="room-progress">Fights: ' + fights + ' / ' + total + '</p>';
+      }
       html += '<button class="btn" data-action="dungeon-fight">Fight</button>';
     } else if (room.type === "enemy" && isCleared) {
       html += '<p class="room-cleared">The room is cleared.</p>';

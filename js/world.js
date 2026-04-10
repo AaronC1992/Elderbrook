@@ -261,6 +261,7 @@ var World = (function () {
     if (newSeason !== oldSeason) {
       var seasonCap = newSeason.charAt(0).toUpperCase() + newSeason.slice(1);
       msg += " The season has changed to " + seasonCap + ".";
+      UI.showSeasonBanner(newSeason);
     }
     UI.showMessage(msg);  }
 

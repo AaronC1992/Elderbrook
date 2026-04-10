@@ -356,6 +356,7 @@
           UI.showMessage("Quest complete! +" + turnInResult.rewards.xp + " XP, +" + (turnInResult.rewards.gold || 0) + " gold");
           if (turnInResult.leveled) UI.showMessage("LEVEL UP!");
           if (UI.getScreen() === 'ledger') UI.renderLedger('quests');
+          else if (document.getElementById("questboard-content")) UI.renderQuestBoard();
           else UI.renderQuestLog();
           UI.updateHeader();
         }
@@ -585,9 +586,14 @@
         UI.showScreen('academy');
         break;
       case "go-sleep":
+        var oldSleepSeason = Player.getSeason();
         Player.sleep();
         UI.showMessage("You rest for the night... A new day begins.");
         Audio.play("buttonClick");
+        var newSleepSeason = Player.getSeason();
+        if (newSleepSeason !== oldSleepSeason) {
+          UI.showSeasonBanner(newSleepSeason);
+        }
         UI.updateHeader();
         UI.updateSidebars();
         World.navigate("elderbrook");

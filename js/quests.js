@@ -6,7 +6,9 @@ var Quests = (function () {
     var def = Chapter1.getQuest(questId);
     if (!def) return false;
     if (p.activeQuests.indexOf(questId) !== -1) return false;
-    if (p.completedQuests.indexOf(questId) !== -1) return false;
+
+    // Board quests can repeat; regular quests cannot
+    if (def.type !== "board" && p.completedQuests.indexOf(questId) !== -1) return false;
 
     // Check prerequisite flags
     if (def.requireFlags) {
@@ -108,9 +110,25 @@ var Quests = (function () {
 
     // Complete quest
     p.activeQuests.splice(idx, 1);
-    p.completedQuests.push(questId);
     delete p.questProgress[questId];
     if (p.trackedQuest === questId) p.trackedQuest = null;
+
+    // Board quests track completion separately (they're repeatable)
+    if (def.type === "board") {
+      if (!p.completedBoardQuests) p.completedBoardQuests = [];
+      p.completedBoardQuests.push(questId + "-" + p.day);
+      // Remove from board list
+      if (p.boardQuests) {
+        for (var bq = 0; bq < p.boardQuests.length; bq++) {
+          if (p.boardQuests[bq].id === questId) {
+            p.boardQuests.splice(bq, 1);
+            break;
+          }
+        }
+      }
+    } else {
+      p.completedQuests.push(questId);
+    }
 
     // Set completion flags
     if (def.onComplete) {

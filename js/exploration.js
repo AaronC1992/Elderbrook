@@ -302,9 +302,9 @@ var Exploration = (function () {
       if (template.hp >= 28) dangerClass = " explore-enemy-hard";
       else if (template.hp >= 20) dangerClass = " explore-enemy-mid";
       html += '<button class="explore-enemy' + dangerClass + '" style="left:' + en.x + '%;top:' + en.y + '%" ';
-      html += 'data-action="explore-fight" data-enemy="' + en.id + '" data-idx="' + i + '">';
+      html += 'data-action="explore-fight" data-enemy="' + en.id + '" data-idx="' + i + '" title="Fight (' + template.name + ') - Costs 2 Energy">';
       html += '<img class="explore-enemy-portrait" src="' + template.portrait + '" alt="' + template.name + '" onerror="this.style.display=\'none\'" />';
-      html += '<span class="explore-enemy-name">' + template.name + '</span>';
+      html += '<span class="explore-enemy-name">' + template.name + ' <span class="energy-cost">-2 EP</span></span>';
       html += '</button>';
     }
 
@@ -334,7 +334,7 @@ var Exploration = (function () {
 
     // ── Gather button for riverbank nodes ──
     if (node.canGather) {
-      html += '<button class="explore-gather-btn" data-action="explore-gather">Gather Herbs</button>';
+      html += '<button class="explore-gather-btn" data-action="explore-gather" title="25% chance of enemy encounter! Costs 1 Energy">Gather Herbs <span class="energy-cost">-1 EP</span></button>';
     }
 
     container.innerHTML = html;
