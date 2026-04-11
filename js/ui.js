@@ -6,6 +6,11 @@ var UI = (function () {
   var messageTimeout = null;
   var pendingDialogueBg = null;
 
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
   function setDialogueBackground(url) {
     pendingDialogueBg = url ? "url('" + url + "')" : null;
   }
@@ -307,11 +312,11 @@ var UI = (function () {
     if (!container || !p) return;
 
     var html = '<div class="char-portrait">';
-    html += '<img src="' + Player.getPortrait() + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">';
+    html += '<img src="' + Player.getPortrait() + '" alt="' + escapeHtml(p.name) + '" onerror="this.style.display=\'none\'">';
     html += '</div>';
 
     html += '<div class="char-info">';
-    html += '<h2>' + p.name + '</h2>';
+    html += '<h2>' + escapeHtml(p.name) + '</h2>';
     html += '<div class="char-stat">Level: ' + p.level + '</div>';
     html += '<div class="char-stat">XP: ' + p.xp + ' / ' + p.xpToNext + '</div>';
     html += '<div class="char-stat">HP: ' + p.hp + ' / ' + p.maxHp + '</div>';
@@ -1138,7 +1143,7 @@ var UI = (function () {
       html += '<div class="save-slot">';
       html += '<div class="save-slot-header">Slot ' + s.slot + '</div>';
       if (s.info) {
-        html += '<div class="save-slot-info">' + s.info.name + ' - Lv.' + s.info.level + '</div>';
+        html += '<div class="save-slot-info">' + escapeHtml(s.info.name) + ' - Lv.' + s.info.level + '</div>';
         if (s.info.savedAt) {
           var d = new Date(s.info.savedAt);
           html += '<div class="save-slot-date">' + d.toLocaleDateString() + ' ' + d.toLocaleTimeString() + '</div>';
@@ -1583,7 +1588,7 @@ var UI = (function () {
 
     var html = '<h2>Character Sheet</h2>';
     var className = p.buildClass && Player.CLASS_DEFS[p.buildClass] ? Player.CLASS_DEFS[p.buildClass].name : '';
-    html += '<h3>' + p.name + (className ? ' &mdash; ' + className : '') + '</h3>';
+    html += '<h3>' + escapeHtml(p.name) + (className ? ' &mdash; ' + className : '') + '</h3>';
 
     // Core stats
     html += '<div class="ledger-stats-grid">';
@@ -2101,6 +2106,7 @@ var UI = (function () {
     renderPetShop: renderPetShop,
     renderLedger: renderLedger,
     showMessage: showMessage,
-    showSeasonBanner: showSeasonBanner
+    showSeasonBanner: showSeasonBanner,
+    escapeHtml: escapeHtml
   };
 })();

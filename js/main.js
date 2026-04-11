@@ -314,6 +314,12 @@
       case "battle-run":
         Battle.playerRun();
         break;
+      case "ambush-avoid":
+        Battle.ambushAvoid();
+        break;
+      case "ambush-rush":
+        Battle.ambushRush();
+        break;
       case "battle-target":
         Battle.selectTarget(parseInt(btn.getAttribute("data-index"), 10));
         break;

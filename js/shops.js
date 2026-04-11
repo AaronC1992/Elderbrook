@@ -233,7 +233,7 @@ var Shops = (function () {
     if (!Player.removeItem(itemId)) return { success: false, message: "Item not found." };
 
     var p = Player.get();
-    var sellPrice = item.sellPrice || 1;
+    var sellPrice = item.sellPrice != null ? item.sellPrice : 1;
     p.gold += sellPrice;
     return { success: true, message: "Sold " + item.name + " for " + sellPrice + " gold." };
   }

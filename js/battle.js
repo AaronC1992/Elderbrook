@@ -17,6 +17,7 @@ var Battle = (function () {
   var lastVictoryData = null;
   var skillCooldowns = {};
   var companion = null;   // { name, hp, maxHp, attack, defense, portrait, abilities, buffs, effects }
+  var ambushChoice = false; // true while waiting for player to choose avoid/rush
 
   var battleBackgrounds = {
     "forest-road": "assets/backgrounds/battle-forest-road.png",
@@ -82,7 +83,7 @@ var Battle = (function () {
       e.hp = Math.floor(e.hp * diff);
       e.attack = Math.ceil(e.attack * diff);
       var xpScale = diff <= 0.75 ? 1.25 : diff >= 1.35 ? 0.85 : 1.0;
-      e.xp = Math.floor(e.xp * xpScale);
+      e.xp = Math.max(1, Math.floor(e.xp * xpScale));
 
       // Elric patrol route: weaken enemies on patrolled roads
       if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
@@ -124,7 +125,8 @@ var Battle = (function () {
       // Pet ambush protection
       var ambushPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
       if (ambushPassive && ambushPassive.type === "ambush-protect" && Math.random() < ambushPassive.chance) {
-        addLog(ambushPassive.message);
+        addLog(ambushPassive.message || "Your pet senses the ambush and warns you!");
+        showAmbushChoice();
       } else {
         addLog("You've been ambushed!");
         Audio.play("ambush");
@@ -230,7 +232,7 @@ var Battle = (function () {
     e.hp = Math.floor(e.hp * diff);
     e.attack = Math.ceil(e.attack * diff);
     var xpScale = diff <= 0.75 ? 1.25 : diff >= 1.35 ? 0.85 : 1.0;
-    e.xp = Math.floor(e.xp * xpScale);
+    e.xp = Math.max(1, Math.floor(e.xp * xpScale));
 
     // Elric patrol route
     if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
@@ -250,7 +252,7 @@ var Battle = (function () {
         var diff2 = Player.getDifficultyMultiplier();
         e2.hp = Math.floor(e2.hp * diff2);
         e2.attack = Math.ceil(e2.attack * diff2);
-        e2.xp = Math.floor(e2.xp * xpScale);
+        e2.xp = Math.max(1, Math.floor(e2.xp * xpScale));
         if (Player.hasFlag("elricPatrolRoute") && (areaId === "forest-road" || areaId === "goblin-trail")) {
           e2.hp = Math.floor(e2.hp * 0.8);
           e2.attack = Math.max(1, e2.attack - 1);
@@ -285,7 +287,8 @@ var Battle = (function () {
     if (isAmbush) {
       var ambushPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
       if (ambushPassive && ambushPassive.type === "ambush-protect" && Math.random() < ambushPassive.chance) {
-        addLog(ambushPassive.message);
+        addLog(ambushPassive.message || "Your pet senses the ambush and warns you!");
+        showAmbushChoice();
       } else {
         addLog("You've been ambushed!");
         Audio.play("ambush");
@@ -480,6 +483,7 @@ var Battle = (function () {
     skillCooldowns = {};
     companion = null;
     onCompanionDeathCallback = null;
+    ambushChoice = false;
   }
 
   /* ── Target Selection Helpers ── */
@@ -698,10 +702,12 @@ var Battle = (function () {
 
   function playerAttack() {
     if (enemies.length === 0 || animating) return;
+    animating = true;
 
     // Stun: skip entire turn
     if (findEffect(playerEffects, "stun") !== -1) {
       addLog("You are stunned and can't act!");
+      animating = false;
       enemyTurn();
       return;
     }
@@ -709,13 +715,14 @@ var Battle = (function () {
     // Fear: chance to lose turn
     if (findEffect(playerEffects, "fear") !== -1 && Math.random() < 0.3) {
       addLog("You are paralyzed with fear and can't act!");
+      animating = false;
       enemyTurn();
       return;
     }
 
     var target = enemies[targetIndex];
     if (!target || target.hp <= 0) { autoSelectTarget(); target = enemies[targetIndex]; }
-    if (!target || target.hp <= 0) return;
+    if (!target || target.hp <= 0) { animating = false; return; }
 
     var p = Player.get();
     var atk = Player.getTotalAttack() + getBuffTotal(playerBuffs, "attack");
@@ -766,6 +773,7 @@ var Battle = (function () {
         }
         target.hp -= dmg;
         Audio.play("swordHit");
+        showFCT("battle-enemy-" + targetIndex, "-" + dmg, isCrit ? "crit" : "damage");
         if (target.hp <= 0) {
           handleEnemyDeath(targetIndex);
         }
@@ -778,7 +786,6 @@ var Battle = (function () {
           if (target.hp <= 0) handleEnemyDeath(targetIndex);
         }
         renderBattle();
-        showFCT("battle-enemy-" + targetIndex, "-" + dmg, isCrit ? "crit" : "damage");
         checkBattleEnd() || enemyTurn();
       });
     }
@@ -786,13 +793,15 @@ var Battle = (function () {
 
   function playerUseSkill(skillId) {
     if (enemies.length === 0 || animating) return;
+    animating = true;
     var skill = Skills.get(skillId);
-    if (!skill) return;
+    if (!skill) { animating = false; return; }
     var p = Player.get();
 
     // Stun: skip entire turn
     if (findEffect(playerEffects, "stun") !== -1) {
       addLog("You are stunned and can't act!");
+      animating = false;
       enemyTurn();
       return;
     }
@@ -801,18 +810,21 @@ var Battle = (function () {
     if (findEffect(playerEffects, "silence") !== -1) {
       addLog("You are silenced and can't use skills!");
       Audio.play("statusSilence");
+      animating = false;
       return;
     }
 
     // Fear: chance to lose turn
     if (findEffect(playerEffects, "fear") !== -1 && Math.random() < 0.3) {
       addLog("You are paralyzed with fear and can't act!");
+      animating = false;
       enemyTurn();
       return;
     }
 
     if (p.mp < skill.mpCost) {
       addLog("Not enough MP!");
+      animating = false;
       return;
     }
 
@@ -820,6 +832,7 @@ var Battle = (function () {
     if (skill.cooldown && skillCooldowns[skillId] && skillCooldowns[skillId] > turnCount) {
       var turnsLeft = skillCooldowns[skillId] - turnCount;
       addLog(skill.name + " is on cooldown for " + turnsLeft + " more turn" + (turnsLeft > 1 ? "s" : "") + ".");
+      animating = false;
       return;
     }
 
@@ -873,7 +886,7 @@ var Battle = (function () {
         checkBattleEnd() || enemyTurn();
       });
     } else if (skill.type === "attack" || skill.type === "magic") {
-      if (!target || target.hp <= 0) return;
+      if (!target || target.hp <= 0) { animating = false; return; }
 
       // Accuracy check for offensive skills
       var skillHitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
@@ -908,6 +921,7 @@ var Battle = (function () {
         target.hp -= totalDmg;
         addLog("You use " + skill.name + " dealing " + totalDmg + " damage!");
         Audio.play(skill.type === "magic" ? "magicCast" : "swordHit");
+        showFCT("battle-enemy-" + targetIndex, "-" + totalDmg, "damage");
 
         // Apply effect (only if target still alive)
         if (target.hp > 0 && skill.appliesEffect) {
@@ -928,19 +942,20 @@ var Battle = (function () {
           handleEnemyDeath(targetIndex);
         }
         renderBattle();
-        showFCT("battle-enemy-" + targetIndex, "-" + totalDmg, "damage");
         checkBattleEnd() || enemyTurn();
       }, undefined, skillOpts);
     } else {
+      animating = false;
       checkBattleEnd() || enemyTurn();
     }
   }
 
   function playerUsePotion(itemId) {
     if (enemies.length === 0 || animating) return;
+    animating = true;
     var item = Items.get(itemId);
-    if (!item || item.type !== "potion") return;
-    if (!Player.hasItem(itemId)) { addLog("You don't have that!"); return; }
+    if (!item || item.type !== "potion") { animating = false; return; }
+    if (!Player.hasItem(itemId)) { addLog("You don't have that!"); animating = false; return; }
 
     Player.removeItem(itemId);
 
@@ -964,20 +979,24 @@ var Battle = (function () {
       showFCT("battle-player", "CLEANSED", "buff");
     }
     Audio.play("potionDrink");
+    animating = false;
     renderBattle();
     enemyTurn();
   }
 
   function playerRun() {
     if (animating) return;
+    animating = true;
     if (isBossFight) {
       addLog("You can't run from a boss fight!");
+      animating = false;
       return;
     }
     // Check if any enemy has cornered tag
     for (var ci = 0; ci < enemies.length; ci++) {
       if (enemies[ci].hp > 0 && enemies[ci].cornered) {
         addLog("The enemy has you cornered! You can't escape!");
+        animating = false;
         return;
       }
     }
@@ -996,10 +1015,12 @@ var Battle = (function () {
     if (Math.random() < chance) {
       addLog("You escaped!");
       Audio.play("runAway");
+      animating = false;
       endBattle(false);
     } else {
       addLog("Failed to escape!");
       Audio.play("miss");
+      animating = false;
       renderBattle();
       enemyTurn();
     }
@@ -1439,6 +1460,35 @@ var Battle = (function () {
     showDefeatButtons();
   }
 
+  /* ── Ambush Choice (pet warned player) ── */
+
+  function showAmbushChoice() {
+    ambushChoice = true;
+    renderBattle();
+  }
+
+  function ambushAvoid() {
+    if (!ambushChoice) return;
+    ambushChoice = false;
+    addLog("You slip away before the enemy notices you.");
+    Audio.play("runAway");
+    endBattle(false);
+  }
+
+  function ambushRush() {
+    if (!ambushChoice) return;
+    ambushChoice = false;
+    addLog("You charge in and catch them off guard!");
+    Audio.play("ambush");
+    // Apply stun to all living enemies for 1 turn
+    for (var i = 0; i < enemies.length; i++) {
+      if (enemies[i].hp > 0) {
+        enemies[i].effects.push({ type: "stun", turns: 1 });
+      }
+    }
+    renderBattle();
+  }
+
   function endBattle(won) {
     // Clear floating combat text
     var fctLayer = document.getElementById("fct-layer");
@@ -1486,7 +1536,7 @@ var Battle = (function () {
       playerStatusClasses += ' status-visual-' + playerEffects[psi].type;
     }
     html += '<div class="battle-player' + playerStatusClasses + '" id="battle-player">';
-    html += '<img class="battle-portrait" src="' + Player.getPortrait() + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">';
+    html += '<img class="battle-portrait" src="' + Player.getPortrait() + '" alt="' + UI.escapeHtml(p.name) + '" onerror="this.style.display=\'none\'">';
     // Active pet portrait
     if (p.activePet && typeof Pets !== 'undefined') {
       var battlePet = Pets.get(p.activePet);
@@ -1495,7 +1545,7 @@ var Battle = (function () {
       }
     }
     html += '<div class="battle-player-info">';
-    html += '<div class="battle-name">' + p.name + ' (Lv.' + p.level + ')</div>';
+    html += '<div class="battle-name">' + UI.escapeHtml(p.name) + ' (Lv.' + p.level + ')</div>';
     html += '<div class="battle-hp-bar"><div class="hp-fill player-hp" style="width:' + (p.hp / p.maxHp * 100) + '%"></div></div>';
     html += '<div class="battle-hp-text">HP: ' + p.hp + '/' + p.maxHp + '</div>';
     html += '<div class="battle-mp-bar"><div class="mp-fill" style="width:' + (p.mp / p.maxMp * 100) + '%"></div></div>';
@@ -1577,7 +1627,14 @@ var Battle = (function () {
 
     // Action buttons (only if battle still active)
     var anyAlive = !allEnemiesDead();
-    if (anyAlive && p.hp > 0) {
+    if (ambushChoice && anyAlive && p.hp > 0) {
+      // Pet warned about ambush — show avoid/rush choice
+      html += '<div class="battle-actions ambush-choice">';
+      html += '<div class="ambush-prompt">Your pet warned you of an ambush! What do you do?</div>';
+      html += '<button class="btn" data-action="ambush-avoid">Slip Away</button>';
+      html += '<button class="btn btn-danger" data-action="ambush-rush">Rush In</button>';
+      html += '</div>';
+    } else if (anyAlive && p.hp > 0) {
       html += '<div class="battle-actions">';
       html += '<button class="btn" data-action="battle-attack">Attack</button>';
       html += '<button class="btn" data-action="battle-run"' + (isBossFight ? ' disabled' : '') + '>Run</button>';
@@ -1769,6 +1826,8 @@ var Battle = (function () {
     renderBattle: renderBattle,
     getEnemy: getEnemy,
     selectTarget: selectTarget,
+    ambushAvoid: ambushAvoid,
+    ambushRush: ambushRush,
     getCompanion: function() { return companion; }
   };
 })();

@@ -86,7 +86,7 @@ var Inventory = (function () {
         html += '<button class="btn btn-small" data-action="use-item" data-item="' + item.id + '" data-index="' + i + '">Use</button>';
       }
       if (item.type !== "quest") {
-        html += '<button class="btn btn-small" data-action="sell-item" data-item="' + item.id + '">Sell (' + (item.sellPrice || 1) + 'g)</button>';
+        html += '<button class="btn btn-small" data-action="sell-item" data-item="' + item.id + '">Sell (' + (item.sellPrice != null ? item.sellPrice : 1) + 'g)</button>';
       }
 
       html += '</div></div>';

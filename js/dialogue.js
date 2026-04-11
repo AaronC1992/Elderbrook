@@ -186,7 +186,8 @@ var Dialogue = (function () {
         Player.recalcStats();
         Audio.play('achievement');
         var cName = classDef ? classDef.name : actions.buildClass;
-        UI.showMessage('You chose the ' + cName + ' path! Learned skill: ' + (classDef && classDef.skill ? Skills.get(classDef.skill).name : '') + '.');
+        var skillDef = classDef && classDef.skill ? Skills.get(classDef.skill) : null;
+        UI.showMessage('You chose the ' + cName + ' path! Learned skill: ' + (skillDef ? skillDef.name : '') + '.');
       }
     }
 

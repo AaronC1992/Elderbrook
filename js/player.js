@@ -73,7 +73,7 @@ var Player = (function () {
       /* ── Day / Time / Energy (SimGirl system) ── */
       day: 1,
       season: "spring",
-      seasonDay: 1,
+      seasonDay: 0,
       energy: 8,
       maxEnergy: 8,
       charm: 1,                     // social stat — affects relationship gains

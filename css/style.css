@@ -1439,6 +1439,15 @@ button {
   font-family: inherit;
 }
 .battle-actions button:hover { border-color: var(--accent); }
+.ambush-choice { flex-direction: column; align-items: center; gap: 0.5rem; }
+.ambush-choice .ambush-prompt {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+}
+.ambush-choice .btn { min-width: 8rem; }
 .battle-skills, .battle-potions {
   display: flex;
   flex-wrap: wrap;
