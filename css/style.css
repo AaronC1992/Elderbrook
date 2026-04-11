@@ -1013,8 +1013,12 @@ button {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* Inventory mode: hide NPC area */
-#screen-shop:not(.shop-scene-mode) .shop-npc-area { display: none; }
+/* Inventory mode: NPC stays visible behind the panel */
+#screen-shop:not(.shop-scene-mode) .shop-panel {
+  background: linear-gradient(180deg, rgba(14, 17, 23, 0.88) 0%, rgba(10, 12, 18, 0.94) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
 
 /* Legacy circle portrait (NPC menu, pet shop header, etc.) */
 .npc-portrait {
