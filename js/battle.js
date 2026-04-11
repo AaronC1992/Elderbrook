@@ -439,7 +439,7 @@ var Battle = (function () {
         if (Math.random() < ab.chance) {
           usedAbility = true;
           var abilityDmg = Math.max(1, Math.floor(baseDmg * (ab.multiplier || 1)));
-          animateCombat("player", "melee", function () {
+          animateCombat("companion", "melee", function () {
             target.hp -= abilityDmg;
             addLog(companion.name + " uses " + ab.name + " on " + target.name + " for " + abilityDmg + " damage!");
             Audio.play("swordHit");
@@ -452,7 +452,7 @@ var Battle = (function () {
             tickBuffs(companion.buffs);
             renderBattle();
             if (callback) callback();
-          });
+          }, bestIdx);
           break;
         }
       }
@@ -461,17 +461,17 @@ var Battle = (function () {
     if (!usedAbility) {
       // Normal attack with 85% hit chance
       if (Math.random() > 0.85) {
-        animateCombat("player", "miss", function () {
+        animateCombat("companion", "miss", function () {
           addLog(companion.name + "'s attack misses!");
           Audio.play("miss");
           showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
           tickBuffs(companion.buffs);
           if (callback) callback();
-        });
+        }, bestIdx);
       } else {
         var isCrit = Math.random() < 0.08;
         var dmg = isCrit ? Math.floor(baseDmg * 1.5) : baseDmg;
-        animateCombat("player", "melee", function () {
+        animateCombat("companion", "melee", function () {
           target.hp -= dmg;
           if (isCrit) {
             addLog(companion.name + " lands a critical hit on " + target.name + " for " + dmg + " damage!");
@@ -484,7 +484,7 @@ var Battle = (function () {
           tickBuffs(companion.buffs);
           renderBattle();
           if (callback) callback();
-        });
+        }, bestIdx);
       }
     }
   }
@@ -569,25 +569,30 @@ var Battle = (function () {
             var healAmt = ab.amount || 5;
             var p = Player.get();
             var healed = Math.min(healAmt, p.maxHp - p.hp);
-            p.hp += healed;
-            addLog(petCombatant.name + " " + ab.message + " +" + healed + " HP!");
-            Audio.play("heal");
-            showFCT("battle-player", "+" + healed, "heal");
-            tickBuffs(petCombatant.buffs);
-            renderBattle();
-            if (callback) callback();
+            animateCombat("pet", "heal", function () {
+              p.hp += healed;
+              addLog(petCombatant.name + " " + ab.message + " +" + healed + " HP!");
+              Audio.play("heal");
+              showFCT("battle-player", "+" + healed, "heal");
+              tickBuffs(petCombatant.buffs);
+              renderBattle();
+              if (callback) callback();
+            });
           } else if (ab.type === "mana-restore") {
             var manaAmt = ab.amount || 3;
-            Player.restoreMana(manaAmt);
-            addLog(petCombatant.name + " " + ab.message + " +" + manaAmt + " MP!");
-            showFCT("battle-player", "+" + manaAmt, "mana");
-            tickBuffs(petCombatant.buffs);
-            renderBattle();
+            animateCombat("pet", "buff", function () {
+              Player.restoreMana(manaAmt);
+              addLog(petCombatant.name + " " + ab.message + " +" + manaAmt + " MP!");
+              showFCT("battle-player", "+" + manaAmt, "mana");
+              tickBuffs(petCombatant.buffs);
+              renderBattle();
+              if (callback) callback();
+            });
             if (callback) callback();
           } else {
             // Damage ability
             var abilityDmg = Math.max(1, Math.floor(baseDmg * (ab.multiplier || 1)));
-            animateCombat("player", "melee", function () {
+            animateCombat("pet", "melee", function () {
               target.hp -= abilityDmg;
               addLog(petCombatant.name + " uses " + ab.name + " on " + target.name + " for " + abilityDmg + " damage!");
               Audio.play("swordHit");
@@ -600,7 +605,7 @@ var Battle = (function () {
               tickBuffs(petCombatant.buffs);
               renderBattle();
               if (callback) callback();
-            });
+            }, bestIdx);
           }
           break;
         }
@@ -610,13 +615,15 @@ var Battle = (function () {
     if (!usedAbility) {
       // Normal attack (80% hit)
       if (Math.random() > 0.80) {
-        addLog(petCombatant.name + "'s attack misses!");
-        showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
-        tickBuffs(petCombatant.buffs);
-        if (callback) callback();
+        animateCombat("pet", "miss", function () {
+          addLog(petCombatant.name + "'s attack misses!");
+          showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
+          tickBuffs(petCombatant.buffs);
+          if (callback) callback();
+        }, bestIdx);
       } else {
         var dmg = baseDmg;
-        animateCombat("player", "melee", function () {
+        animateCombat("pet", "melee", function () {
           target.hp -= dmg;
           addLog(petCombatant.name + " attacks " + target.name + " for " + dmg + " damage.");
           Audio.play("swordHit");
@@ -625,7 +632,7 @@ var Battle = (function () {
           tickBuffs(petCombatant.buffs);
           renderBattle();
           if (callback) callback();
-        });
+        }, bestIdx);
       }
     }
   }
@@ -732,17 +739,23 @@ var Battle = (function () {
   }
 
   function animateCombat(who, type, callback, enemyIdx, opts) {
-    // who: "player" or "enemy"
+    // who: "player", "companion", "pet", or "enemy"
     // type: "melee", "magic", "heal", "buff", "miss", "dodge"
-    // opts: { element: "fire"|"ice"|"lightning"|"poison"|"dark", abilityName: "...", effectType: "..." }
+    // opts: { element, abilityName, effectType, targetOverride: "battle-companion"|"battle-pet"|"battle-player" }
     var attackerId, targetId;
     if (who === "player") {
       attackerId = "battle-player";
       targetId = "battle-enemy-" + targetIndex;
+    } else if (who === "companion") {
+      attackerId = "battle-companion";
+      targetId = "battle-enemy-" + (enemyIdx !== undefined ? enemyIdx : targetIndex);
+    } else if (who === "pet") {
+      attackerId = "battle-pet";
+      targetId = "battle-enemy-" + (enemyIdx !== undefined ? enemyIdx : targetIndex);
     } else {
       var ei = (enemyIdx !== undefined) ? enemyIdx : 0;
       attackerId = "battle-enemy-" + ei;
-      targetId = "battle-player";
+      targetId = (opts && opts.targetOverride) ? opts.targetOverride : "battle-player";
     }
     var attackerEl = document.getElementById(attackerId);
     var targetEl = document.getElementById(targetId);
@@ -1295,20 +1308,22 @@ var Battle = (function () {
       }
     }
 
-    // Pre-determine enemy action outcome
+    // Pre-determine enemy action outcome and target
     var enemyHitChance = Math.min(0.95, 0.70 + e.attack * 0.03);
     var action = determineEnemyAction(e, enemyHitChance);
+    var enemyTarget = pickEnemyTarget();
 
     // Pick animation type and element based on action
     var animType = "melee";
-    var animOpts = null;
+    var animOpts = { targetOverride: enemyTarget.fctTarget };
     if (action.type === "miss") animType = "melee";
     else if (action.type === "dodge") animType = "melee";
     else if (action.type === "buff-only") animType = "buff";
     else if (action.type === "effect-only") {
       animType = "magic";
       var ab = action.ability;
-      animOpts = { abilityName: ab ? ab.name : "", effectType: action.effect ? action.effect.type : "" };
+      animOpts.abilityName = ab ? ab.name : "";
+      animOpts.effectType = action.effect ? action.effect.type : "";
     }
     else if (action.type === "ability" && action.ability) {
       var ab2 = action.ability;
@@ -1316,14 +1331,15 @@ var Battle = (function () {
       // If ability applies an effect, use magic animation instead
       if (ab2.effect && !ab2.multiplier) animType = "magic";
       if (ab2.effect || ab2.name) {
-        animOpts = { abilityName: ab2.name || "", effectType: ab2.effect ? ab2.effect.type : "" };
+        animOpts.abilityName = ab2.name || "";
+        animOpts.effectType = ab2.effect ? ab2.effect.type : "";
       }
     }
 
     // Small delay so player sees the turn transition
     setTimeout(function () {
       animateCombat("enemy", animType, function () {
-        applyEnemyAction(action, e);
+        applyEnemyAction(action, e, enemyTarget);
         tickBuffs(e.buffs);
         renderBattle();
         if (checkBattleEnd()) return;
@@ -1388,12 +1404,20 @@ var Battle = (function () {
     return { type: "hit", damage: dmg };
   }
 
-  function applyEnemyAction(action, e) {
-    // Targeting: 20% pet, 35% companion, otherwise player
+  // Pre-determine who an enemy targets: returns { who: "player"|"companion"|"pet", fctTarget: string, label: string }
+  function pickEnemyTarget() {
     var targetPet = petCombatant && petCombatant.hp > 0 && Math.random() < 0.20;
     var targetCompanion = !targetPet && companion && companion.hp > 0 && Math.random() < 0.35;
-    var targetLabel = targetPet ? petCombatant.name : (targetCompanion ? companion.name : "you");
-    var fctTarget = targetPet ? "battle-pet" : (targetCompanion ? "battle-companion" : "battle-player");
+    if (targetPet) return { who: "pet", fctTarget: "battle-pet", label: petCombatant.name };
+    if (targetCompanion) return { who: "companion", fctTarget: "battle-companion", label: companion.name };
+    return { who: "player", fctTarget: "battle-player", label: "you" };
+  }
+
+  function applyEnemyAction(action, e, target) {
+    var fctTarget = target.fctTarget;
+    var targetLabel = target.label;
+    var targetPet = target.who === "pet";
+    var targetCompanion = target.who === "companion";
 
     if (action.type === "miss") {
       addLog(e.name + "'s attack misses!");
@@ -1761,7 +1785,10 @@ var Battle = (function () {
     }
     html += '</div></div>';
 
-    // Companion (left side, below player)
+    var hasSecondaries = (companion && companion.hp > 0) || (petCombatant && petCombatant.hp > 0);
+
+    // Companion (beside player, shorter)
+    if (hasSecondaries) html += '<div class="battle-allies-secondaries">';
     if (companion && companion.hp > 0) {
       var compStatusClasses = '';
       for (var csi = 0; csi < companion.effects.length; csi++) {
@@ -1783,7 +1810,7 @@ var Battle = (function () {
       html += '</div></div>';
     }
 
-    // Pet combatant (left side, below companion)
+    // Pet combatant (beside player, shorter)
     if (petCombatant && petCombatant.hp > 0) {
       var petStatusClasses = '';
       for (var psi2 = 0; psi2 < petCombatant.effects.length; psi2++) {
@@ -1804,6 +1831,7 @@ var Battle = (function () {
       }
       html += '</div></div>';
     }
+    if (hasSecondaries) html += '</div>'; // end battle-allies-secondaries
 
     html += '</div>'; // end battle-allies-group
 
