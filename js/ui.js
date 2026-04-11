@@ -645,8 +645,6 @@ var UI = (function () {
     // Right side
     html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
     html += '<button class="town-poi" style="top:40%;left:15%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">' + (elricAway ? 'Elric is in the field' : (Player.hasFlag('defeatedGrisk') ? 'Captain Elric — At ease' : 'Captain Elric')) + '</span></button>';
-    html += '<button class="town-poi" style="top:52%;right:19%" data-action="go-liora"><span class="poi-name">Flower Stall</span><span class="poi-sub">Liora Bloom</span></button>';
-
     // Conditional POIs
     if (Player.hasFlag('metElira')) {
       html += '<button class="town-poi" style="top:11%;left:11%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
