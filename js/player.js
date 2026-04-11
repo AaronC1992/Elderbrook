@@ -27,7 +27,7 @@ var Player = (function () {
       gender: "male",
       level: 1,
       xp: 0,
-      xpToNext: 60,
+      xpToNext: 100,
       gold: 30,
       hp: BASE_STATS.hp,
       maxHp: BASE_STATS.maxHp,
@@ -68,7 +68,8 @@ var Player = (function () {
         harlan: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         elric:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         fauna:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
-        liora:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
+        liora:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        selene: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
       },
       /* ── Day / Time / Energy (SimGirl system) ── */
       day: 1,
@@ -340,7 +341,7 @@ var Player = (function () {
     while (state.xp >= state.xpToNext) {
       state.xp -= state.xpToNext;
       state.level++;
-      state.xpToNext = Math.floor(state.xpToNext * 1.4);
+      state.xpToNext = Math.floor(state.xpToNext * 1.55);
       state.maxHp += 8;
       state.hp = state.maxHp;
       state.maxMp += 4;

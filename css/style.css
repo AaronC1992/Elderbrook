@@ -1455,10 +1455,6 @@ button {
 }
 
 /* ── Battle ── */
-#battle-content {
-  width: 100%;
-  max-width: 100%;
-}
 /* Encounter modifier banner */
 .encounter-mod-banner {
   text-align: center;
@@ -1498,13 +1494,36 @@ button {
   color: #f0c070;
 }
 
+/* ── Battle screen layout ── */
+#screen-battle {
+  display: flex;
+  flex-direction: column;
+}
+#screen-battle.active {
+  padding: 0;
+}
+#battle-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#fct-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
 .battle-scene {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 0.5rem;
+  padding: 1rem 1.5rem;
   gap: 1rem;
-  min-height: 200px;
+  flex: 1;
+  min-height: 0;
 }
 .battle-allies-group {
   display: flex;
@@ -1563,13 +1582,21 @@ button {
   width: 110px;
 }
 .battle-enemies-group .battle-hp-bar {
-  width: 100px;
+  width: 110px;
 }
 .battle-player {
   text-align: center;
 }
 .battle-player .battle-portrait {
   width: 130px;
+}
+.battle-player-info,
+.battle-enemy-info,
+.battle-companion-info {
+  background: rgba(10, 12, 18, 0.6);
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-top: 4px;
 }
 .battle-companion {
   text-align: center;
@@ -1591,51 +1618,76 @@ button {
 .companion-hp {
   background: var(--heal);
 }
-.battle-hp-bar {
-  width: 120px;
-  height: 8px;
-  background: var(--bg-dark);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 4px;
+.battle-hp-bar,
+.battle-mp-bar {
+  width: 140px;
+  height: 14px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
   overflow: hidden;
+  margin: 2px 0;
+  position: relative;
 }
-.battle-hp-fill {
+.battle-hp-bar .hp-fill {
   height: 100%;
-  background: var(--heal);
-  border-radius: 4px;
+  background: linear-gradient(90deg, #8b1a1a, #c94040);
+  border-radius: 6px;
   transition: width 0.3s;
 }
-.battle-name { color: var(--accent); font-size: 0.85rem; font-weight: 600; }
+.battle-hp-bar .hp-fill.companion-hp {
+  background: linear-gradient(90deg, #1a6b1a, var(--heal));
+}
+.battle-mp-bar .mp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1a3a8b, #4488cc);
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+.battle-hp-text,
+.battle-mp-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  margin-bottom: 1px;
+}
+.battle-hp-text { color: #e88; }
+.battle-mp-text { color: #8af; }
+.battle-name { color: var(--accent); font-size: 0.85rem; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.7); }
 .battle-stats-row { color: var(--text-muted); font-size: 0.72rem; }
 .battle-log {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
+  background: rgba(14, 17, 23, 0.75);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius);
-  padding: 0.25rem 0.5rem;
-  max-height: 54px;
+  padding: 0.25rem 0.8rem;
+  max-height: 48px;
   overflow-y: auto;
   font-size: 0.68rem;
   line-height: 1.3;
-  margin: 0.3rem 0;
-  opacity: 0.7;
+  margin: 0 1rem;
+  backdrop-filter: blur(4px);
 }
 .battle-log-entry { color: var(--text-muted); padding: 0.1rem 0; }
 .battle-log-entry:last-child { color: var(--text); }
 .battle-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  padding: 0.4rem 0;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: rgba(14, 17, 23, 0.8);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(4px);
 }
 .battle-actions button {
-  background: var(--bg-panel-alt);
+  background: rgba(30, 35, 51, 0.9);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.35rem 0.6rem;
-  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
   cursor: pointer;
   font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
 }
 .battle-actions button:hover { border-color: var(--accent); }
 .ambush-choice { flex-direction: column; align-items: center; gap: 0.5rem; }
@@ -3514,7 +3566,8 @@ button {
   .weapon-picker { grid-template-columns: repeat(2, 1fr); }
   .battle-portrait { width: 100px; }
   .battle-enemies-group .battle-portrait { width: 80px; }
-  .battle-enemies-group .battle-hp-bar { width: 80px; }
+  .battle-enemies-group .battle-hp-bar,
+  .battle-enemies-group .battle-mp-bar { width: 80px; }
   .battle-player .battle-portrait { width: 100px; }
   #player-portrait-box { aspect-ratio: 1/1; }
   .town-npc-portrait { height: 160px; }

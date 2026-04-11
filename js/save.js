@@ -119,10 +119,11 @@ var Save = (function () {
         harlan: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         elric:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
         fauna:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
-        liora:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
+        liora:  { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] },
+        selene: { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] }
       };
     } else {
-      var relNPCs = ["mira", "toma", "elira", "bram", "harlan", "elric", "fauna", "liora"];
+      var relNPCs = ["mira", "toma", "elira", "bram", "harlan", "elric", "fauna", "liora", "selene"];
       for (var r = 0; r < relNPCs.length; r++) {
         if (!data.relationships[relNPCs[r]]) {
           data.relationships[relNPCs[r]] = { affinity: 0, chatted: false, gifted: false, dated: false, milestones: [] };

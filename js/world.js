@@ -289,7 +289,7 @@ var World = (function () {
     Save.autoSave();
     UI.updateHeader();
     var innTexts = [
-      "Gareth pours you a warm meal. You sleep soundly and wake refreshed.",
+      "Selene sets a warm meal before you with a knowing smile. You sleep soundly and wake refreshed.",
       "You settle into a creaky but comfortable bed. A full night's rest does wonders.",
       "The fire crackles in the hearth as you drift off. Morning comes quickly.",
       "A bowl of stew and a warm bed — simple comforts after a long day."

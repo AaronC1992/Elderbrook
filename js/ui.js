@@ -734,8 +734,8 @@ var UI = (function () {
     // Innkeeper NPC
     html += '<div class="inn-npcs">';
     html += '<button class="town-npc inn-npc" data-action="talk-to-innkeeper">';
-    html += '<img class="town-npc-portrait" src="assets/portraits/innkeeper.png" alt="Gareth Hearthwell" onerror="this.style.display=\'none\'">';
-    html += '<span class="town-npc-name">Gareth Hearthwell</span>';
+    html += '<img class="town-npc-portrait" src="assets/portraits/innkeeper.png" alt="Selene Ashford" onerror="this.style.display=\'none\'">';
+    html += '<span class="town-npc-name">Selene Ashford</span>';
     html += '</button>';
     html += '</div>';
 
@@ -760,11 +760,11 @@ var UI = (function () {
     // Innkeeper portrait + menu panel
     html += '<div class="inn-menu-area">';
     html += '<div class="inn-npc-display">';
-    html += '<img class="inn-keeper-portrait" src="assets/portraits/innkeeper.png" alt="Gareth" onerror="this.style.display=\'none\'">';
+    html += '<img class="inn-keeper-portrait" src="assets/portraits/innkeeper.png" alt="Selene" onerror="this.style.display=\'none\'">';
     html += '</div>';
     html += '<div class="inn-menu-panel">';
-    html += '<h3>Gareth Hearthwell</h3>';
-    html += '<p class="inn-flavor">"Welcome, friend! You look like you could use a warm meal and a good night\'s rest."</p>';
+    html += '<h3>Selene Ashford</h3>';
+    html += '<p class="inn-flavor">"Welcome, dear. You look like you could use a warm meal and a good night\'s rest."</p>';
     html += '<div class="inn-option">';
     html += '<span class="inn-option-label">Rest until morning</span>';
     html += '<span class="inn-option-cost">' + cost + ' gold</span>';

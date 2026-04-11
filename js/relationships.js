@@ -803,8 +803,106 @@ var Relationships = (function () {
         ],
         onEnd: { addAffinity: { npc: "liora", amount: 5 } }
       }
+    },
+
+    selene: {
+      name: "Selene Ashford",
+      portrait: "assets/portraits/innkeeper.png",
+      lovedGifts: ["herbal-tea", "sweet-roll", "silver-ring"],
+      likedGifts: ["wildflowers", "moonstone", "old-book"],
+      dislikedGifts: ["iron-ingot", "cave-herb"],
+      bonus: { defense: 1, intelligence: 1 },
+      preferredClass: null,
+      chatLines: [
+        "Running an inn teaches you two things: how to listen, and how to know when someone needs a drink more than a conversation.",
+        "Every traveler who passes through leaves a story behind. Most of them don't even realize they've told it.",
+        "I inherited this place from my aunt. She said the trick to a good inn is making strangers feel like they've come home.",
+        "The fire never goes out here. I made that promise the first night I took over. Even when it's just me, it burns.",
+        "You have that look. The one people get when they've been carrying something heavy and pretending they aren't.",
+        "I know more secrets than anyone in this town. Don't worry, I keep them better than most keep their promises.",
+        "Some nights, after the last patron leaves, I sit by the fire and just listen to the building settle. It sounds like breathing.",
+        "People think innkeeping is simple. It is. That's what makes it hard.",
+        "Bram comes in here every week and orders the same thing. One day I'm going to give him something different and see what happens.",
+        "Mira left a potion here last week. I haven't touched it. I've seen what her experiments do to tables.",
+        "Harlan stopped by for a drink and spent an hour complaining about his back. I charged him double for the therapy.",
+        "Rowan checks on me now and then. I think he worries I get lonely. I don't, usually. But I appreciate the thought.",
+        "A good stew fixes most problems. The rest need ale. And if that doesn't work, a warm bed and a locked door.",
+        "You're one of the few people who actually looks at me when we talk. You'd be surprised how rare that is."
+      ],
+      contextualLines: {
+        completedMQ3: "The whole town feels lighter since you dealt with those goblins. Even the regulars are less jumpy at night.",
+        elricJoinedMQ4: "Captain Elric looked different when he left with you. Less like a man guarding a wall, more like one who remembered why he built it.",
+        completedMQ4: "You came back looking like you'd seen something. Sit down. I'll bring you something warm. No charge.",
+        completedMQ5: "People keep coming in and asking about you. I tell them you're tougher than you look. That usually satisfies them.",
+        defeatedGrisk: "I heard what you did. The whole inn was toasting your name last night. I saved a chair by the fire for when you came back.",
+        completedMQ8: "Elderbrook owes you more than it can repay. But I can start with the best room in the house. Permanently reserved."
+      },
+      giftReactions: {
+        loved: [
+          "Oh... you noticed I always drink tea after closing, didn't you? That's dangerously observant.",
+          "A sweet roll! You're going to ruin my reputation as the serious one. Thank you.",
+          "This is beautiful. You didn't have to, but I'm very glad you did."
+        ],
+        liked: [
+          "That's very kind. I'll treasure it.",
+          "You always seem to know what will put a smile on my face."
+        ],
+        neutral: [
+          "Thank you. That's thoughtful of you.",
+          "I appreciate the gesture. Really."
+        ],
+        disliked: [
+          "Oh. That's... practical. Not really my sort of thing, but I admire the directness.",
+          "You tried. I'll give you that much. But maybe something a little less... industrial next time?"
+        ]
+      },
+      milestoneDialogues: {
+        15: {
+          nodes: [
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "You know, most people come here for the ale or the room. You're the first who seems to come for the company." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I've been running this place alone for three years. You get used to noise without conversation." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "It's nice having someone who lingers. Don't stop." }
+          ]
+        },
+        35: {
+          nodes: [
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I should tell you something. My aunt didn't just leave me this inn. She left me here because no one else would take me." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I was trouble when I was younger. Angry, reckless. She gave me something to care for. Walls, a hearth, people passing through." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "You remind me of her, actually. The way you carry responsibility without making it look heavy." }
+          ]
+        },
+        55: {
+          nodes: [
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "Can I be honest with you? I've spent years making this place feel like home for everyone else." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "But when you walk through that door, it's the first time it's ever felt like home for me." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I don't say that to many people. I'm saying it to you because I trust you with it." }
+          ]
+        },
+        75: {
+          nodes: [
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I've been putting this off because I'm better at reading other people's feelings than admitting my own." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "But every night after you leave, the fire feels colder. And I've started keeping your chair closer to the hearth without thinking about it." },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I think I'm in love with you. And I'd rather say it clumsily than spend another night pretending I'm not.",
+              choices: [
+                { text: "I feel the same way, Selene.", next: 3, flags: ["seleneRomantic"] },
+                { text: "I care about you, but as a friend.", next: 5 }
+              ]
+            },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "Then the fire stays lit. For both of us, from now on.", end: true },
+            { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I understand. And I mean it when I say this doesn't change anything. Your chair will always be by the fire.", end: true }
+          ]
+        }
+      },
+      dateDialogue: {
+        nodes: [
+          { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "A walk? Let me close up early. Nobody will miss me for one evening. Probably." },
+          { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "I forget how quiet Elderbrook gets at night. Behind the bar, there's always noise. Out here, you can hear yourself think." },
+          { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "You know what I like about you? You don't fill silence with nonsense. You just let it be comfortable." },
+          { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "Thank you for tonight. I needed this more than I realized.", end: true }
+        ],
+        onEnd: { addAffinity: { npc: "selene", amount: 5 } }
+      }
     }
-  };
 
   /* â”€â”€ Helper Functions â”€â”€ */
 

@@ -53,10 +53,10 @@ var Chapter1 = (function () {
       portrait: "assets/portraits/pet-shop-keeper.png",
       role: "Pet Shop Owner", personality: "Gentle, animal-loving, earthy."
     },
-    gareth: {
-      id: "gareth", name: "Gareth Hearthwell",
+    selene: {
+      id: "selene", name: "Selene Ashford",
       portrait: "assets/portraits/innkeeper.png",
-      role: "Innkeeper", personality: "Warm, jovial, everyone's friend. Knows all the local gossip."
+      role: "Innkeeper", personality: "Warm, perceptive, quietly caring. Keeps the hearth burning and everyone's secrets safe."
     },
     liora: {
       id: "liora", name: "Liora Bloom",
