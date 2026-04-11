@@ -950,7 +950,7 @@ button {
 }
 
 /* ── Guard Post Room ── */
-#screen-guardpost {
+#screen-guardpost.active {
   background-size: cover;
   background-position: center;
   display: flex;
@@ -1495,11 +1495,9 @@ button {
 }
 
 /* ── Battle screen layout ── */
-#screen-battle {
+#screen-battle.active {
   display: flex;
   flex-direction: column;
-}
-#screen-battle.active {
   padding: 0;
 }
 #battle-content {
