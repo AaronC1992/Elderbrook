@@ -629,18 +629,18 @@ var UI = (function () {
     html += '<div class="town-buildings">';
 
     // Left side
-    html += '<button class="town-poi" style="top:5%;left:1%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
     html += '<button class="town-poi" style="top:22%;left:1%" data-action="go-shop" data-shop="weapon-shop"><span class="poi-name">' + (festival ? 'Bram\'s Festival Forge' : 'Weapon Shop') + '</span><span class="poi-sub">' + (festival ? 'Commemorative blades' : 'Bram Ironhand') + '</span></button>';
     html += '<button class="town-poi" style="top:22%;left:15%" data-action="go-shop" data-shop="armor-shop"><span class="poi-name">Armor Shop</span><span class="poi-sub">' + (festival ? 'Harlan is almost smiling' : 'Harlan Stonevein') + '</span></button>';
     html += '<button class="town-poi" style="top:22%;left:29%" data-action="go-shop" data-shop="potion-shop"><span class="poi-name">' + (festival ? 'Mira\'s Cider Stand' : 'Potion Shop') + '</span><span class="poi-sub">' + (festival ? 'Festive brews &amp; potions' : 'Mira Voss') + '</span></button>';
 
-    // Center — peaked building behind the lamp post
+    // Center — right of lamp post
+    html += '<button class="town-poi" style="top:5%;left:52%" data-action="go-inn"><span class="poi-name">The Hearthstone Inn</span><span class="poi-sub">' + (festival ? 'Packed with revelers' : 'Rest &amp; recover') + '</span></button>';
     var guildSub = 'Guildmaster Rowan';
     if (festival) guildSub = 'Festive drinks inside';
     else if (Player.hasFlag('defeatedGrisk')) guildSub = 'Rowan has news';
     else if (Player.hasFlag('acceptedMQ7')) guildSub = 'Rowan is anxious';
     else if (Player.hasFlag('unlockedGoblinCave')) guildSub = 'Rowan awaits your report';
-    html += '<button class="town-poi" style="top:8%;left:42%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + guildSub + '</span></button>';
+    html += '<button class="town-poi" style="top:18%;left:52%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + guildSub + '</span></button>';
 
     // Right side
     html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
