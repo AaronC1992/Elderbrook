@@ -91,6 +91,19 @@ var Dungeon = (function () {
     }
   };
 
+  var ROOM_FLAVORS = {
+    0: "The stench of goblins is overpowering. No turning back.",
+    1: "Narrow tunnels lit by phosphorescent fungal growth.",
+    2: "Stolen goods are piled high in this small chamber.",
+    3: "Goblin guards stand watch among stolen weapons.",
+    4: "A natural spring offers a moment of respite.",
+    5: "Strange totems and glowing sigils... dark magic lingers.",
+    6: "Maps and battle plans cover an ancient stone table.",
+    7: "The deepest chamber. The goblin chief awaits.",
+    8: "A hidden passage reveals a forgotten stash.",
+    9: "A side tunnel partially blocked by rubble."
+  };
+
   var currentDungeon = null;
   var currentRoomIndex = 0;
   var clearedRooms = {};
@@ -149,114 +162,149 @@ var Dungeon = (function () {
     var room = currentDungeon.rooms[currentRoomIndex];
     if (!room) return;
 
+    var screen = document.getElementById("screen-dungeon");
     var container = document.getElementById("dungeon-content");
-    if (!container) return;
+    if (!screen || !container) return;
+
+    // Set background
+    screen.style.backgroundImage = "url('" + currentDungeon.background + "')";
 
     var isCleared = clearedRooms[room.id];
     var html = '';
 
-    // Dungeon name and mini-map
-    html += '<div class="dungeon-header">';
-    html += '<h2>' + currentDungeon.name + '</h2>';
-    html += renderMiniMap();
+    // Header with name, breadcrumb and flavor
+    var flavor = ROOM_FLAVORS[room.id] || '';
+    html += '<div class="explore-header">';
+    html += '<span class="explore-area-name">' + room.name + '</span>';
+    html += renderBreadcrumb();
+    html += '<span class="explore-flavor">' + flavor + '</span>';
     html += '</div>';
 
-    // Room info
-    html += '<div class="dungeon-room">';
-    html += '<h3>' + room.name + '</h3>';
-    html += '<p>' + room.description + '</p>';
+    // Cleared/status badges
+    if (room.type === "enemy" && isCleared) {
+      html += '<div class="explore-cleared-badge">Room Cleared</div>';
+    }
+    if (room.type === "boss" && isCleared) {
+      html += '<div class="explore-cleared-badge">Boss Defeated</div>';
+    }
+    if (room.type === "treasure" && dungeonLoot[room.id]) {
+      html += '<div class="explore-cleared-badge">Searched</div>';
+    }
+    if (room.type === "rest" && isCleared) {
+      html += '<div class="explore-cleared-badge">Rested</div>';
+    }
 
-    // Room-type specific content
-    if (room.type === "start") {
-      html += '<p>You stand at the entrance. Steel yourself and proceed.</p>';
-    } else if (room.type === "enemy" && !isCleared) {
+    // Enemy portraits (enemy rooms that aren't cleared)
+    if (room.type === "enemy" && !isCleared) {
       var fights = clearedRooms[room.id + "_fights"] || 0;
       var total = room.enemyCount || 1;
-      html += '<p class="room-warning">Enemies lurk ahead!</p>';
-      if (fights > 0) {
-        html += '<p class="room-progress">Fights: ' + fights + ' / ' + total + '</p>';
+      var remaining = total - fights;
+      for (var i = fights; i < total; i++) {
+        var enemyId = room.enemies[i % room.enemies.length];
+        var template = Enemies.get(enemyId);
+        if (!template) continue;
+        var pos = getEnemyPosition(i - fights, remaining);
+        html += '<button class="explore-enemy" style="left:' + pos.x + '%;top:' + pos.y + '%" ';
+        html += 'data-action="dungeon-fight" title="Fight ' + template.name + '">';
+        html += '<img class="explore-enemy-portrait" src="' + template.portrait + '" alt="' + template.name + '" onerror="this.style.display=\'none\'" />';
+        html += '<span class="explore-enemy-name">' + template.name + '</span>';
+        html += '</button>';
       }
-      html += '<button class="btn" data-action="dungeon-fight">Fight</button>';
-    } else if (room.type === "enemy" && isCleared) {
-      html += '<p class="room-cleared">The room is cleared.</p>';
-    } else if (room.type === "treasure") {
-      if (!dungeonLoot[room.id]) {
-        html += '<button class="btn" data-action="dungeon-loot">Search</button>';
-      } else {
-        html += '<p class="room-cleared">Already searched.</p>';
+    }
+
+    // Boss portrait
+    if (room.type === "boss" && !isCleared) {
+      var boss = Enemies.getBoss(room.boss);
+      if (boss) {
+        html += '<button class="explore-enemy dungeon-boss-marker" style="left:50%;top:42%" ';
+        html += 'data-action="dungeon-boss" title="Challenge ' + boss.name + '">';
+        html += '<img class="explore-enemy-portrait dungeon-boss-portrait" src="' + boss.portrait + '" alt="' + boss.name + '" onerror="this.style.display=\'none\'" />';
+        html += '<span class="explore-enemy-name dungeon-boss-name">' + boss.name + '</span>';
+        html += '</button>';
       }
-    } else if (room.type === "rest") {
-      if (!isCleared) {
-        html += '<p>A place to rest and recover.</p>';
-        html += '<button class="btn" data-action="dungeon-rest">Rest</button>';
-      } else {
-        html += '<p class="room-cleared">You already rested here.</p>';
-      }
-    } else if (room.type === "boss") {
-      if (!isCleared) {
-        html += '<p class="room-warning">The boss awaits!</p>';
-        html += '<button class="btn btn-danger" data-action="dungeon-boss">Challenge Boss</button>';
-      } else {
-        html += '<p class="room-cleared">The boss has been defeated.</p>';
-      }
+    }
+
+    // Treasure chest
+    if (room.type === "treasure" && !dungeonLoot[room.id]) {
+      html += '<button class="explore-chest" style="left:50%;top:55%" data-action="dungeon-loot">';
+      html += '<div class="explore-chest-icon"></div>';
+      html += '<div class="explore-chest-twinkle"></div>';
+      html += '</button>';
+    }
+
+    // Rest point
+    if (room.type === "rest" && !isCleared) {
+      html += '<button class="dungeon-rest-point" style="left:50%;top:52%" data-action="dungeon-rest" title="Rest and recover">';
+      html += '<div class="dungeon-rest-glow"></div>';
+      html += '<span class="dungeon-rest-label">Rest</span>';
+      html += '</button>';
     }
 
     // Search for secrets
     if (room.secret && !clearedRooms['secret_' + room.id] && (isCleared || room.type === 'start')) {
-      html += '<button class="btn btn-secondary" data-action="dungeon-search-secret">Search for secrets</button>';
+      html += '<button class="dungeon-search-btn" data-action="dungeon-search-secret">Search for Secrets</button>';
     }
 
-    // Navigation
-    html += '<div class="dungeon-nav">';
-    if (currentRoomIndex > 0) {
-      html += '<button class="btn" data-action="dungeon-back">Back</button>';
-    }
-    if (room.exits.length > 0 && (isCleared || room.type === "start" || room.type === "treasure" || room.type === "rest")) {
-      for (var i = 0; i < room.exits.length; i++) {
-        var nextRoom = currentDungeon.rooms[room.exits[i]];
-        html += '<button class="btn" data-action="dungeon-move" data-room="' + room.exits[i] + '">Proceed to ' + nextRoom.name + '</button>';
+    // Branch paths (side routes beyond the main forward exit)
+    var canProceed = isCleared || room.type === "start" || room.type === "treasure" || room.type === "rest";
+    if (canProceed && room.exits.length > 1) {
+      for (var b = 1; b < room.exits.length; b++) {
+        var branchRoom = currentDungeon.rooms[room.exits[b]];
+        if (branchRoom) {
+          html += '<button class="dungeon-branch-btn" data-action="dungeon-move" data-room="' + room.exits[b] + '">' + branchRoom.name + '</button>';
+        }
       }
     }
-    html += '<button class="btn" data-action="dungeon-exit">Leave Dungeon</button>';
+
+    // Navigation arrows
+    var forward = null;
+    if (room.exits.length > 0 && !room.isSecret) {
+      forward = room.exits[0];
+    }
+    html += '<div class="explore-nav">';
+    if (roomHistory.length > 0) {
+      html += '<button class="explore-arrow explore-arrow-left" data-action="dungeon-back" title="Go back">&larr;</button>';
+    }
+    html += '<button class="explore-arrow explore-arrow-map" data-action="dungeon-exit" title="Leave Dungeon">Exit</button>';
+    if (canProceed && forward !== null) {
+      var fwdRoom = currentDungeon.rooms[forward];
+      html += '<button class="explore-arrow explore-arrow-right" data-action="dungeon-move" data-room="' + forward + '" title="' + (fwdRoom ? fwdRoom.name : 'Forward') + '">&rarr;</button>';
+    }
     html += '</div>';
 
-    html += '</div>';
-
-    // Player status
+    // Player status overlay
     var p = Player.get();
-    html += '<div class="dungeon-player-status">';
-    html += 'HP: ' + p.hp + '/' + p.maxHp + ' | MP: ' + p.mp + '/' + p.maxMp;
+    html += '<div class="dungeon-status">';
+    html += '<span>HP: ' + p.hp + '/' + p.maxHp + '</span>';
+    html += '<span>MP: ' + p.mp + '/' + p.maxMp + '</span>';
     html += '</div>';
 
     container.innerHTML = html;
   }
 
-  function renderMiniMap() {
-    var html = '<div class="dungeon-minimap">';
+  function getEnemyPosition(index, total) {
+    if (total === 1) return { x: 50, y: 48 };
+    if (total === 2) return index === 0 ? { x: 35, y: 48 } : { x: 65, y: 44 };
+    return [{ x: 28, y: 48 }, { x: 50, y: 42 }, { x: 72, y: 50 }][index] || { x: 50, y: 48 };
+  }
+
+  function renderBreadcrumb() {
+    var html = '<div class="explore-breadcrumb">';
     var mainPath = [0, 1, 2, 3, 4, 5, 6, 7];
     for (var i = 0; i < mainPath.length; i++) {
       var r = currentDungeon.rooms[mainPath[i]];
-      var cls = "minimap-room";
-      if (r.id === currentRoomIndex) cls += " minimap-current";
-      else if (clearedRooms[r.id]) cls += " minimap-cleared";
-      var label = r.type === "boss" ? "B" : String(i + 1);
-      html += '<div class="' + cls + '" title="' + r.name + '">' + label + '</div>';
-      if (r.exits && r.exits.length > 1) {
-        html += '<div class="minimap-branch" title="Branching path">*</div>';
-      }
-      if (i < mainPath.length - 1) {
-        html += '<div class="minimap-connector"></div>';
-      }
+      var dotClass = "explore-dot";
+      if (r.id === currentRoomIndex) dotClass += " explore-dot-current";
+      if (clearedRooms[r.id]) dotClass += " explore-dot-cleared";
+      html += '<span class="' + dotClass + '"></span>';
     }
-    // Show secret/branch rooms if discovered
     for (var j = 8; j < currentDungeon.rooms.length; j++) {
       var sr = currentDungeon.rooms[j];
       if (clearedRooms[sr.id] || sr.id === currentRoomIndex) {
-        html += '<div class="minimap-connector minimap-secret-conn"></div>';
-        var scls = "minimap-room minimap-secret";
-        if (sr.id === currentRoomIndex) scls += " minimap-current";
-        else if (clearedRooms[sr.id]) scls += " minimap-cleared";
-        html += '<div class="' + scls + '" title="' + sr.name + '">?</div>';
+        var sCls = "explore-dot";
+        if (sr.id === currentRoomIndex) sCls += " explore-dot-current";
+        if (clearedRooms[sr.id]) sCls += " explore-dot-cleared";
+        html += '<span class="' + sCls + '"></span>';
       }
     }
     html += '</div>';
