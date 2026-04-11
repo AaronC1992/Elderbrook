@@ -16,8 +16,19 @@ var Dialogue = (function () {
     // If it's a random-line type (NPC idle chatter), pick one and show it briefly
     if (data.lines) {
       var randomLine = data.lines[Math.floor(Math.random() * data.lines.length)];
+      // Resolve NPC speaker/portrait from dialogue ID (e.g. "mira-idle" → "mira")
+      var speakerName = "";
+      var speakerPortrait = "";
+      var npcKey = dialogueId.replace(/-idle$/, "");
+      if (npcKey !== dialogueId) {
+        var npc = Chapter1.getNPC(npcKey);
+        if (npc) {
+          speakerName = npc.name || "";
+          speakerPortrait = npc.portrait || "";
+        }
+      }
       currentDialogue = {
-        nodes: [{ speaker: "", portrait: "", text: randomLine }],
+        nodes: [{ speaker: speakerName, portrait: speakerPortrait, text: randomLine }],
         onEnd: null
       };
       currentNode = 0;
