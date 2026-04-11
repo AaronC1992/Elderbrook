@@ -570,12 +570,9 @@ var UI = (function () {
     }
 
     // Persistent town NPCs — portraits in the cobblestone square
-    // Elric leaves town when on escort missions
+    // Elric is at the Guard Post, not in town square
     var elricAway = (Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) ||
                     (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
-    if (!elricAway) {
-      html += '<button class="town-npc" style="top:48%;left:44%" data-action="go-elric"><img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'"><span class="town-npc-name">Captain Elric</span></button>';
-    }
     html += '<button class="town-npc town-npc-event" style="top:51%;left:61%" data-action="go-liora"><img class="town-npc-portrait" src="assets/portraits/liora.png" alt="Liora Bloom" onerror="this.style.display=\'none\'"><span class="town-npc-name">Liora Bloom</span></button>';
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
