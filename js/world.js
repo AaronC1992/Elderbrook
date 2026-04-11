@@ -46,6 +46,10 @@ var World = (function () {
       showPetShopScene();
       return;
     }
+    if (currentNPCContext && currentNPCContext.returnToScene === "guardpost") {
+      enterGuardPost();
+      return;
+    }
     navigate("elderbrook");
   }
 
@@ -79,7 +83,8 @@ var World = (function () {
     var npcArea = document.getElementById("petshop-npc-area");
     var fauna = Chapter1.getNPC("fauna");
     if (npcArea && fauna && fauna.portrait) {
-      npcArea.innerHTML = '<img class="shop-npc-fullbody is-interactive" src="' + fauna.portrait + '" alt="' + fauna.name + '" data-action="petshop-scene-interact" title="Talk to ' + fauna.name + '" onerror="this.style.display=\'none\'">';
+      npcArea.innerHTML = '<img class="shop-npc-fullbody npc-bust-crop is-interactive" src="' + fauna.portrait + '" alt="' + fauna.name + '" data-action="petshop-scene-interact" title="Talk to ' + fauna.name + '" onerror="this.style.display=\'none\'">';
+      npcArea.classList.add('bust-crop-area');
     }
     // Clear shop content in scene mode
     var content = document.getElementById("petshop-content");
@@ -98,6 +103,8 @@ var World = (function () {
   function openPetShopInventory() {
     var screen = document.getElementById("screen-petshop");
     if (screen) screen.classList.remove("petshop-scene-mode");
+    var npcArea = document.getElementById("petshop-npc-area");
+    if (npcArea) npcArea.classList.remove('bust-crop-area');
     UI.renderPetShop();
     UI.showScreen("petshop");
   }
@@ -258,11 +265,21 @@ var World = (function () {
     }
   }
 
+  function enterInn() {
+    UI.renderInn();
+    UI.showScreen("inn");
+  }
+
+  function talkToInnkeeper() {
+    UI.renderInnMenu();
+  }
+
   function restAtInn() {
     var p = Player.get();
     var cost = 5;
     if (p.gold < cost) {
-      UI.showMessage("The innkeeper shakes his head. 'That'll be " + cost + " gold, friend.' You don't have enough.");
+      UI.showMessage("You don't have enough gold.");
+      UI.renderInnMenu();
       return;
     }
     var oldSeason = Player.getSeason();
@@ -272,7 +289,7 @@ var World = (function () {
     Save.autoSave();
     UI.updateHeader();
     var innTexts = [
-      "The innkeeper pours you a warm meal. You sleep soundly and wake refreshed.",
+      "Gareth pours you a warm meal. You sleep soundly and wake refreshed.",
       "You settle into a creaky but comfortable bed. A full night's rest does wonders.",
       "The fire crackles in the hearth as you drift off. Morning comes quickly.",
       "A bowl of stew and a warm bed — simple comforts after a long day."
@@ -284,7 +301,9 @@ var World = (function () {
       msg += " The season has changed to " + seasonCap + ".";
       UI.showSeasonBanner(newSeason);
     }
-    UI.showMessage(msg);  }
+    UI.renderInn();
+    UI.showMessage(msg);
+  }
 
   /* NPC interaction routing for town POIs */
   function visitShop(shopId) {
@@ -669,7 +688,12 @@ var World = (function () {
     });
   }
 
-  function visitElric() {
+  function enterGuardPost() {
+    UI.renderGuardPost();
+    UI.showScreen("guardpost");
+  }
+
+  function talkToElric() {
     // Elric is away on escort missions
     var elricAway = (Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) ||
                     (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
@@ -691,8 +715,7 @@ var World = (function () {
           Audio.play("questComplete");
           Save.autoSave();
           Dialogue.start(ecqs[ei] + "-complete", function () {
-            UI.showScreen("town");
-            UI.renderTown();
+            enterGuardPost();
           });
           return;
         }
@@ -704,8 +727,7 @@ var World = (function () {
       if (result) {
         Audio.play("questComplete");
         Dialogue.start("sq5-complete", function () {
-          UI.showScreen("town");
-          UI.renderTown();
+          enterGuardPost();
           UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
         });
         return;
@@ -717,8 +739,7 @@ var World = (function () {
       if (result) {
         Audio.play("questComplete");
         Dialogue.start("sq7-complete", function () {
-          UI.showScreen("town");
-          UI.renderTown();
+          enterGuardPost();
           UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
         });
         return;
@@ -730,15 +751,14 @@ var World = (function () {
       if (result) {
         Audio.play("questComplete");
         Dialogue.start("sq10-complete", function () {
-          UI.showScreen("town");
-          UI.renderTown();
+          enterGuardPost();
           UI.showMessage("Quest complete! +" + result.rewards.xp + " XP, +" + (result.rewards.gold || 0) + " gold");
         });
         return;
       }
     }
     // Check SQ16 turn-in (Guard Duty - early Elric)
-    var elricMenuOptions = { background: "assets/backgrounds/watch-post.png" };
+    var elricMenuOptions = { background: "assets/backgrounds/watch-post.png", returnToScene: "guardpost" };
     if (Quests.isActive("sq16") && Quests.checkObjectives("sq16")) {
       var result = Quests.turnIn("sq16");
       if (result) {
@@ -1019,10 +1039,14 @@ var World = (function () {
     navigate: navigate,
     gather: gather,
     restAtInn: restAtInn,
+    enterInn: enterInn,
+    talkToInnkeeper: talkToInnkeeper,
     visitShop: visitShop,
     visitGuild: visitGuild,
     visitQuestBoard: visitQuestBoard,
-    visitElric: visitElric,
+    visitElric: enterGuardPost,
+    enterGuardPost: enterGuardPost,
+    talkToElric: talkToElric,
     visitLiora: visitLiora,
     visitElira: visitElira,
     interactEvent: interactEvent,

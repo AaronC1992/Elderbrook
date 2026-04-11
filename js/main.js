@@ -150,10 +150,30 @@
         World.visitQuestBoard();
         break;
       case "go-inn":
+        World.enterInn();
+        break;
+      case "talk-to-innkeeper":
+        World.talkToInnkeeper();
+        break;
+      case "inn-rest":
         World.restAtInn();
         break;
+      case "inn-menu-back":
+        UI.renderInn();
+        break;
+      case "inn-back":
+        UI.showScreen("town");
+        UI.renderTown();
+        break;
       case "go-elric":
-        World.visitElric();
+        World.enterGuardPost();
+        break;
+      case "talk-to-elric":
+        World.talkToElric();
+        break;
+      case "guardpost-back":
+        UI.showScreen("town");
+        UI.renderTown();
         break;
       case "go-liora":
         World.visitLiora();
@@ -747,6 +767,90 @@
             var days = parseInt(val, 10) || 1;
             for (var di = 0; di < days; di++) Player.sleep();
             UI.showMessage("Advanced " + days + " day(s)");
+            break;
+          case "set-difficulty":
+            if (val === "easy" || val === "normal" || val === "hard") {
+              ap.difficulty = val;
+              UI.showMessage("Difficulty: " + val);
+            }
+            break;
+          case "set-class":
+            if (Player.CLASS_DEFS[val]) {
+              ap.buildClass = val;
+              if (!ap.learnedSkills) ap.learnedSkills = [];
+              var cSkill = Player.CLASS_DEFS[val].skill;
+              if (cSkill && ap.learnedSkills.indexOf(cSkill) === -1) {
+                ap.learnedSkills.push(cSkill);
+              }
+              Player.recalcStats();
+              UI.showMessage("Class set to " + Player.CLASS_DEFS[val].name);
+            }
+            break;
+          case "add-charm":
+            ap.charm += parseInt(val, 10) || 1;
+            UI.showMessage("Charm: " + ap.charm);
+            break;
+          case "give-all-pets":
+            var petList = Pets.getAll();
+            if (!ap.ownedPets) ap.ownedPets = [];
+            for (var gpi = 0; gpi < petList.length; gpi++) {
+              if (ap.ownedPets.indexOf(petList[gpi].id) === -1) {
+                ap.ownedPets.push(petList[gpi].id);
+              }
+            }
+            UI.showMessage("All pets given!");
+            break;
+          case "set-pet":
+            if (!ap.ownedPets) ap.ownedPets = [];
+            if (ap.ownedPets.indexOf(val) === -1) ap.ownedPets.push(val);
+            ap.activePet = val;
+            Player.recalcStats();
+            UI.showMessage("Pet set: " + val);
+            break;
+          case "remove-pet":
+            ap.activePet = null;
+            Player.recalcStats();
+            UI.showMessage("Pet removed");
+            break;
+          case "add-affinity":
+            var affParts = val.split("|");
+            Relationships.addAffinity(affParts[0], parseInt(affParts[1], 10) || 10);
+            UI.showMessage(affParts[0] + " affinity +" + affParts[1]);
+            break;
+          case "set-affinity":
+            var saParts = val.split("|");
+            var saTarget = parseInt(saParts[1], 10);
+            if (ap.relationships && ap.relationships[saParts[0]]) {
+              ap.relationships[saParts[0]].affinity = saTarget;
+            }
+            UI.showMessage(saParts[0] + " affinity set to " + saTarget);
+            break;
+          case "set-season":
+            if (["spring", "summer", "autumn", "winter"].indexOf(val) !== -1) {
+              ap.season = val;
+              ap.seasonDay = 0;
+              UI.showMessage("Season: " + val);
+            }
+            break;
+          case "start-festival":
+            Player.startFestival();
+            UI.showMessage("Harvest Festival started!");
+            break;
+          case "end-festival":
+            ap.festivalStartDay = null;
+            UI.showMessage("Festival ended");
+            break;
+          case "reset-training":
+            ap.trainingDone = {};
+            UI.showMessage("Daily training reset!");
+            break;
+          case "add-flag":
+            var flagInput = document.getElementById("admin-new-flag");
+            var newFlag = flagInput ? flagInput.value.trim() : "";
+            if (newFlag) {
+              Player.setFlag(newFlag);
+              UI.showMessage("Flag set: " + newFlag);
+            }
             break;
         }
         UI.updateHeader();

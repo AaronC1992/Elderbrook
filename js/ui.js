@@ -691,6 +691,102 @@ var UI = (function () {
     container.innerHTML = html;
   }
 
+  /* ── Guard Post Interior ── */
+  function renderGuardPost() {
+    var container = document.getElementById("guardpost-content");
+    if (!container) return;
+
+    var elricAway = (Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) ||
+                    (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
+
+    var html = '<div class="guardpost-room">';
+    html += '<h2 class="guardpost-title">Guard Post</h2>';
+
+    // Clickable NPCs
+    html += '<div class="guardpost-npcs">';
+    if (!elricAway) {
+      html += '<button class="town-npc guardpost-npc" data-action="talk-to-elric">';
+      html += '<img class="town-npc-portrait" src="assets/portraits/elric.png" alt="Captain Elric" onerror="this.style.display=\'none\'">';
+      html += '<span class="town-npc-name">Captain Elric</span>';
+      html += '</button>';
+    } else {
+      html += '<p class="guardpost-away">Captain Elric is out on patrol.</p>';
+    }
+    html += '</div>';
+
+    // Back button
+    html += '<button class="town-poi town-poi-exit guardpost-back" data-action="guardpost-back"><span class="poi-name">Back to Town</span></button>';
+    html += '</div>';
+
+    container.innerHTML = html;
+  }
+
+  /* ── Inn Interior ── */
+  function renderInn() {
+    var container = document.getElementById("inn-content");
+    if (!container) return;
+    var p = Player.get();
+    var cost = 5;
+
+    var html = '<div class="inn-room">';
+    html += '<h2 class="inn-title">The Hearthstone Inn</h2>';
+
+    // Innkeeper NPC
+    html += '<div class="inn-npcs">';
+    html += '<button class="town-npc inn-npc" data-action="talk-to-innkeeper">';
+    html += '<img class="town-npc-portrait" src="assets/portraits/innkeeper.png" alt="Gareth Hearthwell" onerror="this.style.display=\'none\'">';
+    html += '<span class="town-npc-name">Gareth Hearthwell</span>';
+    html += '</button>';
+    html += '</div>';
+
+    // Back button
+    html += '<button class="town-poi town-poi-exit inn-back" data-action="inn-back"><span class="poi-name">Back to Town</span></button>';
+    html += '</div>';
+
+    container.innerHTML = html;
+  }
+
+  /* ── Inn Rest Menu (shown when clicking innkeeper) ── */
+  function renderInnMenu() {
+    var container = document.getElementById("inn-content");
+    if (!container) return;
+    var p = Player.get();
+    var cost = 5;
+    var canAfford = p.gold >= cost;
+
+    var html = '<div class="inn-room">';
+    html += '<h2 class="inn-title">The Hearthstone Inn</h2>';
+
+    // Innkeeper portrait + menu panel
+    html += '<div class="inn-menu-area">';
+    html += '<div class="inn-npc-display">';
+    html += '<img class="inn-keeper-portrait" src="assets/portraits/innkeeper.png" alt="Gareth" onerror="this.style.display=\'none\'">';
+    html += '</div>';
+    html += '<div class="inn-menu-panel">';
+    html += '<h3>Gareth Hearthwell</h3>';
+    html += '<p class="inn-flavor">"Welcome, friend! You look like you could use a warm meal and a good night\'s rest."</p>';
+    html += '<div class="inn-option">';
+    html += '<span class="inn-option-label">Rest until morning</span>';
+    html += '<span class="inn-option-cost">' + cost + ' gold</span>';
+    html += '</div>';
+    html += '<p class="inn-detail">Restores HP, MP, and Energy. Advances to the next day.</p>';
+    html += '<div class="inn-actions">';
+    html += '<button class="btn' + (canAfford ? '' : ' btn-disabled') + '" data-action="inn-rest"' + (canAfford ? '' : ' disabled') + '>Rest (' + cost + 'g)</button>';
+    html += '<button class="btn btn-secondary" data-action="inn-menu-back">Back</button>';
+    html += '</div>';
+    if (!canAfford) {
+      html += '<p class="inn-no-gold">You don\'t have enough gold.</p>';
+    }
+    html += '</div>'; // .inn-menu-panel
+    html += '</div>'; // .inn-menu-area
+
+    // Back to town
+    html += '<button class="town-poi town-poi-exit inn-back" data-action="inn-back"><span class="poi-name">Back to Town</span></button>';
+    html += '</div>';
+
+    container.innerHTML = html;
+  }
+
   /* ── Chapter End Screen ── */
   function renderChapterEnd() {
     var container = document.getElementById("chapter-end-content");
@@ -1974,57 +2070,143 @@ var UI = (function () {
     if (!p || !p.isAdmin) return '<p>Access denied.</p>';
 
     var html = '<h2 class="ledger-section-title">Admin Controls</h2>';
+    html += '<p class="admin-hint">Developer tools for testing. Changes take effect immediately.</p>';
 
-    // Player Stats
+    /* ── Resources & Stats ── */
     html += '<div class="admin-section">';
-    html += '<h3>Player Stats</h3>';
+    html += '<h3>Resources &amp; Stats</h3>';
+
     html += '<div class="admin-row">';
     html += '<label>Level: <strong>' + p.level + '</strong></label>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="1">+1 Lv</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="5">+5 Lv</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="10">+10 Lv</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="1">+1</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="5">+5</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-levels" data-val="10">+10</button>';
     html += '</div>';
+
     html += '<div class="admin-row">';
-    html += '<label>Gold: <strong>' + p.gold + '</strong></label>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="100">+100g</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="1000">+1000g</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="10000">+10000g</button>';
+    html += '<label>XP: <strong>' + p.xp + ' / ' + p.xpToNext + '</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-xp" data-val="100">+100</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-xp" data-val="1000">+1000</button>';
     html += '</div>';
+
     html += '<div class="admin-row">';
-    html += '<label>HP: ' + p.hp + '/' + p.maxHp + ' | MP: ' + p.mp + '/' + p.maxMp + '</label>';
+    html += '<label>Gold: <strong>' + p.gold + 'g</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="100">+100</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="1000">+1000</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-gold" data-val="10000">+10000</button>';
+    html += '</div>';
+
+    html += '<div class="admin-row">';
+    html += '<label>HP: <strong>' + p.hp + ' / ' + p.maxHp + '</strong></label>';
+    html += '<label>MP: <strong>' + p.mp + ' / ' + p.maxMp + '</strong></label>';
     html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="full-heal">Full Heal</button>';
     html += '</div>';
+
     html += '<div class="admin-row">';
-    html += '<label>XP: ' + p.xp + '/' + p.xpToNext + '</label>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-xp" data-val="100">+100 XP</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-xp" data-val="1000">+1000 XP</button>';
+    html += '<label>Energy: <strong>' + p.energy + ' / ' + p.maxEnergy + '</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="full-energy">Restore</button>';
     html += '</div>';
+
     html += '<div class="admin-row">';
     html += '<label>Stat Points: <strong>' + p.unspentPoints + '</strong></label>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-points" data-val="5">+5 pts</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-points" data-val="20">+20 pts</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-points" data-val="5">+5</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-points" data-val="20">+20</button>';
     html += '</div>';
+
     html += '<div class="admin-row">';
-    html += '<label>Energy: ' + p.energy + '/' + p.maxEnergy + '</label>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="full-energy">Max Energy</button>';
-    html += '</div>';
+    html += '<label>Charm: <strong>' + p.charm + '</strong></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-charm" data-val="1">+1</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-charm" data-val="5">+5</button>';
     html += '</div>';
 
-    // Classes
+    html += '</div>';
+
+    /* ── Difficulty ── */
     html += '<div class="admin-section">';
-    html += '<h3>Unlock All Classes</h3>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="unlock-all-classes">Unlock All</button>';
+    html += '<h3>Difficulty</h3>';
+    html += '<div class="admin-row">';
+    var diffs = ["easy", "normal", "hard"];
+    for (var di = 0; di < diffs.length; di++) {
+      var isActive = p.difficulty === diffs[di];
+      html += '<button class="btn btn-small' + (isActive ? ' btn-active' : '') + '" data-action="admin-cmd" data-cmd="set-difficulty" data-val="' + diffs[di] + '">' + diffs[di].charAt(0).toUpperCase() + diffs[di].slice(1) + '</button>';
+    }
+    html += '</div>';
     html += '</div>';
 
-    // Skills
+    /* ── Class & Skills ── */
     html += '<div class="admin-section">';
-    html += '<h3>Learn All Skills</h3>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="learn-all-skills">Learn All</button>';
+    html += '<h3>Class &amp; Skills</h3>';
+    html += '<div class="admin-row">';
+    html += '<label>Current Class: <strong>' + (p.buildClass ? Player.CLASS_DEFS[p.buildClass].name : 'None') + '</strong></label>';
+    html += '</div>';
+    html += '<div class="admin-row admin-class-grid">';
+    var cdefs = Player.CLASS_DEFS;
+    for (var ck in cdefs) {
+      if (cdefs.hasOwnProperty(ck)) {
+        var isCurrent = p.buildClass === ck;
+        html += '<button class="btn btn-small' + (isCurrent ? ' btn-active' : '') + '" data-action="admin-cmd" data-cmd="set-class" data-val="' + ck + '" title="' + cdefs[ck].desc + '">' + cdefs[ck].name + '</button>';
+      }
+    }
+    html += '</div>';
+    html += '<div class="admin-row" style="margin-top:6px">';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="unlock-all-classes">Unlock All Classes</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="learn-all-skills">Learn All Skills</button>';
+    html += '</div>';
     html += '</div>';
 
-    // Items
+    /* ── Pets ── */
+    html += '<div class="admin-section">';
+    html += '<h3>Pets</h3>';
+    html += '<div class="admin-row">';
+    html += '<label>Active: <strong>' + (p.activePet || 'None') + '</strong></label>';
+    if (p.activePet) {
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="remove-pet">Remove</button>';
+    }
+    html += '</div>';
+    var allPets = Pets.getAll();
+    html += '<div class="admin-row admin-pet-grid">';
+    for (var pi = 0; pi < allPets.length; pi++) {
+      var pet = allPets[pi];
+      var owned = p.ownedPets && p.ownedPets.indexOf(pet.id) !== -1;
+      var active = p.activePet === pet.id;
+      var cls = 'btn btn-small';
+      if (active) cls += ' btn-active';
+      else if (owned) cls += ' btn-owned';
+      html += '<button class="' + cls + '" data-action="admin-cmd" data-cmd="set-pet" data-val="' + pet.id + '" title="' + (owned ? 'Owned' : 'Not owned — will be given') + '">' + pet.name + (active ? ' (active)' : owned ? ' (owned)' : '') + '</button>';
+    }
+    html += '</div>';
+    html += '<div class="admin-row" style="margin-top:6px">';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="give-all-pets">Give All Pets</button>';
+    html += '</div>';
+    html += '</div>';
+
+    /* ── Relationships ── */
+    html += '<div class="admin-section">';
+    html += '<h3>Relationships</h3>';
+    var npcIds = ["mira", "toma", "elira", "bram", "harlan", "elric", "fauna", "liora"];
+    for (var ri = 0; ri < npcIds.length; ri++) {
+      var nid = npcIds[ri];
+      var rel = p.relationships[nid];
+      var nconf = Relationships.getConfig(nid);
+      var nname = nconf ? nconf.name : nid;
+      var aff = rel ? rel.affinity : 0;
+      var lvl = Relationships.getLevelName(aff);
+      html += '<div class="admin-row admin-rel-row">';
+      html += '<label class="admin-rel-label">' + nname + '</label>';
+      html += '<span class="admin-rel-bar"><span class="admin-rel-fill" style="width:' + aff + '%"></span></span>';
+      html += '<span class="admin-rel-val">' + aff + '/100 (' + lvl + ')</span>';
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-affinity" data-val="' + nid + '|10">+10</button>';
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-affinity" data-val="' + nid + '|25">+25</button>';
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="set-affinity" data-val="' + nid + '|100">Max</button>';
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="set-affinity" data-val="' + nid + '|0">Reset</button>';
+      html += '</div>';
+    }
+    html += '</div>';
+
+    /* ── Items ── */
     html += '<div class="admin-section">';
     html += '<h3>Add Items</h3>';
+    html += '<p class="admin-hint">Click an item to add it to your inventory.</p>';
     html += '<div class="admin-item-grid">';
     var allItems = Items.getAll();
     for (var iid in allItems) {
@@ -2036,13 +2218,78 @@ var UI = (function () {
     html += '</div>';
     html += '</div>';
 
-    // Story Flags
+    /* ── World & Time ── */
+    html += '<div class="admin-section">';
+    html += '<h3>World &amp; Time</h3>';
+
+    html += '<div class="admin-row">';
+    html += '<label>Day: <strong>' + p.day + '</strong></label>';
+    html += '<label>Season: <strong>' + p.season.charAt(0).toUpperCase() + p.season.slice(1) + '</strong> (day ' + p.seasonDay + '/14)</label>';
+    html += '</div>';
+
+    html += '<div class="admin-row">';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day" data-val="1">+1 Day</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day" data-val="7">+7 Days</button>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day" data-val="14">+14 Days</button>';
+    html += '</div>';
+
+    html += '<div class="admin-row">';
+    html += '<label>Set Season:</label>';
+    var seasons = ["spring", "summer", "autumn", "winter"];
+    for (var si = 0; si < seasons.length; si++) {
+      var isS = p.season === seasons[si];
+      html += '<button class="btn btn-small' + (isS ? ' btn-active' : '') + '" data-action="admin-cmd" data-cmd="set-season" data-val="' + seasons[si] + '">' + seasons[si].charAt(0).toUpperCase() + seasons[si].slice(1) + '</button>';
+    }
+    html += '</div>';
+
+    html += '<div class="admin-row">';
+    html += '<label>Festival:</label>';
+    if (p.festivalStartDay) {
+      var daysLeft = 15 - (p.day - p.festivalStartDay);
+      html += '<span class="admin-rel-val">Active (' + daysLeft + ' days left)</span>';
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="end-festival">End Festival</button>';
+    } else {
+      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="start-festival">Start Harvest Festival</button>';
+    }
+    html += '</div>';
+
+    html += '<div class="admin-row">';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="reset-training">Reset Daily Training</button>';
+    html += '</div>';
+
+    html += '</div>';
+
+    /* ── Teleport ── */
+    html += '<div class="admin-section">';
+    html += '<h3>Teleport</h3>';
+    html += '<p class="admin-hint">Instantly travel to any location.</p>';
+    html += '<div class="admin-row">';
+    var areas = [
+      { id: "elderbrook", name: "Elderbrook" },
+      { id: "forest-road", name: "Forest Road" },
+      { id: "goblin-trail", name: "Goblin Trail" },
+      { id: "watch-post", name: "Watch Post" },
+      { id: "riverbank", name: "Riverbank" },
+      { id: "goblin-cave", name: "Goblin Cave" }
+    ];
+    for (var a = 0; a < areas.length; a++) {
+      var isHere = p.currentArea === areas[a].id;
+      html += '<button class="btn btn-small' + (isHere ? ' btn-active' : '') + '" data-action="admin-cmd" data-cmd="teleport" data-val="' + areas[a].id + '">' + areas[a].name + '</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    /* ── Story Flags ── */
     html += '<div class="admin-section">';
     html += '<h3>Story Flags</h3>';
+    html += '<div class="admin-row" style="margin-bottom:8px">';
     html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="complete-all-quests">Complete All Quests</button>';
+    html += '<label class="admin-flag-input-wrap">Add Flag: <input type="text" id="admin-new-flag" class="admin-input" placeholder="flagName"></label>';
+    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="add-flag">Add</button>';
+    html += '</div>';
     html += '<div class="admin-flags">';
     if (p.storyFlags) {
-      var flagKeys = Object.keys(p.storyFlags);
+      var flagKeys = Object.keys(p.storyFlags).sort();
       for (var f = 0; f < flagKeys.length; f++) {
         var fk = flagKeys[f];
         var fv = p.storyFlags[fk];
@@ -2052,27 +2299,6 @@ var UI = (function () {
         html += '</div>';
       }
     }
-    html += '</div>';
-    html += '</div>';
-
-    // Teleport
-    html += '<div class="admin-section">';
-    html += '<h3>Teleport</h3>';
-    html += '<div class="admin-row">';
-    var areas = ["elderbrook", "forest-edge", "deep-woods", "goblin-territory"];
-    for (var a = 0; a < areas.length; a++) {
-      html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="teleport" data-val="' + areas[a] + '">' + areas[a] + '</button>';
-    }
-    html += '</div>';
-    html += '</div>';
-
-    // Day/Time
-    html += '<div class="admin-section">';
-    html += '<h3>Time</h3>';
-    html += '<div class="admin-row">';
-    html += '<label>Day: ' + p.day + ' | Season: ' + p.season + '</label>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day">+1 Day</button>';
-    html += '<button class="btn btn-small" data-action="admin-cmd" data-cmd="advance-day" data-val="7">+7 Days</button>';
     html += '</div>';
     html += '</div>';
 
@@ -2091,6 +2317,9 @@ var UI = (function () {
     renderQuestBoard: renderQuestBoard,
     renderWorldMap: renderWorldMap,
     renderTown: renderTown,
+    renderGuardPost: renderGuardPost,
+    renderInn: renderInn,
+    renderInnMenu: renderInnMenu,
     renderChapterEnd: renderChapterEnd,
     renderRelationships: renderRelationships,
     renderNPCMenu: renderNPCMenu,
