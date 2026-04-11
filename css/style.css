@@ -1013,7 +1013,7 @@ button {
 }
 
 /* ── Inn Room ── */
-#screen-inn {
+#screen-inn.active {
   background-size: cover;
   background-position: center;
   display: flex;
