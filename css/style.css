@@ -1013,11 +1013,11 @@ button {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* Inventory mode: NPC stays visible behind the panel */
+/* Inventory mode: NPC visible behind semi-transparent panel */
 #screen-shop:not(.shop-scene-mode) .shop-panel {
-  background: linear-gradient(180deg, rgba(14, 17, 23, 0.88) 0%, rgba(10, 12, 18, 0.94) 100%);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, rgba(14, 17, 23, 0.75) 0%, rgba(10, 12, 18, 0.82) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* Legacy circle portrait (NPC menu, pet shop header, etc.) */
@@ -1744,9 +1744,11 @@ button {
 .social-panel {
   position: relative;
   z-index: 5;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   display: flex;
   justify-content: flex-end;
   align-items: center;
