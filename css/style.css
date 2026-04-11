@@ -1032,9 +1032,8 @@ button {
 }
 .inn-title {
   position: absolute;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 1rem;
+  left: 1.2rem;
   color: var(--accent);
   font-family: var(--font-heading);
   font-size: 1.3rem;
@@ -1071,9 +1070,9 @@ button {
 }
 .inn-back {
   position: absolute !important;
-  bottom: 3%;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 1.2rem;
+  left: 1.2rem;
+  transform: none;
   z-index: 3;
 }
 /* Inn rest menu */
