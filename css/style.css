@@ -781,7 +781,7 @@ button {
 
 /* ── Town ── */
 #screen-town { position: absolute; inset: 0; }
-#screen-town.active { display: block; padding: 0; }
+#screen-town.active { display: block; padding: 0; overflow: hidden; }
 #town-content {
   position: relative;
   width: 100%;
@@ -1462,6 +1462,7 @@ button {
   display: flex;
   flex-direction: column;
   padding: 0;
+  overflow: hidden;
 }
 #battle-content {
   display: flex;
@@ -3363,6 +3364,16 @@ button {
 /* ══════════════════════════════════════════════════════════════
    VICTORY REWARD SCREEN
    ══════════════════════════════════════════════════════════════ */
+/* Battle result overlay — covers the battle scene */
+.battle-result {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 30;
+}
 .victory-overlay {
   background: rgba(14, 17, 23, 0.92);
   border: 2px solid var(--accent);

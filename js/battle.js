@@ -1761,14 +1761,6 @@ var Battle = (function () {
       playerStatusClasses += ' status-visual-' + playerEffects[psi].type;
     }
     html += '<div class="battle-player' + playerStatusClasses + '" id="battle-player">';
-    html += '<img class="battle-portrait" src="' + Player.getPortrait() + '" alt="' + UI.escapeHtml(p.name) + '" onerror="this.style.display=\'none\'">';
-    // Active pet portrait
-    if (p.activePet && typeof Pets !== 'undefined') {
-      var battlePet = Pets.get(p.activePet);
-      if (battlePet) {
-        html += '<img class="battle-pet-portrait" src="' + battlePet.portrait + '" alt="' + battlePet.name + '" onerror="this.style.display=\'none\'">';
-      }
-    }
     html += '<div class="battle-player-info">';
     html += '<div class="battle-name">' + UI.escapeHtml(p.name) + ' (Lv.' + p.level + ')</div>';
     html += '<div class="battle-hp-bar"><div class="hp-fill player-hp" style="width:' + (p.hp / p.maxHp * 100) + '%"></div></div>';
@@ -1795,7 +1787,6 @@ var Battle = (function () {
         compStatusClasses += ' status-visual-' + companion.effects[csi].type;
       }
       html += '<div class="battle-companion' + compStatusClasses + '" id="battle-companion">';
-      html += '<img class="battle-portrait" src="' + (companion.portrait || '') + '" alt="' + companion.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="battle-companion-info">';
       html += '<div class="battle-name">' + companion.name + ' (Ally)</div>';
       html += '<div class="battle-hp-bar"><div class="hp-fill companion-hp" style="width:' + (companion.hp / companion.maxHp * 100) + '%"></div></div>';
@@ -1817,7 +1808,6 @@ var Battle = (function () {
         petStatusClasses += ' status-visual-' + petCombatant.effects[psi2].type;
       }
       html += '<div class="battle-companion battle-pet-combatant' + petStatusClasses + '" id="battle-pet">';
-      html += '<img class="battle-portrait" src="' + (petCombatant.portrait || '') + '" alt="' + petCombatant.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="battle-companion-info">';
       html += '<div class="battle-name">' + petCombatant.name + ' (Pet)</div>';
       html += '<div class="battle-hp-bar"><div class="hp-fill pet-hp" style="width:' + (petCombatant.hp / petCombatant.maxHp * 100) + '%"></div></div>';
@@ -1849,7 +1839,6 @@ var Battle = (function () {
         }
       }
       html += '<div class="' + enemyClass + '" id="battle-enemy-' + ei + '"' + (!isDead ? ' data-action="battle-target" data-index="' + ei + '"' : '') + '>';
-      html += '<img class="battle-portrait" src="' + (e.portrait || '') + '" alt="' + e.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="battle-enemy-info">';
       html += '<div class="battle-name">' + e.name + (e.isBoss ? ' (BOSS)' : '') + '</div>';
       html += '<div class="battle-hp-bar"><div class="hp-fill enemy-hp" style="width:' + Math.max(0, (e.hp / e.maxHp) * 100) + '%"></div></div>';
@@ -1872,13 +1861,7 @@ var Battle = (function () {
 
     html += '</div>'; // end battle-scene
 
-    // Battle log (minimal — FCT is primary feedback)
-    html += '<div class="battle-log">';
-    var logStart = Math.max(0, battleLog.length - 3);
-    for (var b = logStart; b < battleLog.length; b++) {
-      html += '<div>' + battleLog[b] + '</div>';
-    }
-    html += '</div>';
+
 
     // Action buttons (only if battle still active)
     var anyAlive = !allEnemiesDead();
