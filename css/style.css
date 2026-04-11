@@ -985,12 +985,14 @@ button {
   position: absolute;
   inset: 0;
   padding: 0;
+  pointer-events: none;
 }
 #screen-shop.shop-scene-mode .shop-header {
   display: none;
 }
 #screen-shop.shop-scene-mode .shop-grid { display: none; }
 #screen-shop.shop-scene-mode .btn-back {
+  pointer-events: auto;
   position: absolute;
   bottom: 20px;
   right: 20px;
