@@ -643,8 +643,8 @@ var UI = (function () {
     html += '<button class="town-poi" style="top:8%;left:42%" data-action="go-guild"><span class="poi-name">Adventurers Guild</span><span class="poi-sub">' + guildSub + '</span></button>';
 
     // Right side
-    html += '<button class="town-poi" style="top:28%;right:0%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
-    html += '<button class="town-poi" style="top:44%;left:39%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">' + (elricAway ? 'Elric is in the field' : (Player.hasFlag('defeatedGrisk') ? 'Captain Elric — At ease' : 'Captain Elric')) + '</span></button>';
+    html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
+    html += '<button class="town-poi" style="top:40%;left:15%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">' + (elricAway ? 'Elric is in the field' : (Player.hasFlag('defeatedGrisk') ? 'Captain Elric — At ease' : 'Captain Elric')) + '</span></button>';
     html += '<button class="town-poi" style="top:52%;right:19%" data-action="go-liora"><span class="poi-name">Flower Stall</span><span class="poi-sub">Liora Bloom</span></button>';
 
     // Conditional POIs
@@ -656,7 +656,7 @@ var UI = (function () {
     }
 
     // Pet Shop
-    html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-petshop"><span class="poi-name">Pet Emporium</span><span class="poi-sub">Fauna\'s creatures</span></button>';
+    html += '<button class="town-poi" style="top:44%;left:39%" data-action="go-petshop"><span class="poi-name">Pet Emporium</span><span class="poi-sub">Fauna\'s creatures</span></button>';
 
     // Class Mentor NPCs (conditional)
     var p = Player.get();
