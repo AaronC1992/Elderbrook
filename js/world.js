@@ -60,7 +60,8 @@ var World = (function () {
     showNPCMenu(shop.npc, {
       shopId: shopId,
       background: shop.background || '',
-      returnToScene: "shop"
+      returnToScene: "shop",
+      bustCrop: shop.bustCrop || false
     });
   }
 

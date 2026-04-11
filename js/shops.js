@@ -18,6 +18,7 @@ var Shops = (function () {
       name: "Harlan's Armory",
       npc: "harlan",
       background: "assets/backgrounds/main-town-armor-shop.png",
+      bustCrop: true,
       stock: [
         "leather-helm", "leather-chest", "leather-leggings", "leather-gloves", "leather-bracers",
         "iron-helm", "iron-chestplate", "iron-leggings", "iron-gloves", "iron-bracers",
@@ -29,6 +30,7 @@ var Shops = (function () {
       name: "Mira's Potion Shop",
       npc: "mira",
       background: "assets/backgrounds/main-town-potions-shop.png",
+      bustCrop: true,
       stock: [
         "lesser-health-potion", "health-potion", "greater-health-potion", "mana-potion",
         "wildflowers", "herbal-tea", "sweet-roll", "moonstone", "old-book"
@@ -70,10 +72,11 @@ var Shops = (function () {
 
     if (shopTitle) shopTitle.textContent = shop.name;
 
-    // Full-body NPC portrait in the scene (bust crop — behind counter)
+    // Full-body NPC portrait in the scene (bust crop if shop requires it)
     if (npcArea) {
       if (npc && npc.portrait) {
-        var img = '<img class="shop-npc-fullbody npc-bust-crop' + (interactivePortrait ? ' is-interactive' : '') + '" src="' + npc.portrait + '" alt="' + npc.name + '" onerror="this.style.display=\'none\'"';
+        var cropClass = shop.bustCrop ? ' npc-bust-crop' : '';
+        var img = '<img class="shop-npc-fullbody' + cropClass + (interactivePortrait ? ' is-interactive' : '') + '" src="' + npc.portrait + '" alt="' + npc.name + '" onerror="this.style.display=\'none\'"';
         if (interactivePortrait) {
           img += ' data-action="shop-scene-interact" data-shop="' + shopId + '" title="Talk to ' + npc.name + '"';
         }
@@ -82,7 +85,11 @@ var Shops = (function () {
       } else {
         npcArea.innerHTML = '';
       }
-      npcArea.classList.add('bust-crop-area');
+      if (shop.bustCrop) {
+        npcArea.classList.add('bust-crop-area');
+      } else {
+        npcArea.classList.remove('bust-crop-area');
+      }
     }
 
     if (backBtn) {
