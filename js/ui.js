@@ -802,6 +802,11 @@ var UI = (function () {
       html += '<button class="btn" data-action="npc-shop" data-shop="' + options.shopId + '">Shop</button>';
     }
 
+    // Pet Shop button
+    if (options.petShop) {
+      html += '<button class="btn" data-action="npc-petshop">Shop</button>';
+    }
+
     // Quest Board button
     if (options.questBoard) {
       html += '<button class="btn" data-action="npc-questboard">Quest Board</button>';
@@ -1415,7 +1420,7 @@ var UI = (function () {
       html += '<p class="flavor">You\'ve adopted all available companions!</p>';
     }
     html += '</div>';
-    html += '<button class="btn" data-action="go-town">Back</button>';
+    html += '<button class="btn" data-action="go-petshop-scene">Back</button>';
     container.innerHTML = html;
   }
 

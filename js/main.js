@@ -179,6 +179,12 @@
       case "petshop-scene-interact":
         World.openPetShopNPCMenu();
         break;
+      case "npc-petshop":
+        World.openPetShopInventory();
+        break;
+      case "go-petshop-scene":
+        World.visitPetShop();
+        break;
       case "buy-pet":
         var buyPetResult = Player.buyPet(btn.getAttribute("data-pet"));
         UI.showMessage(buyPetResult.message);

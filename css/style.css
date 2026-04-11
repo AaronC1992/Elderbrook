@@ -972,7 +972,6 @@ button {
 }
 .shop-npc-fullbody.is-interactive:hover {
   filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(212, 164, 56, 0.5));
-  transform: scale(1.02);
 }
 
 /* Scene mode: hide shop panel content, show only NPC + name + back */
@@ -1008,6 +1007,21 @@ button {
 
 /* Inventory mode: NPC visible behind semi-transparent panel */
 #screen-shop:not(.shop-scene-mode) .shop-panel {
+  background: linear-gradient(180deg, rgba(14, 17, 23, 0.75) 0%, rgba(10, 12, 18, 0.82) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Pet shop scene mode */
+#screen-petshop.petshop-scene-mode .petshop-panel {
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: none;
+}
+#screen-petshop:not(.petshop-scene-mode) .petshop-panel {
   background: linear-gradient(180deg, rgba(14, 17, 23, 0.75) 0%, rgba(10, 12, 18, 0.82) 100%);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);

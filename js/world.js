@@ -70,6 +70,7 @@ var World = (function () {
       screen.style.backgroundImage = "url('assets/backgrounds/main-town-pet-shop.png')";
       screen.style.backgroundSize = "cover";
       screen.style.backgroundPosition = "center";
+      screen.classList.add("petshop-scene-mode");
     }
     // Show full-body NPC
     var npcArea = document.getElementById("petshop-npc-area");
@@ -77,15 +78,25 @@ var World = (function () {
     if (npcArea && fauna && fauna.portrait) {
       npcArea.innerHTML = '<img class="shop-npc-fullbody is-interactive" src="' + fauna.portrait + '" alt="' + fauna.name + '" data-action="petshop-scene-interact" title="Talk to ' + fauna.name + '" onerror="this.style.display=\'none\'">';
     }
-    UI.renderPetShop();
+    // Clear shop content in scene mode
+    var content = document.getElementById("petshop-content");
+    if (content) content.innerHTML = '';
     UI.showScreen("petshop");
   }
 
   function openPetShopNPCMenu() {
     showNPCMenu("fauna", {
       background: "assets/backgrounds/main-town-pet-shop.png",
-      returnToScene: "petshop"
+      returnToScene: "petshop",
+      petShop: true
     });
+  }
+
+  function openPetShopInventory() {
+    var screen = document.getElementById("screen-petshop");
+    if (screen) screen.classList.remove("petshop-scene-mode");
+    UI.renderPetShop();
+    UI.showScreen("petshop");
   }
 
   function navigate(locationId) {
@@ -1023,6 +1034,7 @@ var World = (function () {
     npcOpenShop: npcOpenShop,
     openShopNPCMenu: openShopNPCMenu,
     openPetShopNPCMenu: openPetShopNPCMenu,
+    openPetShopInventory: openPetShopInventory,
     npcOpenQuestBoard: npcOpenQuestBoard,
     npcChat: npcChat,
     npcGift: npcGift,
