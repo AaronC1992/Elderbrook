@@ -1034,8 +1034,13 @@ button {
   background-position: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
+}
+#inn-content {
+  flex: 1;
+  position: relative;
+  min-height: 0;
 }
 .inn-room {
   display: flex;
