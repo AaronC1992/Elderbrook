@@ -1058,10 +1058,15 @@ button {
 #screen-petshop:not(.petshop-scene-mode) .btn-back {
   display: none;
 }
+#screen-petshop:not(.petshop-scene-mode) .shop-npc-area {
+  display: none;
+}
 #screen-petshop:not(.petshop-scene-mode) .petshop-panel {
-  background: linear-gradient(180deg, rgba(14, 17, 23, 0.75) 0%, rgba(10, 12, 18, 0.82) 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(180deg, rgba(14, 17, 23, 0.92) 0%, rgba(10, 12, 18, 0.96) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 /* Legacy circle portrait (NPC menu, pet shop header, etc.) */
