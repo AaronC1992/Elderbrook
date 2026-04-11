@@ -9,6 +9,8 @@ var World = (function () {
       npcId: npcId,
       shopId: options.shopId || null,
       questBoard: options.questBoard || false,
+      petShop: options.petShop || false,
+      bustCrop: options.bustCrop || false,
       background: options.background || '',
       returnToScene: options.returnToScene || ''
     };

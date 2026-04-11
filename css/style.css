@@ -1031,6 +1031,23 @@ button {
   -webkit-backdrop-filter: none !important;
   pointer-events: none;
 }
+#screen-petshop.petshop-scene-mode .btn-back {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.35);
+  border-radius: 10px;
+  padding: 0.45rem 1.2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+#screen-petshop:not(.petshop-scene-mode) .btn-back {
+  display: none;
+}
 #screen-petshop:not(.petshop-scene-mode) .petshop-panel {
   background: linear-gradient(180deg, rgba(14, 17, 23, 0.75) 0%, rgba(10, 12, 18, 0.82) 100%);
   backdrop-filter: blur(4px);
