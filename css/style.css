@@ -980,6 +980,9 @@ button {
   background: transparent;
   border: none;
   box-shadow: none;
+  position: absolute;
+  inset: 0;
+  padding: 0;
 }
 #screen-shop.shop-scene-mode .shop-header {
   position: absolute;
