@@ -755,12 +755,8 @@ var UI = (function () {
     }
 
     var html = '<div class="inn-room">';
-    var isFestival = typeof Player !== 'undefined' && Player.isFestivalActive();
-    html += '<h2 class="inn-title">' + (isFestival ? 'The Hearthstone Inn - Harvest Festival' : 'The Hearthstone Inn') + '</h2>';
-    html += '<div class="inn-npc-label">Selene Ashford</div>';
-
-    // Back button
-    html += '<button class="town-poi town-poi-exit inn-back" data-action="inn-back"><span class="poi-name">Back to Town</span></button>';
+    // Back button (matches shop style, bottom-right)
+    html += '<button class="btn btn-back inn-back" data-action="inn-back">Back to Town</button>';
     html += '</div>';
 
     container.innerHTML = html;
@@ -782,7 +778,6 @@ var UI = (function () {
 
     var html = '<div class="inn-room">';
     var isFestival = typeof Player !== 'undefined' && Player.isFestivalActive();
-    html += '<h2 class="inn-title">' + (isFestival ? 'The Hearthstone Inn - Harvest Festival' : 'The Hearthstone Inn') + '</h2>';
 
     // Menu panel (centered)
     html += '<div class="inn-menu-area">';
@@ -808,7 +803,7 @@ var UI = (function () {
     html += '</div>'; // .inn-menu-area
 
     // Back to town
-    html += '<button class="town-poi town-poi-exit inn-back" data-action="inn-back"><span class="poi-name">Back to Town</span></button>';
+    html += '<button class="btn btn-back inn-back" data-action="inn-back">Back to Town</button>';
     html += '</div>';
 
     container.innerHTML = html;

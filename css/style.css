@@ -1030,37 +1030,8 @@ button {
   height: 100%;
   position: relative;
 }
-.inn-title {
-  position: absolute;
-  top: 1rem;
-  left: 1.2rem;
-  color: var(--accent);
-  font-family: var(--font-heading);
-  font-size: 1.3rem;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-  background: rgba(14, 17, 23, 0.7);
-  padding: 0.3rem 1rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  z-index: 3;
-}
 .inn-npcs {
   display: none;
-}
-.inn-npc-label {
-  position: absolute;
-  bottom: 18%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: Georgia, serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--accent);
-  background: rgba(14, 17, 23, 0.75);
-  padding: 0.2rem 0.8rem;
-  border-radius: 3px;
-  z-index: 3;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 .inn-npc {
   position: relative !important;
@@ -1070,10 +1041,18 @@ button {
 }
 .inn-back {
   position: absolute !important;
-  bottom: 1.2rem;
-  left: 1.2rem;
+  bottom: 20px;
+  right: 20px;
+  left: auto;
   transform: none;
-  z-index: 3;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.35);
+  border-radius: 10px;
+  padding: 0.45rem 1.2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 /* Inn rest menu */
 .inn-menu-area {
