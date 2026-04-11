@@ -959,12 +959,22 @@ button {
   z-index: 2;
 }
 .shop-npc-fullbody {
-  max-height: 98%;
+  max-height: 100%;
   width: auto;
   object-fit: contain;
   object-position: bottom center;
   filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
   pointer-events: auto;
+}
+.shop-npc-fullbody.npc-bust-crop {
+  max-height: none;
+  height: 160%;
+  object-fit: cover;
+  object-position: top center;
+}
+.shop-npc-area.bust-crop-area {
+  align-items: flex-start;
+  overflow: hidden;
 }
 .shop-npc-fullbody.is-interactive {
   cursor: pointer;

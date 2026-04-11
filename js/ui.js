@@ -761,9 +761,15 @@ var UI = (function () {
     var npcArea = document.getElementById("social-npc-area");
     if (npcArea) {
       if (cfg && cfg.portrait) {
-        npcArea.innerHTML = '<img class="shop-npc-fullbody" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
+        var cropClass = options.bustCrop ? ' npc-bust-crop' : '';
+        npcArea.innerHTML = '<img class="shop-npc-fullbody' + cropClass + '" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
       } else {
         npcArea.innerHTML = '';
+      }
+      if (options.bustCrop) {
+        npcArea.classList.add('bust-crop-area');
+      } else {
+        npcArea.classList.remove('bust-crop-area');
       }
     }
 

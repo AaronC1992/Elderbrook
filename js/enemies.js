@@ -3,6 +3,17 @@ var Enemies = (function () {
 
   var enemies = {
     /* ── Tier 1 (Forest Road) ── */
+    "dire-rat": {
+      id: "dire-rat", name: "Dire Rat", portrait: "assets/portraits/dire_rat.png",
+      hp: 12, attack: 3, defense: 0, xp: 6, gold: [1, 4],
+      loot: [
+        { id: "torn-cloth", chance: 0.30 },
+        { id: "beast-sinew", chance: 0.08 }
+      ],
+      abilities: [
+        { name: "Diseased Bite", chance: 0.20, effect: { type: "poison", damage: 1, turns: 3 } }
+      ]
+    },
     "wolf": {
       id: "wolf", name: "Wolf", portrait: "assets/portraits/wolf-enemy.png",
       hp: 18, attack: 4, defense: 1, xp: 8, gold: [2, 5],

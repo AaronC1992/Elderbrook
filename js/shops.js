@@ -70,10 +70,10 @@ var Shops = (function () {
 
     if (shopTitle) shopTitle.textContent = shop.name;
 
-    // Full-body NPC portrait in the scene
+    // Full-body NPC portrait in the scene (bust crop — behind counter)
     if (npcArea) {
       if (npc && npc.portrait) {
-        var img = '<img class="shop-npc-fullbody' + (interactivePortrait ? ' is-interactive' : '') + '" src="' + npc.portrait + '" alt="' + npc.name + '" onerror="this.style.display=\'none\'"';
+        var img = '<img class="shop-npc-fullbody npc-bust-crop' + (interactivePortrait ? ' is-interactive' : '') + '" src="' + npc.portrait + '" alt="' + npc.name + '" onerror="this.style.display=\'none\'"';
         if (interactivePortrait) {
           img += ' data-action="shop-scene-interact" data-shop="' + shopId + '" title="Talk to ' + npc.name + '"';
         }
@@ -82,6 +82,7 @@ var Shops = (function () {
       } else {
         npcArea.innerHTML = '';
       }
+      npcArea.classList.add('bust-crop-area');
     }
 
     if (backBtn) {

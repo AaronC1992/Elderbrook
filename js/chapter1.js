@@ -137,7 +137,7 @@ var Chapter1 = (function () {
       id: "forest-road", name: "Forest Road",
       description: "A winding path through the woods. Goblins and wolves lurk here.",
       background: "assets/backgrounds/forest-road.png",
-      enemies: ["wolf", "goblin-scout", "goblin-sneak", "bandit"],
+      enemies: ["wolf", "goblin-scout", "goblin-sneak", "bandit", "dire-rat"],
       recommendedLevel: "Lv. 1-3",
       requireFlag: "unlockedForestRoad"
     },
@@ -169,7 +169,7 @@ var Chapter1 = (function () {
       id: "riverbank", name: "Riverbank Crossing",
       description: "A calm stretch of riverbank. Herbs grow along the water's edge.",
       background: "assets/backgrounds/riverbank.png",
-      enemies: ["wolf", "goblin-scout"],
+      enemies: ["wolf", "goblin-scout", "dire-rat"],
       isGathering: true,
       gatherItem: "cave-herb",
       recommendedLevel: "Lv. 1-3",

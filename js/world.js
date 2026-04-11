@@ -609,7 +609,7 @@ var World = (function () {
     // Set questboard background for dialogue
     UI.setDialogueBackground("assets/backgrounds/main-town-questboard.png");
 
-    var menuOptions = { questBoard: true, background: "assets/backgrounds/main-town-questboard.png" };
+    var menuOptions = { questBoard: true, background: "assets/backgrounds/main-town-questboard.png", bustCrop: true };
 
     // Check SQ4 turn-in (Toma's bounty quest)
     if (Quests.isActive("sq4") && Quests.checkObjectives("sq4")) {
