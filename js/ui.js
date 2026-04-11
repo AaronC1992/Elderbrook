@@ -241,6 +241,25 @@ var UI = (function () {
       }
     }
 
+    // Follower display
+    var followerBox = document.getElementById("sidebar-follower");
+    if (followerBox) {
+      if (p.followingNpc) {
+        var followerCfg = Relationships.getConfig(p.followingNpc);
+        if (followerCfg) {
+          followerBox.style.display = "";
+          var followerPortrait = document.getElementById("sidebar-follower-portrait");
+          var followerName = document.getElementById("sidebar-follower-name");
+          if (followerPortrait) followerPortrait.src = followerCfg.portrait;
+          if (followerName) followerName.textContent = followerCfg.name;
+        } else {
+          followerBox.style.display = "none";
+        }
+      } else {
+        followerBox.style.display = "none";
+      }
+    }
+
     // Right: quest tracker — show tracked quest with full detail
     var questContainer = document.getElementById("quest-tracker");
     if (questContainer) {
@@ -940,6 +959,17 @@ var UI = (function () {
         html += '<button class="btn btn-date" data-action="npc-date" data-npc="' + npcId + '">Date</button>';
       } else if (rel.affinity >= 55 && rel.dated) {
         html += '<button class="btn" disabled>Dated Today</button>';
+      }
+    }
+
+    // Follow / Dismiss (90+ affinity romantic partner)
+    if (cfg && rel && rel.affinity >= 90 && Player.hasFlag(npcId + "Romantic")) {
+      if (p.followingNpc === npcId) {
+        html += '<button class="btn btn-danger" data-action="npc-dismiss" data-npc="' + npcId + '">Dismiss Follower</button>';
+      } else if (!p.followingNpc) {
+        html += '<button class="btn btn-follow" data-action="npc-follow" data-npc="' + npcId + '">Ask to Follow</button>';
+      } else {
+        html += '<button class="btn" disabled>Another companion is following</button>';
       }
     }
 

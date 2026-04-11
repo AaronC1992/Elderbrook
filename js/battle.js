@@ -17,6 +17,7 @@ var Battle = (function () {
   var lastVictoryData = null;
   var skillCooldowns = {};
   var companion = null;   // { name, hp, maxHp, attack, defense, portrait, abilities, buffs, effects }
+  var petCombatant = null; // { name, hp, maxHp, attack, defense, portrait, abilities, buffs, effects }
   var ambushChoice = false; // true while waiting for player to choose avoid/rush
 
   var battleBackgrounds = {
@@ -120,6 +121,8 @@ var Battle = (function () {
       addLog("You face: " + names.join(", ") + "!");
     }
 
+    summonAllies();
+
     // Ambush: enemies get a free turn
     if (enemies[0].ambush) {
       // Pet ambush protection
@@ -156,6 +159,7 @@ var Battle = (function () {
     renderBattle();
     UI.showScreen("battle");
     addLog(enemies[0].name + " stands before you!");
+    summonAllies();
     return true;
   }
 
@@ -192,6 +196,7 @@ var Battle = (function () {
       for (var n = 0; n < enemies.length; n++) names.push(enemies[n].name);
       addLog("Enemies block your path: " + names.join(", ") + "!");
     }
+    summonAllies();
     return true;
   }
 
@@ -283,6 +288,8 @@ var Battle = (function () {
       addLog("You face: " + names.join(", ") + "!");
     }
 
+    summonAllies();
+
     // Ambush
     if (isAmbush) {
       var ambushPassive = (typeof Pets !== 'undefined') ? Pets.getActivePassive() : null;
@@ -314,6 +321,37 @@ var Battle = (function () {
       effects: []
     };
     onCompanionDeathCallback = onDeathCb || null;
+  }
+
+  /* Auto-summon NPC follower + active pet as combatants */
+  function summonAllies() {
+    // NPC follower (90+ affinity romantic partner)
+    if (!companion && typeof Relationships !== 'undefined') {
+      var followerDef = Relationships.getFollowerCompanion();
+      if (followerDef) {
+        setCompanion(followerDef, null);
+        addLog(companion.name + " fights at your side!");
+      }
+    }
+    // Active pet joins as combatant
+    if (typeof Pets !== 'undefined') {
+      var petDef = Pets.getCombatDef();
+      if (petDef) {
+        petCombatant = {
+          name: petDef.name,
+          hp: petDef.hp,
+          maxHp: petDef.hp,
+          attack: petDef.attack,
+          defense: petDef.defense,
+          portrait: petDef.portrait || "",
+          abilities: petDef.abilities || [],
+          buffs: [],
+          effects: []
+        };
+        addLog(petCombatant.name + " joins the fight!");
+      }
+    }
+    if (companion || petCombatant) renderBattle();
   }
 
   function startWithCompanion(areaId, companionDef, callback, onCompanionDeath) {
@@ -473,6 +511,133 @@ var Battle = (function () {
     }
   }
 
+  /* ── Pet Combatant Turn ── */
+  function petCombatantTurn(callback) {
+    if (!petCombatant || petCombatant.hp <= 0) { if (callback) callback(); return; }
+
+    // Tick pet effects
+    tickEffects(petCombatant.effects, petCombatant, false, 0);
+    if (petCombatant.hp <= 0) {
+      handlePetDeath();
+      if (callback) callback();
+      return;
+    }
+
+    // Stun check
+    var stunIdx = findEffect(petCombatant.effects, "stun");
+    if (stunIdx !== -1) {
+      addLog(petCombatant.name + " is stunned!");
+      tickBuffs(petCombatant.buffs);
+      if (callback) callback();
+      return;
+    }
+
+    // Pick target: lowest HP living enemy
+    var bestIdx = -1;
+    var bestHp = Infinity;
+    for (var i = 0; i < enemies.length; i++) {
+      if (enemies[i].hp > 0 && enemies[i].hp < bestHp) {
+        bestHp = enemies[i].hp;
+        bestIdx = i;
+      }
+    }
+    if (bestIdx === -1) { if (callback) callback(); return; }
+
+    var target = enemies[bestIdx];
+    var atk = petCombatant.attack + getBuffTotal(petCombatant.buffs, "attack");
+    var def = target.defense + getBuffTotal(target.buffs, "defense");
+    var baseDmg = Math.max(1, Math.floor(atk * atk / (atk + def)) + Math.floor(Math.random() * 2));
+
+    // Try special ability
+    var usedAbility = false;
+    if (petCombatant.abilities && petCombatant.abilities.length > 0) {
+      for (var a = 0; a < petCombatant.abilities.length; a++) {
+        var ab = petCombatant.abilities[a];
+        if (Math.random() < ab.chance) {
+          usedAbility = true;
+          if (ab.type === "heal-owner") {
+            // Healing ability targets player
+            var healAmt = ab.amount || 5;
+            var p = Player.get();
+            var healed = Math.min(healAmt, p.maxHp - p.hp);
+            p.hp += healed;
+            addLog(petCombatant.name + " " + ab.message + " +" + healed + " HP!");
+            Audio.play("heal");
+            showFCT("battle-player", "+" + healed, "heal");
+            tickBuffs(petCombatant.buffs);
+            renderBattle();
+            if (callback) callback();
+          } else if (ab.type === "mana-restore") {
+            var manaAmt = ab.amount || 3;
+            Player.restoreMana(manaAmt);
+            addLog(petCombatant.name + " " + ab.message + " +" + manaAmt + " MP!");
+            showFCT("battle-player", "+" + manaAmt, "mana");
+            tickBuffs(petCombatant.buffs);
+            renderBattle();
+            if (callback) callback();
+          } else {
+            // Damage ability
+            var abilityDmg = Math.max(1, Math.floor(baseDmg * (ab.multiplier || 1)));
+            animateCombat("player", "melee", function () {
+              target.hp -= abilityDmg;
+              addLog(petCombatant.name + " uses " + ab.name + " on " + target.name + " for " + abilityDmg + " damage!");
+              Audio.play("swordHit");
+              if (ab.effect && target.hp > 0) {
+                target.effects.push({ type: ab.effect.type, damage: ab.effect.damage || 0, turns: ab.effect.turns });
+                addLog(target.name + " is " + ab.effect.type + "ed!");
+              }
+              if (target.hp <= 0) handleEnemyDeath(bestIdx);
+              showFCT("battle-enemy-" + bestIdx, "-" + abilityDmg, "damage");
+              tickBuffs(petCombatant.buffs);
+              renderBattle();
+              if (callback) callback();
+            });
+          }
+          break;
+        }
+      }
+    }
+
+    if (!usedAbility) {
+      // Normal attack (80% hit)
+      if (Math.random() > 0.80) {
+        addLog(petCombatant.name + "'s attack misses!");
+        showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
+        tickBuffs(petCombatant.buffs);
+        if (callback) callback();
+      } else {
+        var dmg = baseDmg;
+        animateCombat("player", "melee", function () {
+          target.hp -= dmg;
+          addLog(petCombatant.name + " attacks " + target.name + " for " + dmg + " damage.");
+          Audio.play("swordHit");
+          if (target.hp <= 0) handleEnemyDeath(bestIdx);
+          showFCT("battle-enemy-" + bestIdx, "-" + dmg, "damage");
+          tickBuffs(petCombatant.buffs);
+          renderBattle();
+          if (callback) callback();
+        });
+      }
+    }
+  }
+
+  function petCombatantTakeDamage(damage) {
+    if (!petCombatant) return;
+    petCombatant.hp -= damage;
+    if (petCombatant.hp <= 0) {
+      petCombatant.hp = 0;
+      handlePetDeath();
+    }
+  }
+
+  function handlePetDeath() {
+    if (!petCombatant) return;
+    addLog(petCombatant.name + " has been knocked out!");
+    showFCT("battle-pet", petCombatant.name + " DOWN", "damage");
+    petCombatant = null;
+    renderBattle();
+  }
+
   function resetState() {
     battleLog = [];
     playerBuffs = [];
@@ -482,6 +647,7 @@ var Battle = (function () {
     animating = false;
     skillCooldowns = {};
     companion = null;
+    petCombatant = null;
     onCompanionDeathCallback = null;
     ambushChoice = false;
   }
@@ -1030,14 +1196,23 @@ var Battle = (function () {
 
   function enemyTurn() {
     turnCount++;
-    // Companion acts before enemies
-    if (companion && companion.hp > 0 && !allEnemiesDead()) {
-      companionTurn(function () {
-        if (allEnemiesDead()) { victory(); return; }
-        runEnemyPhase();
-      });
-    } else {
+    // Allies act before enemies: companion → pet → enemy phase
+    var afterAllies = function () {
+      if (allEnemiesDead()) { victory(); return; }
       runEnemyPhase();
+    };
+    var afterCompanion = function () {
+      if (allEnemiesDead()) { victory(); return; }
+      if (petCombatant && petCombatant.hp > 0 && !allEnemiesDead()) {
+        petCombatantTurn(afterAllies);
+      } else {
+        afterAllies();
+      }
+    };
+    if (companion && companion.hp > 0 && !allEnemiesDead()) {
+      companionTurn(afterCompanion);
+    } else {
+      afterCompanion();
     }
   }
 
@@ -1203,17 +1378,20 @@ var Battle = (function () {
   }
 
   function applyEnemyAction(action, e) {
-    // 35% chance enemy targets companion instead of player (if alive)
-    var targetCompanion = companion && companion.hp > 0 && Math.random() < 0.35;
-    var targetLabel = targetCompanion ? companion.name : "you";
-    var fctTarget = targetCompanion ? "battle-companion" : "battle-player";
+    // Targeting: 20% pet, 35% companion, otherwise player
+    var targetPet = petCombatant && petCombatant.hp > 0 && Math.random() < 0.20;
+    var targetCompanion = !targetPet && companion && companion.hp > 0 && Math.random() < 0.35;
+    var targetLabel = targetPet ? petCombatant.name : (targetCompanion ? companion.name : "you");
+    var fctTarget = targetPet ? "battle-pet" : (targetCompanion ? "battle-companion" : "battle-player");
 
     if (action.type === "miss") {
       addLog(e.name + "'s attack misses!");
       Audio.play("miss");
       showFCT(fctTarget, "MISS", "miss");
     } else if (action.type === "dodge") {
-      if (targetCompanion) {
+      if (targetPet) {
+        addLog(petCombatant.name + " dodges " + e.name + "'s attack!");
+      } else if (targetCompanion) {
         addLog(companion.name + " dodges " + e.name + "'s attack!");
       } else {
         addLog("You dodge " + e.name + "'s attack!");
@@ -1221,9 +1399,12 @@ var Battle = (function () {
       Audio.play("miss");
       showFCT(fctTarget, "DODGE", "dodge");
     } else if (action.type === "hit") {
-      if (targetCompanion) {
-        companionTakeDamage(action.damage);
+      if (targetPet) {
+        addLog(e.name + " attacks " + petCombatant.name + " for " + action.damage + " damage.");
+        petCombatantTakeDamage(action.damage);
+      } else if (targetCompanion) {
         addLog(e.name + " attacks " + companion.name + " for " + action.damage + " damage.");
+        companionTakeDamage(action.damage);
       } else {
         Player.takeDamage(action.damage);
         addLog(e.name + " attacks for " + action.damage + " damage.");
@@ -1238,7 +1419,9 @@ var Battle = (function () {
           Audio.play("miss");
           showFCT(fctTarget, "MISS", "miss");
         } else if (action.dodged) {
-          if (targetCompanion) {
+          if (targetPet) {
+            addLog(petCombatant.name + " dodges " + e.name + "'s " + ab.name + "!");
+          } else if (targetCompanion) {
             addLog(companion.name + " dodges " + e.name + "'s " + ab.name + "!");
           } else {
             addLog("You dodge " + e.name + "'s " + ab.name + "!");
@@ -1246,9 +1429,12 @@ var Battle = (function () {
           Audio.play("miss");
           showFCT(fctTarget, "DODGE", "dodge");
         } else if (action.damage > 0) {
-          if (targetCompanion) {
-            companionTakeDamage(action.damage);
+          if (targetPet) {
+            addLog(e.name + " uses " + ab.name + " on " + petCombatant.name + " for " + action.damage + " damage!");
+            petCombatantTakeDamage(action.damage);
+          } else if (targetCompanion) {
             addLog(e.name + " uses " + ab.name + " on " + companion.name + " for " + action.damage + " damage!");
+            companionTakeDamage(action.damage);
           } else {
             Player.takeDamage(action.damage);
             addLog(e.name + " uses " + ab.name + " for " + action.damage + " damage!");
@@ -1262,7 +1448,11 @@ var Battle = (function () {
         addLog(e.name + " uses " + ab.name + "!");
       }
       if (action.effect) {
-        if (targetCompanion && companion && companion.hp > 0) {
+        if (targetPet && petCombatant && petCombatant.hp > 0) {
+          petCombatant.effects.push({ type: action.effect.type, damage: action.effect.damage || 0, turns: action.effect.turns });
+          addLog(e.name + " afflicts " + petCombatant.name + " with " + action.effect.type + "!");
+          showFCT("battle-pet", action.effect.type.toUpperCase(), "status");
+        } else if (targetCompanion && companion && companion.hp > 0) {
           companion.effects.push({ type: action.effect.type, damage: action.effect.damage || 0, turns: action.effect.turns });
           addLog(e.name + " afflicts " + companion.name + " with " + action.effect.type + "!");
           showFCT("battle-companion", action.effect.type.toUpperCase(), "status");
@@ -1576,6 +1766,28 @@ var Battle = (function () {
         html += '<div class="battle-effects">';
         for (var ce = 0; ce < companion.effects.length; ce++) {
           html += '<span class="effect-tag effect-' + companion.effects[ce].type + '">' + companion.effects[ce].type + ' (' + companion.effects[ce].turns + ')</span>';
+        }
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
+
+    // Pet combatant (left side, below companion)
+    if (petCombatant && petCombatant.hp > 0) {
+      var petStatusClasses = '';
+      for (var psi2 = 0; psi2 < petCombatant.effects.length; psi2++) {
+        petStatusClasses += ' status-visual-' + petCombatant.effects[psi2].type;
+      }
+      html += '<div class="battle-companion battle-pet-combatant' + petStatusClasses + '" id="battle-pet">';
+      html += '<img class="battle-portrait" src="' + (petCombatant.portrait || '') + '" alt="' + petCombatant.name + '" onerror="this.style.display=\'none\'">';
+      html += '<div class="battle-companion-info">';
+      html += '<div class="battle-name">' + petCombatant.name + ' (Pet)</div>';
+      html += '<div class="battle-hp-bar"><div class="hp-fill pet-hp" style="width:' + (petCombatant.hp / petCombatant.maxHp * 100) + '%"></div></div>';
+      html += '<div class="battle-hp-text">HP: ' + petCombatant.hp + '/' + petCombatant.maxHp + '</div>';
+      if (petCombatant.effects.length > 0) {
+        html += '<div class="battle-effects">';
+        for (var pce = 0; pce < petCombatant.effects.length; pce++) {
+          html += '<span class="effect-tag effect-' + petCombatant.effects[pce].type + '">' + petCombatant.effects[pce].type + ' (' + petCombatant.effects[pce].turns + ')</span>';
         }
         html += '</div>';
       }

@@ -93,6 +93,7 @@ var Player = (function () {
       learnedSkills: [],             // array of skill ids the player has purchased/unlocked
       activePet: null,               // pet id string or null
       ownedPets: [],                 // array of pet ids the player owns
+      followingNpc: null,            // npc id of romantic partner following player (or null)
       isAdmin: false                 // admin mode flag
     };
   }

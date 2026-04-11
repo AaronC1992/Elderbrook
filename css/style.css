@@ -1638,6 +1638,9 @@ button {
 .battle-hp-bar .hp-fill.companion-hp {
   background: linear-gradient(90deg, #1a6b1a, var(--heal));
 }
+.battle-hp-bar .hp-fill.pet-hp {
+  background: linear-gradient(90deg, #8b6b1a, #d4a843);
+}
 .battle-mp-bar .mp-fill {
   height: 100%;
   background: linear-gradient(90deg, #1a3a8b, #4488cc);
@@ -2281,6 +2284,11 @@ button {
   background: rgba(100, 50, 50, 0.6);
   color: var(--text);
   border-color: rgba(200, 100, 100, 0.3);
+}
+.btn-follow {
+  background: rgba(50, 100, 50, 0.6);
+  color: var(--text);
+  border-color: rgba(100, 200, 100, 0.3);
 }
 
 /* ── Gift Select ── */

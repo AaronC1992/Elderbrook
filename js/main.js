@@ -467,6 +467,24 @@
       case "npc-date":
         World.npcDate(btn.getAttribute("data-npc"));
         break;
+      case "npc-follow":
+        var followNpc = btn.getAttribute("data-npc");
+        var pFollow = Player.get();
+        pFollow.followingNpc = followNpc;
+        var followCfg = Relationships.getConfig(followNpc);
+        Dialogue.startDirect({ nodes: [
+          { speaker: followCfg ? followCfg.name : followNpc, portrait: followCfg ? followCfg.portrait : "", text: "I'd love to! Let's go together.", end: true }
+        ] }, function () { World.returnToNPCMenu(); });
+        break;
+      case "npc-dismiss":
+        var dismissNpc = btn.getAttribute("data-npc");
+        var pDismiss = Player.get();
+        pDismiss.followingNpc = null;
+        var dismissCfg = Relationships.getConfig(dismissNpc);
+        Dialogue.startDirect({ nodes: [
+          { speaker: dismissCfg ? dismissCfg.name : dismissNpc, portrait: dismissCfg ? dismissCfg.portrait : "", text: "I'll head back for now. Stay safe out there!", end: true }
+        ] }, function () { World.returnToNPCMenu(); });
+        break;
       case "npc-back":
         World.returnToNPCMenu();
         break;

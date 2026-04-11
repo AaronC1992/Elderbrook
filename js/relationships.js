@@ -1,7 +1,7 @@
-﻿/* relationships.js - Relationship building, gift-giving, and dating system */
+/* relationships.js - Relationship building, gift-giving, and dating system */
 var Relationships = (function () {
 
-  /* â”€â”€ Relationship Level Thresholds â”€â”€ */
+  /* ── Relationship Level Thresholds ── */
   var LEVELS = [
     { name: "Stranger",          min: 0 },
     { name: "Acquaintance",      min: 15 },
@@ -13,7 +13,7 @@ var Relationships = (function () {
   var MILESTONES = [15, 35, 55, 75];
   var MAX_AFFINITY = 100;
 
-  /* â”€â”€ NPC Relationship Config â”€â”€ */
+  /* ── NPC Relationship Config ── */
   var config = {
     mira: {
       name: "Mira Voss",
@@ -23,6 +23,13 @@ var Relationships = (function () {
       dislikedGifts: ["iron-ingot", "fine-leather"],
       bonus: { intelligence: 2 },
       preferredClass: "mage",
+      combatDef: {
+        hp: 30, attack: 5, defense: 3,
+        abilities: [
+          { name: "Healing Salve", type: "heal-owner", chance: 0.30, amount: 10, message: "applies a healing salve!" },
+          { name: "Alchemist's Fire", chance: 0.20, multiplier: 1.5, effect: { type: "burn", damage: 2, turns: 2 } }
+        ]
+      },
       chatLines: [
         "I've been experimenting with a new kind of salve. It smells terrible, but it works wonders on burns!",
         "Did you know cave herbs glow faintly under moonlight? I find it absolutely fascinating.",
@@ -126,6 +133,13 @@ var Relationships = (function () {
       dislikedGifts: ["iron-ingot", "fine-leather"],
       bonus: { dexterity: 2 },
       preferredClass: "rogue",
+      combatDef: {
+        hp: 35, attack: 8, defense: 3,
+        abilities: [
+          { name: "Sneak Attack", chance: 0.25, multiplier: 1.8 },
+          { name: "Hamstring", chance: 0.15, multiplier: 1.2, effect: { type: "bleed", damage: 2, turns: 3 } }
+        ]
+      },
       chatLines: [
         "I sorted the entire quest board by region today. Nobody noticed, but I feel great about it.",
         "Don't tell anyone, but sometimes I read the quest descriptions and imagine I'm the one going on adventures.",
@@ -228,6 +242,13 @@ var Relationships = (function () {
       dislikedGifts: ["sweet-roll", "iron-ingot"],
       bonus: { intelligence: 1, dexterity: 1 },
       preferredClass: "mage",
+      combatDef: {
+        hp: 28, attack: 6, defense: 2,
+        abilities: [
+          { name: "Arcane Bolt", chance: 0.25, multiplier: 1.6 },
+          { name: "Mana Song", type: "mana-restore", chance: 0.20, amount: 5, message: "plays an invigorating melody!" }
+        ]
+      },
       chatLines: [
         "The stars here are different from the ones I grew up under. Brighter, somehow.",
         "I've been studying the goblin markings. They remind me of something I saw in the far north, long ago.",
@@ -327,6 +348,13 @@ var Relationships = (function () {
       dislikedGifts: ["wildflowers", "herbal-tea"],
       bonus: { attack: 2 },
       preferredClass: "warrior",
+      combatDef: {
+        hp: 55, attack: 9, defense: 6,
+        abilities: [
+          { name: "Power Strike", chance: 0.25, multiplier: 1.6 },
+          { name: "Forge Slam", chance: 0.15, multiplier: 1.3, effect: { type: "stun", turns: 1 } }
+        ]
+      },
       chatLines: [
         "People think smithing is just hitting metal. It's not. It's listening to the steel and knowing when it's ready.",
         "Made my first knife when I was eight. Cut myself on it immediately. Still have the scar.",
@@ -429,6 +457,13 @@ var Relationships = (function () {
       dislikedGifts: ["wildflowers", "cave-herb"],
       bonus: { defense: 2 },
       preferredClass: "warrior",
+      combatDef: {
+        hp: 50, attack: 7, defense: 7,
+        abilities: [
+          { name: "Shield Wall", chance: 0.20, multiplier: 0.8, effect: { type: "weakness", turns: 2 } },
+          { name: "Cave Breaker", chance: 0.20, multiplier: 1.5 }
+        ]
+      },
       chatLines: [
         "In the army, they said armor is your second skin. I took that literally. Haven't stopped working with it since.",
         "I've seen more battles than birthdays at this point. Elderbrook is supposed to be my quiet retirement. So much for that.",
@@ -528,6 +563,13 @@ var Relationships = (function () {
       dislikedGifts: ["cave-herb", "wildflowers"],
       bonus: { defense: 1, attack: 1 },
       preferredClass: "warrior",
+      combatDef: {
+        hp: 50, attack: 8, defense: 5,
+        abilities: [
+          { name: "Shield Bash", chance: 0.25, multiplier: 1.4, effect: { type: "stun", turns: 1 } },
+          { name: "Guard Strike", chance: 0.15, multiplier: 1.2 }
+        ]
+      },
       chatLines: [
         "Another quiet patrol. I should be grateful, but the quiet makes me nervous these days.",
         "The men look to me for confidence. Some days I have to fake it. Don't tell them that.",
@@ -631,6 +673,13 @@ var Relationships = (function () {
       likedGifts: ["moonstone", "old-book", "cave-herb"],
       dislikedGifts: ["iron-ingot", "smelling-salts"],
       bonus: { dexterity: 1, defense: 1, maxHp: 6 },
+      combatDef: {
+        hp: 35, attack: 5, defense: 4,
+        abilities: [
+          { name: "Nature's Balm", type: "heal-owner", chance: 0.25, amount: 8, message: "channels nature's energy to heal you!" },
+          { name: "Thorn Whip", chance: 0.20, multiplier: 1.3, effect: { type: "poison", damage: 2, turns: 2 } }
+        ]
+      },
       chatLines: [
         "If an animal trusts you quickly, it usually means your heart is kinder than your reputation.",
         "The fox kits always try to nap in the sunniest corner. Honestly, I can't blame them.",
@@ -722,6 +771,13 @@ var Relationships = (function () {
       dislikedGifts: ["iron-ingot", "smelling-salts"],
       bonus: { dexterity: 1, intelligence: 1 },
       preferredClass: "rogue",
+      combatDef: {
+        hp: 32, attack: 7, defense: 3,
+        abilities: [
+          { name: "Shadow Step", chance: 0.25, multiplier: 1.7 },
+          { name: "Inspiring Song", type: "heal-owner", chance: 0.20, amount: 6, message: "sings an inspiring melody!" }
+        ]
+      },
       chatLines: [
         "I arrange the flowers by mood instead of color. It confuses Bram terribly, which is a bonus.",
         "A market square needs something beautiful in it, otherwise it starts to feel like everyone is only hurrying through life.",
@@ -813,6 +869,13 @@ var Relationships = (function () {
       dislikedGifts: ["iron-ingot", "cave-herb"],
       bonus: { defense: 1, intelligence: 1 },
       preferredClass: null,
+      combatDef: {
+        hp: 38, attack: 5, defense: 4,
+        abilities: [
+          { name: "Fortifying Brew", type: "heal-owner", chance: 0.25, amount: 8, message: "shares a fortifying brew!" },
+          { name: "Skillet Strike", chance: 0.20, multiplier: 1.4, effect: { type: "stun", turns: 1 } }
+        ]
+      },
       chatLines: [
         "Running an inn teaches you two things: how to listen, and how to know when someone needs a drink more than a conversation.",
         "Every traveler who passes through leaves a story behind. Most of them don't even realize they've told it.",
@@ -903,8 +966,9 @@ var Relationships = (function () {
         onEnd: { addAffinity: { npc: "selene", amount: 5 } }
       }
     }
+  };
 
-  /* â”€â”€ Helper Functions â”€â”€ */
+  /* ── Helper Functions ── */
 
   function getConfig(npcId) {
     return config[npcId] || null;
@@ -946,7 +1010,7 @@ var Relationships = (function () {
     return ids;
   }
 
-  /* â”€â”€ Chat System â”€â”€ */
+  /* ── Chat System ── */
 
   function canChat(npcId) {
     var rel = getRelData(npcId);
@@ -1004,7 +1068,7 @@ var Relationships = (function () {
     });
   }
 
-  /* â”€â”€ Gift System â”€â”€ */
+  /* ── Gift System ── */
 
   function canGift(npcId) {
     var rel = getRelData(npcId);
@@ -1062,7 +1126,7 @@ var Relationships = (function () {
     });
   }
 
-  /* â”€â”€ Date System â”€â”€ */
+  /* ── Date System ── */
 
   function canDate(npcId) {
     var rel = getRelData(npcId);
@@ -1083,7 +1147,7 @@ var Relationships = (function () {
     });
   }
 
-  /* â”€â”€ Milestone System â”€â”€ */
+  /* ── Milestone System ── */
 
   function getPendingMilestone(npcId) {
     var rel = getRelData(npcId);
@@ -1118,7 +1182,7 @@ var Relationships = (function () {
     });
   }
 
-  /* â”€â”€ Daily Reset (called on inn rest) â”€â”€ */
+  /* ── Daily Reset (called on inn rest) ── */
 
   function resetDaily() {
     var p = Player.get();
@@ -1130,7 +1194,7 @@ var Relationships = (function () {
     }
   }
 
-  /* â”€â”€ Partner Bonus â”€â”€ */
+  /* ── Partner Bonus ── */
 
   function getPartnerBonus() {
     var p = Player.get();
@@ -1143,8 +1207,29 @@ var Relationships = (function () {
     return null;
   }
 
-  /* â”€â”€ Gift Inventory Helper â”€â”€ */
+  /* ── Gift Inventory Helper ── */
 
+
+  /* -- Follower Companion -- */
+
+  function getFollowerCompanion() {
+    var p = Player.get();
+    if (!p || !p.followingNpc || !p.relationships) return null;
+    var npcId = p.followingNpc;
+    var rel = p.relationships[npcId];
+    if (!rel || rel.affinity < 90 || !Player.hasFlag(npcId + "Romantic")) return null;
+    var cfg = config[npcId];
+    if (!cfg || !cfg.combatDef) return null;
+    var def = cfg.combatDef;
+    return {
+      name: cfg.name,
+      hp: def.hp,
+      attack: def.attack,
+      defense: def.defense,
+      portrait: cfg.portrait,
+      abilities: def.abilities || []
+    };
+  }
   function getGiftableItems() {
     var p = Player.get();
     if (!p) return [];
@@ -1186,6 +1271,7 @@ var Relationships = (function () {
     checkMilestone: checkMilestone,
     resetDaily: resetDaily,
     getPartnerBonus: getPartnerBonus,
+    getFollowerCompanion: getFollowerCompanion,
     getGiftableItems: getGiftableItems
   };
 })();

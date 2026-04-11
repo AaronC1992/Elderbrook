@@ -105,6 +105,7 @@ var Save = (function () {
     if (!data.ownedPets) data.ownedPets = [];
     if (data.trackedQuest === undefined) data.trackedQuest = null;
     if (data.isAdmin === undefined) data.isAdmin = false;
+    if (data.followingNpc === undefined) data.followingNpc = null;
     if (!data.boardQuests) data.boardQuests = [];
     if (!data.completedBoardQuests) data.completedBoardQuests = [];
     if (data.lastBoardDay === undefined) data.lastBoardDay = 0;
