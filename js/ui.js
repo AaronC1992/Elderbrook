@@ -597,7 +597,6 @@ var UI = (function () {
     // Elric is at the Guard Post, not in town square
     var elricAway = (Player.hasFlag("elricJoinedMQ4") && !Player.hasFlag("completedMQ4")) ||
                     (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
-    html += '<button class="town-npc town-npc-event" style="top:51%;left:61%" data-action="go-liora"><img class="town-npc-portrait" src="assets/portraits/liora.png" alt="Liora Bloom" onerror="this.style.display=\'none\'"><span class="town-npc-name">Liora Bloom</span></button>';
 
     // Biscuit the cat — appears near the gate when looking, vanishes once found
     if (Player.hasFlag('lookingForBiscuit') && !Player.hasFlag('foundBiscuit')) {
@@ -2214,7 +2213,7 @@ var UI = (function () {
     /* ── Relationships ── */
     html += '<div class="admin-section">';
     html += '<h3>Relationships</h3>';
-    var npcIds = ["mira", "toma", "elira", "bram", "harlan", "elric", "fauna", "liora"];
+    var npcIds = ["mira", "toma", "elira", "bram", "harlan", "elric", "fauna"];
     for (var ri = 0; ri < npcIds.length; ri++) {
       var nid = npcIds[ri];
       var rel = p.relationships[nid];

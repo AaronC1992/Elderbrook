@@ -175,9 +175,6 @@
         UI.showScreen("town");
         UI.renderTown();
         break;
-      case "go-liora":
-        World.visitLiora();
-        break;
       case "go-elira":
         World.visitElira();
         break;

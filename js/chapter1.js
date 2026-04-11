@@ -1275,16 +1275,6 @@ var Chapter1 = (function () {
       ],
       onEnd: { flags: ["visitedElric"] }
     },
-    "liora-first": {
-      id: "liora-first",
-      nodes: [
-        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "Oh, a new face. Give me one second before you speak or I'll end up tying a bouquet with my order ledger again." },
-        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "I'm Liora. I run the flower stall by the square. Bouquets, ribbons, little tokens of luck... all the things that make a hard place feel gentler." },
-        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "You look like someone carrying quite a lot. Heroes usually do." },
-        { speaker: "Liora Bloom", portrait: npcs.liora.portrait, text: "Come by whenever you need a quiet word or something beautiful to remind you what you're fighting for." }
-      ],
-      onEnd: { flags: ["visitedLiora"] }
-    },
     "elric-idle": {
       lines: [
         "Keep your eyes open out there. My patrols have been stretched thin.",
@@ -1303,18 +1293,6 @@ var Chapter1 = (function () {
         "I wrote a forty-page security proposal. The council read the summary. The summary of the summary.",
         "Budget meeting tomorrow. I'd rather fight the goblins. At least they're honest about wanting to ruin my day.",
         "Harlan offered to train my guards. Half of them came back stronger. The other half came back crying. Both outcomes are acceptable."
-      ]
-    },
-    "liora-idle": {
-      lines: [
-        "Fresh flowers won't stop a goblin spear, but they do make the town worth defending.",
-        "The square feels lighter when you stop here. I hope that's true for you too, not just for me.",
-        "Children always pick the brightest ribbons. Adults go for the quiet colors. I wish more adults were brave.",
-        "I grew up on caravan roads. Learning how to make strangers feel welcome becomes second nature after a while.",
-        "If the world insists on being harsh, I intend to answer with beauty out of sheer stubbornness.",
-        "Fauna says the fox kits steal my ribbon scraps for bedding. I pretend to be annoyed. I'm not.",
-        "You're becoming my favorite part of the market day. That's either charming or dangerous. Possibly both.",
-        "A town can tell you what it needs by what it buys. Lately Elderbrook has been buying hope in every shape it can find."
       ]
     },
     "elira-idle": {
@@ -1353,7 +1331,6 @@ var Chapter1 = (function () {
         "Festival or not, good armor saves lives. But I'll admit the decorations look nice.",
         "I wore my old ceremonial armor from the border wars to the festival last year. Didn't fit. We don't speak of it.",
         "The recruits want the day off for the festival. I told them goblins don't celebrate harvests. Probably.",
-        "Liora put a wreath on my shop door. I pretended to complain. She saw right through me.",
         "Fine. The festival bunting looks nice. There. I said it. Don't make me repeat it."
       ]
     },
@@ -1391,15 +1368,6 @@ var Chapter1 = (function () {
         "My guards drew lots for festival duty. The losers patrol. The winners also patrol, but near the food stalls.",
         "Even goblins quiet down during harvest. Maybe they have their own festival. Terrifying thought.",
         "The festival bonfire is beautiful. I'll enjoy it once I've confirmed every road is secure. So, probably never."
-      ]
-    },
-    "liora-idle-festival": {
-      lines: [
-        "The festival is my favorite time of year! I've made garlands for every doorway in town.",
-        "Harvest colors everywhere. Amber, gold, deep red. The town looks like it's wearing its finest.",
-        "I wove festival crowns for the children. They're running around town pretending to be adventurers. Sound familiar?",
-        "The square smells like cider and baked apples and bonfire smoke. If I could bottle this evening, I would.",
-        "Fauna and I strung ribbon between the stalls. It took all afternoon. Worth every minute."
       ]
     },
     "elira-idle-festival": {

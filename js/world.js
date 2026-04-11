@@ -845,27 +845,6 @@ var World = (function () {
     showNPCMenu("elira", { background: '' });
   }
 
-  function visitLiora() {
-    var lioraMenuOptions = { background: "assets/backgrounds/main-town.png" };
-    UI.setDialogueBackground("assets/backgrounds/main-town.png");
-
-    if (!Player.hasFlag("visitedLiora")) {
-      Dialogue.start("liora-first", function () {
-        showNPCMenu("liora", lioraMenuOptions);
-      });
-      return;
-    }
-
-    if (Chapter1.getDialogue("liora-idle")) {
-      Dialogue.start("liora-idle", function () {
-        showNPCMenu("liora", lioraMenuOptions);
-      });
-      return;
-    }
-
-    showNPCMenu("liora", lioraMenuOptions);
-  }
-
   /* ── NPC Menu Actions ── */
 
   function npcChat(npcId) {
@@ -1062,7 +1041,6 @@ var World = (function () {
     visitElric: enterGuardPost,
     enterGuardPost: enterGuardPost,
     talkToElric: talkToElric,
-    visitLiora: visitLiora,
     visitElira: visitElira,
     interactEvent: interactEvent,
     checkOnChild: checkOnChild,
