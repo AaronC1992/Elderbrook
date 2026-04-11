@@ -1004,12 +1004,28 @@ button {
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
 }
-.guardpost-back {
+/* ── Unified floating "< Town" button for all scene screens ── */
+.guardpost-back,
+.inn-back,
+#screen-shop.shop-scene-mode .btn-back,
+#screen-petshop.petshop-scene-mode .btn-back {
+  pointer-events: auto;
   position: absolute !important;
-  bottom: 3%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
+  bottom: 20px;
+  right: 20px;
+  left: auto;
+  transform: none;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.35);
+  border-radius: 10px;
+  padding: 0.45rem 1.2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
 /* ── Inn Room ── */
@@ -1039,21 +1055,7 @@ button {
   left: auto !important;
   right: auto !important;
 }
-.inn-back {
-  position: absolute !important;
-  bottom: 20px;
-  right: 20px;
-  left: auto;
-  transform: none;
-  z-index: 10;
-  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
-  border: 1px solid rgba(212, 164, 56, 0.35);
-  border-radius: 10px;
-  padding: 0.45rem 1.2rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-}
+/* .inn-back styled by unified scene-exit rule above */
 /* Inn rest menu */
 .inn-menu-area {
   position: absolute;
@@ -1196,20 +1198,7 @@ button {
   display: none;
 }
 #screen-shop.shop-scene-mode .shop-grid { display: none; }
-#screen-shop.shop-scene-mode .btn-back {
-  pointer-events: auto;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10;
-  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
-  border: 1px solid rgba(212, 164, 56, 0.35);
-  border-radius: 10px;
-  padding: 0.45rem 1.2rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-}
+/* #screen-shop.shop-scene-mode .btn-back styled by unified scene-exit rule */
 
 /* Inventory mode: NPC visible behind semi-transparent panel */
 #screen-shop:not(.shop-scene-mode) .shop-panel {
@@ -1227,20 +1216,7 @@ button {
   -webkit-backdrop-filter: none !important;
   pointer-events: none;
 }
-#screen-petshop.petshop-scene-mode .btn-back {
-  pointer-events: auto;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10;
-  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
-  border: 1px solid rgba(212, 164, 56, 0.35);
-  border-radius: 10px;
-  padding: 0.45rem 1.2rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-}
+/* #screen-petshop.petshop-scene-mode .btn-back styled by unified scene-exit rule */
 #screen-petshop:not(.petshop-scene-mode) .btn-back {
   display: none;
 }
