@@ -987,21 +987,7 @@ button {
   padding: 0;
 }
 #screen-shop.shop-scene-mode .shop-header {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  z-index: 10;
-}
-#screen-shop.shop-scene-mode .shop-header h2 {
-  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
-  border: 1px solid rgba(212, 164, 56, 0.35);
-  border-radius: 10px;
-  padding: 0.5rem 1.2rem;
-  color: var(--accent);
-  font-size: 1.1rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  display: none;
 }
 #screen-shop.shop-scene-mode .shop-grid { display: none; }
 #screen-shop.shop-scene-mode .btn-back {
@@ -1078,10 +1064,11 @@ button {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
   pointer-events: none;
   z-index: 1;
+  overflow: hidden;
 }
 #dialogue-portrait-area img {
   max-height: 95%;
@@ -1091,7 +1078,8 @@ button {
   filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
 }
 #dialogue-portrait-area .portrait-bust-crop {
-  max-height: 105%;
+  max-height: none;
+  height: 180%;
   object-fit: cover;
   object-position: top center;
 }
@@ -3108,7 +3096,7 @@ button {
   .dialogue-text-body { padding: 0.6rem 0.8rem 0.5rem; }
   .dialogue-text { font-size: 0.85rem; line-height: 1.5; }
   .dialogue-speaker-tag { font-size: 0.8rem; padding: 2px 12px; left: 10px; top: -13px; border-radius: 6px 6px 0 0; }
-  #dialogue-portrait-area .portrait-bust-crop { max-height: 95%; }
+  #dialogue-portrait-area .portrait-bust-crop { height: 160%; }
 
   /* ── Mobile town: bottom-bar navigation ── */
   #town-content {
