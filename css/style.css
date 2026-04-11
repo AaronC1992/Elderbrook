@@ -959,7 +959,7 @@ button {
   z-index: 2;
 }
 .shop-npc-fullbody {
-  max-height: 90%;
+  max-height: 98%;
   width: auto;
   object-fit: contain;
   object-position: bottom center;
@@ -977,9 +977,11 @@ button {
 
 /* Scene mode: hide shop panel content, show only NPC + name + back */
 #screen-shop.shop-scene-mode .shop-panel {
-  background: transparent;
+  background: transparent !important;
   border: none;
   box-shadow: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   position: absolute;
   inset: 0;
   padding: 0;
@@ -1089,7 +1091,7 @@ button {
   filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
 }
 #dialogue-portrait-area .portrait-bust-crop {
-  max-height: 82%;
+  max-height: 105%;
   object-fit: cover;
   object-position: top center;
 }
@@ -3106,7 +3108,7 @@ button {
   .dialogue-text-body { padding: 0.6rem 0.8rem 0.5rem; }
   .dialogue-text { font-size: 0.85rem; line-height: 1.5; }
   .dialogue-speaker-tag { font-size: 0.8rem; padding: 2px 12px; left: 10px; top: -13px; border-radius: 6px 6px 0 0; }
-  #dialogue-portrait-area .portrait-bust-crop { max-height: 75%; }
+  #dialogue-portrait-area .portrait-bust-crop { max-height: 95%; }
 
   /* ── Mobile town: bottom-bar navigation ── */
   #town-content {
