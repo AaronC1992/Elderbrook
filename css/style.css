@@ -3408,6 +3408,26 @@ button {
 }
 
 /* ── Navigation arrows ── */
+.explore-nav-wrap {
+  position: absolute;
+  bottom: 0.8rem;
+  left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  z-index: 10;
+  pointer-events: none;
+}
+.explore-nav-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+}
+.explore-nav-row > * { pointer-events: auto; }
+/* Legacy .explore-nav kept for dungeon.js */
 .explore-nav {
   position: absolute;
   bottom: 1rem;
@@ -3417,7 +3437,9 @@ button {
   align-items: center;
   gap: 1rem;
   z-index: 10;
+  pointer-events: none;
 }
+.explore-nav > * { pointer-events: auto; }
 .explore-arrow {
   background: rgba(14,17,23,0.75);
   border: 2px solid var(--accent);
@@ -3437,6 +3459,11 @@ button {
 }
 .explore-arrow-left { font-size: 1.6rem; padding: 0.4rem 1.2rem; }
 .explore-arrow-right { font-size: 1.6rem; padding: 0.4rem 1.2rem; }
+.explore-arrow-up { font-size: 1.6rem; padding: 0.3rem 1.2rem; }
+.explore-arrow-down { font-size: 1.6rem; padding: 0.3rem 1.2rem; }
+.explore-nav-down {
+  bottom: 3.5rem;
+}
 .explore-arrow-map {
   font-size: 0.85rem;
   text-transform: uppercase;
