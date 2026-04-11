@@ -521,6 +521,16 @@ button {
 }
 
 /* ── Create (redesigned) ── */
+#screen-create {
+  background-size: cover;
+  background-position: center;
+}
+#screen-create .create-sidebar,
+#screen-create .create-wrapper {
+  background: rgba(14, 17, 23, 0.85);
+  border-radius: var(--radius);
+}
+
 /* ── Create Layout (3-column) ── */
 .create-layout {
   display: flex;
@@ -1837,6 +1847,16 @@ button {
 .locked-text { font-style: italic; }
 
 /* ── Training & Academy (new SimGirl screens) ── */
+#screen-academy {
+  background-size: cover;
+  background-position: center;
+}
+#screen-academy .panel {
+  background: rgba(14, 17, 23, 0.88);
+  border: 1px solid rgba(212, 164, 56, 0.5);
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
 .training-grid, .academy-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -2266,6 +2286,15 @@ button {
 .crafting-result { color: var(--text); font-size: 0.82rem; }
 
 /* ── Chapter End ── */
+#screen-chapter-end {
+  background-size: cover;
+  background-position: center;
+}
+#screen-chapter-end .panel {
+  background: rgba(14, 17, 23, 0.88);
+  border: 1px solid rgba(212, 164, 56, 0.5);
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
 .chapter-end h2 { color: var(--accent); margin-bottom: 0.5rem; }
 .chapter-end h3 { color: var(--text-muted); margin: 0.8rem 0; }
 .chapter-end p { margin-bottom: 0.5rem; font-size: 0.9rem; }
