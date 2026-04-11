@@ -1736,53 +1736,78 @@ button {
 .training-current { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.5rem; }
 
 /* ── NPC Interaction Menu ── */
+/* ── NPC Menu (social interaction) ── */
+.social-panel {
+  position: relative;
+  z-index: 5;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem;
+}
 .npc-menu {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 0.8rem;
+  width: 280px;
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.94) 0%, rgba(12, 14, 22, 0.97) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.35);
+  border-radius: 12px;
+  padding: 1.2rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 164, 56, 0.1);
 }
 .npc-menu-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: var(--bg-panel-alt);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius);
-  padding: 0.8rem 1.2rem;
-  width: 100%;
-  max-width: 360px;
-}
-.npc-menu-portrait {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--bg-dark);
-}
-.npc-menu-info {
-  flex: 1;
-  min-width: 0;
+  text-align: center;
 }
 .npc-menu-name {
   color: var(--accent);
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.2rem 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: 0.02em;
+}
+.npc-menu-rel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 .npc-menu-actions {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  width: 100%;
-  max-width: 360px;
 }
 .npc-menu-actions .btn {
   width: 100%;
   text-align: center;
+  background: rgba(212, 164, 56, 0.1);
+  border: 1px solid rgba(212, 164, 56, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.npc-menu-actions .btn:hover:not(:disabled) {
+  background: rgba(212, 164, 56, 0.25);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.npc-menu-actions .btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.npc-menu-hint {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  opacity: 0.7;
 }
 
 /* ── Social Hub (kept for backwards compat) ── */

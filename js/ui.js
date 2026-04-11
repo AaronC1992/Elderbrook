@@ -757,18 +757,27 @@ var UI = (function () {
       screen.style.backgroundImage = options.background ? "url('" + options.background + "')" : "";
     }
 
+    // Full-body NPC portrait in the background
+    var npcArea = document.getElementById("social-npc-area");
+    if (npcArea) {
+      if (cfg && cfg.portrait) {
+        npcArea.innerHTML = '<img class="shop-npc-fullbody" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
+      } else {
+        npcArea.innerHTML = '';
+      }
+    }
+
     var html = '<div class="npc-menu">';
 
-    // NPC portrait and info
+    // NPC name and relationship info
     if (cfg) {
       var levelName = Relationships.getLevelName(rel ? rel.affinity : 0);
       var pct = rel ? Math.min(100, Math.floor((rel.affinity / Relationships.MAX_AFFINITY) * 100)) : 0;
       var isPartner = rel && rel.affinity >= 75 && Player.hasFlag(npcId + "Romantic");
 
       html += '<div class="npc-menu-header">';
-      html += '<img class="npc-menu-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
-      html += '<div class="npc-menu-info">';
       html += '<h2 class="npc-menu-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</h2>';
+      html += '<div class="npc-menu-rel">';
       html += '<div class="rel-level">' + levelName + '</div>';
       html += '<div class="rel-bar"><div class="rel-fill" style="width:' + pct + '%"></div></div>';
       html += '<div class="rel-affinity">' + (rel ? rel.affinity : 0) + ' / ' + Relationships.MAX_AFFINITY + '</div>';
@@ -833,7 +842,7 @@ var UI = (function () {
     html += '</div>';
 
     // Daily reset hint
-    html += '<p class="flavor" style="margin-top:0.8rem;text-align:center;">Rest at the inn to reset daily social actions.</p>';
+    html += '<p class="npc-menu-hint">Rest at the inn to reset daily social actions.</p>';
     html += '</div>';
     container.innerHTML = html;
   }
