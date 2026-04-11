@@ -1338,6 +1338,80 @@ var Chapter1 = (function () {
       ]
     },
 
+    /* ── Festival Idle Dialogues ── */
+    "bram-idle-festival": {
+      lines: [
+        "Festival season! I've been forging decorative blades for the weapon displays. Don't tell anyone they're not sharp.",
+        "The harvest festival always brings extra business. Everyone wants a shiny new sword to show off.",
+        "I made a ceremonial axe for the festival bonfire display. Prettiest thing I've ever forged.",
+        "Mira's cider is flowing and Bram's blades are gleaming. That's what a proper festival looks like.",
+        "I hung lanterns in the forge this year. The heat keeps melting them. Festive puddles everywhere."
+      ]
+    },
+    "harlan-idle-festival": {
+      lines: [
+        "Festival or not, good armor saves lives. But I'll admit the decorations look nice.",
+        "I wore my old ceremonial armor from the border wars to the festival last year. Didn't fit. We don't speak of it.",
+        "The recruits want the day off for the festival. I told them goblins don't celebrate harvests. Probably.",
+        "Liora put a wreath on my shop door. I pretended to complain. She saw right through me.",
+        "Fine. The festival bunting looks nice. There. I said it. Don't make me repeat it."
+      ]
+    },
+    "mira-idle-festival": {
+      lines: [
+        "I've been brewing festival cider all week! The secret ingredient is a pinch of moonpetal essence.",
+        "The harvest festival is the perfect time to test new recipes. Nobody notices odd flavors when they're celebrating.",
+        "My festival cider has a mild warming enchantment. Completely safe. Mostly. Well, the last batch was fine.",
+        "I made firework potions for the festival! They're beautiful. And only slightly explosive. That's the point, though.",
+        "Every festival I set up a tasting booth. Every festival something catches fire. It's basically tradition now."
+      ]
+    },
+    "rowan-idle-festival": {
+      lines: [
+        "The harvest festival brings the whole town together. Even the paperwork can wait tonight.",
+        "I remember my first festival as Guildmaster. I gave a speech. It was terrible. Everyone was very polite about it.",
+        "The guild hall cleans up nicely for the festival. Toma did most of the decorating. I supervised. From my chair.",
+        "Festival season reminds me why we fight to protect this place. For nights like these.",
+        "Twelve years of festival speeches. I think this year I'll keep it to two words: 'Enjoy yourselves.' Revolutionary."
+      ]
+    },
+    "toma-idle-festival": {
+      lines: [
+        "I decorated the quest board with harvest garlands! Rowan said it was 'aggressively cheerful.' I'm taking that as a compliment.",
+        "Festival time means fewer quests and more fun! Well, the same number of quests. But more fun!",
+        "I've been handing out festival ribbons to adventurers. Morale boost! Probably worth at least two copper in motivation.",
+        "The best part of the festival? Free samples at every stall. I've done three laps of the square already.",
+        "I tried to file the festival under 'special events' on the quest board. Rowan made me take it down."
+      ]
+    },
+    "elric-idle-festival": {
+      lines: [
+        "Festival security is no joke. Double patrols on every road into town tonight.",
+        "I'll admit the lanterns make the guard post look almost welcoming. Almost.",
+        "My guards drew lots for festival duty. The losers patrol. The winners also patrol, but near the food stalls.",
+        "Even goblins quiet down during harvest. Maybe they have their own festival. Terrifying thought.",
+        "The festival bonfire is beautiful. I'll enjoy it once I've confirmed every road is secure. So, probably never."
+      ]
+    },
+    "liora-idle-festival": {
+      lines: [
+        "The festival is my favorite time of year! I've made garlands for every doorway in town.",
+        "Harvest colors everywhere. Amber, gold, deep red. The town looks like it's wearing its finest.",
+        "I wove festival crowns for the children. They're running around town pretending to be adventurers. Sound familiar?",
+        "The square smells like cider and baked apples and bonfire smoke. If I could bottle this evening, I would.",
+        "Fauna and I strung ribbon between the stalls. It took all afternoon. Worth every minute."
+      ]
+    },
+    "elira-idle-festival": {
+      lines: [
+        "Festivals are curious things. The old rites were about gratitude and warding off winter's darkness. The spirit remains.",
+        "I sense fewer shadows during the festival. Laughter is a surprisingly effective ward.",
+        "Even mysterious strangers enjoy a good harvest celebration. I draw the line at dancing, though.",
+        "The ancient texts describe festivals as moments when the boundary between worlds grows thin. Enjoy the bonfire.",
+        "Toma asked if I'd smile for the festival. I told him I'd consider it. He looked genuinely alarmed."
+      ]
+    },
+
     /* --- Chain Quest Dialogues --- */
     "celebration": {
       id: "celebration",

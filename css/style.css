@@ -826,18 +826,18 @@ button {
 }
 .festival-banner {
   position: absolute;
-  top: 7%;
+  top: 4.5%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   color: #f0d89a;
   background: rgba(14, 17, 23, 0.75);
   border: 1px solid rgba(212, 164, 56, 0.4);
   border-radius: var(--radius);
-  padding: 0.3rem 1rem;
+  padding: 0.2rem 0.8rem;
   text-align: center;
   white-space: nowrap;
-  z-index: 3;
+  z-index: 2;
   pointer-events: none;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
@@ -1046,13 +1046,22 @@ button {
   z-index: 3;
 }
 .inn-npcs {
+  display: none;
+}
+.inn-npc-label {
   position: absolute;
-  top: 50%;
+  bottom: 18%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  gap: 2rem;
+  transform: translateX(-50%);
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(14, 17, 23, 0.75);
+  padding: 0.2rem 0.8rem;
+  border-radius: 3px;
   z-index: 3;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 .inn-npc {
   position: relative !important;
@@ -1518,7 +1527,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 1rem 1.5rem;
+  padding: 4rem 1.5rem 0.5rem;
   gap: 1rem;
   flex: 1;
   min-height: 0;
@@ -1580,6 +1589,9 @@ button {
   width: 110px;
 }
 .battle-enemies-group .battle-hp-bar {
+  width: 110px;
+}
+.battle-enemies-group .battle-mp-bar {
   width: 110px;
 }
 .battle-player {

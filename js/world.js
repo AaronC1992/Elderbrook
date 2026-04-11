@@ -74,7 +74,8 @@ var World = (function () {
   function showPetShopScene() {
     var screen = document.getElementById("screen-petshop");
     if (screen) {
-      screen.style.backgroundImage = "url('assets/backgrounds/main-town-pet-shop.png')";
+      var bg = Player.isFestivalActive() ? "assets/backgrounds/main-town-pet-shop-festival.png" : "assets/backgrounds/main-town-pet-shop.png";
+      screen.style.backgroundImage = "url('" + bg + "')";
       screen.style.backgroundSize = "cover";
       screen.style.backgroundPosition = "center";
       screen.classList.add("petshop-scene-mode");
@@ -93,10 +94,12 @@ var World = (function () {
   }
 
   function openPetShopNPCMenu() {
+    var petBg = Player.isFestivalActive() ? "assets/backgrounds/main-town-pet-shop-festival.png" : "assets/backgrounds/main-town-pet-shop.png";
     showNPCMenu("fauna", {
-      background: "assets/backgrounds/main-town-pet-shop.png",
+      background: petBg,
       returnToScene: "petshop",
-      petShop: true
+      petShop: true,
+      bustCrop: true
     });
   }
 
@@ -266,6 +269,11 @@ var World = (function () {
   }
 
   function enterInn() {
+    var screen = document.getElementById("screen-inn");
+    if (screen) {
+      var bg = Player.isFestivalActive() ? "assets/backgrounds/main-town-inn-festival.png" : "assets/backgrounds/main-town-inn.png";
+      screen.style.backgroundImage = "url('" + bg + "')";
+    }
     UI.renderInn();
     UI.showScreen("inn");
   }
@@ -496,7 +504,8 @@ var World = (function () {
     var p = Player.get();
 
     // Set guild background for dialogue
-    UI.setDialogueBackground("assets/backgrounds/main-town-adventurers-guild.png");
+    var guildBg = Player.isFestivalActive() ? "assets/backgrounds/main-town-adventurers-guild-festival.png" : "assets/backgrounds/main-town-adventurers-guild.png";
+    UI.setDialogueBackground(guildBg);
 
     // Check for quest turn-ins in order
     if (Quests.isActive("mq1") && Quests.checkObjectives("mq1")) {
@@ -689,6 +698,11 @@ var World = (function () {
   }
 
   function enterGuardPost() {
+    var screen = document.getElementById("screen-guardpost");
+    if (screen) {
+      var bg = Player.isFestivalActive() ? "assets/backgrounds/guard-post-festival.png" : "assets/backgrounds/watch-post.png";
+      screen.style.backgroundImage = "url('" + bg + "')";
+    }
     UI.renderGuardPost();
     UI.showScreen("guardpost");
   }
@@ -704,7 +718,8 @@ var World = (function () {
     }
 
     // Set guard post background for dialogue
-    UI.setDialogueBackground("assets/backgrounds/watch-post.png");
+    var gpBg = Player.isFestivalActive() ? "assets/backgrounds/guard-post-festival.png" : "assets/backgrounds/watch-post.png";
+    UI.setDialogueBackground(gpBg);
 
     // Check chain quests cq5, cq6
     var ecqs = ["cq5", "cq6"];
@@ -758,7 +773,7 @@ var World = (function () {
       }
     }
     // Check SQ16 turn-in (Guard Duty - early Elric)
-    var elricMenuOptions = { background: "assets/backgrounds/watch-post.png", returnToScene: "guardpost" };
+    var elricMenuOptions = { background: Player.isFestivalActive() ? "assets/backgrounds/guard-post-festival.png" : "assets/backgrounds/watch-post.png", returnToScene: "guardpost" };
     if (Quests.isActive("sq16") && Quests.checkObjectives("sq16")) {
       var result = Quests.turnIn("sq16");
       if (result) {

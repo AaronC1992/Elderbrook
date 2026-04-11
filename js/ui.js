@@ -719,7 +719,8 @@ var UI = (function () {
                     (Player.hasFlag("acceptedMQ7") && !Player.hasFlag("completedMQ7"));
 
     var html = '<div class="guardpost-room">';
-    html += '<h2 class="guardpost-title">Guard Post</h2>';
+    var isFestival = typeof Player !== 'undefined' && Player.isFestivalActive();
+    html += '<h2 class="guardpost-title">' + (isFestival ? 'Guard Post - Festival Watch' : 'Guard Post') + '</h2>';
 
     // Clickable NPCs
     html += '<div class="guardpost-npcs">';
@@ -747,16 +748,16 @@ var UI = (function () {
     var p = Player.get();
     var cost = 5;
 
-    var html = '<div class="inn-room">';
-    html += '<h2 class="inn-title">The Hearthstone Inn</h2>';
+    // Full-body NPC in background
+    var npcArea = document.getElementById("inn-npc-area");
+    if (npcArea) {
+      npcArea.innerHTML = '<img class="shop-npc-fullbody npc-bust-crop is-interactive" src="assets/portraits/innkeeper.png" alt="Selene Ashford" data-action="talk-to-innkeeper" title="Talk to Selene Ashford" onerror="this.style.display=\'none\'">';
+    }
 
-    // Innkeeper NPC
-    html += '<div class="inn-npcs">';
-    html += '<button class="town-npc inn-npc" data-action="talk-to-innkeeper">';
-    html += '<img class="town-npc-portrait" src="assets/portraits/innkeeper.png" alt="Selene Ashford" onerror="this.style.display=\'none\'">';
-    html += '<span class="town-npc-name">Selene Ashford</span>';
-    html += '</button>';
-    html += '</div>';
+    var html = '<div class="inn-room">';
+    var isFestival = typeof Player !== 'undefined' && Player.isFestivalActive();
+    html += '<h2 class="inn-title">' + (isFestival ? 'The Hearthstone Inn - Harvest Festival' : 'The Hearthstone Inn') + '</h2>';
+    html += '<div class="inn-npc-label">Selene Ashford</div>';
 
     // Back button
     html += '<button class="town-poi town-poi-exit inn-back" data-action="inn-back"><span class="poi-name">Back to Town</span></button>';
@@ -773,17 +774,24 @@ var UI = (function () {
     var cost = 5;
     var canAfford = p.gold >= cost;
 
-    var html = '<div class="inn-room">';
-    html += '<h2 class="inn-title">The Hearthstone Inn</h2>';
+    // Keep bust-crop NPC visible
+    var npcArea = document.getElementById("inn-npc-area");
+    if (npcArea) {
+      npcArea.innerHTML = '<img class="shop-npc-fullbody npc-bust-crop" src="assets/portraits/innkeeper.png" alt="Selene Ashford" onerror="this.style.display=\'none\'">';
+    }
 
-    // Innkeeper portrait + menu panel
+    var html = '<div class="inn-room">';
+    var isFestival = typeof Player !== 'undefined' && Player.isFestivalActive();
+    html += '<h2 class="inn-title">' + (isFestival ? 'The Hearthstone Inn - Harvest Festival' : 'The Hearthstone Inn') + '</h2>';
+
+    // Menu panel (centered)
     html += '<div class="inn-menu-area">';
-    html += '<div class="inn-npc-display">';
-    html += '<img class="inn-keeper-portrait" src="assets/portraits/innkeeper.png" alt="Selene" onerror="this.style.display=\'none\'">';
-    html += '</div>';
     html += '<div class="inn-menu-panel">';
     html += '<h3>Selene Ashford</h3>';
-    html += '<p class="inn-flavor">"Welcome, dear. You look like you could use a warm meal and a good night\'s rest."</p>';
+    var flavorText = isFestival
+      ? '"The festival\'s in full swing! Warm cider by the fire and a soft bed to rest your head. You\'ve earned it."'
+      : '"Welcome, dear. You look like you could use a warm meal and a good night\'s rest."';
+    html += '<p class="inn-flavor">' + flavorText + '</p>';
     html += '<div class="inn-option">';
     html += '<span class="inn-option-label">Rest until morning</span>';
     html += '<span class="inn-option-cost">' + cost + ' gold</span>';

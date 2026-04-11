@@ -5,8 +5,10 @@ var Shops = (function () {
     "weapon-shop": {
       id: "weapon-shop",
       name: "Bram's Weapon Shop",
+      festivalName: "Bram's Festival Forge",
       npc: "bram",
       background: "assets/backgrounds/main-town-weapons-shop.png",
+      festivalBackground: "assets/backgrounds/main-town-weapons-shop-festival.png",
       stock: [
         "basic-sword", "basic-dagger", "basic-bow", "basic-staff",
         "reinforced-sword", "sharpened-dagger", "hunters-bow", "apprentice-staff",
@@ -16,8 +18,10 @@ var Shops = (function () {
     "armor-shop": {
       id: "armor-shop",
       name: "Harlan's Armory",
+      festivalName: "Harlan's Festival Armory",
       npc: "harlan",
       background: "assets/backgrounds/main-town-armor-shop.png",
+      festivalBackground: "assets/backgrounds/main-town-armor-shop-festival.png",
       bustCrop: true,
       stock: [
         "leather-helm", "leather-chest", "leather-leggings", "leather-gloves", "leather-bracers",
@@ -28,8 +32,10 @@ var Shops = (function () {
     "potion-shop": {
       id: "potion-shop",
       name: "Mira's Potion Shop",
+      festivalName: "Mira's Cider Stand",
       npc: "mira",
       background: "assets/backgrounds/main-town-potions-shop.png",
+      festivalBackground: "assets/backgrounds/main-town-potions-shop-festival.png",
       bustCrop: true,
       stock: [
         "lesser-health-potion", "health-potion", "greater-health-potion", "mana-potion",
@@ -62,7 +68,11 @@ var Shops = (function () {
 
     var shopScreen = document.getElementById("screen-shop");
     if (shopScreen && shop.background) {
-      shopScreen.style.backgroundImage = "url('" + shop.background + "')";
+      var bg = shop.background;
+      if (shop.festivalBackground && typeof Player !== 'undefined' && Player.isFestivalActive()) {
+        bg = shop.festivalBackground;
+      }
+      shopScreen.style.backgroundImage = "url('" + bg + "')";
     }
 
     var npc = Chapter1.getNPC(shop.npc);
@@ -70,7 +80,11 @@ var Shops = (function () {
     var shopTitle = document.getElementById("shop-title");
     var backBtn = shopScreen ? shopScreen.querySelector(".btn-back") : null;
 
-    if (shopTitle) shopTitle.textContent = shop.name;
+    var displayName = shop.name;
+    if (shop.festivalName && typeof Player !== 'undefined' && Player.isFestivalActive()) {
+      displayName = shop.festivalName;
+    }
+    if (shopTitle) shopTitle.textContent = displayName;
 
     // Full-body NPC portrait in the scene (bust crop if shop requires it)
     if (npcArea) {

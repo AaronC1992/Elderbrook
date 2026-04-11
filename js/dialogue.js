@@ -15,7 +15,15 @@ var Dialogue = (function () {
 
     // If it's a random-line type (NPC idle chatter), pick one and show it briefly
     if (data.lines) {
-      var randomLine = data.lines[Math.floor(Math.random() * data.lines.length)];
+      // During festival, try festival-specific idle lines first
+      var lines = data.lines;
+      if (typeof Player !== 'undefined' && Player.isFestivalActive()) {
+        var festivalData = Chapter1.getDialogue(dialogueId + "-festival");
+        if (festivalData && festivalData.lines) {
+          lines = festivalData.lines;
+        }
+      }
+      var randomLine = lines[Math.floor(Math.random() * lines.length)];
       // Resolve NPC speaker/portrait from dialogue ID (e.g. "mira-idle" → "mira")
       var speakerName = "";
       var speakerPortrait = "";

@@ -59,6 +59,15 @@ var Battle = (function () {
     e.buffs = [];
     e.effects = [];
     e.maxHp = e.hp;
+    // Calculate MP based on abilities: 5 MP per ability, minimum 10 if any exist
+    if (e.abilities && e.abilities.length > 0) {
+      var baseMp = Math.max(10, e.abilities.length * 5);
+      e.mp = e.mp || baseMp;
+      e.maxMp = e.maxMp || e.mp;
+    } else {
+      e.mp = e.mp || 0;
+      e.maxMp = e.maxMp || 0;
+    }
     return e;
   }
 
@@ -1325,10 +1334,12 @@ var Battle = (function () {
 
   function determineEnemyAction(e, enemyHitChance) {
     // Check for special ability first
-    if (e.abilities && e.abilities.length > 0) {
+    if (e.abilities && e.abilities.length > 0 && e.mp > 0) {
       for (var a = 0; a < e.abilities.length; a++) {
         var ab = e.abilities[a];
-        if (Math.random() < ab.chance) {
+        var abMpCost = ab.mpCost || 3;
+        if (e.mp >= abMpCost && Math.random() < ab.chance) {
+          e.mp -= abMpCost;
           var result = { type: "ability", ability: ab, damage: 0, missed: false, dodged: false, buff: null, effect: null };
 
           if (ab.multiplier) {
@@ -1815,6 +1826,10 @@ var Battle = (function () {
       html += '<div class="battle-name">' + e.name + (e.isBoss ? ' (BOSS)' : '') + '</div>';
       html += '<div class="battle-hp-bar"><div class="hp-fill enemy-hp" style="width:' + Math.max(0, (e.hp / e.maxHp) * 100) + '%"></div></div>';
       html += '<div class="battle-hp-text">' + Math.max(0, e.hp) + ' HP</div>';
+      if (e.maxMp > 0) {
+        html += '<div class="battle-mp-bar"><div class="mp-fill" style="width:' + Math.max(0, (e.mp / e.maxMp) * 100) + '%"></div></div>';
+        html += '<div class="battle-mp-text">' + Math.max(0, e.mp) + ' MP</div>';
+      }
       // Enemy effects
       if (e.effects && e.effects.length > 0) {
         html += '<div class="battle-effects">';
