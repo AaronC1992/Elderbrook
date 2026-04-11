@@ -732,7 +732,7 @@ var UI = (function () {
     html += '</div>';
 
     // Back button
-    html += '<button class="btn btn-back guardpost-back" data-action="guardpost-back">< Town</button>';
+    html += '<button class="btn btn-back guardpost-back" data-action="guardpost-back">&lt; Town</button>';
     html += '</div>';
 
     container.innerHTML = html;
@@ -753,7 +753,7 @@ var UI = (function () {
 
     var html = '<div class="inn-room">';
     // Back button (matches shop style, bottom-right)
-    html += '<button class="btn btn-back inn-back" data-action="inn-back">< Town</button>';
+    html += '<button class="btn btn-back inn-back" data-action="inn-back">&lt; Town</button>';
     html += '</div>';
 
     container.innerHTML = html;
@@ -800,7 +800,7 @@ var UI = (function () {
     html += '</div>'; // .inn-menu-area
 
     // Back to town
-    html += '<button class="btn btn-back inn-back" data-action="inn-back">< Town</button>';
+    html += '<button class="btn btn-back inn-back" data-action="inn-back">&lt; Town</button>';
     html += '</div>';
 
     container.innerHTML = html;
