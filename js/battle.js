@@ -1094,6 +1094,58 @@ var Battle = (function () {
       if (skill.intScaling) {
         atk = p.intelligence + getBuffTotal(playerBuffs, "attack");
       }
+
+      // AoE skills hit all enemies
+      if (skill.aoe) {
+        var animType = skill.type === "magic" ? "magic" : "melee";
+        var skillOpts = { abilityName: skill.name, effectType: skill.appliesEffect ? skill.appliesEffect.type : "" };
+        animateCombat("player", animType, function () {
+          var alive = [];
+          for (var a = 0; a < enemies.length; a++) {
+            if (enemies[a].hp > 0) alive.push(a);
+          }
+          for (var ai = 0; ai < alive.length; ai++) {
+            var ei = alive[ai];
+            var tgt = enemies[ei];
+            var eDef = tgt.defense + getBuffTotal(tgt.buffs, "defense");
+            var hits = skill.hits || 1;
+            var totalDmg = 0;
+            for (var h = 0; h < hits; h++) {
+              var dmg = Math.max(1, Math.floor(atk * atk / (atk + eDef) * skill.damageMultiplier * (1 + profBonus)) + Math.floor(Math.random() * 3));
+              totalDmg += dmg;
+            }
+            // Split mode divides damage among targets
+            if (skill.aoe === "split") {
+              totalDmg = Math.max(1, Math.floor(totalDmg / alive.length));
+            }
+            tgt.hp -= totalDmg;
+            showFCT("battle-enemy-" + ei, "-" + totalDmg, "damage");
+
+            // Apply effect
+            if (tgt.hp > 0 && skill.appliesEffect) {
+              var eff = skill.appliesEffect;
+              if (eff.type === "stun" && Math.random() < (eff.chance || 1)) {
+                tgt.effects.push({ type: "stun", turns: eff.turns });
+                showFCT("battle-enemy-" + ei, "STUNNED", "status");
+              } else if (eff.type === "poison") {
+                tgt.effects.push({ type: "poison", damage: eff.damage, turns: eff.turns });
+                showFCT("battle-enemy-" + ei, "POISONED", "status");
+              } else if (eff.type === "burn") {
+                tgt.effects.push({ type: "burn", damage: eff.damage, turns: eff.turns });
+                showFCT("battle-enemy-" + ei, "BURNING", "status");
+              }
+            }
+            if (tgt.hp <= 0) {
+              handleEnemyDeath(ei);
+            }
+          }
+          addLog("You use " + skill.name + " hitting all enemies!");
+          Audio.play(skill.type === "magic" ? "magicCast" : "swordHit");
+          renderBattle();
+          checkBattleEnd() || enemyTurn();
+        }, undefined, skillOpts);
+      } else {
+      // Single-target skill (original logic)
       var def = target.defense + getBuffTotal(target.buffs, "defense");
       var hits = skill.hits || 1;
       var totalDmg = 0;
@@ -1132,6 +1184,7 @@ var Battle = (function () {
         renderBattle();
         checkBattleEnd() || enemyTurn();
       }, undefined, skillOpts);
+      }
     } else {
       animating = false;
       checkBattleEnd() || enemyTurn();
@@ -1890,7 +1943,8 @@ var Battle = (function () {
           var onCooldown = sk.cooldown && skillCooldowns[sk.id] && skillCooldowns[sk.id] > turnCount;
           var cdLeft = onCooldown ? (skillCooldowns[sk.id] - turnCount) : 0;
           var canUse = p.mp >= sk.mpCost && !onCooldown;
-          var label = sk.name + (onCooldown ? ' (' + cdLeft + ')' : '');
+          var aoeTag = sk.aoe ? (sk.aoe === "split" ? " [Split]" : " [AoE]") : "";
+          var label = sk.name + aoeTag + (onCooldown ? ' (' + cdLeft + ')' : '');
           var tip = sk.description + ' (MP: ' + sk.mpCost + ')' + (onCooldown ? ' — Cooldown: ' + cdLeft + ' turn' + (cdLeft > 1 ? 's' : '') : '');
           html += '<button class="btn btn-small battle-skill-btn" data-action="battle-skill" data-skill="' + sk.id + '"' + (canUse ? '' : ' disabled') + ' title="' + tip + '">' + label + '</button>';
         }

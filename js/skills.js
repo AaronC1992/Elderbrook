@@ -49,6 +49,24 @@ var Skills = (function () {
       mpCost: 6, damageMultiplier: 1.3, cooldown: 2, appliesEffect: { type: "stun", chance: 0.30, turns: 1 }
     },
     {
+      id: "whirlwind", name: "Whirlwind", type: "attack", tier: 2,
+      cost: TIER_COSTS[2],
+      description: "Sweeps all enemies for 0.8x damage each.",
+      mpCost: 7, damageMultiplier: 0.8, aoe: true
+    },
+    {
+      id: "cleave", name: "Cleave", type: "attack", tier: 3,
+      cost: TIER_COSTS[3],
+      description: "Splits 1.6x damage across all enemies. (2-turn cooldown)",
+      mpCost: 8, damageMultiplier: 1.6, aoe: "split", cooldown: 2
+    },
+    {
+      id: "chain-lightning", name: "Chain Lightning", type: "magic", tier: 3,
+      cost: TIER_COSTS[3],
+      description: "Magic bolt jumps to all enemies for 0.7x INT damage each.",
+      mpCost: 10, damageMultiplier: 0.7, intScaling: true, aoe: true
+    },
+    {
       id: "meditate", name: "Meditate", type: "heal", tier: 3,
       cost: 0, questLocked: true, unlockFlag: "unlockedMeditate",
       unlockQuest: "sq-meditate",
@@ -83,6 +101,12 @@ var Skills = (function () {
       mpCost: 7, hits: 2, damageMultiplier: 1.0
     },
     {
+      id: "ground-slam", name: "Ground Slam", type: "attack", tier: 3,
+      cost: 0, classSkill: "berserker",
+      description: "Slams the ground splitting 1.4x damage across all enemies. Berserker class skill.",
+      mpCost: 9, damageMultiplier: 1.4, aoe: "split"
+    },
+    {
       id: "smoke-bomb", name: "Smoke Bomb", type: "buff", tier: 2,
       cost: 0, classSkill: "rogue",
       description: "Increases evasion by 30 for 2 turns. Rogue class skill.",
@@ -97,8 +121,8 @@ var Skills = (function () {
     {
       id: "volley", name: "Volley", type: "attack", tier: 3,
       cost: 0, classSkill: "ranger",
-      description: "Hits 3 times at 0.6x damage each. Ranger class skill.",
-      mpCost: 9, hits: 3, damageMultiplier: 0.6
+      description: "Rains arrows on all enemies for 0.6x damage each. Ranger class skill.",
+      mpCost: 9, damageMultiplier: 0.6, aoe: true
     },
     {
       id: "arcane-shield", name: "Arcane Shield", type: "buff", tier: 2,
@@ -109,8 +133,8 @@ var Skills = (function () {
     {
       id: "inferno", name: "Inferno", type: "magic", tier: 3,
       cost: 0, classSkill: "pyromancer",
-      description: "Deals 1.6x magic damage and burns. Pyromancer class skill.",
-      mpCost: 10, damageMultiplier: 1.6, intScaling: true, appliesEffect: { type: "poison", damage: 5, turns: 2 }
+      description: "Engulfs all enemies in flame for 1.0x magic damage and burns. Pyromancer class skill.",
+      mpCost: 10, damageMultiplier: 1.0, intScaling: true, aoe: true, appliesEffect: { type: "burn", damage: 5, turns: 2 }
     },
     {
       id: "holy-light", name: "Holy Light", type: "heal", tier: 3,

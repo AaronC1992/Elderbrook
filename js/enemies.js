@@ -5,7 +5,7 @@ var Enemies = (function () {
     /* ── Tier 1 (Forest Road) ── */
     "dire-rat": {
       id: "dire-rat", name: "Dire Rat", portrait: "assets/portraits/dire_rat.png",
-      hp: 12, attack: 3, defense: 0, xp: 4, gold: [1, 4],
+      hp: 18, attack: 3, defense: 0, xp: 4, gold: [1, 4],
       loot: [
         { id: "torn-cloth", chance: 0.30 },
         { id: "beast-sinew", chance: 0.08 }
@@ -16,7 +16,7 @@ var Enemies = (function () {
     },
     "wolf": {
       id: "wolf", name: "Wolf", portrait: "assets/portraits/wolf-enemy.png",
-      hp: 18, attack: 4, defense: 1, xp: 5, gold: [2, 5],
+      hp: 26, attack: 4, defense: 1, xp: 5, gold: [2, 5],
       loot: [
         { id: "wolf-pelt", chance: 0.40 },
         { id: "torn-cloth", chance: 0.20 },
@@ -26,7 +26,7 @@ var Enemies = (function () {
     },
     "goblin-scout": {
       id: "goblin-scout", name: "Goblin Scout", portrait: "assets/portraits/goblin-scout-enemy.png",
-      hp: 15, attack: 3, defense: 1, xp: 7, gold: [3, 6],
+      hp: 22, attack: 3, defense: 1, xp: 7, gold: [3, 6],
       loot: [
         { id: "goblin-fang", chance: 0.40 },
         { id: "lesser-health-potion", chance: 0.10 },
@@ -37,7 +37,7 @@ var Enemies = (function () {
     },
     "goblin-sneak": {
       id: "goblin-sneak", name: "Goblin Sneak", portrait: "assets/portraits/goblin-enemy.png",
-      hp: 18, attack: 5, defense: 1, xp: 8, gold: [4, 7],
+      hp: 26, attack: 5, defense: 1, xp: 8, gold: [4, 7],
       loot: [
         { id: "goblin-fang", chance: 0.35 },
         { id: "rusted-scrap", chance: 0.20 },
@@ -53,7 +53,7 @@ var Enemies = (function () {
     /* ── Tier 2 (Goblin Trail / Watch Post) ── */
     "goblin-raider": {
       id: "goblin-raider", name: "Goblin Raider", portrait: "assets/portraits/goblin_raider_enemy.png",
-      hp: 22, attack: 5, defense: 2, xp: 10, gold: [5, 10],
+      hp: 32, attack: 5, defense: 2, xp: 10, gold: [5, 10],
       loot: [
         { id: "goblin-fang", chance: 0.40 },
         { id: "goblin-scrap", chance: 0.30 },
@@ -68,7 +68,7 @@ var Enemies = (function () {
     },
     "goblin-archer": {
       id: "goblin-archer", name: "Goblin Archer", portrait: "assets/portraits/goblin-archer-enemy.png",
-      hp: 16, attack: 7, defense: 1, xp: 10, gold: [4, 9],
+      hp: 24, attack: 7, defense: 1, xp: 10, gold: [4, 9],
       loot: [
         { id: "goblin-fang", chance: 0.35 },
         { id: "torn-cloth", chance: 0.25 },
@@ -83,7 +83,7 @@ var Enemies = (function () {
     },
     "wolf-pack": {
       id: "wolf-pack", name: "Wolf Pack Leader", portrait: "assets/portraits/wolf-pack-leader-enemy.png",
-      hp: 25, attack: 5, defense: 2, xp: 11, gold: [3, 6],
+      hp: 36, attack: 5, defense: 2, xp: 11, gold: [3, 6],
       loot: [
         { id: "wolf-pelt", chance: 0.60 },
         { id: "beast-sinew", chance: 0.15 }
@@ -97,7 +97,7 @@ var Enemies = (function () {
     /* ── Tier 3 (Goblin Cave) ── */
     "goblin-guard": {
       id: "goblin-guard", name: "Goblin Guard", portrait: "assets/portraits/goblin-brute-enemy.png",
-      hp: 28, attack: 6, defense: 4, xp: 14, gold: [6, 12],
+      hp: 40, attack: 6, defense: 4, xp: 14, gold: [6, 12],
       loot: [
         { id: "goblin-scrap", chance: 0.40 },
         { id: "iron-helm", chance: 0.03 },
@@ -112,7 +112,7 @@ var Enemies = (function () {
     },
     "goblin-shaman": {
       id: "goblin-shaman", name: "Goblin Shaman", portrait: "assets/portraits/goblin-shaman-enemy.png",
-      hp: 20, attack: 8, defense: 2, xp: 15, gold: [5, 11],
+      hp: 30, attack: 8, defense: 2, xp: 15, gold: [5, 11],
       loot: [
         { id: "goblin-fang", chance: 0.30 },
         { id: "mana-potion", chance: 0.15 },
@@ -129,7 +129,7 @@ var Enemies = (function () {
     },
     "goblin-brute": {
       id: "goblin-brute", name: "Goblin Brute", portrait: "assets/portraits/goblin-brute-enemy.png",
-      hp: 35, attack: 8, defense: 3, xp: 17, gold: [8, 15],
+      hp: 50, attack: 8, defense: 3, xp: 17, gold: [8, 15],
       loot: [
         { id: "goblin-scrap", chance: 0.50 },
         { id: "health-potion", chance: 0.15 },
@@ -147,7 +147,7 @@ var Enemies = (function () {
     /* ── Bandits ── */
     "bandit": {
       id: "bandit", name: "Bandit", portrait: "assets/portraits/bandit_enemy.png",
-      hp: 24, attack: 6, defense: 2, xp: 11, gold: [5, 10],
+      hp: 34, attack: 6, defense: 2, xp: 11, gold: [5, 10],
       loot: [
         { id: "torn-cloth", chance: 0.35 },
         { id: "rusted-scrap", chance: 0.25 },
@@ -164,7 +164,7 @@ var Enemies = (function () {
     /* ── Winter Enemies ── */
     "snow-wolf": {
       id: "snow-wolf", name: "Snow Wolf", portrait: "assets/portraits/frostbitten-snow-wolf.png",
-      hp: 24, attack: 6, defense: 2, xp: 8, gold: [3, 7],
+      hp: 34, attack: 6, defense: 2, xp: 8, gold: [3, 7],
       loot: [
         { id: "wolf-pelt", chance: 0.50 },
         { id: "beast-sinew", chance: 0.15 },
@@ -177,7 +177,7 @@ var Enemies = (function () {
     },
     "frost-goblin": {
       id: "frost-goblin", name: "Frost-bound Goblin", portrait: "assets/portraits/frost-bound-goblin.png",
-      hp: 22, attack: 5, defense: 3, xp: 10, gold: [4, 8],
+      hp: 32, attack: 5, defense: 3, xp: 10, gold: [4, 8],
       loot: [
         { id: "goblin-fang", chance: 0.40 },
         { id: "goblin-scrap", chance: 0.25 },
@@ -190,7 +190,7 @@ var Enemies = (function () {
     },
     "snow-bandit": {
       id: "snow-bandit", name: "Frostbitten Bandit", portrait: "assets/portraits/frostbitten-bandit.png",
-      hp: 26, attack: 7, defense: 3, xp: 12, gold: [6, 12],
+      hp: 38, attack: 7, defense: 3, xp: 12, gold: [6, 12],
       loot: [
         { id: "torn-cloth", chance: 0.35 },
         { id: "rusted-scrap", chance: 0.25 },
@@ -207,7 +207,7 @@ var Enemies = (function () {
     /* ── Boss ── */
     "goblin-chief-grisk": {
       id: "goblin-chief-grisk", name: "Goblin Chief Grisk", portrait: "assets/portraits/goblin-king-enemy.png",
-      hp: 80, attack: 10, defense: 5, xp: 150, gold: [50, 80],
+      hp: 120, attack: 10, defense: 5, xp: 150, gold: [50, 80],
       isBoss: true,
       phases: [
         { threshold: 0.75, name: "Enraged", message: "Grisk snarls with fury! His attacks grow wilder!", buffs: { attack: 2 } },
