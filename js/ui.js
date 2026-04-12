@@ -1069,6 +1069,19 @@ var UI = (function () {
     html += '<button class="btn btn-small' + (!Audio.isEnabled() ? ' btn-active' : '') + '" data-action="set-sound" data-sound="off">Off</button>';
     html += '</div>';
 
+    if (typeof Voice !== 'undefined') {
+      html += '<div class="settings-group">';
+      html += '<label>Voice (ElevenLabs):</label>';
+      html += '<button class="btn btn-small' + (Voice.isEnabled() ? ' btn-active' : '') + '" data-action="set-voice" data-voice="on">On</button>';
+      html += '<button class="btn btn-small' + (!Voice.isEnabled() ? ' btn-active' : '') + '" data-action="set-voice" data-voice="off">Off</button>';
+      html += '</div>';
+      html += '<div class="settings-group">';
+      html += '<label>API Key:</label>';
+      html += '<input type="password" id="voice-api-key" class="settings-input" placeholder="ElevenLabs API key" value="' + (Voice.getApiKey() ? '********' : '') + '" />';
+      html += '<button class="btn btn-small" data-action="save-voice-key">Save Key</button>';
+      html += '</div>';
+    }
+
     html += '<div class="settings-group">';
     html += '<label>Difficulty:</label>';
     var diffs = ['easy', 'normal', 'hard'];
@@ -2062,6 +2075,22 @@ var UI = (function () {
     html += '<button class="ledger-btn' + (Audio.isEnabled() ? ' active' : '') + '" data-action="set-sound" data-sound="on">On</button>';
     html += '<button class="ledger-btn' + (!Audio.isEnabled() ? ' active' : '') + '" data-action="set-sound" data-sound="off">Off</button>';
     html += '</div></div>';
+
+    // Voice
+    if (typeof Voice !== 'undefined') {
+      html += '<div class="ledger-setting">';
+      html += '<span class="ledger-setting-label">Voice (ElevenLabs)</span>';
+      html += '<div class="ledger-setting-options">';
+      html += '<button class="ledger-btn' + (Voice.isEnabled() ? ' active' : '') + '" data-action="set-voice" data-voice="on">On</button>';
+      html += '<button class="ledger-btn' + (!Voice.isEnabled() ? ' active' : '') + '" data-action="set-voice" data-voice="off">Off</button>';
+      html += '</div></div>';
+      html += '<div class="ledger-setting">';
+      html += '<span class="ledger-setting-label">API Key</span>';
+      html += '<div class="ledger-setting-options">';
+      html += '<input type="password" id="voice-api-key" class="settings-input" placeholder="ElevenLabs API key" value="' + (Voice.getApiKey() ? '********' : '') + '" />';
+      html += '<button class="ledger-btn" data-action="save-voice-key">Save</button>';
+      html += '</div></div>';
+    }
 
     // Difficulty
     html += '<div class="ledger-setting">';

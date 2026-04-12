@@ -103,6 +103,11 @@ var Dialogue = (function () {
 
     container.innerHTML = html;
     startTypewriter(node.text);
+
+    // Auto-play voice for this dialogue line
+    if (typeof Voice !== 'undefined' && Voice.isEnabled()) {
+      Voice.speak(node.text, node.speaker);
+    }
   }
 
   function advance() {
@@ -162,6 +167,7 @@ var Dialogue = (function () {
 
   function end() {
     stopTypewriter();
+    if (typeof Voice !== 'undefined') Voice.stop();
     if (currentDialogue && currentDialogue.onEnd) {
       var actions = currentDialogue.onEnd;
       if (actions.flags) Player.setFlags(actions.flags);

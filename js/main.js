@@ -543,6 +543,24 @@
         else UI.renderSettings();
         UI.updateHeader();
         break;
+      case "set-voice":
+        if (typeof Voice !== 'undefined') {
+          Voice.setEnabled(btn.getAttribute('data-voice') === 'on');
+          if (UI.getScreen() === 'ledger') UI.renderLedger('settings');
+          else UI.renderSettings();
+        }
+        break;
+      case "save-voice-key":
+        if (typeof Voice !== 'undefined') {
+          var keyInput = document.getElementById('voice-api-key');
+          if (keyInput && keyInput.value && keyInput.value !== '********') {
+            Voice.setApiKey(keyInput.value.trim());
+            UI.showMessage('API key saved.');
+            if (UI.getScreen() === 'ledger') UI.renderLedger('settings');
+            else UI.renderSettings();
+          }
+        }
+        break;
 
       /* ── Settings ── */
       case "open-settings":
@@ -879,6 +897,9 @@
   function init() {
     // Migrate legacy single-slot saves to new multi-slot system
     Save.migrateLegacy();
+
+    // Init voice system
+    if (typeof Voice !== 'undefined') Voice.init();
 
     // Show title screen
     UI.showScreen("title");

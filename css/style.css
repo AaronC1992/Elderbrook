@@ -2411,6 +2411,16 @@ button {
   gap: 0.3rem;
   flex-wrap: wrap;
 }
+.settings-input {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.82rem;
+  width: 220px;
+  margin-right: 0.4rem;
+}
 
 /* ── Achievements ── */
 .achievements-grid {
