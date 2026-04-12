@@ -1579,15 +1579,9 @@ button {
 }
 .battle-companion .battle-portrait {
   width: 85px;
-  opacity: 0.95;
-  border: 2px solid var(--accent);
-  border-radius: var(--radius);
 }
 .battle-pet-combatant .battle-portrait {
   width: 70px;
-  opacity: 0.95;
-  border: 2px solid #d4a843;
-  border-radius: var(--radius);
 }
 .battle-companion-info {
   font-size: 0.8rem;
