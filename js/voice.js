@@ -6,6 +6,7 @@ var Voice = (function () {
   var enabled = true;
   var currentAudio = null;
   var cache = {}; // text hash -> audio blob URL
+  var onEndedCallback = null;
 
   var voiceMap = {
     rowan:    "JBFqnCBsd6RMkjVDRZzb", // George – Warm, Captivating Storyteller
@@ -124,15 +125,25 @@ var Voice = (function () {
   function playBlob(blobUrl) {
     stop();
     currentAudio = new _NativeAudio(blobUrl);
+    currentAudio.onended = function () {
+      currentAudio = null;
+      if (onEndedCallback) {
+        var cb = onEndedCallback;
+        onEndedCallback = null;
+        cb();
+      }
+    };
     currentAudio.play().catch(function () {});
   }
 
   function stop() {
     if (currentAudio) {
+      currentAudio.onended = null;
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
     }
+    onEndedCallback = null;
   }
 
   function setVoice(npcKey, voiceId) {
@@ -151,6 +162,8 @@ var Voice = (function () {
     isEnabled: isEnabled,
     speak: speak,
     stop: stop,
+    onEnded: function (cb) { onEndedCallback = cb; },
+    isPlaying: function () { return !!currentAudio; },
     setVoice: setVoice,
     getVoiceMap: getVoiceMap
   };

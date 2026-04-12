@@ -107,6 +107,14 @@ var Dialogue = (function () {
     // Auto-play voice for this dialogue line
     if (typeof Voice !== 'undefined' && Voice.isEnabled()) {
       Voice.speak(node.text, node.speaker);
+      // Auto-advance when voice finishes (skip if choices present)
+      if (!node.choices || node.choices.length === 0) {
+        Voice.onEnded(function () {
+          if (currentDialogue && currentDialogue.nodes[currentNode] === node) {
+            advance();
+          }
+        });
+      }
     }
   }
 
