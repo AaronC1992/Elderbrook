@@ -114,6 +114,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-riverside-moonlit.png",
       dateDialogue: {
         nodes: [
           { speaker: "Mira Voss", portrait: "assets/portraits/mira.png", text: "A walk by the river? I'd love that! Let me grab my cloak." },
@@ -122,7 +123,19 @@ var Relationships = (function () {
           { speaker: "Mira Voss", portrait: "assets/portraits/mira.png", text: "This is much better. Thank you for tonight." }
         ],
         onEnd: { addAffinity: { npc: "mira", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "What ingredient do I always need more of?", answers: ["Cave herbs", "Iron ingots", "Leather scraps"], correct: 0 },
+        { q: "Why did I become an alchemist?", answers: ["For the gold", "My mother died without the right medicine", "I was bored"], correct: 1 },
+        { q: "What nearly happened in my workshop last week?", answers: ["A flood", "An explosion", "A robbery"], correct: 1 },
+        { q: "How many herb varieties have I catalogued nearby?", answers: ["Twenty-three", "Forty-seven", "Over a hundred"], correct: 1 },
+        { q: "Where did I move here from?", answers: ["The capital", "The southern provinces", "Across the sea"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "What makes the herbs by this river so special?", answers: ["The moonlight makes them potent", "The soil is enchanted", "They grow faster here"], correct: 0 },
+        { q: "What's my favorite thing about this riverside walk?", answers: ["Collecting samples", "The company", "The exercise"], correct: 1 },
+        { q: "What do you think that glowing plant is?", answers: ["Moonpetal - it's medicinal", "Probably poisonous", "Just a weed"], correct: 0 }
+      ]
     },
 
     toma: {
@@ -223,6 +236,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-inn-dinner.png",
       dateDialogue: {
         nodes: [
           { speaker: "Toma Reed", portrait: "assets/portraits/toma.png", text: "Wait, you want to have dinner with me? At the inn? Let me just close up the board real quick!" },
@@ -231,7 +245,19 @@ var Relationships = (function () {
           { speaker: "Toma Reed", portrait: "assets/portraits/toma.png", text: "This was the best evening I've had in... maybe ever. Thank you." }
         ],
         onEnd: { addAffinity: { npc: "toma", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "What's my favorite meal at the inn?", answers: ["Roast chicken", "The stew", "Bread and cheese"], correct: 1 },
+        { q: "What do I do when I'm nervous?", answers: ["I ramble", "I go quiet", "I crack jokes"], correct: 0 },
+        { q: "What's my job in Elderbrook?", answers: ["Guard recruit", "Quest Board Clerk", "Innkeeper's assistant"], correct: 1 },
+        { q: "What sound do I love hearing at night?", answers: ["The crickets over the walls", "The tavern music", "Rain on the roof"], correct: 0 },
+        { q: "What kind of gifts do I appreciate most?", answers: ["Weapons", "Sweet treats and books", "Gold coins"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "Is it boring that I always order the stew?", answers: ["Not at all, it suits you", "A little predictable", "You should try something new"], correct: 0 },
+        { q: "What do you think makes Elderbrook special?", answers: ["The people who care about it", "The location", "The shops"], correct: 0 },
+        { q: "Do you think I talk too much?", answers: ["I like listening to you", "Sometimes, yes", "You could talk more actually"], correct: 0 }
+      ]
     },
 
     elira: {
@@ -329,6 +355,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-hilltop-stargazing.png",
       dateDialogue: {
         nodes: [
           { speaker: "Elira Ashfen", portrait: "assets/portraits/elira.png", text: "Stargazing on the hill? I suppose I can spare an evening from my research." },
@@ -337,7 +364,19 @@ var Relationships = (function () {
           { speaker: "Elira Ashfen", portrait: "assets/portraits/elira.png", text: "Thank you for this. I had forgotten what peace feels like." }
         ],
         onEnd: { addAffinity: { npc: "elira", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "What is the constellation called that I pointed out?", answers: ["The Sentinel", "The Watcher", "The Guardian"], correct: 1 },
+        { q: "What am I researching in Elderbrook?", answers: ["Ancient ruins and buried secrets", "New trade routes", "Farming techniques"], correct: 0 },
+        { q: "How would you describe my personality?", answers: ["Loud and outgoing", "Calm and guarded", "Reckless and impulsive"], correct: 1 },
+        { q: "Where have I traveled before coming here?", answers: ["Just the capital", "A hundred different places", "Only nearby villages"], correct: 1 },
+        { q: "What did I forget the feeling of before tonight?", answers: ["Excitement", "Peace", "Laughter"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "What do you think the Watcher constellation guards?", answers: ["Buried secrets of the old world", "Nothing, it's just stars", "A dragon's treasure"], correct: 0 },
+        { q: "Why does the sky look different tonight?", answers: ["The company makes everything better", "It's a clear night", "Must be magic"], correct: 0 },
+        { q: "What matters more - knowledge or peace?", answers: ["Peace, but knowledge helps protect it", "Knowledge above all", "Neither, just gold"], correct: 0 }
+      ]
     },
 
     bram: {
@@ -438,6 +477,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-inn-dinner.png",
       dateDialogue: {
         nodes: [
           { speaker: "Bram Ironhand", portrait: "assets/portraits/bram.png", text: "Dinner at the inn? Sure. But I'm ordering the biggest plate they've got. Forging works up an appetite." },
@@ -446,7 +486,19 @@ var Relationships = (function () {
           { speaker: "Bram Ironhand", portrait: "assets/portraits/bram.png", text: "Good food, good company. A man could get used to this." }
         ],
         onEnd: { addAffinity: { npc: "bram", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "What materials do I work with most?", answers: ["Wood and cloth", "Iron, steel, and stone", "Gold and silver"], correct: 1 },
+        { q: "What did my old man say about meals?", answers: ["Eat fast, work faster", "The measure of a meal is the company", "Never waste good food"], correct: 1 },
+        { q: "What's my personality like?", answers: ["Cheerful and chatty", "Grumpy but good-hearted", "Quiet and mysterious"], correct: 1 },
+        { q: "What's my trade?", answers: ["Innkeeper", "Blacksmith", "Merchant"], correct: 1 },
+        { q: "Who do I have a rivalry with?", answers: ["Mira", "Harlan", "Rowan"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "What do you think matters more - the meal or the company?", answers: ["The company, always", "A good meal is important too", "I just came for the stew"], correct: 0 },
+        { q: "Do you think a blacksmith can be... gentle?", answers: ["Strength and gentleness aren't opposites", "You seem pretty rough to me", "I hadn't thought about it"], correct: 0 },
+        { q: "What would you forge if you could make anything?", answers: ["Something to protect the people I care about", "A golden crown", "The sharpest sword ever"], correct: 0 }
+      ]
     },
 
     harlan: {
@@ -544,6 +596,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-town-walls-sunset.png",
       dateDialogue: {
         nodes: [
           { speaker: "Harlan Stonevein", portrait: "assets/portraits/harlan.png", text: "A walk along the walls? Hmph. Alright. I know the best vantage points." },
@@ -552,7 +605,19 @@ var Relationships = (function () {
           { speaker: "Harlan Stonevein", portrait: "assets/portraits/harlan.png", text: "Thank you for dragging me out of the shop. I needed this more than I realized." }
         ],
         onEnd: { addAffinity: { npc: "harlan", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "How long have I watched that treeline at sunset?", answers: ["One year", "Three years", "Since childhood"], correct: 1 },
+        { q: "What did I used to think about peace?", answers: ["It was precious", "It was boring", "It was impossible"], correct: 1 },
+        { q: "What kind of shop do I run?", answers: ["Potions", "Weapons", "Armor"], correct: 2 },
+        { q: "What's my approach to conversation?", answers: ["I love small talk", "Blunt and to the point", "I avoid people"], correct: 1 },
+        { q: "What do I think about Bram?", answers: ["He's my best friend", "Competitive rival but respect him", "Can't stand him"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "What do you see when you look at that treeline?", answers: ["Years of watching over something you love", "Just trees", "A potential threat"], correct: 0 },
+        { q: "Is peace really boring?", answers: ["It's hard-earned and worth protecting", "A little, yes", "Only if you let it be"], correct: 0 },
+        { q: "Why did you need to get out of the shop?", answers: ["Even the toughest people need a break sometimes", "Your armor was getting dusty", "I just wanted company"], correct: 0 }
+      ]
     },
 
     elric: {
@@ -655,6 +720,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-inn-dinner.png",
       dateDialogue: {
         nodes: [
           { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "Dinner? I... yes. Let me tell the lieutenant he has the watch tonight." },
@@ -663,7 +729,19 @@ var Relationships = (function () {
           { speaker: "Captain Elric", portrait: "assets/portraits/Guard_captain.png", text: "I don't want this evening to end. But duty calls at dawn. Let's do this again soon." }
         ],
         onEnd: { addAffinity: { npc: "elric", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "How did I start my career in the guard?", answers: ["As a captain right away", "As a gate guard", "As a spy"], correct: 1 },
+        { q: "What keeps me up at night?", answers: ["Goblin sightings getting closer to town", "Bad dreams", "Noisy neighbors"], correct: 0 },
+        { q: "What does my lieutenant think about me?", answers: ["I'm too lenient", "I work too hard", "I'm not fit for command"], correct: 1 },
+        { q: "Why did I almost leave Elderbrook?", answers: ["Better pay elsewhere", "Politics, underfunding, and feeling alone", "I was transferred"], correct: 1 },
+        { q: "What do I value most in a person?", answers: ["Wealth", "Loyalty and reliability", "A good sense of humor"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "When's the last time I had a meal without paperwork?", answers: ["You can't remember, and that says a lot", "Last week probably", "Captains don't need breaks"], correct: 0 },
+        { q: "What makes tonight different from other evenings?", answers: ["No emergencies, just us", "The food is better than usual", "Nothing special"], correct: 0 },
+        { q: "What should we toast to?", answers: ["To quiet evenings and good company", "To the guard", "To gold and glory"], correct: 0 }
+      ]
     },
 
     fauna: {
@@ -752,6 +830,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-evening-town-walk.png",
       dateDialogue: {
         nodes: [
           { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "A little evening walk through town? I'd love that. Let me wash the fox pawprints off my skirt first." },
@@ -760,7 +839,19 @@ var Relationships = (function () {
           { speaker: "Fauna", portrait: "assets/portraits/pet-shop-keeper.png", text: "Thank you for tonight. I was already fond of you. This certainly didn't help me be less so.", end: true }
         ],
         onEnd: { addAffinity: { npc: "fauna", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "Where did I grow up?", answers: ["In the capital", "On the edge of the deepwood", "By the coast"], correct: 1 },
+        { q: "How do I judge a new visitor to my shop?", answers: ["By their coin purse", "By whether the barn owl likes them", "By their clothes"], correct: 1 },
+        { q: "What do I braid into shy animals' collars?", answers: ["Bells", "Ribbons", "Flowers"], correct: 1 },
+        { q: "What kind of people do I prefer in my shop?", answers: ["Those who want the fiercest pet", "Those who ask which pet needs the gentlest home", "Those who spend the most"], correct: 1 },
+        { q: "What does my shop smell like on a good day?", answers: ["Cedar, hay, and mischief", "Roses and perfume", "Nothing in particular"], correct: 0 }
+      ],
+      dateQuestions: [
+        { q: "What does Elderbrook look like to you tonight?", answers: ["Soft and peaceful, like it's exhaling", "Same as always", "Kind of dark and quiet"], correct: 0 },
+        { q: "What's the nicest thing someone can do for me?", answers: ["Look after me for a change", "Buy something from my shop", "Leave me alone"], correct: 0 },
+        { q: "What do you think of the fireflies tonight?", answers: ["They're like little lanterns guiding our way", "I hadn't noticed them", "They're just bugs"], correct: 0 }
+      ]
     },
 
     liora: {
@@ -850,6 +941,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-market-square-evening.png",
       dateDialogue: {
         nodes: [
           { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "A quiet evening walk through the square after the market closes? That sounds perfect." },
@@ -858,7 +950,19 @@ var Relationships = (function () {
           { speaker: "Liora Bloom", portrait: "assets/portraits/liora.png", text: "Thank you. Tonight felt like a pressed flower in a favorite book. Something worth keeping.", end: true }
         ],
         onEnd: { addAffinity: { npc: "liora", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "When do I like Elderbrook best?", answers: ["In the morning bustle", "After the market closes, when it's quiet", "During festivals"], correct: 1 },
+        { q: "What did I compare tonight to?", answers: ["A warm blanket", "A pressed flower in a favorite book", "A beautiful painting"], correct: 1 },
+        { q: "What do I sell at the market?", answers: ["Potions", "Flowers and bouquets", "Weapons"], correct: 1 },
+        { q: "What would make me never feel lonely again?", answers: ["More customers", "Someone standing beside me every evening", "A pet"], correct: 1 },
+        { q: "How did I plan to confess my feelings?", answers: ["With a grand gesture", "Flowers first, then charm, then a graceful exit", "I wasn't going to"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "What makes this hour feel special?", answers: ["Everything feels more possible when it's quiet", "The shops are closed so there's nothing to do", "It's just nighttime"], correct: 0 },
+        { q: "What kind of flower reminds you of this evening?", answers: ["Something delicate that blooms at dusk", "A weed", "I don't know flowers"], correct: 0 },
+        { q: "Would you walk with me like this again?", answers: ["Every evening if you'd let me", "Maybe sometimes", "I'm pretty busy"], correct: 0 }
+      ]
     },
 
     selene: {
@@ -956,6 +1060,7 @@ var Relationships = (function () {
           ]
         }
       },
+      dateBackground: "assets/backgrounds/date-evening-town-walk.png",
       dateDialogue: {
         nodes: [
           { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "A walk? Let me close up early. Nobody will miss me for one evening. Probably." },
@@ -964,7 +1069,19 @@ var Relationships = (function () {
           { speaker: "Selene Ashford", portrait: "assets/portraits/innkeeper.png", text: "Thank you for tonight. I needed this more than I realized.", end: true }
         ],
         onEnd: { addAffinity: { npc: "selene", amount: 5 } }
-      }
+      },
+      askQuestions: [
+        { q: "How long have I run this inn alone?", answers: ["One year", "Three years", "Ten years"], correct: 1 },
+        { q: "Who left me this inn?", answers: ["My parents", "My aunt", "I bought it myself"], correct: 1 },
+        { q: "What was I like when I was younger?", answers: ["Quiet and studious", "Angry and reckless", "Cheerful and carefree"], correct: 1 },
+        { q: "What do I like about you?", answers: ["Your gold", "You don't fill silence with nonsense", "Your fighting skills"], correct: 1 },
+        { q: "What am I better at than admitting my own feelings?", answers: ["Cooking", "Reading other people's feelings", "Running the inn"], correct: 1 }
+      ],
+      dateQuestions: [
+        { q: "What's different about Elderbrook at night?", answers: ["You can actually hear yourself think", "It's dangerous", "Nothing, really"], correct: 0 },
+        { q: "Why did you close up early tonight?", answers: ["Because this is worth more than one evening's tips", "The inn was empty anyway", "I was bored"], correct: 0 },
+        { q: "What makes silence comfortable?", answers: ["Being with someone who doesn't need to fill it", "I don't like silence", "Silence is always awkward"], correct: 0 }
+      ]
     }
   };
 
@@ -1126,12 +1243,59 @@ var Relationships = (function () {
     });
   }
 
+  /* ── Ask System (dating-sim questions) ── */
+
+  function canAsk(npcId) {
+    var rel = getRelData(npcId);
+    return rel && !rel.asked;
+  }
+
+  function getAskQuestion(npcId) {
+    var cfg = config[npcId];
+    if (!cfg || !cfg.askQuestions || cfg.askQuestions.length === 0) return null;
+    var pool = cfg.askQuestions;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function resolveAsk(npcId, correct, callback) {
+    var rel = getRelData(npcId);
+    var cfg = config[npcId];
+    if (!rel || !cfg) return;
+
+    rel.asked = true;
+    var amount = correct ? 3 : -2;
+    addAffinity(npcId, amount);
+
+    var text = correct
+      ? cfg.name + " beams. \"You really do pay attention!\""
+      : cfg.name + " frowns slightly. \"That's... not quite right.\"";
+
+    Dialogue.startDirect({
+      nodes: [{ speaker: cfg.name, portrait: cfg.portrait, text: text }],
+      onEnd: null
+    }, function () {
+      UI.showMessage((correct ? "+" : "") + amount + " affinity with " + cfg.name);
+      checkMilestone(npcId, callback);
+    });
+  }
+
   /* ── Date System ── */
 
   function canDate(npcId) {
     var rel = getRelData(npcId);
     if (!rel) return false;
     return rel.affinity >= 55 && !rel.dated;
+  }
+
+  function getDateBackground(npcId) {
+    var cfg = config[npcId];
+    return cfg && cfg.dateBackground ? cfg.dateBackground : '';
+  }
+
+  function getDateQuestions(npcId) {
+    var cfg = config[npcId];
+    if (!cfg || !cfg.dateQuestions || cfg.dateQuestions.length === 0) return [];
+    return cfg.dateQuestions;
   }
 
   function goOnDate(npcId, callback) {
@@ -1141,8 +1305,58 @@ var Relationships = (function () {
 
     rel.dated = true;
 
+    // Play the opening date dialogue, then start date questions
     Dialogue.startDirect(cfg.dateDialogue, function () {
-      UI.showMessage("A wonderful time with " + cfg.name + "!");
+      var questions = getDateQuestions(npcId);
+      if (questions.length > 0) {
+        // Start the date question round
+        startDateQuestions(npcId, questions, 0, 0, callback);
+      } else {
+        UI.showMessage("A wonderful time with " + cfg.name + "!");
+        checkMilestone(npcId, callback);
+      }
+    });
+  }
+
+  function startDateQuestions(npcId, questions, index, score, callback) {
+    if (index >= questions.length) {
+      // Date is over, calculate result
+      finishDate(npcId, score, questions.length, callback);
+      return;
+    }
+    UI.renderDateQuestion(npcId, questions[index], index, questions.length, function (correct) {
+      startDateQuestions(npcId, questions, index + 1, score + (correct ? 1 : 0), callback);
+    });
+  }
+
+  function finishDate(npcId, score, total, callback) {
+    var cfg = config[npcId];
+    if (!cfg) return;
+
+    var baseAffinity = 3;
+    var bonusPerCorrect = 2;
+    var wrongPenalty = -1;
+    var correct = score;
+    var wrong = total - score;
+    var totalGain = baseAffinity + (correct * bonusPerCorrect) + (wrong * wrongPenalty);
+    if (totalGain < 1) totalGain = 1;
+
+    addAffinity(npcId, totalGain);
+
+    var resultText;
+    if (score === total) {
+      resultText = cfg.name + " looks genuinely delighted. \"That was a perfect evening. You really understand me.\"";
+    } else if (score >= Math.ceil(total / 2)) {
+      resultText = cfg.name + " smiles warmly. \"I had a lovely time tonight. Thank you.\"";
+    } else {
+      resultText = cfg.name + " gives a polite smile. \"It was... an interesting evening. Maybe we'll connect more next time.\"";
+    }
+
+    Dialogue.startDirect({
+      nodes: [{ speaker: cfg.name, portrait: cfg.portrait, text: resultText }],
+      onEnd: null
+    }, function () {
+      UI.showMessage("+" + totalGain + " affinity with " + cfg.name + " (" + score + "/" + total + " correct)");
       checkMilestone(npcId, callback);
     });
   }
@@ -1191,6 +1405,7 @@ var Relationships = (function () {
       p.relationships[key].chatted = false;
       p.relationships[key].gifted = false;
       p.relationships[key].dated = false;
+      p.relationships[key].asked = false;
     }
   }
 
@@ -1262,10 +1477,14 @@ var Relationships = (function () {
     getDateableNPCs: getDateableNPCs,
     canChat: canChat,
     chat: chat,
+    canAsk: canAsk,
+    getAskQuestion: getAskQuestion,
+    resolveAsk: resolveAsk,
     canGift: canGift,
     getGiftReaction: getGiftReaction,
     giveGift: giveGift,
     canDate: canDate,
+    getDateBackground: getDateBackground,
     goOnDate: goOnDate,
     getPendingMilestone: getPendingMilestone,
     checkMilestone: checkMilestone,

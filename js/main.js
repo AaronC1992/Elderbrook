@@ -472,6 +472,26 @@
       case "npc-chat":
         World.npcChat(btn.getAttribute("data-npc"));
         break;
+      case "npc-ask":
+        World.npcAsk(btn.getAttribute("data-npc"));
+        break;
+      case "npc-ask-answer":
+        var askIdx = parseInt(btn.getAttribute("data-index"), 10);
+        var askCorrect = parseInt(btn.getAttribute("data-correct"), 10);
+        var askNpc = btn.getAttribute("data-npc");
+        var isCorrect = askIdx === askCorrect;
+        Relationships.resolveAsk(askNpc, isCorrect, function () {
+          World.returnToNPCMenu();
+        });
+        break;
+      case "date-answer":
+        var dateIdx = parseInt(btn.getAttribute("data-index"), 10);
+        var dateCorrectIdx = parseInt(btn.getAttribute("data-correct"), 10);
+        if (window._dateAnswerCallback) {
+          window._dateAnswerCallback(dateIdx === dateCorrectIdx);
+          window._dateAnswerCallback = null;
+        }
+        break;
       case "npc-gift":
         World.npcGift(btn.getAttribute("data-npc"));
         break;

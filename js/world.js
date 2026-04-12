@@ -927,8 +927,23 @@ var World = (function () {
     });
   }
 
-  function npcDate(npcId) {
+  function npcAsk(npcId) {
+    var question = Relationships.getAskQuestion(npcId);
+    if (!question) return;
     if (currentNPCContext && currentNPCContext.background) {
+      UI.setDialogueBackground(currentNPCContext.background);
+    }
+    UI.renderAskQuestion(npcId, question);
+  }
+
+  function npcDate(npcId) {
+    // Set the date-specific background
+    var dateBg = Relationships.getDateBackground(npcId);
+    if (dateBg) {
+      UI.setDialogueBackground(dateBg);
+      var screen = document.getElementById("screen-social");
+      if (screen) screen.style.backgroundImage = "url('" + dateBg + "')";
+    } else if (currentNPCContext && currentNPCContext.background) {
       UI.setDialogueBackground(currentNPCContext.background);
     }
     Relationships.goOnDate(npcId, function () {
@@ -1115,6 +1130,7 @@ var World = (function () {
     openPetShopInventory: openPetShopInventory,
     npcOpenQuestBoard: npcOpenQuestBoard,
     npcChat: npcChat,
+    npcAsk: npcAsk,
     npcGift: npcGift,
     npcGiveGift: npcGiveGift,
     npcDate: npcDate

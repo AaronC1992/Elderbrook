@@ -2279,6 +2279,67 @@ button {
 .gift-item-name { color: var(--text); font-size: 0.85rem; font-weight: 600; }
 .gift-item-desc { color: var(--text-muted); font-size: 0.72rem; }
 
+/* ── Ask / Date Question Panels ── */
+.ask-question-panel,
+.date-question-panel {
+  background: linear-gradient(180deg, rgba(20, 24, 36, 0.92) 0%, rgba(12, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(212, 164, 56, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 420px;
+  margin: 2rem auto;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+.ask-question-speaker,
+.date-question-speaker {
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+.ask-question-text,
+.date-question-text {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+.date-question-header {
+  margin-bottom: 0.5rem;
+}
+.date-question-count {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ask-answers,
+.date-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ask-answer-btn,
+.date-answer-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.ask-answer-btn:hover,
+.date-answer-btn:hover {
+  border-color: var(--accent);
+  background: rgba(212, 164, 56, 0.1);
+}
+
 /* ── Relationships Overview ── */
 .rel-grid {
   display: grid;

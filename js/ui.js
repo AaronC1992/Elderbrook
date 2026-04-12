@@ -946,6 +946,15 @@ var UI = (function () {
       }
     }
 
+    // Ask (dating-sim questions)
+    if (cfg && rel) {
+      if (Relationships.canAsk(npcId)) {
+        html += '<button class="btn" data-action="npc-ask" data-npc="' + npcId + '">Ask</button>';
+      } else {
+        html += '<button class="btn" disabled>Asked Today</button>';
+      }
+    }
+
     // Gift
     if (cfg && rel) {
       if (Relationships.canGift(npcId)) {
@@ -1049,6 +1058,55 @@ var UI = (function () {
 
     html += '<button class="btn btn-back" data-action="npc-back" style="margin-top:1rem;">Back</button>';
     container.innerHTML = html;
+  }
+
+  /* ── Ask Question (daily dating-sim question in NPC menu) ── */
+  function renderAskQuestion(npcId, question, callback) {
+    var container = document.getElementById("social-content");
+    if (!container) return;
+
+    var cfg = Relationships.getConfig(npcId);
+    if (!cfg) return;
+
+    var html = '<div class="ask-question-panel">';
+    html += '<h2 class="ask-question-speaker">' + cfg.name + ' asks:</h2>';
+    html += '<p class="ask-question-text">"' + question.q + '"</p>';
+    html += '<div class="ask-answers">';
+    for (var i = 0; i < question.answers.length; i++) {
+      html += '<button class="btn ask-answer-btn" data-action="npc-ask-answer" data-index="' + i + '" data-correct="' + question.correct + '" data-npc="' + npcId + '">' + question.answers[i] + '</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Store callback for answer handler
+    window._askCallback = callback;
+  }
+
+  /* ── Date Question (shown during dates) ── */
+  function renderDateQuestion(npcId, question, index, total, callback) {
+    var container = document.getElementById("social-content");
+    if (!container) return;
+
+    var cfg = Relationships.getConfig(npcId);
+    if (!cfg) return;
+
+    var html = '<div class="date-question-panel">';
+    html += '<div class="date-question-header">';
+    html += '<span class="date-question-count">Question ' + (index + 1) + ' of ' + total + '</span>';
+    html += '</div>';
+    html += '<h2 class="date-question-speaker">' + cfg.name + ' asks:</h2>';
+    html += '<p class="date-question-text">"' + question.q + '"</p>';
+    html += '<div class="date-answers">';
+    for (var i = 0; i < question.answers.length; i++) {
+      html += '<button class="btn date-answer-btn" data-action="date-answer" data-index="' + i + '" data-correct="' + question.correct + '">' + question.answers[i] + '</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Store callback for answer handler
+    window._dateAnswerCallback = callback;
   }
 
   /* ── Messages ── */
@@ -2413,6 +2471,8 @@ var UI = (function () {
     renderRelationships: renderRelationships,
     renderNPCMenu: renderNPCMenu,
     renderGiftSelect: renderGiftSelect,
+    renderAskQuestion: renderAskQuestion,
+    renderDateQuestion: renderDateQuestion,
     renderSettings: renderSettings,
     renderAchievements: renderAchievements,
     renderBestiary: renderBestiary,
