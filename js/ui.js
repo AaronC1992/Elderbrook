@@ -930,6 +930,11 @@ var UI = (function () {
       html += '<button class="btn" data-action="npc-questboard">Quest Board</button>';
     }
 
+    // Inn Rest button
+    if (options.inn) {
+      html += '<button class="btn" data-action="npc-inn-rest">Rest</button>';
+    }
+
     // Chat
     if (cfg && rel) {
       if (Relationships.canChat(npcId)) {
@@ -970,6 +975,8 @@ var UI = (function () {
 
     if ((options.returnToScene === 'shop' && options.shopId) || options.returnToScene === 'petshop') {
       html += '<button class="btn" data-action="npc-exit-menu">Back</button>';
+    } else if (options.returnToScene === 'inn') {
+      html += '<button class="btn" data-action="npc-exit-menu">Back</button>';
     } else {
       html += '<button class="btn" data-action="go-town">Back to Town</button>';
     }
@@ -977,6 +984,35 @@ var UI = (function () {
 
     // Daily reset hint
     html += '<p class="npc-menu-hint">Rest at the inn to reset daily social actions.</p>';
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  /* ── Inn Rest Confirmation ── */
+  function renderInnRestPrompt() {
+    var container = document.getElementById("social-content");
+    if (!container) return;
+    var p = Player.get();
+    var cost = 5;
+    var canAfford = p.gold >= cost;
+
+    var html = '<div class="npc-menu">';
+    html += '<div class="inn-menu-area">';
+    html += '<div class="inn-menu-panel">';
+    html += '<h3>Rest at the Inn</h3>';
+    html += '<p class="inn-flavor">A warm meal and a soft bed. Restores HP, MP, and Energy. Advances to the next day.</p>';
+    html += '<div class="inn-option">';
+    html += '<span class="inn-option-label">One night</span>';
+    html += '<span class="inn-option-cost">' + cost + ' gold</span>';
+    html += '</div>';
+    html += '<div class="inn-actions" style="margin-top: 1rem;">';
+    html += '<button class="btn' + (canAfford ? '' : ' btn-disabled') + '" data-action="inn-rest"' + (canAfford ? '' : ' disabled') + '>Book Room</button>';
+    html += '<button class="btn btn-secondary" data-action="npc-back">Leave</button>';
+    html += '</div>';
+    if (!canAfford) {
+      html += '<p class="inn-no-gold">You don\'t have enough gold.</p>';
+    }
+    html += '</div></div>';
     html += '</div>';
     container.innerHTML = html;
   }
@@ -2370,6 +2406,7 @@ var UI = (function () {
     renderGuardPost: renderGuardPost,
     renderInn: renderInn,
     renderInnMenu: renderInnMenu,
+    renderInnRestPrompt: renderInnRestPrompt,
     renderChapterEnd: renderChapterEnd,
     renderRelationships: renderRelationships,
     renderNPCMenu: renderNPCMenu,

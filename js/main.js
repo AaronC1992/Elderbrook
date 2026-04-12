@@ -167,6 +167,9 @@
       case "talk-to-innkeeper":
         World.talkToInnkeeper();
         break;
+      case "npc-inn-rest":
+        UI.renderInnRestPrompt();
+        break;
       case "inn-rest":
         World.restAtInn();
         break;

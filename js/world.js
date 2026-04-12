@@ -51,6 +51,10 @@ var World = (function () {
       enterGuardPost();
       return;
     }
+    if (currentNPCContext && currentNPCContext.returnToScene === "inn") {
+      enterInn();
+      return;
+    }
     navigate("elderbrook");
   }
 
@@ -60,14 +64,16 @@ var World = (function () {
     harlan:   ["Step inside. I've got armor that'll keep you breathing.", "Good to see you. Looking for some protection?", "Nothing leaves my shop unless it's built to last."],
     mira:     ["Welcome, dear! Let me know if anything catches your eye.", "Oh hello! I just brewed a fresh batch. Come have a look.", "Need something for the road? I've got just the thing."],
     merchant: ["Greetings, traveler! I have wares from distant lands.", "Ah, a customer! Come, see what I've collected.", "You won't find these goods anywhere else in Elderbrook."],
-    fauna:    ["Oh, hello there! The little ones have been waiting for a visitor!", "Welcome to my shop! Every creature here needs a good home.", "Come in! I think one of my friends wants to meet you."]
+    fauna:    ["Oh, hello there! The little ones have been waiting for a visitor!", "Welcome to my shop! Every creature here needs a good home.", "Come in! I think one of my friends wants to meet you."],
+    selene:   ["Welcome back, dear. Take a seat by the fire.", "There you are! I was hoping you'd stop by.", "Come in, come in. The usual spot is waiting for you."]
   };
   var shopFarewells = {
     bram:     ["Stay sharp out there.", "Come back when you need an upgrade!", "Safe travels, friend."],
     harlan:   ["Keep that armor in good shape.", "Don't be a stranger.", "Watch yourself out there."],
     mira:     ["Take care of yourself, dear!", "Come back anytime!", "Stay safe out there!"],
     merchant: ["Until next time, traveler.", "May fortune favor your travels.", "I'll be here if you need me."],
-    fauna:    ["Give your companion some extra treats for me!", "Bye bye! Take good care of them!", "Come visit the little ones anytime!"]
+    fauna:    ["Give your companion some extra treats for me!", "Bye bye! Take good care of them!", "Come visit the little ones anytime!"],
+    selene:   ["Stay safe out there. I'll keep the fire going.", "Don't be gone too long, alright?", "The door's always open for you."]
   };
 
   function speakShopGreeting(npcKey) {
@@ -320,10 +326,18 @@ var World = (function () {
     }
     UI.renderInn();
     UI.showScreen("inn");
+    currentShopNpc = "selene";
+    speakShopGreeting("selene");
   }
 
   function talkToInnkeeper() {
-    UI.renderInnMenu();
+    var bg = Player.isFestivalActive() ? "assets/backgrounds/main-town-inn-festival.png" : "assets/backgrounds/main-town-inn.png";
+    showNPCMenu("selene", {
+      background: bg,
+      returnToScene: "inn",
+      inn: true,
+      bustCrop: true
+    });
   }
 
   function restAtInn() {
@@ -331,7 +345,7 @@ var World = (function () {
     var cost = 5;
     if (p.gold < cost) {
       UI.showMessage("You don't have enough gold.");
-      UI.renderInnMenu();
+      returnToNPCMenu();
       return;
     }
     var oldSeason = Player.getSeason();
@@ -353,7 +367,7 @@ var World = (function () {
       msg += " The season has changed to " + seasonCap + ".";
       UI.showSeasonBanner(newSeason);
     }
-    UI.renderInn();
+    enterInn();
     UI.showMessage(msg);
   }
 
