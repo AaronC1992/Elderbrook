@@ -21,8 +21,8 @@ var Skills = (function () {
     {
       id: "first-aid", name: "First Aid", type: "heal", tier: 1,
       cost: TIER_COSTS[1],
-      description: "Restore 12 HP. (2-turn cooldown)",
-      mpCost: 5, healAmount: 12, cooldown: 2
+      description: "Restore 10 HP. (2-turn cooldown)",
+      mpCost: 5, healAmount: 10, cooldown: 2
     },
     {
       id: "venom-slash", name: "Venom Slash", type: "attack", tier: 2,

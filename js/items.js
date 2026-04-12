@@ -31,7 +31,7 @@ var Items = (function () {
     /* ── Potions ── */
     "lesser-health-potion": { id: "lesser-health-potion", name: "Lesser Health Potion", type: "potion", subtype: "health", icon: "", healAmount: 15, price: 8,  sellPrice: 3, description: "Restores 15 HP." },
     "health-potion":        { id: "health-potion",        name: "Health Potion",        type: "potion", subtype: "health", icon: "", healAmount: 30, price: 18, sellPrice: 6, description: "Restores 30 HP." },
-    "greater-health-potion":{ id: "greater-health-potion", name: "Greater Health Potion",type: "potion", subtype: "health", icon: "", healAmount: 60, price: 40, sellPrice: 14, description: "Restores 60 HP." },
+    "greater-health-potion":{ id: "greater-health-potion", name: "Greater Health Potion",type: "potion", subtype: "health", icon: "", healAmount: 50, price: 40, sellPrice: 14, description: "Restores 50 HP." },
     "mana-potion":          { id: "mana-potion",          name: "Mana Potion",          type: "potion", subtype: "mana",   icon: "", manaAmount: 20, price: 15, sellPrice: 5, description: "Restores 20 MP." },
 
     /* ── Loot / Materials ── */

@@ -2,7 +2,7 @@
 var _NativeAudio = window.Audio; // capture before audio.js overwrites it
 var Voice = (function () {
 
-  var apiKey = "c42b2284e84700d840bd57ccd4c1ce1203f600faba94332340f8343c00659e50";
+  var apiKey = "";
   var enabled = true;
   var currentAudio = null;
   var cache = {}; // text hash -> audio blob URL
@@ -75,6 +75,10 @@ var Voice = (function () {
 
   function init(key) {
     if (key) apiKey = key;
+    // Load saved API key from localStorage
+    if (!apiKey) {
+      try { apiKey = localStorage.getItem("elderbrook_xi_key") || ""; } catch (e) {}
+    }
     // Load enabled preference (default is on)
     try {
       var saved = localStorage.getItem("elderbrook_voice_enabled");

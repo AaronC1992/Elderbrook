@@ -762,9 +762,6 @@ var UI = (function () {
     var container = document.getElementById("inn-content");
     if (!container) return;
     var p = Player.get();
-    var cost = 5;
-    var canAfford = p.gold >= cost;
-
     // Keep bust-crop NPC visible
     var npcArea = document.getElementById("inn-npc-area");
     if (npcArea) {
@@ -784,16 +781,13 @@ var UI = (function () {
     html += '<p class="inn-flavor">' + flavorText + '</p>';
     html += '<div class="inn-option">';
     html += '<span class="inn-option-label">Rest until morning</span>';
-    html += '<span class="inn-option-cost">' + cost + ' gold</span>';
+    html += '<span class="inn-option-cost">Free</span>';
     html += '</div>';
-    html += '<p class="inn-detail">Restores HP, MP, and Energy. Advances to the next day.</p>';
+    html += '<p class="inn-detail">Restores 10 HP, 10 MP, and Energy. Advances to the next day.</p>';
     html += '<div class="inn-actions">';
-    html += '<button class="btn' + (canAfford ? '' : ' btn-disabled') + '" data-action="inn-rest"' + (canAfford ? '' : ' disabled') + '>Rest (' + cost + 'g)</button>';
+    html += '<button class="btn" data-action="inn-rest">Rest</button>';
     html += '<button class="btn btn-secondary" data-action="inn-menu-back">Back</button>';
     html += '</div>';
-    if (!canAfford) {
-      html += '<p class="inn-no-gold">You don\'t have enough gold.</p>';
-    }
     html += '</div>'; // .inn-menu-panel
     html += '</div>'; // .inn-menu-area
 
@@ -1004,25 +998,19 @@ var UI = (function () {
     var container = document.getElementById("social-content");
     if (!container) return;
     var p = Player.get();
-    var cost = 5;
-    var canAfford = p.gold >= cost;
-
     var html = '<div class="npc-menu">';
     html += '<div class="inn-menu-area">';
     html += '<div class="inn-menu-panel">';
     html += '<h3>Rest at the Inn</h3>';
-    html += '<p class="inn-flavor">A warm meal and a soft bed. Restores HP, MP, and Energy. Advances to the next day.</p>';
+    html += '<p class="inn-flavor">A warm meal and a soft bed. Restores 10 HP, 10 MP, and Energy. Advances to the next day.</p>';
     html += '<div class="inn-option">';
     html += '<span class="inn-option-label">One night</span>';
-    html += '<span class="inn-option-cost">' + cost + ' gold</span>';
+    html += '<span class="inn-option-cost">Free</span>';
     html += '</div>';
     html += '<div class="inn-actions" style="margin-top: 1rem;">';
-    html += '<button class="btn' + (canAfford ? '' : ' btn-disabled') + '" data-action="inn-rest"' + (canAfford ? '' : ' disabled') + '>Book Room</button>';
+    html += '<button class="btn" data-action="inn-rest">Rest</button>';
     html += '<button class="btn btn-secondary" data-action="npc-back">Leave</button>';
     html += '</div>';
-    if (!canAfford) {
-      html += '<p class="inn-no-gold">You don\'t have enough gold.</p>';
-    }
     html += '</div></div>';
     html += '</div>';
     container.innerHTML = html;

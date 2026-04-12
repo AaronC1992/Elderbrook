@@ -3,7 +3,7 @@ var Player = (function () {
 
   var MAX_INVENTORY = 20;
   var EQUIP_SLOTS = ["weapon", "helmet", "chest", "legs", "gloves", "bracers"];
-  var BASE_STATS = { hp: 50, maxHp: 50, mp: 20, maxMp: 20, attack: 2, defense: 1, dexterity: 1, intelligence: 1 };
+  var BASE_STATS = { hp: 40, maxHp: 40, mp: 20, maxMp: 20, attack: 2, defense: 1, dexterity: 1, intelligence: 1 };
 
   /* ── Class Definitions ── */
   var CLASS_DEFS = {
@@ -342,11 +342,11 @@ var Player = (function () {
     while (state.xp >= state.xpToNext) {
       state.xp -= state.xpToNext;
       state.level++;
-      state.xpToNext = Math.floor(state.xpToNext * 1.55);
-      state.maxHp += 8;
-      state.hp = state.maxHp;
+      state.xpToNext = Math.floor(state.xpToNext * 1.45);
+      state.maxHp += 6;
+      state.hp = Math.min(state.maxHp, state.hp + Math.floor(state.maxHp * 0.7));
       state.maxMp += 4;
-      state.mp = state.maxMp;
+      state.mp = Math.min(state.maxMp, state.mp + Math.floor(state.maxMp * 0.7));
       state.unspentPoints += 2;
       leveled = true;
     }
@@ -532,6 +532,8 @@ var Player = (function () {
         if (gain) state.charm += 1;
         statName = 'Charm';
         break;
+      default:
+        return { success: false, message: "Unknown training type." };
     }
 
     if (gain) recalcStats();

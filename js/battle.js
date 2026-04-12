@@ -505,7 +505,9 @@ var Battle = (function () {
     showFCT("battle-companion", companion.name + " FALLEN", "damage");
     if (onCompanionDeathCallback) {
       // Quest failure — end battle
+      animating = true;
       setTimeout(function () {
+        animating = false;
         onCompanionDeathCallback();
         enemies = [];
         companion = null;
@@ -588,7 +590,6 @@ var Battle = (function () {
               renderBattle();
               if (callback) callback();
             });
-            if (callback) callback();
           } else {
             // Damage ability
             var abilityDmg = Math.max(1, Math.floor(baseDmg * (ab.multiplier || 1)));
@@ -1362,7 +1363,7 @@ var Battle = (function () {
     }
 
     // Pre-determine enemy action outcome and target
-    var enemyHitChance = Math.min(0.95, 0.70 + e.attack * 0.03);
+    var enemyHitChance = Math.min(0.95, 0.75 + e.attack * 0.03);
     var action = determineEnemyAction(e, enemyHitChance);
     var enemyTarget = pickEnemyTarget();
 
@@ -1448,7 +1449,7 @@ var Battle = (function () {
     var dmg = Math.max(1, Math.floor(atk * atk / (atk + def)) + Math.floor(Math.random() * 2));
 
     var evasion = getBuffTotal(playerBuffs, "evasion");
-    var dexDodge = Player.get().dexterity * 1.5;
+    var dexDodge = Player.get().dexterity * 1.0;
     var totalDodge = evasion + dexDodge;
     if (totalDodge > 0 && Math.random() * 100 < totalDodge) {
       return { type: "dodge" };

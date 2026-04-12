@@ -343,15 +343,13 @@ var World = (function () {
 
   function restAtInn() {
     var p = Player.get();
-    var cost = 5;
-    if (p.gold < cost) {
-      UI.showMessage("You don't have enough gold.");
-      returnToNPCMenu();
-      return;
-    }
+    var hpBefore = p.hp;
+    var mpBefore = p.mp;
     var oldSeason = Player.getSeason();
-    p.gold -= cost;
-    Player.sleep(); // advances day, restores HP/MP/energy, resets daily limits
+    Player.sleep(); // advances day, restores energy, resets daily limits
+    // Inn only heals 10 HP and 10 MP (not a full restore)
+    p.hp = Math.min(p.maxHp, hpBefore + 10);
+    p.mp = Math.min(p.maxMp, mpBefore + 10);
     Audio.play("heal");
     Save.autoSave();
     UI.updateHeader();
@@ -361,7 +359,7 @@ var World = (function () {
       "The fire crackles in the hearth as you drift off. Morning comes quickly.",
       "A bowl of stew and a warm bed — simple comforts after a long day."
     ];
-    var msg = innTexts[Math.floor(Math.random() * innTexts.length)] + " (-" + cost + " gold. Day " + p.day + " begins.)";
+    var msg = innTexts[Math.floor(Math.random() * innTexts.length)] + " (+10 HP, +10 MP. Day " + p.day + " begins.)";
     var newSeason = Player.getSeason();
     if (newSeason !== oldSeason) {
       var seasonCap = newSeason.charAt(0).toUpperCase() + newSeason.slice(1);
