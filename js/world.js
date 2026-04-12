@@ -11,6 +11,7 @@ var World = (function () {
       shopId: options.shopId || null,
       questBoard: options.questBoard || false,
       petShop: options.petShop || false,
+      inn: options.inn || false,
       bustCrop: options.bustCrop || false,
       background: options.background || '',
       returnToScene: options.returnToScene || ''
