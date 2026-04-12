@@ -640,6 +640,7 @@ var UI = (function () {
     // Right side
     html += '<button class="town-poi" style="top:40%;right:5%" data-action="go-questboard"><span class="poi-name">Quest Board</span><span class="poi-sub">Check for jobs</span></button>';
     html += '<button class="town-poi" style="top:52%;left:1%" data-action="go-elric"><span class="poi-name">Guard Post</span><span class="poi-sub">' + (elricAway ? 'Elric is in the field' : (Player.hasFlag('defeatedGrisk') ? 'Captain Elric — At ease' : 'Captain Elric')) + '</span></button>';
+    html += '<button class="town-poi" style="top:62%;left:1%" data-action="go-academy"><span class="poi-name">Academy</span><span class="poi-sub">Study &amp; Train</span></button>';
     // Conditional POIs
     if (Player.hasFlag('metElira')) {
       html += '<button class="town-poi" style="top:11%;left:11%" data-action="go-elira"><span class="poi-name">Inn (Upstairs)</span><span class="poi-sub">Visit Elira</span></button>';
@@ -719,7 +720,7 @@ var UI = (function () {
     html += '<div class="guardpost-npcs">';
     if (!elricAway) {
       html += '<button class="town-npc guardpost-npc" data-action="talk-to-elric">';
-      html += '<img class="town-npc-portrait" src="assets/portraits/elric.png" alt="Captain Elric" onerror="this.style.display=\'none\'">';
+      html += '<img class="town-npc-portrait" src="assets/portraits/Guard_captain.png" alt="Captain Elric" onerror="this.style.display=\'none\'">';
       html += '<span class="town-npc-name">Captain Elric</span>';
       html += '</button>';
     } else {
