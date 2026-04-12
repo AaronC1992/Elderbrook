@@ -1927,9 +1927,6 @@ var Battle = (function () {
 
     html += '<div class="battle-result">';
     html += '<div class="victory-overlay">';
-    if (d.enemyPortrait) {
-      html += '<img class="victory-enemy-portrait" src="' + d.enemyPortrait + '" alt="' + d.enemyName + '" onerror="this.style.display=\'none\'" />';
-    }
     html += '<h3>Victory!</h3>';
     html += '<div class="victory-enemy-name">' + d.enemyName + ' defeated</div>';
     html += '<div class="victory-rewards">';

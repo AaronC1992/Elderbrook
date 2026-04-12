@@ -1645,20 +1645,7 @@ button {
 .battle-mp-text { color: #8af; }
 .battle-name { color: var(--accent); font-size: 0.85rem; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.7); }
 .battle-stats-row { color: var(--text-muted); font-size: 0.72rem; }
-.battle-log {
-  background: rgba(14, 17, 23, 0.75);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius);
-  padding: 0.25rem 0.8rem;
-  max-height: 48px;
-  overflow-y: auto;
-  font-size: 0.68rem;
-  line-height: 1.3;
-  margin: 0 1rem;
-  backdrop-filter: blur(4px);
-}
-.battle-log-entry { color: var(--text-muted); padding: 0.1rem 0; }
-.battle-log-entry:last-child { color: var(--text); }
+
 .battle-actions {
   display: flex;
   flex-wrap: wrap;

@@ -229,9 +229,7 @@ var UI = (function () {
         var petData = Pets.get(p.activePet);
         if (petData) {
           petBox.style.display = "";
-          var petPortrait = document.getElementById("sidebar-pet-portrait");
           var petName = document.getElementById("sidebar-pet-name");
-          if (petPortrait) petPortrait.src = petData.portrait;
           if (petName) petName.textContent = petData.name;
         } else {
           petBox.style.display = "none";
@@ -248,9 +246,7 @@ var UI = (function () {
         var followerCfg = Relationships.getConfig(p.followingNpc);
         if (followerCfg) {
           followerBox.style.display = "";
-          var followerPortrait = document.getElementById("sidebar-follower-portrait");
           var followerName = document.getElementById("sidebar-follower-name");
-          if (followerPortrait) followerPortrait.src = followerCfg.portrait;
           if (followerName) followerName.textContent = followerCfg.name;
         } else {
           followerBox.style.display = "none";
@@ -843,7 +839,6 @@ var UI = (function () {
       var isPartner = rel.affinity >= 75 && Player.hasFlag(npcId + "Romantic");
 
       html += '<div class="rel-card">';
-      html += '<img class="rel-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="rel-info">';
       html += '<div class="rel-name">' + cfg.name + (isPartner ? ' <span class="partner-badge">Partner</span>' : '') + '</div>';
       html += '<div class="rel-level">' + levelName + '</div>';
@@ -996,9 +991,7 @@ var UI = (function () {
 
     var gifts = Relationships.getGiftableItems();
     var html = '<h2>Choose a Gift for ' + cfg.name + '</h2>';
-    html += '<div class="gift-npc-preview">';
-    html += '<img class="social-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
-    html += '</div>';
+
 
     if (gifts.length === 0) {
       html += '<p>You have no gifts to give. Buy gift items from the shops!</p>';
@@ -1500,7 +1493,6 @@ var UI = (function () {
       var active = Pets.get(p.activePet);
       if (active) {
         html += '<div class="pet-active-banner">';
-        html += '<img class="pet-mini-portrait" src="' + active.portrait + '" alt="' + active.name + '" onerror="this.style.display=\'none\'">';
         html += '<span>Active companion: <strong>' + active.name + '</strong></span>';
         html += '<button class="btn btn-small" data-action="remove-pet">Dismiss</button>';
         html += '</div>';
@@ -2019,7 +2011,6 @@ var UI = (function () {
       var isPartner = rel.affinity >= 75 && Player.hasFlag(npcId + "Romantic");
 
       html += '<div class="ledger-rel">';
-      html += '<img class="ledger-rel-portrait" src="' + cfg.portrait + '" alt="' + cfg.name + '" onerror="this.style.display=\'none\'">';
       html += '<div class="ledger-rel-info">';
       html += '<div class="ledger-rel-name">' + cfg.name + (isPartner ? ' (Partner)' : '') + '</div>';
       html += '<div class="ledger-rel-level">' + levelName + ' &mdash; ' + rel.affinity + '/' + Relationships.MAX_AFFINITY + '</div>';
