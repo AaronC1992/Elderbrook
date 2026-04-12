@@ -43,6 +43,15 @@
       textEl.innerHTML = introPages[idx].html;
       // Fade in
       textEl.classList.add("visible");
+
+      // Narrate intro page
+      if (typeof Voice !== 'undefined' && Voice.isEnabled()) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = introPages[idx].html;
+        var plainText = tmp.textContent || tmp.innerText || '';
+        Voice.speak(plainText, 'Narrator');
+      }
+
       // Show continue after a short reading delay
       introTimer = setTimeout(function () {
         if (continueBtn) {
@@ -55,6 +64,7 @@
 
   function finishIntro() {
     if (introTimer) { clearTimeout(introTimer); introTimer = null; }
+    if (typeof Voice !== 'undefined') Voice.stop();
     var gc = document.getElementById("game-container");
     if (gc) gc.classList.remove("mode-menu");
     World.navigate("elderbrook");
@@ -129,10 +139,12 @@
         UI.showScreen('save-select');
         break;
       case "intro-continue":
+        if (typeof Voice !== 'undefined') Voice.stop();
         introPageIndex++;
         showIntroPage(introPageIndex);
         break;
       case "intro-skip":
+        if (typeof Voice !== 'undefined') Voice.stop();
         finishIntro();
         break;
 

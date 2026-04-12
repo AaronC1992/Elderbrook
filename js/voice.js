@@ -1,45 +1,39 @@
 /* voice.js - ElevenLabs text-to-speech for dialogue */
 var Voice = (function () {
 
-  var apiKey = "";
+  var apiKey = "c42b2284e84700d840bd57ccd4c1ce1203f600faba94332340f8343c00659e50";
   var enabled = true;
   var currentAudio = null;
   var cache = {}; // text hash -> audio blob URL
 
-  // Map NPC keys to ElevenLabs voice IDs
-  // Replace these with your actual ElevenLabs voice IDs
   var voiceMap = {
-    rowan:    "", // Guildmaster Rowan
-    bram:     "", // Bram Ironhand
-    harlan:   "", // Harlan Stonevein
-    mira:     "", // Mira Voss
-    toma:     "", // Toma Reed
-    elric:    "", // Captain Elric Vale
-    elira:    "", // Elira Ashfen
-    grisk:    "", // Goblin Chief Grisk
-    merchant: "", // Traveling Merchant
-    fauna:    "", // Fauna (Pet Shop)
-    selene:   "", // Selene Ashford (Innkeeper)
-    varn:     "", // Varn the Ironclad
-    shade:    "", // Shade
-    theron:   "", // Sage Theron
-    lysara:   "", // Dame Lysara
-    grul:     "", // Grul
-    whisper:  "", // Whisper
-    fenn:     "", // Warden Fenn
-    cindra:   "", // Cindra
-    maren:    "", // Sister Maren
-    cedric:   "", // Sir Cedric
-    _default: ""  // Fallback voice for unknown speakers
+    rowan:    "pNInz6obpgDQGcFmaJgB", // Adam – Dominant, Firm
+    bram:     "IKne3meq5aSn9XLyUdCD", // Charlie – Deep, Confident
+    harlan:   "nPczCjzI2devNBz1zQrb", // Brian – Deep, Resonant
+    mira:     "EXAVITQu4vr4xnSDxMaL", // Sarah – Mature, Reassuring
+    toma:     "bIHbv24MWmeRgasZH58o", // Will – Relaxed Optimist
+    elric:    "cjVigY5qzO86Huf0OWal", // Eric – Smooth, Trustworthy
+    elira:    "FGY2WhTYpPnrIDTdsKH5", // Laura – Quirky, Sassy
+    grisk:    "N2lVS1w4EtoT3dr4eOWO", // Callum – Husky Trickster
+    merchant: "iP95p4xoKVk53GoZ742B", // Chris – Charming, Down-to-Earth
+    fauna:    "cgSgspJ2msm6clMCkdW9", // Jessica – Playful, Warm
+    selene:   "hpp4J3VqNfWAUOO0d1Us", // Bella – Professional, Warm
+    varn:     "TX3LPaxmHKxFdv7VOQHJ", // Liam – Energetic, Confident
+    shade:    "CwhRBWXzGAHq8TQ4Fs17", // Roger – Laid-Back, Casual
+    theron:   "pqHfZKP75CvOlQylNhV4", // Bill – Wise, Mature
+    lysara:   "Xb7hH8MSUJpSbSDYk0k2", // Alice – Clear, British
+    grul:     "SOYHLrjzK2X1ezoPC6cr", // Harry – Fierce Warrior
+    whisper:  "SAz9YHcvj6GT2YYXdXww", // River – Neutral, Calm
+    fenn:     "onwK4e9ZLuTAKqWW03F9", // Daniel – Steady, Formal
+    cindra:   "XrExE9yKIg1WjnnlVkGX", // Matilda – Knowledgable
+    maren:    "pFZP5JQG7iQjIQuC4Bku", // Lily – Velvety, Gentle
+    cedric:   "JBFqnCBsd6RMkjVDRZzb", // George – Warm Storyteller
+    _default: "JBFqnCBsd6RMkjVDRZzb"  // George – Narrator fallback
   };
 
   function init(key) {
     if (key) apiKey = key;
-    // Try to load saved key
-    if (!apiKey) {
-      try { apiKey = localStorage.getItem("elderbrook_xi_key") || ""; } catch (e) {}
-    }
-    // Load enabled preference
+    // Load enabled preference (default is on)
     try {
       var saved = localStorage.getItem("elderbrook_voice_enabled");
       if (saved !== null) enabled = saved === "true";
