@@ -174,6 +174,7 @@
         UI.renderInn();
         break;
       case "inn-back":
+        if (typeof Voice !== 'undefined') Voice.stop();
         UI.showScreen("town");
         UI.renderTown();
         break;
@@ -184,6 +185,7 @@
         World.talkToElric();
         break;
       case "guardpost-back":
+        if (typeof Voice !== 'undefined') Voice.stop();
         UI.showScreen("town");
         UI.renderTown();
         break;

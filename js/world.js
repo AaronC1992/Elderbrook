@@ -2,6 +2,7 @@
 var World = (function () {
 
   var currentNPCContext = null; // { npcId, shopId, questBoard, background, returnToScene }
+  var currentShopNpc = null;    // track which shop NPC the player is visiting
 
   function showNPCMenu(npcId, options) {
     options = options || {};
@@ -53,11 +54,43 @@ var World = (function () {
     navigate("elderbrook");
   }
 
+  // Shop NPC greeting/farewell lines
+  var shopGreetings = {
+    bram:     ["Welcome! Need a blade sharpened, or something new?", "Come in, come in! What'll it be today?", "Ah, a fellow warrior! Browse my finest steel."],
+    harlan:   ["Step inside. I've got armor that'll keep you breathing.", "Good to see you. Looking for some protection?", "Nothing leaves my shop unless it's built to last."],
+    mira:     ["Welcome, dear! Let me know if anything catches your eye.", "Oh hello! I just brewed a fresh batch. Come have a look.", "Need something for the road? I've got just the thing."],
+    merchant: ["Greetings, traveler! I have wares from distant lands.", "Ah, a customer! Come, see what I've collected.", "You won't find these goods anywhere else in Elderbrook."],
+    fauna:    ["Oh, hello there! The little ones have been waiting for a visitor!", "Welcome to my shop! Every creature here needs a good home.", "Come in! I think one of my friends wants to meet you."]
+  };
+  var shopFarewells = {
+    bram:     ["Stay sharp out there.", "Come back when you need an upgrade!", "Safe travels, friend."],
+    harlan:   ["Keep that armor in good shape.", "Don't be a stranger.", "Watch yourself out there."],
+    mira:     ["Take care of yourself, dear!", "Come back anytime!", "Stay safe out there!"],
+    merchant: ["Until next time, traveler.", "May fortune favor your travels.", "I'll be here if you need me."],
+    fauna:    ["Give your companion some extra treats for me!", "Bye bye! Take good care of them!", "Come visit the little ones anytime!"]
+  };
+
+  function speakShopGreeting(npcKey) {
+    if (typeof Voice === 'undefined' || !Voice.isEnabled()) return;
+    var lines = shopGreetings[npcKey];
+    if (!lines || !lines.length) return;
+    Voice.speak(lines[Math.floor(Math.random() * lines.length)], npcKey);
+  }
+
+  function speakShopFarewell(npcKey) {
+    if (typeof Voice === 'undefined' || !Voice.isEnabled()) return;
+    var lines = shopFarewells[npcKey];
+    if (!lines || !lines.length) return;
+    Voice.speak(lines[Math.floor(Math.random() * lines.length)], npcKey);
+  }
+
   function showShopScene(shopId) {
     var shop = Shops.getShop(shopId);
     if (!shop) return;
     Shops.renderShopScene(shopId);
     UI.showScreen("shop");
+    currentShopNpc = shop.npc;
+    speakShopGreeting(shop.npc);
   }
 
   function openShopNPCMenu(shopId) {
@@ -91,6 +124,8 @@ var World = (function () {
     var content = document.getElementById("petshop-content");
     if (content) content.innerHTML = '';
     UI.showScreen("petshop");
+    currentShopNpc = "fauna";
+    speakShopGreeting("fauna");
   }
 
   function openPetShopNPCMenu() {
@@ -116,6 +151,15 @@ var World = (function () {
     var p = Player.get();
     if (!p) return;
     p.currentArea = locationId;
+
+    // Speak farewell if leaving a shop
+    if (currentShopNpc) {
+      speakShopFarewell(currentShopNpc);
+      currentShopNpc = null;
+    } else {
+      // Stop any playing voice
+      if (typeof Voice !== 'undefined') Voice.stop();
+    }
 
     // Clear NPC context when navigating away
     currentNPCContext = null;

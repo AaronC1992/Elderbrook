@@ -8,12 +8,12 @@ var Voice = (function () {
   var cache = {}; // text hash -> audio blob URL
 
   var voiceMap = {
-    rowan:    "pNInz6obpgDQGcFmaJgB", // Adam – Dominant, Firm
+    rowan:    "JBFqnCBsd6RMkjVDRZzb", // George – Warm, Captivating Storyteller
     bram:     "IKne3meq5aSn9XLyUdCD", // Charlie – Deep, Confident
     harlan:   "nPczCjzI2devNBz1zQrb", // Brian – Deep, Resonant
     mira:     "EXAVITQu4vr4xnSDxMaL", // Sarah – Mature, Reassuring
     toma:     "bIHbv24MWmeRgasZH58o", // Will – Relaxed Optimist
-    elric:    "cjVigY5qzO86Huf0OWal", // Eric – Smooth, Trustworthy
+    elric:    "pNInz6obpgDQGcFmaJgB", // Adam – Dominant, Commanding
     elira:    "FGY2WhTYpPnrIDTdsKH5", // Laura – Quirky, Sassy
     grisk:    "N2lVS1w4EtoT3dr4eOWO", // Callum – Husky Trickster
     merchant: "iP95p4xoKVk53GoZ742B", // Chris – Charming, Down-to-Earth
@@ -28,8 +28,8 @@ var Voice = (function () {
     fenn:     "onwK4e9ZLuTAKqWW03F9", // Daniel – Steady, Formal
     cindra:   "XrExE9yKIg1WjnnlVkGX", // Matilda – Knowledgable
     maren:    "pFZP5JQG7iQjIQuC4Bku", // Lily – Velvety, Gentle
-    cedric:   "JBFqnCBsd6RMkjVDRZzb", // George – Warm Storyteller
-    _default: "JBFqnCBsd6RMkjVDRZzb"  // George – Narrator fallback
+    cedric:   "cjVigY5qzO86Huf0OWal", // Eric – Smooth, Trustworthy
+    _default: "onwK4e9ZLuTAKqWW03F9"  // Daniel – Steady Narrator fallback
   };
 
   function init(key) {
