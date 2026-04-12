@@ -1,4 +1,5 @@
 /* voice.js - ElevenLabs text-to-speech for dialogue */
+var _NativeAudio = window.Audio; // capture before audio.js overwrites it
 var Voice = (function () {
 
   var apiKey = "c42b2284e84700d840bd57ccd4c1ce1203f600faba94332340f8343c00659e50";
@@ -122,7 +123,7 @@ var Voice = (function () {
 
   function playBlob(blobUrl) {
     stop();
-    currentAudio = new window.Audio(blobUrl);
+    currentAudio = new _NativeAudio(blobUrl);
     currentAudio.play().catch(function () {});
   }
 
