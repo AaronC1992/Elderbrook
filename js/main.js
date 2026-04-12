@@ -671,17 +671,7 @@
         UI.showScreen('academy');
         break;
       case "go-sleep":
-        var oldSleepSeason = Player.getSeason();
-        Player.sleep();
-        UI.showMessage("You rest for the night... A new day begins.");
-        Audio.play("buttonClick");
-        var newSleepSeason = Player.getSeason();
-        if (newSleepSeason !== oldSleepSeason) {
-          UI.showSeasonBanner(newSleepSeason);
-        }
-        UI.updateHeader();
-        UI.updateSidebars();
-        World.navigate("elderbrook");
+        World.enterInn();
         break;
       case "train-stat":
         var trainResult = Player.trainStat(btn.getAttribute("data-stat"));

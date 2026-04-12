@@ -392,13 +392,13 @@ body {
   background: rgba(60, 50, 20, 0.9);
   color: var(--accent);
 }
-.nav-sleep {
+.nav-inn {
   background: rgba(60, 45, 15, 0.85);
   color: var(--accent);
   font-weight: 700;
   border-color: var(--accent);
 }
-.nav-sleep:hover { background: rgba(90, 70, 20, 0.95); }
+.nav-inn:hover { background: rgba(90, 70, 20, 0.95); }
 
 /* Hide sidebars + nav + header on title/create/intro (full-screen overlay) */
 #game-container.mode-menu #game-header,
