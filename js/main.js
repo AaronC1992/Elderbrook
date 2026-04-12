@@ -235,9 +235,11 @@
         UI.renderPetShop();
         UI.updateSidebars();
         break;
-      case "merchant-pets":
-        UI.renderPetShop(Pets.getMerchantPets());
-        UI.showScreen("petshop");
+      case "buy-merchant-pet":
+        var buyMPResult = Player.buyPet(btn.getAttribute("data-pet"));
+        UI.showMessage(buyMPResult.message);
+        Shops.renderShop(btn.getAttribute("data-shop"));
+        UI.updateHeader();
         break;
       case "go-worldmap":
         UI.renderWorldMap();

@@ -199,16 +199,37 @@ var Shops = (function () {
 
     html += '</div>';
 
-    // Merchant has exotic pets too
+    // Merchant has exotic pets — render inline
     if (shopId === "merchant-shop" && typeof Pets !== 'undefined') {
       var merchantPets = Pets.getMerchantPets();
-      var hasUnowned = false;
       var pState = Player.get();
+      if (!pState.ownedPets) pState.ownedPets = [];
+
+      var unownedPets = [];
       for (var mp = 0; mp < merchantPets.length; mp++) {
-        if (!pState.ownedPets || pState.ownedPets.indexOf(merchantPets[mp].id) === -1) { hasUnowned = true; break; }
+        if (pState.ownedPets.indexOf(merchantPets[mp].id) === -1) unownedPets.push(merchantPets[mp]);
       }
-      if (hasUnowned) {
-        html += '<button class="btn btn-primary" style="margin-top:0.5rem;" data-action="merchant-pets">Browse Exotic Pets</button>';
+
+      if (unownedPets.length > 0) {
+        html += '<h3 style="color:var(--accent);margin-top:1rem;margin-bottom:0.5rem;">Exotic Pets</h3>';
+        html += '<div class="pet-grid" style="margin-bottom:1rem;">';
+        for (var ep = 0; ep < unownedPets.length; ep++) {
+          var mPet = unownedPets[ep];
+          var canBuyPet = pState.gold >= mPet.price;
+          html += '<div class="pet-card">';
+          html += '<img class="pet-portrait" src="' + mPet.portrait + '" alt="' + mPet.name + '" onerror="this.style.display=\'none\'">';
+          html += '<div class="pet-card-info">';
+          html += '<div class="pet-name">' + mPet.name + '</div>';
+          html += '<div class="pet-desc">' + mPet.description + '</div>';
+          html += '<div class="pet-price">' + mPet.price + ' gold</div>';
+          if (canBuyPet) {
+            html += '<button class="btn btn-small btn-primary" data-action="buy-merchant-pet" data-pet="' + mPet.id + '" data-shop="' + shopId + '">Adopt (' + mPet.price + 'g)</button>';
+          } else {
+            html += '<button class="btn btn-small" disabled>Can\'t Afford</button>';
+          }
+          html += '</div></div>';
+        }
+        html += '</div>';
       }
     }
 
