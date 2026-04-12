@@ -1236,11 +1236,11 @@ button {
   overflow-y: auto;
 }
 
-/* Legacy circle portrait (NPC menu, pet shop header, etc.) */
+/* Legacy portrait (NPC menu, pet shop header, etc.) */
 .npc-portrait {
   width: 70px;
   height: 70px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 2px solid var(--accent);
   object-fit: cover;
   flex-shrink: 0;
@@ -2239,7 +2239,7 @@ button {
 .social-portrait {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 2px solid var(--accent);
   object-fit: cover;
   flex-shrink: 0;
@@ -2312,7 +2312,7 @@ button {
 .rel-portrait {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 2px solid var(--accent);
   object-fit: cover;
   margin-bottom: 0.3rem;
@@ -3040,7 +3040,7 @@ button {
 .ledger-rel-portrait {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 2px solid #c4a96a;
   object-fit: cover;
 }
@@ -3442,7 +3442,7 @@ button {
 .petshop-header .npc-portrait {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 2px solid var(--accent);
   object-fit: cover;
 }
@@ -3459,7 +3459,7 @@ button {
 .pet-mini-portrait {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   object-fit: cover;
 }
 .pet-grid {
@@ -3524,23 +3524,16 @@ button {
 .sidebar-pet-portrait {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
+  border-radius: 4px;
   object-fit: cover;
 }
 .sidebar-pet-name {
   font-size: 0.75rem;
   color: var(--accent);
 }
-/* Battle pet portrait */
+/* Battle pet portrait (no longer rendered, kept for safety) */
 .battle-pet-portrait {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--accent);
-  position: absolute;
-  bottom: -4px;
-  right: -8px;
+  display: none;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -3970,7 +3963,7 @@ button {
 .victory-enemy-portrait {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 2px solid var(--accent);
   object-fit: cover;
   margin-bottom: 0.4rem;
