@@ -69,6 +69,7 @@ var Voice = (function () {
     cindra:   "XrExE9yKIg1WjnnlVkGX", // Matilda – Knowledgable
     maren:    "pFZP5JQG7iQjIQuC4Bku", // Lily – Velvety, Gentle
     cedric:   "cjVigY5qzO86Huf0OWal", // Eric – Smooth, Trustworthy
+    villager: "EXAVITQu4vr4xnSDxMaL", // Sarah – Female Villager
     _default: "onwK4e9ZLuTAKqWW03F9"  // Daniel – Steady Narrator fallback
   };
 
