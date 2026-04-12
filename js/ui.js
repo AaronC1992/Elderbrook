@@ -729,9 +729,9 @@ var UI = (function () {
     }
     html += '</div>';
 
-    // Back button
-    html += '<button class="btn btn-back guardpost-back" data-action="guardpost-back">&lt; Town</button>';
     html += '</div>';
+    // Back button (outside guardpost-room so it positions against the screen)
+    html += '<button class="btn btn-back guardpost-back" data-action="guardpost-back">&lt; Town</button>';
 
     container.innerHTML = html;
   }
