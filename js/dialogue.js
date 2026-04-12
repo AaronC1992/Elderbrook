@@ -115,6 +115,12 @@ var Dialogue = (function () {
           }
         });
       }
+      // Pre-fetch the next line so it plays instantly
+      var nextIdx = (typeof node.next === "number") ? node.next : currentNode + 1;
+      var nextNode = currentDialogue.nodes[nextIdx];
+      if (nextNode && nextNode.text) {
+        Voice.prefetch(nextNode.text, nextNode.speaker);
+      }
     }
   }
 

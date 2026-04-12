@@ -7,6 +7,45 @@ var Voice = (function () {
   var currentAudio = null;
   var cache = {}; // text hash -> audio blob URL
   var onEndedCallback = null;
+  var DB_NAME = 'elderbrook_voice_cache';
+  var DB_STORE = 'audio';
+  var db = null;
+
+  /* ── IndexedDB persistent cache ── */
+  function openDB(cb) {
+    if (db) { if (cb) cb(db); return; }
+    var req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = function (e) {
+      e.target.result.createObjectStore(DB_STORE);
+    };
+    req.onsuccess = function (e) {
+      db = e.target.result;
+      if (cb) cb(db);
+    };
+    req.onerror = function () { if (cb) cb(null); };
+  }
+
+  function dbGet(key, cb) {
+    openDB(function (d) {
+      if (!d) { cb(null); return; }
+      try {
+        var tx = d.transaction(DB_STORE, 'readonly');
+        var req = tx.objectStore(DB_STORE).get(key);
+        req.onsuccess = function () { cb(req.result || null); };
+        req.onerror = function () { cb(null); };
+      } catch (e) { cb(null); }
+    });
+  }
+
+  function dbPut(key, blob) {
+    openDB(function (d) {
+      if (!d) return;
+      try {
+        var tx = d.transaction(DB_STORE, 'readwrite');
+        tx.objectStore(DB_STORE).put(blob, key);
+      } catch (e) {}
+    });
+  }
 
   var voiceMap = {
     rowan:    "JBFqnCBsd6RMkjVDRZzb", // George – Warm, Captivating Storyteller
@@ -40,6 +79,8 @@ var Voice = (function () {
       var saved = localStorage.getItem("elderbrook_voice_enabled");
       if (saved !== null) enabled = saved === "true";
     } catch (e) {}
+    // Open IndexedDB cache early
+    openDB(function () {});
   }
 
   function setApiKey(key) {
@@ -84,6 +125,48 @@ var Voice = (function () {
     return hash.toString(36);
   }
 
+  function fetchAudio(voiceId, text, cb) {
+    var cacheKey = voiceId + "_" + hashText(text);
+
+    // 1. In-memory cache (instant)
+    if (cache[cacheKey]) { cb(cache[cacheKey]); return; }
+
+    // 2. IndexedDB cache (no API hit)
+    dbGet(cacheKey, function (blob) {
+      if (blob) {
+        var blobUrl = URL.createObjectURL(blob);
+        cache[cacheKey] = blobUrl;
+        cb(blobUrl);
+        return;
+      }
+
+      // 3. Fetch from API
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "https://api.elevenlabs.io/v1/text-to-speech/" + voiceId);
+      xhr.setRequestHeader("xi-api-key", apiKey);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.responseType = "blob";
+
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          dbPut(cacheKey, xhr.response); // persist raw blob
+          var blobUrl = URL.createObjectURL(xhr.response);
+          cache[cacheKey] = blobUrl;
+          cb(blobUrl);
+        }
+      };
+
+      xhr.send(JSON.stringify({
+        text: text,
+        model_id: "eleven_turbo_v2_5",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75
+        }
+      }));
+    });
+  }
+
   function speak(text, speakerName) {
     if (!enabled || !apiKey) return;
     var voiceId = getVoiceId(speakerName);
@@ -91,35 +174,19 @@ var Voice = (function () {
 
     stop();
 
-    // Check cache
+    fetchAudio(voiceId, text, function (blobUrl) {
+      playBlob(blobUrl);
+    });
+  }
+
+  /* Pre-fetch audio for upcoming lines so they play instantly */
+  function prefetch(text, speakerName) {
+    if (!enabled || !apiKey) return;
+    var voiceId = getVoiceId(speakerName);
+    if (!voiceId) return;
     var cacheKey = voiceId + "_" + hashText(text);
-    if (cache[cacheKey]) {
-      playBlob(cache[cacheKey]);
-      return;
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://api.elevenlabs.io/v1/text-to-speech/" + voiceId);
-    xhr.setRequestHeader("xi-api-key", apiKey);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.responseType = "blob";
-
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        var blobUrl = URL.createObjectURL(xhr.response);
-        cache[cacheKey] = blobUrl;
-        playBlob(blobUrl);
-      }
-    };
-
-    xhr.send(JSON.stringify({
-      text: text,
-      model_id: "eleven_multilingual_v2",
-      voice_settings: {
-        stability: 0.5,
-        similarity_boost: 0.75
-      }
-    }));
+    if (cache[cacheKey]) return; // already cached in memory
+    fetchAudio(voiceId, text, function () {}); // fetch silently
   }
 
   function playBlob(blobUrl) {
@@ -161,6 +228,7 @@ var Voice = (function () {
     setEnabled: setEnabled,
     isEnabled: isEnabled,
     speak: speak,
+    prefetch: prefetch,
     stop: stop,
     onEnded: function (cb) { onEndedCallback = cb; },
     isPlaying: function () { return !!currentAudio; },
