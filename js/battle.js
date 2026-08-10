@@ -1798,13 +1798,11 @@ var Battle = (function () {
 
     var html = '';
 
-    // Encounter modifier banner
+    // Battle scene: player bottom-left, enemies top-right
+    html += '<div class="battle-scene">';
     if (encounterMod && encounterMod.label) {
       html += '<div class="encounter-mod-banner encounter-mod-' + encounterMod.id + '">' + encounterMod.label + '</div>';
     }
-
-    // Battle scene: player bottom-left, enemies top-right
-    html += '<div class="battle-scene">';
 
     // Player side (left)
     html += '<div class="battle-allies-group">';
@@ -1919,60 +1917,141 @@ var Battle = (function () {
 
     html += '</div>'; // end battle-scene
 
-
-
-    // Action buttons (only if battle still active)
+    // ── Battle Panel ──────────────────────────────────────────────
     var anyAlive = !allEnemiesDead();
     if (ambushChoice && anyAlive && p.hp > 0) {
-      // Pet warned about ambush — show avoid/rush choice
-      html += '<div class="battle-actions ambush-choice">';
+      html += '<div class="battle-panel bp-ambush">';
       html += '<div class="ambush-prompt">Your pet warned you of an ambush! What do you do?</div>';
+      html += '<div class="ambush-choices">';
       html += '<button class="btn" data-action="ambush-avoid">Slip Away</button>';
       html += '<button class="btn btn-danger" data-action="ambush-rush">Rush In</button>';
-      html += '</div>';
+      html += '</div></div>';
     } else if (anyAlive && p.hp > 0) {
-      html += '<div class="battle-actions">';
-      html += '<button class="btn" data-action="battle-attack">Attack</button>';
-      html += '<button class="btn" data-action="battle-run"' + (isBossFight ? ' disabled' : '') + '>Run</button>';
-
-      // Skills
-      var availSkills = Skills.getAvailable(p.learnedSkills);
-      if (availSkills.length > 0) {
-        html += '<div class="battle-skills">';
-        for (var s = 0; s < availSkills.length; s++) {
-          var sk = availSkills[s];
-          var onCooldown = sk.cooldown && skillCooldowns[sk.id] && skillCooldowns[sk.id] > turnCount;
-          var cdLeft = onCooldown ? (skillCooldowns[sk.id] - turnCount) : 0;
-          var canUse = p.mp >= sk.mpCost && !onCooldown;
-          var aoeTag = sk.aoe ? (sk.aoe === "split" ? " [Split]" : " [AoE]") : "";
-          var label = sk.name + aoeTag + (onCooldown ? ' (' + cdLeft + ')' : '');
-          var tip = sk.description + ' (MP: ' + sk.mpCost + ')' + (onCooldown ? ' — Cooldown: ' + cdLeft + ' turn' + (cdLeft > 1 ? 's' : '') : '');
-          html += '<button class="btn btn-small battle-skill-btn" data-action="battle-skill" data-skill="' + sk.id + '"' + (canUse ? '' : ' disabled') + ' title="' + tip + '">' + label + '</button>';
-        }
-        html += '</div>';
-      }
-
-      // Potions in inventory
+      // Gather potions
       var potions = [];
       for (var pi = 0; pi < p.inventory.length; pi++) {
         var pItem = Items.get(p.inventory[pi]);
         if (pItem && pItem.type === "potion") {
-          var exists = false;
+          var pExists = false;
           for (var cp = 0; cp < potions.length; cp++) {
-            if (potions[cp].id === pItem.id) { potions[cp].count++; exists = true; break; }
+            if (potions[cp].id === pItem.id) { potions[cp].count++; pExists = true; break; }
           }
-          if (!exists) potions.push({ id: pItem.id, name: pItem.name, count: 1 });
+          if (!pExists) potions.push({ id: pItem.id, name: pItem.name, count: 1 });
         }
       }
+      // Gather skills
+      var availSkills = Skills.getAvailable(p.learnedSkills);
+      // Gather inventory weapons/armor grouped by slot
+      var EQUIP_SLOTS_BP = ["weapon", "helmet", "chest", "legs", "gloves", "bracers"];
+      var SLOT_ABBR = { weapon: "WPN", helmet: "HLM", chest: "BST", legs: "LEG", gloves: "GLV", bracers: "BRC" };
+      var invBySlot = {};
+      for (var ii = 0; ii < p.inventory.length; ii++) {
+        var iItem = Items.get(p.inventory[ii]);
+        if (iItem && (iItem.type === "weapon" || iItem.type === "armor")) {
+          if (!invBySlot[iItem.slot]) invBySlot[iItem.slot] = [];
+          invBySlot[iItem.slot].push({ id: p.inventory[ii], item: iItem });
+        }
+      }
+
+      html += '<div class="battle-panel">';
+
+      // Left: Commands + Items
+      html += '<div class="bp-commands">';
+      html += '<div class="bp-label">Commands</div>';
+      html += '<button class="btn bp-btn-attack" data-action="battle-attack">⚔ Attack</button>';
+      html += '<button class="btn bp-btn-run"' + (isBossFight ? ' disabled' : '') + ' data-action="battle-run">↩ Run</button>';
       if (potions.length > 0) {
-        html += '<div class="battle-potions">';
+        html += '<div class="bp-divider"></div>';
+        html += '<div class="bp-label">Items</div>';
         for (var pp = 0; pp < potions.length; pp++) {
-          html += '<button class="btn btn-small" data-action="battle-potion" data-item="' + potions[pp].id + '">' + potions[pp].name + ' x' + potions[pp].count + '</button>';
+          html += '<button class="bp-item-btn" data-action="battle-potion" data-item="' + potions[pp].id + '">';
+          html += '<span class="bp-item-name">' + potions[pp].name + '</span><span class="bp-item-count">×' + potions[pp].count + '</span>';
+          html += '</button>';
+        }
+      }
+      html += '</div>';
+
+      // Center: Skills + Equipment
+      html += '<div class="bp-center">';
+
+      // Skills section
+      html += '<div class="bp-section">';
+      html += '<div class="bp-label">Skills &amp; Magic</div>';
+      if (availSkills.length > 0) {
+        html += '<div class="bp-skills-grid">';
+        for (var s = 0; s < availSkills.length; s++) {
+          var sk = availSkills[s];
+          var onCD = sk.cooldown && skillCooldowns[sk.id] && skillCooldowns[sk.id] > turnCount;
+          var cdLeft = onCD ? (skillCooldowns[sk.id] - turnCount) : 0;
+          var canUse = p.mp >= sk.mpCost && !onCD;
+          var tip = sk.description + ' (MP: ' + sk.mpCost + ')' + (onCD ? ' — CD: ' + cdLeft + ' turn' + (cdLeft > 1 ? 's' : '') : '');
+          html += '<button class="bp-skill-card" data-action="battle-skill" data-skill="' + sk.id + '"' + (canUse ? '' : ' disabled') + ' title="' + tip + '">';
+          html += '<span class="bp-skill-name">' + sk.name;
+          if (sk.aoe) html += '<span class="bp-skill-tag">' + (sk.aoe === "split" ? "Split" : "AoE") + '</span>';
+          html += '</span>';
+          html += '<span class="bp-skill-meta"><span class="bp-skill-mp">' + sk.mpCost + ' MP</span>';
+          if (onCD) html += '<span class="bp-skill-cd">CD:' + cdLeft + '</span>';
+          html += '</span></button>';
+        }
+        html += '</div>';
+      } else {
+        html += '<span class="bp-empty">No skills learned yet.</span>';
+      }
+      html += '</div>';
+
+      // Equipment section
+      html += '<div class="bp-section">';
+      html += '<div class="bp-label">Equipment</div>';
+      html += '<div class="bp-gear-grid">';
+      for (var si = 0; si < EQUIP_SLOTS_BP.length; si++) {
+        var slot = EQUIP_SLOTS_BP[si];
+        var eqId = p.equipped[slot];
+        var eqItem = eqId ? Items.get(eqId) : null;
+        var slotInv = invBySlot[slot] || [];
+        html += '<div class="bp-gear-row">';
+        html += '<span class="bp-slot-lbl">' + SLOT_ABBR[slot] + '</span>';
+        if (eqItem) {
+          var tc = eqItem.tier ? ' bp-tier-' + eqItem.tier : '';
+          var statParts = [];
+          if (eqItem.attack) statParts.push('+' + eqItem.attack + ' ATK');
+          if (eqItem.defense) statParts.push('+' + eqItem.defense + ' DEF');
+          if (eqItem.intelligence) statParts.push('+' + eqItem.intelligence + ' INT');
+          if (eqItem.dexterity) statParts.push('+' + eqItem.dexterity + ' DEX');
+          html += '<div class="bp-gear-chip bp-gear-active' + tc + '" title="' + UI.escapeHtml(eqItem.description) + '">';
+          html += '<span class="bp-chip-name">' + UI.escapeHtml(eqItem.name) + '</span>';
+          if (statParts.length) html += '<span class="bp-chip-stats">' + statParts.join(' ') + '</span>';
+          html += '</div>';
+        } else {
+          html += '<div class="bp-gear-empty">empty</div>';
+        }
+        for (var iv = 0; iv < slotInv.length; iv++) {
+          var ivItem = slotInv[iv].item;
+          var ivTc = ivItem.tier ? ' bp-tier-' + ivItem.tier : '';
+          var ivStats = [];
+          if (ivItem.attack) ivStats.push('+' + ivItem.attack + ' ATK');
+          if (ivItem.defense) ivStats.push('+' + ivItem.defense + ' DEF');
+          if (ivItem.intelligence) ivStats.push('+' + ivItem.intelligence + ' INT');
+          if (ivItem.dexterity) ivStats.push('+' + ivItem.dexterity + ' DEX');
+          html += '<button class="bp-gear-chip bp-gear-swap' + ivTc + '" data-action="battle-equip" data-item="' + slotInv[iv].id + '" title="Equip: ' + UI.escapeHtml(ivItem.description) + '">';
+          html += '<span class="bp-chip-name">' + UI.escapeHtml(ivItem.name) + '</span>';
+          if (ivStats.length) html += '<span class="bp-chip-stats">' + ivStats.join(' ') + '</span>';
+          html += '</button>';
         }
         html += '</div>';
       }
+      html += '</div></div>'; // end gear grid + section
 
-      html += '</div>';
+      html += '</div>'; // end bp-center
+
+      // Right: Battle Log
+      html += '<div class="bp-log">';
+      html += '<div class="bp-label">Battle Log</div>';
+      html += '<div class="bp-log-entries">';
+      var logSlice = battleLog.slice(-12).reverse();
+      for (var li = 0; li < logSlice.length; li++) { html += logSlice[li]; }
+      html += '</div></div>';
+
+      html += '</div>'; // end battle-panel
     }
 
     container.innerHTML = html;

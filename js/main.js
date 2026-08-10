@@ -342,6 +342,10 @@
       case "battle-attack":
         Battle.playerAttack();
         break;
+      case "battle-equip":
+        Player.equip(btn.getAttribute("data-item"));
+        Battle.renderBattle();
+        break;
       case "battle-skill":
         Battle.playerUseSkill(btn.getAttribute("data-skill"));
         break;
