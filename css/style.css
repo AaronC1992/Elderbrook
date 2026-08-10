@@ -756,6 +756,15 @@ button {
   font-style: italic;
   font-size: 0.9rem;
 }
+.intro-text p.intro-chapter-label {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 0.25rem;
+  opacity: 0.75;
+}
 .intro-text h3 {
   color: var(--accent);
   font-size: 1.3rem;

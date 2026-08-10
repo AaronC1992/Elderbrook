@@ -4,7 +4,7 @@
   /* ── Intro Lore Sequence ── */
   var introPages = [
     {
-      html: '<h3>The World of Elderbrook</h3>' +
+      html: '<p class="intro-chapter-label">Chapter 1</p><h3>The World of Elderbrook</h3>' +
         '<p>For centuries, the kingdom of Astenmere thrived under the protection of the Wardstones, ancient pillars of magic that kept the wilds at bay and the roads safe for travelers.</p>' +
         '<p>But the Wardstones have been fading. One by one, their light dims, and the creatures of the deep forest grow bolder.</p>' +
         '<p class="intro-dim">No one knows why. No one knows how to stop it.</p>'
