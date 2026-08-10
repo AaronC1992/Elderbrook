@@ -65,8 +65,9 @@ var Battle = (function () {
       e.mp = e.mp || baseMp;
       e.maxMp = e.maxMp || e.mp;
     } else {
-      e.mp = e.mp || 0;
-      e.maxMp = e.maxMp || 0;
+      var baseMpNoAbil = Math.max(8, Math.floor(e.hp * 0.3));
+      e.mp = e.mp || baseMpNoAbil;
+      e.maxMp = e.maxMp || e.mp;
     }
     return e;
   }
