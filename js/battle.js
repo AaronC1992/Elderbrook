@@ -928,7 +928,7 @@ var Battle = (function () {
     var hitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
     if (Math.random() > hitChance) {
       addLog("Your attack misses!");
-      Audio.play("miss");
+      Audio.play("swordBlock");
       animateCombat("player", "miss", function () {
         showFCT("battle-enemy-" + targetIndex, "MISS", "miss");
         enemyTurn();
@@ -941,7 +941,7 @@ var Battle = (function () {
     if (Math.random() < dodgeChance) {
       animateCombat("player", "melee", function () {
         addLog("The " + target.name + " dodges your attack!");
-        Audio.play("miss");
+        Audio.play("swordBlock");
         renderBattle();
         showFCT("battle-enemy-" + targetIndex, "DODGE", "dodge");
         checkBattleEnd() || enemyTurn();
@@ -1475,7 +1475,7 @@ var Battle = (function () {
 
     if (action.type === "miss") {
       addLog(e.name + "'s attack misses!");
-      Audio.play("miss");
+      Audio.play("swordBlock");
       showFCT(fctTarget, "MISS", "miss");
     } else if (action.type === "dodge") {
       if (targetPet) {
@@ -1485,7 +1485,7 @@ var Battle = (function () {
       } else {
         addLog("You dodge " + e.name + "'s attack!");
       }
-      Audio.play("miss");
+      Audio.play("swordBlock");
       showFCT(fctTarget, "DODGE", "dodge");
     } else if (action.type === "hit") {
       if (targetPet) {

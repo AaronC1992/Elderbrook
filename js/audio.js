@@ -3,6 +3,7 @@ var Audio = (function () {
 
   var ctx = null;
   var enabled = true;
+  var clickAudio = null;
 
   function getCtx() {
     if (!ctx) {
@@ -56,7 +57,17 @@ var Audio = (function () {
     levelUp: function () { playSequence([{ freq: 523, duration: 0.1 }, { freq: 659, duration: 0.1 }, { freq: 784, duration: 0.1 }, { freq: 1047, duration: 0.2 }]); },
     victory: function () { playSequence([{ freq: 523, duration: 0.12 }, { freq: 659, duration: 0.12 }, { freq: 784, duration: 0.2 }]); },
     defeat: function () { playSequence([{ freq: 300, duration: 0.2, type: "sawtooth" }, { freq: 200, duration: 0.3, type: "sawtooth" }]); },
-    buttonClick: function () { playTone(600, 0.04, "square", 0.04); },
+    swordBlock: function () {
+      if (!enabled) return;
+      var a = new window.Audio('Sounds/sword block.mp3');
+      a.play().catch(function () {});
+    },
+    buttonClick: function () {
+      if (!enabled) return;
+      if (!clickAudio) clickAudio = new window.Audio('Sounds/click.mp3');
+      clickAudio.currentTime = 0;
+      clickAudio.play().catch(function () {});
+    },
     shopBuy: function () { playSequence([{ freq: 800, duration: 0.06 }, { freq: 1000, duration: 0.08 }]); },
     questComplete: function () { playSequence([{ freq: 523, duration: 0.1, type: "sine" }, { freq: 784, duration: 0.1, type: "sine" }, { freq: 1047, duration: 0.2, type: "sine" }]); },
     runAway: function () { playSequence([{ freq: 400, duration: 0.08 }, { freq: 300, duration: 0.08 }, { freq: 200, duration: 0.1 }]); },
