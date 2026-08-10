@@ -1483,6 +1483,7 @@ button {
 #screen-battle.active {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   padding: 0;
   overflow: hidden;
 }
@@ -1490,7 +1491,8 @@ button {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   position: relative;
 }
 #fct-layer {
