@@ -45,6 +45,53 @@ body {
   -webkit-user-select: none;
 }
 
+/* ── WIP Notice Modal ── */
+#wip-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+#wip-modal-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.2rem;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.wip-title {
+  color: var(--accent);
+  font-size: 1.3rem;
+  margin: 0;
+}
+.wip-body {
+  color: var(--text);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0;
+}
+.wip-contact {
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0;
+}
+.wip-btn {
+  margin-top: 0.5rem;
+  align-self: center;
+  min-width: 160px;
+}
+
 /* ── TOP BAR ── */
 #game-header {
   background: linear-gradient(180deg, #1e2333 0%, var(--bg-panel) 100%);
@@ -1498,12 +1545,14 @@ button {
   justify-content: flex-start;
   padding: 0;
   overflow: hidden;
+  height: 100%;
 }
 #battle-content {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  inset: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 #fct-layer {
   position: absolute;

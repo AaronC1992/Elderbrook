@@ -1,6 +1,27 @@
 /* main.js - Entry point and event wiring */
 (function () {
 
+  /* ── WIP Notice Modal ── */
+  function showWipNotice(onContinue) {
+    var existing = document.getElementById("wip-modal");
+    if (existing) existing.remove();
+    var modal = document.createElement("div");
+    modal.id = "wip-modal";
+    modal.innerHTML =
+      '<div id="wip-modal-box">' +
+        '<h3 class="wip-title">Work in Progress</h3>' +
+        '<p class="wip-body">Elderbrook is still in active development. Art, dialogue, balancing, and features are all being worked on and may be incomplete or change at any time.</p>' +
+        '<p class="wip-body">If you find a bug or run into any issues, please let me know!</p>' +
+        '<p class="wip-contact">aaroncue92@gmail.com</p>' +
+        '<button class="btn wip-btn" id="wip-continue-btn">Got it — Let\'s Play</button>' +
+      '</div>';
+    document.body.appendChild(modal);
+    document.getElementById("wip-continue-btn").addEventListener("click", function () {
+      modal.remove();
+      if (onContinue) onContinue();
+    });
+  }
+
   /* ── Intro Lore Sequence ── */
   var introPages = [
     {
@@ -134,7 +155,7 @@
     switch (action) {
       /* ── Title Screen ── */
       case "new-game":
-        UI.showScreen("create");
+        showWipNotice(function () { UI.showScreen("create"); });
         break;
       case "continue-game":
         UI.renderSaveSlots('load');
