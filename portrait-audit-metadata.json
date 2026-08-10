@@ -1,0 +1,948 @@
+[
+  {
+    "file": "bandit_enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 107.76,
+      "stdev": 123.9,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "Bard.png",
+    "width": 1365,
+    "height": 2048,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 123.42,
+      "stdev": 127.43,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "biscuit-cat.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 99.56,
+      "stdev": 123.49,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "bram.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 161.92,
+      "stdev": 121.49,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "cedric.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "cheerful-villager.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 108.01,
+      "stdev": 124.08,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "cindra.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "cloaked-figure.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 153.72,
+      "stdev": 123.42,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "dire_rat.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 83.46,
+      "stdev": 116.36,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "elira.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 168.57,
+      "stdev": 118.05,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "elric.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 147.77,
+      "stdev": 122.08,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "female_player_assassin.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "female_player_berserker.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "female_player_cleric.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "female_player_dwarf.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 103.92,
+      "stdev": 124.03,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "female_player_knight.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "female_player_mage.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 130.16,
+      "stdev": 125.39,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "female_player_paladin.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "female_player_pyromancer.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "female_player_ranger.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 107.07,
+      "stdev": 123.8,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "female_player_rogue.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 93.01,
+      "stdev": 121.07,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "female_player_warrior.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 114.32,
+      "stdev": 125.29,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "female-player.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 57.58,
+      "stdev": 106.35,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "fenn.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "frost-bound-goblin.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 112.31,
+      "stdev": 124.2,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "frostbitten-bandit.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 143.05,
+      "stdev": 125.97,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "frostbitten-snow-wolf.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 116.76,
+      "stdev": 124.95,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin_chief.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 133.03,
+      "stdev": 127.13,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin_enemy_2.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 101.87,
+      "stdev": 122.74,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin_raider_enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 94.25,
+      "stdev": 120.73,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-archer-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 94.56,
+      "stdev": 121.45,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-brute-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 87.65,
+      "stdev": 120.81,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-enemy.png",
+    "width": 1024,
+    "height": 1438,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 85.67,
+      "stdev": 118.64,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-grunt-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 98.12,
+      "stdev": 122.3,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-guard-enemy.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 85.91,
+      "stdev": 118.91,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-king-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 151.68,
+      "stdev": 121.95,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-scout-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 79.2,
+      "stdev": 116.46,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "goblin-shaman-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 117.6,
+      "stdev": 124.73,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "grul.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "Guard_captain.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 115.11,
+      "stdev": 125.22,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "Guard-1.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 112.7,
+      "stdev": 125.26,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "harlan.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 169.32,
+      "stdev": 117.27,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "lost-child.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 73.72,
+      "stdev": 112.86,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "lysara.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "main-town-armor-shopkeep.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 165.69,
+      "stdev": 120.43,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "main-town-guildmaster-npc.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 161.23,
+      "stdev": 122.79,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "main-town-potions-shopkeep.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 171.05,
+      "stdev": 118.32,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "main-town-weapon-shopkeep.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 148.44,
+      "stdev": 125.63,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "male_player_assassin.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "male_player_berserker.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "male_player_cleric.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "male_player_dwarf.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 110.48,
+      "stdev": 125.07,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "male_player_knight.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "male_player_mage.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 125.79,
+      "stdev": 125.29,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "male_player_paladin.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "male_player_pyromancer.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "male_player_ranger.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 107.78,
+      "stdev": 124.08,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "male_player_rogue.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 100.18,
+      "stdev": 122.85,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "male_player_warrior.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 131.98,
+      "stdev": 125.9,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "male-player.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 59.97,
+      "stdev": 107.96,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "maren.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "mira.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 100.91,
+      "stdev": 123.74,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "pet-barn-owl.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "pet-ferret.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "pet-fox-kit.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "pet-raven.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "pet-shop-keeper.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "pet-tabby-cat.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "pet-timber-wolf.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "rowan.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 132.45,
+      "stdev": 125.89,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "shade.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "theron.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "toma.png",
+    "width": 1365,
+    "height": 2048,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 122.49,
+      "stdev": 127.4,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "traveler.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 119.46,
+      "stdev": 125.52,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "varn.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "villager_female.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 105.41,
+      "stdev": 124.08,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "villager_male.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "mean": 103.2,
+      "stdev": 123.28,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "whisper.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 3,
+    "hasAlpha": false,
+    "alpha": null
+  },
+  {
+    "file": "wolf-enemy.png",
+    "width": 1024,
+    "height": 1536,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 93.19,
+      "stdev": 121.14,
+      "isOpaque": false
+    }
+  },
+  {
+    "file": "wolf-pack-leader-enemy.png",
+    "width": 1024,
+    "height": 1792,
+    "channels": 4,
+    "hasAlpha": true,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "mean": 90.54,
+      "stdev": 120.24,
+      "isOpaque": false
+    }
+  }
+]

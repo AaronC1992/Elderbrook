@@ -1,0 +1,40 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "Battle": "readonly",
+    "Chapter1": "readonly",
+    "Dialogue": "readonly",
+    "Dungeon": "readonly",
+    "Enemies": "readonly",
+    "Inventory": "readonly",
+    "Items": "readonly",
+    "Player": "readonly",
+    "Quests": "readonly",
+    "Relationships": "readonly",
+    "Save": "readonly",
+    "Shops": "readonly",
+    "Skills": "readonly",
+    "UI": "readonly",
+    "World": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "rules": {
+    "no-undef": "error",
+    "no-unused-vars": ["warn", { "vars": "local", "args": "none" }],
+    "no-redeclare": "warn",
+    "no-unreachable": "error",
+    "no-constant-condition": "warn",
+    "no-duplicate-case": "error",
+    "eqeqeq": ["warn", "smart"],
+    "no-loss-of-precision": "warn",
+    "no-self-assign": "warn",
+    "no-self-compare": "warn",
+    "no-dupe-keys": "error",
+    "no-empty": ["warn", { "allowEmptyCatch": true }]
+  }
+}

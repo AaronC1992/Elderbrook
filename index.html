@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Elderbrook - Chapter 1</title>
+  <link rel="icon" href="data:,">
+  <style>
+    html, body { touch-action: manipulation; }
+  </style>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a id="portal-back" href="../index.html">&#8592; Portal</a>
+  <div id="game-container" class="mode-menu">
+
+    <!-- ═══ TOP STATUS BAR (SimGirl-style) ═══ -->
+    <header id="game-header">
+      <div id="header-day" class="header-cell">Day 1</div>
+      <div id="header-time" class="header-cell">Morning</div>
+      <div id="header-energy" class="header-cell">
+        <span class="energy-label">Energy</span>
+        <div class="energy-bar"><div id="energy-fill" class="energy-fill"></div></div>
+        <span id="energy-text">8/8</span>
+      </div>
+      <div id="header-gold" class="header-cell">Gold: 0</div>
+      <div class="header-cell header-btns">
+        <button class="hdr-btn" data-action="save-game">Save</button>
+        <button class="hdr-btn" data-action="open-settings">Settings</button>
+        <button class="hdr-btn" data-action="toggle-sound" id="btn-sound">Sound</button>
+      </div>
+    </header>
+
+    <!-- ═══ MAIN 3-COLUMN LAYOUT ═══ -->
+    <div id="game-body">
+
+      <!-- LEFT SIDEBAR: Player Stats -->
+      <aside id="sidebar-stats">
+        <div id="player-portrait-box">
+          <img id="sidebar-portrait" src="" alt="Player" />
+        </div>
+        <div id="sidebar-name" class="sidebar-val"></div>
+        <div id="sidebar-level" class="sidebar-val"></div>
+        <div class="stat-row"><span class="stat-label">HP</span><div class="stat-bar"><div id="bar-hp" class="stat-fill hp-fill"></div></div><span id="stat-hp" class="stat-num"></span></div>
+        <div class="stat-row"><span class="stat-label">MP</span><div class="stat-bar"><div id="bar-mp" class="stat-fill mp-fill"></div></div><span id="stat-mp" class="stat-num"></span></div>
+        <div class="stat-row"><span class="stat-label">XP</span><div class="stat-bar"><div id="bar-xp" class="stat-fill xp-fill"></div></div><span id="stat-xp" class="stat-num"></span></div>
+        <div class="stat-line"><span>ATK</span><span id="stat-atk">0</span></div>
+        <div class="stat-line"><span>DEF</span><span id="stat-def">0</span></div>
+        <div class="stat-line"><span>DEX</span><span id="stat-dex">0</span></div>
+        <div class="stat-line"><span>INT</span><span id="stat-int">0</span></div>
+        <div class="stat-line"><span>CHA</span><span id="stat-cha">0</span></div>
+        <div id="sidebar-pet" class="sidebar-pet" style="display:none;">
+          <span id="sidebar-pet-name" class="sidebar-pet-name"></span>
+        </div>
+        <div id="sidebar-follower" class="sidebar-pet" style="display:none;">
+          <span id="sidebar-follower-name" class="sidebar-pet-name"></span>
+        </div>
+        <div class="sidebar-btns">
+          <button class="side-btn" data-action="open-ledger">Ledger</button>
+          <button class="side-btn" data-action="open-inventory">Inventory</button>
+        </div>
+      </aside>
+
+      <!-- CENTER: Scene / Screens -->
+      <main id="screen-container">
+
+        <!-- Title Screen (full overlay) -->
+        <section id="screen-title" class="screen active">
+          <div class="panel create-panel" style="text-align:center;">
+            <h2 style="font-size:2.2rem; margin-bottom:0.3rem;">Elderbrook</h2>
+            <p class="flavor" style="margin-bottom:2rem;">Chapter 1 &mdash; The Goblin Threat</p>
+            <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:center;">
+              <button class="btn-primary" data-action="new-game" style="width:220px; font-size:1.1rem;">New Game</button>
+              <button class="btn-secondary" data-action="continue-game" id="btn-continue" style="width:220px; font-size:1.1rem;">Continue</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Character Creation (redesigned) -->
+        <section id="screen-create" class="screen" style="background-image:url('assets/backgrounds/character-creation.png');">
+          <div class="create-layout">
+            <!-- Left: Class Overview -->
+            <div class="create-sidebar create-sidebar-left">
+              <div id="create-class-paths"></div>
+            </div>
+
+            <!-- Center: Character Builder -->
+            <div class="create-wrapper">
+            <div class="create-header">
+              <h2>Forge Your Legend</h2>
+              <p class="create-subtitle">Every hero has a beginning. This is yours.</p>
+            </div>
+
+            <div class="create-steps">
+              <!-- Step 1: Appearance -->
+              <div class="create-step">
+                <div class="create-step-label">Appearance</div>
+                <div class="gender-picker">
+                  <button class="gender-btn selected" data-gender="male">
+                    <img class="gender-portrait" src="assets/portraits/male-player.png" alt="Male" />
+                    <span>Male</span>
+                  </button>
+                  <button class="gender-btn" data-gender="female">
+                    <img class="gender-portrait" src="assets/portraits/female-player.png" alt="Female" />
+                    <span>Female</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 2: Weapon -->
+              <div class="create-step">
+                <div class="create-step-label">Starting Weapon</div>
+                <div class="weapon-picker">
+                  <button class="weapon-btn selected" data-weapon="basic-sword">
+                    <span class="weapon-name">Sword</span>
+                    <span class="weapon-stat">+3 ATK</span>
+                    <span class="weapon-desc">A reliable blade for close combat.</span>
+                  </button>
+                  <button class="weapon-btn" data-weapon="basic-dagger">
+                    <span class="weapon-name">Dagger</span>
+                    <span class="weapon-stat">+2 ATK, +1 DEX</span>
+                    <span class="weapon-desc">Quick and precise. Favors the agile.</span>
+                  </button>
+                  <button class="weapon-btn" data-weapon="basic-bow">
+                    <span class="weapon-name">Bow</span>
+                    <span class="weapon-stat">+3 ATK</span>
+                    <span class="weapon-desc">Strike from a distance with deadly aim.</span>
+                  </button>
+                  <button class="weapon-btn" data-weapon="basic-staff">
+                    <span class="weapon-name">Staff</span>
+                    <span class="weapon-stat">+2 ATK, +1 INT</span>
+                    <span class="weapon-desc">Channels arcane energy. For the wise.</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 3: Name -->
+              <div class="create-step">
+                <div class="create-step-label">Your Name</div>
+                <form id="create-form">
+                  <input type="text" id="char-name" maxlength="20" required placeholder="Enter your name..." autocomplete="off" />
+                  <button class="btn-primary create-begin-btn" type="submit">Begin Your Story</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+            <!-- Right: Stat Guide -->
+            <div class="create-sidebar create-sidebar-right">
+              <h3>Stat Guide</h3>
+              <div class="create-stat-list">
+                <div class="create-stat-item">
+                  <div class="create-stat-name">ATK (Attack)</div>
+                  <div class="create-stat-desc">Increases physical damage dealt to enemies.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">DEF (Defense)</div>
+                  <div class="create-stat-desc">Reduces physical damage taken from enemies.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">DEX (Dexterity)</div>
+                  <div class="create-stat-desc">Improves dodge chance and crit rate in combat.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">INT (Intelligence)</div>
+                  <div class="create-stat-desc">Boosts magic damage and skill effectiveness.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">HP (Hit Points)</div>
+                  <div class="create-stat-desc">Your health pool. Reach 0 and you're defeated.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">MP (Mana Points)</div>
+                  <div class="create-stat-desc">Resource spent to use skills in battle.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">Charm</div>
+                  <div class="create-stat-desc">Social stat. Boosts NPC relationship gains.</div>
+                </div>
+                <div class="create-stat-item">
+                  <div class="create-stat-name">Energy</div>
+                  <div class="create-stat-desc">Daily action points. Rests at the Inn to restore.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- World Intro / Lore (shown after creation, before gameplay) -->
+        <section id="screen-intro" class="screen">
+          <div class="intro-wrapper">
+            <div class="intro-text-container">
+              <div id="intro-text" class="intro-text"></div>
+            </div>
+            <button class="btn intro-skip-btn" data-action="intro-skip">Skip</button>
+            <button class="btn-primary intro-continue-btn" id="intro-continue-btn" data-action="intro-continue" style="display:none;">Continue</button>
+          </div>
+        </section>
+
+        <!-- Dialogue -->
+        <section id="screen-dialogue" class="screen">
+          <div id="dialogue-portrait-area"></div>
+          <div id="dialogue-content" class="dialogue-box"></div>
+        </section>
+
+        <!-- Town Hub (location scene) -->
+        <section id="screen-town" class="screen" style="background-image:url('assets/backgrounds/main-town.png');">
+          <div id="town-content"></div>
+        </section>
+
+        <!-- Shop -->
+        <section id="screen-shop" class="screen">
+          <div id="shop-npc-area" class="shop-npc-area"></div>
+          <div class="panel shop-panel">
+            <div class="shop-header">
+              <h2 id="shop-title">Shop</h2>
+            </div>
+            <div id="shop-inventory" class="shop-grid"></div>
+            <button class="btn-back" data-action="npc-back">Back</button>
+          </div>
+        </section>
+
+        <!-- Quest Board -->
+        <section id="screen-questboard" class="screen" style="background-image:url('assets/backgrounds/main-town-questboard.png');">
+          <div class="panel">
+            <div id="questboard-content"></div>
+            <button class="btn-back" data-action="npc-back" style="margin-top:1rem;">Back</button>
+          </div>
+        </section>
+
+        <!-- World Map -->
+        <section id="screen-worldmap" class="screen" style="background-image:url('assets/backgrounds/world-map-1.png');">
+          <div id="worldmap-content"></div>
+        </section>
+
+        <!-- Area / Exploration -->
+        <section id="screen-area" class="screen">
+          <div id="area-content" class="panel"></div>
+        </section>
+
+        <!-- Node Exploration (DragonFable-style) -->
+        <section id="screen-explore" class="screen">
+          <div id="explore-content"></div>
+        </section>
+
+        <!-- Battle -->
+        <section id="screen-battle" class="screen" style="position:relative;">
+          <div id="battle-content"></div>
+          <div id="fct-layer"></div>
+        </section>
+
+        <!-- Dungeon -->
+        <section id="screen-dungeon" class="screen">
+          <div id="dungeon-content"></div>
+        </section>
+
+        <!-- Inventory -->
+        <section id="screen-inventory" class="screen">
+          <div class="panel">
+            <h2>Inventory</h2>
+            <h3>Equipment</h3>
+            <div id="equipment-slots"></div>
+            <h3>Items</h3>
+            <div id="inventory-items"></div>
+            <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+          </div>
+        </section>
+
+        <!-- Character Screen -->
+        <section id="screen-character" class="screen">
+          <div class="panel">
+            <div id="character-content"></div>
+            <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+          </div>
+        </section>
+
+        <!-- Quest Log -->
+        <section id="screen-quests" class="screen">
+          <div class="panel">
+            <div id="quests-content"></div>
+            <button class="btn-back" data-action="close-overlay" style="margin-top:1rem;">Close</button>
+          </div>
+        </section>
+
+        <!-- Relationships Overview -->
+        <section id="screen-relationships" class="screen">
+          <div class="panel">
+            <div id="relationships-content"></div>
+          </div>
+        </section>
+
+        <!-- Social Hub / Town Square -->
+        <section id="screen-social" class="screen">
+          <div id="social-npc-area" class="shop-npc-area"></div>
+          <div class="panel social-panel">
+            <div id="social-content"></div>
+          </div>
+        </section>
+
+        <!-- Guard Post Interior -->
+        <section id="screen-guardpost" class="screen" style="background-image:url('assets/backgrounds/watch-post.png');">
+          <div id="guardpost-content"></div>
+        </section>
+
+        <!-- Inn Interior -->
+        <section id="screen-inn" class="screen" style="background-image:url('assets/backgrounds/main-town-inn.png');">
+          <div id="inn-npc-area" class="shop-npc-area bust-crop-area"></div>
+          <div id="inn-content"></div>
+        </section>
+
+        <!-- Training Grounds (new for SimGirl) -->
+        <section id="screen-training" class="screen" style="background-image:url('assets/backgrounds/Main%20town%20training%20grounds.png');">
+          <div class="panel">
+            <div id="training-content"></div>
+          </div>
+        </section>
+
+        <!-- Academy (new for SimGirl) -->
+        <section id="screen-academy" class="screen" style="background-image:url('assets/backgrounds/main-town-academy.png');">
+          <div class="panel">
+            <div id="academy-content"></div>
+          </div>
+        </section>
+
+        <!-- Pet Shop -->
+        <section id="screen-petshop" class="screen">
+          <div id="petshop-npc-area" class="shop-npc-area"></div>
+          <div class="panel petshop-panel">
+            <div id="petshop-content"></div>
+            <button class="btn-back" data-action="go-town">&lt; Town</button>
+          </div>
+        </section>
+
+        <!-- Chapter End -->
+        <section id="screen-chapter-end" class="screen" style="background-image:url('assets/backgrounds/chapter-end.png');">
+          <div id="chapter-end-content" class="panel" style="text-align:center;"></div>
+        </section>
+
+        <!-- Ledger (book-style overlay) -->
+        <section id="screen-ledger" class="screen">
+          <div class="ledger-book">
+            <div class="ledger-spine"></div>
+            <div class="ledger-tabs" id="ledger-tabs"></div>
+            <div class="ledger-page" id="ledger-page"></div>
+            <button class="ledger-close" data-action="close-overlay">&times;</button>
+          </div>
+        </section>
+
+        <!-- Settings (kept for fallback) -->
+        <section id="screen-settings" class="screen">
+          <div class="panel">
+            <div id="settings-content"></div>
+          </div>
+        </section>
+
+        <!-- Achievements (kept for fallback) -->
+        <section id="screen-achievements" class="screen">
+          <div class="panel">
+            <div id="achievements-content"></div>
+          </div>
+        </section>
+
+        <!-- Bestiary (kept for fallback) -->
+        <section id="screen-bestiary" class="screen">
+          <div class="panel">
+            <div id="bestiary-content"></div>
+          </div>
+        </section>
+
+        <!-- Crafting -->
+        <section id="screen-crafting" class="screen">
+          <div class="panel">
+            <div id="crafting-content"></div>
+          </div>
+        </section>
+
+        <!-- Save Slot Selection -->
+        <section id="screen-save-select" class="screen">
+          <div class="panel">
+            <div id="save-select-content"></div>
+          </div>
+        </section>
+
+        <!-- Build Class Selection -->
+        <section id="screen-build-select" class="screen">
+          <div class="panel">
+            <div id="build-select-content"></div>
+          </div>
+        </section>
+
+        <!-- Difficulty Selection -->
+        <section id="screen-difficulty" class="screen">
+          <div class="panel">
+            <div id="difficulty-content"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- RIGHT SIDEBAR: Quest Tracker -->
+      <aside id="sidebar-quests">
+        <h3 class="sidebar-heading">Active Quests</h3>
+        <div id="quest-tracker"></div>
+      </aside>
+
+    </div><!-- /game-body -->
+
+    <!-- ═══ BOTTOM NAV BAR (SimGirl location buttons) ═══ -->
+    <nav id="game-nav">
+      <button class="nav-btn" data-action="go-town">Town</button>
+      <button class="nav-btn" data-action="go-guild">Guild</button>
+      <button class="nav-btn" data-action="go-shop" data-shop="weapon-shop">Weapons</button>
+      <button class="nav-btn" data-action="go-shop" data-shop="armor-shop">Armor</button>
+      <button class="nav-btn" data-action="go-shop" data-shop="potion-shop">Potions</button>
+      <button class="nav-btn" data-action="go-questboard">Quests</button>
+      <button class="nav-btn" data-action="go-training">Train</button>
+      <button class="nav-btn" data-action="go-academy">Academy</button>
+      <button class="nav-btn" data-action="go-petshop">Pets</button>
+      <button class="nav-btn" data-action="go-worldmap">World Map</button>
+      <button class="nav-btn nav-inn" data-action="go-inn">Inn</button>
+    </nav>
+
+    <!-- Toast Message -->
+    <div id="game-message" class="game-message"></div>
+
+    <!-- Season Change Banner -->
+    <div id="season-banner" class="season-banner"></div>
+  </div>
+
+  <!-- Scripts (load order matters) -->
+  <script src="js/chapter1.js"></script>
+  <script src="js/items.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/skills.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/shops.js"></script>
+  <script src="js/pets.js"></script>
+  <script src="js/quests.js"></script>
+  <script src="js/dialogue.js"></script>
+  <script src="js/relationships.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/battle.js"></script>
+  <script src="js/exploration.js"></script>
+  <script src="js/dungeon.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/world.js"></script>
+  <script>
+    (() => {
+      const triggerResize = () => window.dispatchEvent(new Event('resize'));
+      window.addEventListener('orientationchange', triggerResize);
+      window.visualViewport?.addEventListener('resize', triggerResize);
+    })();
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>
