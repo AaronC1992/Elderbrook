@@ -43,28 +43,6 @@ body {
   overflow: hidden;
 }
 
-#portal-back {
-  position: fixed;
-  top: calc(10px + env(safe-area-inset-top, 0px));
-  left: calc(10px + env(safe-area-inset-left, 0px));
-  z-index: 5000;
-  text-decoration: none;
-  color: #f3e7c7;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  background: rgba(18, 22, 31, 0.82);
-  border: 1px solid rgba(212, 164, 56, 0.55);
-  border-radius: 8px;
-  padding: 6px 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-}
-
-#portal-back:hover {
-  color: #ffffff;
-  border-color: rgba(234, 185, 79, 0.85);
-}
-
 /* ── TOP BAR ── */
 #game-header {
   background: linear-gradient(180deg, #1e2333 0%, var(--bg-panel) 100%);
