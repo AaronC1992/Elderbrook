@@ -41,6 +41,8 @@ body {
   display: grid;
   grid-template-rows: auto 1fr auto;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* ── TOP BAR ── */
@@ -1185,6 +1187,10 @@ button {
   object-position: bottom center;
   filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
   pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  draggable: false;
 }
 .shop-npc-fullbody.npc-bust-crop {
   max-height: none;
@@ -1496,10 +1502,8 @@ button {
 #battle-content {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-  position: relative;
+  position: absolute;
+  inset: 0;
 }
 #fct-layer {
   position: absolute;
