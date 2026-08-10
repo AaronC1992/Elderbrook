@@ -50,13 +50,22 @@ var Audio = (function () {
   }
 
   var presets = {
-    swordHit: function () { playTone(200, 0.1, "sawtooth", 0.06); },
+    swordHit: function () {
+      if (!enabled) return;
+      var a = new window.Audio('Sounds/sword hit.mp3');
+      a.play().catch(function () {});
+    },
     enemyHit: function () { playTone(150, 0.12, "sawtooth", 0.07); },
     potionDrink: function () { playSequence([{ freq: 400, duration: 0.08 }, { freq: 600, duration: 0.08 }, { freq: 800, duration: 0.12 }]); },
     heal: function () { playSequence([{ freq: 523, duration: 0.1, type: "sine" }, { freq: 659, duration: 0.1, type: "sine" }, { freq: 784, duration: 0.15, type: "sine" }]); },
     levelUp: function () { playSequence([{ freq: 523, duration: 0.1 }, { freq: 659, duration: 0.1 }, { freq: 784, duration: 0.1 }, { freq: 1047, duration: 0.2 }]); },
     victory: function () { playSequence([{ freq: 523, duration: 0.12 }, { freq: 659, duration: 0.12 }, { freq: 784, duration: 0.2 }]); },
     defeat: function () { playSequence([{ freq: 300, duration: 0.2, type: "sawtooth" }, { freq: 200, duration: 0.3, type: "sawtooth" }]); },
+    swordMiss: function () {
+      if (!enabled) return;
+      var a = new window.Audio('Sounds/sword miss.mp3');
+      a.play().catch(function () {});
+    },
     swordBlock: function () {
       if (!enabled) return;
       var a = new window.Audio('Sounds/sword block.mp3');

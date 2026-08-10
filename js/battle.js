@@ -463,7 +463,7 @@ var Battle = (function () {
       if (Math.random() > 0.85) {
         animateCombat("companion", "miss", function () {
           addLog(companion.name + "'s attack misses!");
-          Audio.play("miss");
+          Audio.play("swordMiss");
           showFCT("battle-enemy-" + bestIdx, "MISS", "miss");
           tickBuffs(companion.buffs);
           if (callback) callback();
@@ -928,7 +928,7 @@ var Battle = (function () {
     var hitChance = Math.min(0.98, 0.75 + p.dexterity * 0.02);
     if (Math.random() > hitChance) {
       addLog("Your attack misses!");
-      Audio.play("swordBlock");
+      Audio.play("swordMiss");
       animateCombat("player", "miss", function () {
         showFCT("battle-enemy-" + targetIndex, "MISS", "miss");
         enemyTurn();
@@ -1475,7 +1475,7 @@ var Battle = (function () {
 
     if (action.type === "miss") {
       addLog(e.name + "'s attack misses!");
-      Audio.play("swordBlock");
+      Audio.play("swordMiss");
       showFCT(fctTarget, "MISS", "miss");
     } else if (action.type === "dodge") {
       if (targetPet) {
@@ -1498,7 +1498,7 @@ var Battle = (function () {
         Player.takeDamage(action.damage);
         addLog(e.name + " attacks for " + action.damage + " damage.");
       }
-      Audio.play("enemyHit");
+      Audio.play("swordHit");
       showFCT(fctTarget, "-" + action.damage, "damage");
     } else if (action.type === "ability" || action.type === "buff-only" || action.type === "effect-only") {
       var ab = action.ability;
@@ -1528,7 +1528,7 @@ var Battle = (function () {
             Player.takeDamage(action.damage);
             addLog(e.name + " uses " + ab.name + " for " + action.damage + " damage!");
           }
-          Audio.play("enemyHit");
+          Audio.play("swordHit");
           showFCT(fctTarget, "-" + action.damage, "damage");
         }
       }
