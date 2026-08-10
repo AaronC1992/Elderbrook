@@ -1,4 +1,5 @@
 /* audio.js - Web Audio API oscillator-based sound effects */
+var _NativeAudio = window.Audio; // capture before this module overwrites window.Audio
 var Audio = (function () {
 
   var ctx = null;
@@ -52,7 +53,7 @@ var Audio = (function () {
   var presets = {
     swordHit: function () {
       if (!enabled) return;
-      var a = new window.Audio('Sounds/sword hit.mp3');
+      var a = new _NativeAudio('Sounds/sword hit.mp3');
       a.play().catch(function () {});
     },
     enemyHit: function () { playTone(150, 0.12, "sawtooth", 0.07); },
@@ -63,17 +64,17 @@ var Audio = (function () {
     defeat: function () { playSequence([{ freq: 300, duration: 0.2, type: "sawtooth" }, { freq: 200, duration: 0.3, type: "sawtooth" }]); },
     swordMiss: function () {
       if (!enabled) return;
-      var a = new window.Audio('Sounds/sword miss.mp3');
+      var a = new _NativeAudio('Sounds/sword miss.mp3');
       a.play().catch(function () {});
     },
     swordBlock: function () {
       if (!enabled) return;
-      var a = new window.Audio('Sounds/sword block.mp3');
+      var a = new _NativeAudio('Sounds/sword block.mp3');
       a.play().catch(function () {});
     },
     buttonClick: function () {
       if (!enabled) return;
-      if (!clickAudio) clickAudio = new window.Audio('Sounds/click.mp3');
+      if (!clickAudio) clickAudio = new _NativeAudio('Sounds/click.mp3');
       clickAudio.currentTime = 0;
       clickAudio.play().catch(function () {});
     },
