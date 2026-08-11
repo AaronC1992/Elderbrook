@@ -113,6 +113,26 @@ vercel
 vercel --prod
 ```
 
+## Deploy on Render
+
+This project is ready for static hosting on Render.
+
+### Option 1: Deploy from GitHub with Blueprint
+
+1. Push this repository to GitHub
+2. In Render, click "New" then "Blueprint"
+3. Select this repository
+4. Render will read `render.yaml` and create the static site
+
+### Option 2: Deploy from GitHub as a Static Site
+
+1. In Render, click "New" then "Static Site"
+2. Connect this repository
+3. Use these settings:
+	- Build Command: leave blank
+	- Publish Directory: `.`
+4. Deploy
+
 ---
 
 <p align="center"><strong>Elderbrook</strong> — Click. Play. Adventure.</p>
