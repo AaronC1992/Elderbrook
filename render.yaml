@@ -1,9 +1,10 @@
-staticSites:
-  - name: elderbrook
+services:
+  - type: static_site
+    name: elderbrook
     branch: main
     rootDir: .
     buildCommand: ""
-    publishPath: .
+    staticPublishPath: .
     pullRequestPreviewsEnabled: true
     headers:
       - path: /*

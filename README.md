@@ -124,6 +124,8 @@ This project is ready for static hosting on Render.
 3. Select this repository
 4. Render will read `render.yaml` and create the static site
 
+The Blueprint uses Render's current `services` schema with `type: static_site`.
+
 ### Option 2: Deploy from GitHub as a Static Site
 
 1. In Render, click "New" then "Static Site"
