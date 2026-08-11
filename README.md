@@ -82,6 +82,37 @@ No build tools required. Open `index.html` in any browser, or use a local server
 1. Right-click `index.html` in VS Code
 2. Select "Open with Live Server"
 
+## Deploy on Vercel
+
+This project is ready for static hosting on Vercel.
+
+### Option 1: Deploy from GitHub
+
+1. Push this project to a GitHub repository
+2. In Vercel, click "Add New..." then "Project"
+3. Import the repository and deploy
+4. Vercel will detect this as a static site and publish it
+
+### Option 2: Deploy with Vercel CLI
+
+1. Install the CLI:
+
+```bash
+npm i -g vercel
+```
+
+2. Deploy from the project folder:
+
+```bash
+vercel
+```
+
+3. Deploy to production:
+
+```bash
+vercel --prod
+```
+
 ---
 
 <p align="center"><strong>Elderbrook</strong> — Click. Play. Adventure.</p>
